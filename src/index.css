@@ -9,7 +9,11 @@
 }
 
 .math-render {
-  font-family: KaTeX_Main, "Times New Roman", serif;
+  line-height: 1.6;
+}
+
+.math-render .katex {
+  font-size: 1.05em;
 }
 
 /* Custom scrollbar for clean UI */

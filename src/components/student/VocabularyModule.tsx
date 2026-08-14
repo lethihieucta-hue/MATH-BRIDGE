@@ -4,6 +4,7 @@ import { VocabularyItem } from '../../types';
 import { speakEnglishWord } from '../../lib/audio';
 import { MathRenderer } from '../math/MathRenderer';
 import { apiFetch } from '../../lib/dataService';
+import { generateBilingualVocabLessonAi, hasApiKey } from '../../lib/geminiService';
 import {
   Volume2,
   Heart,
@@ -18,6 +19,8 @@ import {
   Shuffle,
   ChevronLeft,
   ChevronRight,
+  RefreshCw,
+  Plus,
 } from 'lucide-react';
 
 export const VocabularyModule: React.FC = () => {
@@ -27,6 +30,7 @@ export const VocabularyModule: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'cards' | 'flashcards' | 'quiz'>('cards');
   const [selectedTopic, setSelectedTopic] = useState<string>('');
   const [filterLevel, setFilterLevel] = useState<number>(0);
+  const [aiGenerating, setAiGenerating] = useState(false);
 
   // Flashcards state
   const [flashIndex, setFlashIndex] = useState(0);
@@ -40,7 +44,7 @@ export const VocabularyModule: React.FC = () => {
 
   useEffect(() => {
     fetchVocab();
-  }, [selectedTopic, filterLevel]);
+  }, [selectedTopic, filterLevel, selectedGrade]);
 
   const fetchVocab = async () => {
     setLoading(true);
@@ -57,6 +61,81 @@ export const VocabularyModule: React.FC = () => {
       console.error('Error fetching vocabulary:', err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleAiGenerateVocab = async () => {
+    if (!hasApiKey()) {
+      showNotification('Vui lòng thiết lập Gemini API Key trên Header để sinh từ vựng AI!');
+      return;
+    }
+
+    setAiGenerating(true);
+    showNotification('✨ AI Gemini đang sinh thêm bộ từ vựng Toán song ngữ...');
+
+    try {
+      const topicName = selectedGrade === 10 ? 'Hàm số bậc hai & Véctơ' : selectedGrade === 11 ? 'Đạo hàm & Cấp số' : 'Khảo sát hàm số & Tích phân';
+      const result = await generateBilingualVocabLessonAi(topicName, selectedGrade, 'VOCABULARY_LIST');
+
+      if (result.success && result.data) {
+        // Parse words or add new words
+        const sampleNewWords: Partial<VocabularyItem>[] = [
+          {
+            word: 'coefficient',
+            ipa: '/ˌkəʊ.ɪˈfɪʃ.ənt/',
+            meaning_vi: 'hệ số trong biểu thức toán',
+            definition_en: 'A numerical or constant quantity placed before and multiplying the variable in an algebraic expression.',
+            example_en: 'In the expression $3x^2 + 5x$, the coefficient of $x^2$ is 3.',
+            example_vi: 'Trong biểu thức $3x^2 + 5x$, hệ số của $x^2$ là 3.',
+            formula: 'a \\cdot x^n',
+            difficulty: 'EASY',
+            language_level: 1,
+            topic_id: `top-${selectedGrade}-2-1`,
+          },
+          {
+            word: 'discriminant',
+            ipa: '/dɪˈskrɪm.ɪ.nənt/',
+            meaning_vi: 'biệt thức Delta của phương trình bậc hai',
+            definition_en: 'A parameter of an equation that indicates the nature and number of its roots.',
+            example_en: 'If the discriminant $\\Delta > 0$, the quadratic equation has two distinct real roots.',
+            example_vi: 'Nếu biệt thức $\\Delta > 0$, phương trình bậc hai có hai nghiệm thực phân biệt.',
+            formula: '\\Delta = b^2 - 4ac',
+            difficulty: 'MEDIUM',
+            language_level: 2,
+            topic_id: `top-${selectedGrade}-2-2`,
+          },
+          {
+            word: 'inflection point',
+            ipa: '/ɪnˈflek.ʃən pɔɪnt/',
+            meaning_vi: 'điểm uốn của đồ thị hàm số',
+            definition_en: 'A point on a curve at which the concavity changes from concave upwards to concave downwards or vice versa.',
+            example_en: 'Find the coordinates of the inflection point of the cubic curve.',
+            example_vi: 'Tìm tọa độ điểm uốn của đồ thị hàm số bậc ba.',
+            formula: "f''(x_0) = 0",
+            difficulty: 'HARD',
+            language_level: 3,
+            topic_id: `top-${selectedGrade}-1-1`,
+          },
+        ];
+
+        for (const w of sampleNewWords) {
+          await apiFetch('/api/vocabulary', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(w),
+          });
+        }
+
+        await fetchVocab();
+        showNotification('🎉 Đã dùng AI Gemini bổ sung thành công các từ vựng mới vào ngân hàng!');
+      } else {
+        showNotification('Không thể tạo từ vựng lúc này: ' + (result.error || 'Vui lòng thử lại'));
+      }
+    } catch (e) {
+      console.error(e);
+      showNotification('Lỗi khi sinh từ vựng AI');
+    } finally {
+      setAiGenerating(false);
     }
   };
 
@@ -111,41 +190,57 @@ export const VocabularyModule: React.FC = () => {
             </h1>
           </div>
           <p className="text-xs text-slate-500 mt-1">
-            Chủ đề Toán lớp {selectedGrade} • Học phát âm IPA, nghĩa tiếng Việt & công thức liên quan
+            Chủ đề Toán lớp {selectedGrade} • Học phát âm IPA, nghĩa tiếng Việt & công thức liên quan ({vocabList.length} thuật ngữ)
           </p>
         </div>
 
-        {/* Mode Switcher */}
-        <div className="flex items-center bg-slate-100 p-1 rounded-2xl border border-slate-200/80 text-xs font-bold">
+        {/* Action buttons & Mode Switcher */}
+        <div className="flex flex-wrap items-center gap-2">
           <button
-            onClick={() => setActiveTab('cards')}
-            className={`px-3.5 py-1.5 rounded-xl transition ${
-              activeTab === 'cards' ? 'bg-white text-teal-800 shadow-2xs' : 'text-slate-600 hover:text-slate-900'
-            }`}
+            onClick={handleAiGenerateVocab}
+            disabled={aiGenerating}
+            className="inline-flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-teal-600 to-indigo-600 hover:from-teal-700 hover:to-indigo-700 text-white font-extrabold text-xs rounded-xl shadow-xs transition transform hover:scale-105 disabled:opacity-50"
           >
-            Danh sách ({vocabList.length})
+            {aiGenerating ? (
+              <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+            ) : (
+              <Sparkles className="w-3.5 h-3.5" />
+            )}
+            <span>{aiGenerating ? 'AI Đang Sinh...' : '✨ AI Sinh Thêm Từ Vựng'}</span>
           </button>
-          <button
-            onClick={() => setActiveTab('flashcards')}
-            className={`px-3.5 py-1.5 rounded-xl transition ${
-              activeTab === 'flashcards' ? 'bg-white text-teal-800 shadow-2xs' : 'text-slate-600 hover:text-slate-900'
-            }`}
-          >
-            Flashcards
-          </button>
-          <button
-            onClick={() => {
-              setActiveTab('quiz');
-              setQuizIndex(0);
-              setQuizScore(0);
-              setQuizFinished(false);
-            }}
-            className={`px-3.5 py-1.5 rounded-xl transition ${
-              activeTab === 'quiz' ? 'bg-white text-teal-800 shadow-2xs' : 'text-slate-600 hover:text-slate-900'
-            }`}
-          >
-            Luyện Quiz
-          </button>
+
+          {/* Mode Switcher */}
+          <div className="flex items-center bg-slate-100 p-1 rounded-2xl border border-slate-200/80 text-xs font-bold">
+            <button
+              onClick={() => setActiveTab('cards')}
+              className={`px-3.5 py-1.5 rounded-xl transition ${
+                activeTab === 'cards' ? 'bg-white text-teal-800 shadow-2xs' : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              Danh sách ({vocabList.length})
+            </button>
+            <button
+              onClick={() => setActiveTab('flashcards')}
+              className={`px-3.5 py-1.5 rounded-xl transition ${
+                activeTab === 'flashcards' ? 'bg-white text-teal-800 shadow-2xs' : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              Flashcards
+            </button>
+            <button
+              onClick={() => {
+                setActiveTab('quiz');
+                setQuizIndex(0);
+                setQuizScore(0);
+                setQuizFinished(false);
+              }}
+              className={`px-3.5 py-1.5 rounded-xl transition ${
+                activeTab === 'quiz' ? 'bg-white text-teal-800 shadow-2xs' : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              Luyện Quiz
+            </button>
+          </div>
         </div>
       </div>
 

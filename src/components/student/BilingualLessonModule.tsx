@@ -4,6 +4,7 @@ import { Lesson, LanguageMode } from '../../types';
 import { MathRenderer } from '../math/MathRenderer';
 import { speakEnglishWord } from '../../lib/audio';
 import { apiFetch } from '../../lib/dataService';
+import { generateBilingualVocabLessonAi, hasApiKey } from '../../lib/geminiService';
 import {
   BookOpen,
   Globe2,
@@ -13,26 +14,97 @@ import {
   HelpCircle,
   Lightbulb,
   ArrowRight,
+  RefreshCw,
+  Plus,
 } from 'lucide-react';
 
 export const BilingualLessonModule: React.FC = () => {
-  const { selectedGrade, languageMode, setLanguageMode } = useAppStore();
+  const { selectedGrade, languageMode, setLanguageMode, showNotification } = useAppStore();
   const [lessons, setLessons] = useState<Lesson[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeLesson, setActiveLesson] = useState<Lesson | null>(null);
+  const [aiGenerating, setAiGenerating] = useState(false);
 
   useEffect(() => {
-    apiFetch<Lesson[]>('/api/lessons')
-      .then((data) => {
-        setLessons(data || []);
-        if (data && data.length > 0) setActiveLesson(data[0]);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error('Error fetching lessons:', err);
-        setLoading(false);
-      });
+    fetchLessons();
   }, [selectedGrade]);
+
+  const fetchLessons = async () => {
+    setLoading(true);
+    try {
+      const data = await apiFetch<Lesson[]>('/api/lessons');
+      setLessons(data || []);
+      if (data && data.length > 0) setActiveLesson(data[0]);
+    } catch (err) {
+      console.error('Error fetching lessons:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAiGenerateLesson = async () => {
+    if (!hasApiKey()) {
+      showNotification('Vui lòng thiết lập Gemini API Key trên Header để sinh bài học AI!');
+      return;
+    }
+
+    setAiGenerating(true);
+    showNotification('✨ AI Gemini đang soạn bài học song ngữ mới...');
+
+    try {
+      const topicTitle = selectedGrade === 10 ? 'Bất phương trình & Hệ thức lượng' : selectedGrade === 11 ? 'Hàm số lượng giác & Giới hạn' : 'Hàm số mũ & Số phức';
+      const result = await generateBilingualVocabLessonAi(topicTitle, selectedGrade, 'FULL_LESSON');
+
+      if (result.success && result.data) {
+        const newLesson: Partial<Lesson> = {
+          title_vi: result.data.title_vi || `Bài Học AI: ${topicTitle} (Lớp ${selectedGrade})`,
+          title_en: result.data.title_en || `AI Lesson: ${topicTitle} (Grade ${selectedGrade})`,
+          topic_id: `top-${selectedGrade}-1-1`,
+          learning_objectives: result.data.learning_objectives || [
+            'Nắm vững định nghĩa và thuật ngữ toán học tiếng Anh',
+            'Vận dụng công thức giải bài tập toán THPT',
+          ],
+          key_concepts_vi: result.data.key_concepts_vi || 'Khái niệm toán học được hệ thống hóa rõ ràng theo chuẩn GDPT 2018.',
+          key_concepts_en: result.data.key_concepts_en || 'Mathematical concepts structured clearly for bilingual comprehension.',
+          formulas: result.data.formulas || [
+            '\\sin^2 x + \\cos^2 x = 1',
+            'e^{\\ln x} = x \\quad (x > 0)',
+            'a^2 = b^2 + c^2 - 2bc \\cos A',
+          ],
+          worked_examples: result.data.worked_examples || [
+            {
+              id: `we-${Date.now()}`,
+              title_vi: 'Ví dụ Minh Họa Tự Động',
+              title_en: 'AI Worked Example',
+              problem_vi: 'Giải phương trình $\\sin x = \\frac{1}{2}$ trên đoạn $[0, 2\\pi]$.',
+              problem_en: 'Solve the equation $\\sin x = \\frac{1}{2}$ on the interval $[0, 2\\pi]$.',
+              solution_en: 'The solutions are $x = \\frac{\\pi}{6}$ and $x = \\frac{5\\pi}{6}$.',
+              solution_vi: 'Nghiệm của phương trình là $x = \\frac{\\pi}{6}$ và $x = \\frac{5\\pi}{6}$.',
+            },
+          ],
+          status: 'PUBLISHED',
+          language_level: 2,
+        };
+
+        const res = await apiFetch('/api/lessons', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newLesson),
+        });
+
+        await fetchLessons();
+        if (res.lesson) setActiveLesson(res.lesson);
+        showNotification('🎉 Đã soạn thành công bài học song ngữ mới bằng AI!');
+      } else {
+        showNotification('Không thể tạo bài học lúc này: ' + (result.error || 'Vui lòng thử lại'));
+      }
+    } catch (e) {
+      console.error(e);
+      showNotification('Lỗi khi soạn bài học AI');
+    } finally {
+      setAiGenerating(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -55,36 +127,52 @@ export const BilingualLessonModule: React.FC = () => {
             </h1>
           </div>
           <p className="text-xs text-slate-500 mt-1">
-            Toán {selectedGrade} • Chuyển đổi linh hoạt chế độ ngôn ngữ (Vietnamese / Bilingual / English)
+            Toán {selectedGrade} • Chuyển đổi linh hoạt chế độ ngôn ngữ (Vietnamese / Bilingual / English) • {lessons.length} bài học
           </p>
         </div>
 
-        {/* Language Mode Toggle */}
-        <div className="flex items-center bg-slate-100 p-1.5 rounded-2xl border border-slate-200 text-xs font-bold">
+        <div className="flex flex-wrap items-center gap-2">
+          {/* AI Generator Button */}
           <button
-            onClick={() => setLanguageMode('VIETNAMESE')}
-            className={`px-3 py-1.5 rounded-xl transition ${
-              languageMode === 'VIETNAMESE' ? 'bg-white text-teal-800 shadow-2xs' : 'text-slate-600'
-            }`}
+            onClick={handleAiGenerateLesson}
+            disabled={aiGenerating}
+            className="inline-flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-teal-600 to-indigo-600 hover:from-teal-700 hover:to-indigo-700 text-white font-extrabold text-xs rounded-xl shadow-xs transition transform hover:scale-105 disabled:opacity-50"
           >
-            Tiếng Việt
+            {aiGenerating ? (
+              <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+            ) : (
+              <Sparkles className="w-3.5 h-3.5" />
+            )}
+            <span>{aiGenerating ? 'AI Đang Soạn...' : '✨ AI Soạn Bài Học Mới'}</span>
           </button>
-          <button
-            onClick={() => setLanguageMode('BILINGUAL')}
-            className={`px-3 py-1.5 rounded-xl transition ${
-              languageMode === 'BILINGUAL' ? 'bg-teal-600 text-white shadow-2xs' : 'text-slate-600'
-            }`}
-          >
-            🇻🇳 🇬🇧 Song Ngữ
-          </button>
-          <button
-            onClick={() => setLanguageMode('ENGLISH')}
-            className={`px-3 py-1.5 rounded-xl transition ${
-              languageMode === 'ENGLISH' ? 'bg-white text-teal-800 shadow-2xs' : 'text-slate-600'
-            }`}
-          >
-            English
-          </button>
+
+          {/* Language Mode Toggle */}
+          <div className="flex items-center bg-slate-100 p-1.5 rounded-2xl border border-slate-200 text-xs font-bold">
+            <button
+              onClick={() => setLanguageMode('VIETNAMESE')}
+              className={`px-3 py-1.5 rounded-xl transition ${
+                languageMode === 'VIETNAMESE' ? 'bg-white text-teal-800 shadow-2xs' : 'text-slate-600'
+              }`}
+            >
+              Tiếng Việt
+            </button>
+            <button
+              onClick={() => setLanguageMode('BILINGUAL')}
+              className={`px-3 py-1.5 rounded-xl transition ${
+                languageMode === 'BILINGUAL' ? 'bg-teal-600 text-white shadow-2xs' : 'text-slate-600'
+              }`}
+            >
+              🇻🇳 🇬🇧 Song Ngữ
+            </button>
+            <button
+              onClick={() => setLanguageMode('ENGLISH')}
+              className={`px-3 py-1.5 rounded-xl transition ${
+                languageMode === 'ENGLISH' ? 'bg-white text-teal-800 shadow-2xs' : 'text-slate-600'
+              }`}
+            >
+              English
+            </button>
+          </div>
         </div>
       </div>
 
@@ -212,39 +300,79 @@ export const BilingualLessonModule: React.FC = () => {
                   </h3>
 
                   {activeLesson.worked_examples.map((ex, idx) => (
-                    <div key={idx} className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-4">
+                    <div key={idx} className="p-5 sm:p-6 rounded-3xl bg-slate-50 border border-slate-200/90 space-y-4 shadow-2xs">
                       {/* Problem Statement */}
-                      <div className="space-y-1">
-                        <span className="text-[10px] uppercase font-bold text-teal-800 bg-teal-100 px-2.5 py-0.5 rounded-full">
-                          Đề bài Ví dụ {idx + 1}
-                        </span>
-                        <div className="text-xs sm:text-sm font-bold text-slate-900 leading-relaxed mt-2">
-                          <MathRenderer content={ex.problem_en} inline />
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-[10px] uppercase font-bold text-teal-800 bg-teal-100 px-2.5 py-0.5 rounded-full">
+                            {ex.title_vi || `Đề bài Ví dụ ${idx + 1}`}
+                          </span>
+                          <button
+                            onClick={() => speakEnglishWord(ex.problem_en)}
+                            className="p-1.5 rounded-xl bg-white border border-slate-200 text-teal-700 hover:bg-teal-50 transition"
+                            title="Nghe phát âm đề bài tiếng Anh"
+                          >
+                            <Volume2 className="w-4 h-4" />
+                          </button>
                         </div>
-                        <p className="text-xs text-slate-500">→ {ex.problem_vi}</p>
+                        <div className="text-sm font-extrabold text-slate-900 leading-relaxed font-serif">
+                          <MathRenderer content={ex.problem_en} />
+                        </div>
+                        <p className="text-xs text-slate-500 italic">→ {ex.problem_vi}</p>
                       </div>
 
-                      {/* Key steps */}
-                      {ex.key_steps && (
-                        <div className="bg-white p-3 rounded-xl border border-slate-200 space-y-1">
-                          <p className="text-[10px] font-bold text-slate-400 uppercase">Các bước giải chính (Key Steps):</p>
-                          <div className="flex flex-wrap gap-2">
-                            {ex.key_steps.map((step, sIdx) => (
-                              <span key={sIdx} className="text-[11px] font-bold bg-teal-50 text-teal-800 border border-teal-200 px-2.5 py-1 rounded-lg">
-                                {sIdx + 1}. {step}
-                              </span>
+                      {/* Step-by-step Solution Cards if available */}
+                      {ex.solution_steps && ex.solution_steps.length > 0 && (
+                        <div className="space-y-2.5 pt-2">
+                          <p className="text-[11px] font-extrabold text-slate-700 uppercase tracking-wider">
+                            Các bước giải chi tiết (Step-by-step Solution):
+                          </p>
+                          <div className="space-y-2">
+                            {ex.solution_steps.map((step, sIdx) => (
+                              <div
+                                key={sIdx}
+                                className="p-3.5 rounded-2xl bg-white border border-slate-200 text-xs space-y-1.5"
+                              >
+                                <div className="flex items-center gap-2">
+                                  <span className="w-5 h-5 rounded-lg bg-teal-600 text-white font-bold text-[10px] flex items-center justify-center">
+                                    {step.step_number || sIdx + 1}
+                                  </span>
+                                  <span className="font-extrabold text-slate-900 text-xs">
+                                    {step.title_en}
+                                  </span>
+                                  <span className="text-[10px] text-slate-400">({step.title_vi})</span>
+                                </div>
+                                <div className="text-slate-700 pl-7 text-xs">
+                                  <MathRenderer content={step.content_en} />
+                                </div>
+                                {step.formula && (
+                                  <div className="ml-7 p-2 rounded-xl bg-slate-900 text-teal-300 font-mono text-center text-xs">
+                                    <MathRenderer content={step.formula} inline />
+                                  </div>
+                                )}
+                              </div>
                             ))}
                           </div>
                         </div>
                       )}
 
-                      {/* Solution */}
-                      <div className="space-y-2 pt-2 border-t border-slate-200/80">
-                        <p className="text-xs font-bold text-teal-800 uppercase">Lời giải mẫu (Sample Solution):</p>
-                        <div className="p-3.5 rounded-xl bg-white border border-slate-200 text-xs text-slate-800 leading-relaxed">
-                          <MathRenderer content={ex.solution_en} inline />
+                      {/* Full Solution Fallback */}
+                      {ex.solution_en && (!ex.solution_steps || ex.solution_steps.length === 0) && (
+                        <div className="space-y-2 pt-2 border-t border-slate-200/80">
+                          <p className="text-xs font-bold text-teal-800 uppercase">Lời giải mẫu (Sample Solution):</p>
+                          <div className="p-4 rounded-2xl bg-white border border-slate-200 text-xs text-slate-800 leading-relaxed font-serif">
+                            <MathRenderer content={ex.solution_en} />
+                          </div>
                         </div>
-                      </div>
+                      )}
+
+                      {/* Conclusion Banner */}
+                      {(ex.conclusion_en || ex.conclusion_vi) && (
+                        <div className="p-3.5 rounded-2xl bg-teal-50/80 border border-teal-200 text-xs text-teal-950 font-bold flex items-center gap-2">
+                          <CheckCircle2 className="w-4 h-4 text-teal-600 shrink-0" />
+                          <span>{ex.conclusion_en || ex.conclusion_vi}</span>
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
