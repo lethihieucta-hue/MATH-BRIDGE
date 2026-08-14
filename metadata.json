@@ -1,0 +1,6 @@
+{
+  "name": "MATH-BRIDGE",
+  "description": "Learn Mathematics Through English - Nền tảng học Toán bằng tiếng Anh dành cho học sinh THPT Việt Nam",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
