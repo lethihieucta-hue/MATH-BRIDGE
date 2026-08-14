@@ -142,9 +142,9 @@ export const MathReadingModule: React.FC = () => {
         </div>
 
         {!isCustomMode && (
-          <p className="text-xs text-slate-400 italic">
-            Gợi ý tiếng Việt: "{sampleProblem.vietnamese_translation}"
-          </p>
+          <div className="text-xs text-slate-400 italic">
+            Gợi ý tiếng Việt: "<MathRenderer content={sampleProblem.vietnamese_translation} inline />"
+          </div>
         )}
       </div>
 
@@ -171,7 +171,7 @@ export const MathReadingModule: React.FC = () => {
                       : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100'
                   }`}
                 >
-                  {opt.text}
+                  <MathRenderer content={opt.text} inline />
                 </button>
               ))}
             </div>
@@ -193,7 +193,7 @@ export const MathReadingModule: React.FC = () => {
                       : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100'
                   }`}
                 >
-                  {opt.text}
+                  <MathRenderer content={opt.text} inline />
                 </button>
               ))}
             </div>
@@ -215,7 +215,7 @@ export const MathReadingModule: React.FC = () => {
                       : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100'
                   }`}
                 >
-                  {opt.text}
+                  <MathRenderer content={opt.text} inline />
                 </button>
               ))}
             </div>

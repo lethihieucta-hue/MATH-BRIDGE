@@ -14,7 +14,7 @@ import {
 } from 'lucide-react';
 
 export const MobileNav: React.FC = () => {
-  const { currentRole, activeTab, setActiveTab } = useAppStore();
+  const { currentRole, activeTab, setActiveTab, selectedLessonSubTab, setSelectedLessonSubTab } = useAppStore();
 
   if (currentRole === 'TEACHER') {
     return (
@@ -85,9 +85,12 @@ export const MobileNav: React.FC = () => {
       </button>
 
       <button
-        onClick={() => setActiveTab('vocabulary')}
+        onClick={() => {
+          setSelectedLessonSubTab('vocab');
+          setActiveTab('learn');
+        }}
         className={`flex flex-col items-center gap-0.5 text-[10px] font-bold transition ${
-          activeTab === 'vocabulary' ? 'text-teal-400 font-black' : 'hover:text-slate-200'
+          activeTab === 'learn' && selectedLessonSubTab === 'vocab' ? 'text-teal-400 font-black' : 'hover:text-slate-200'
         }`}
       >
         <BookMarked className="w-5 h-5" />
@@ -95,9 +98,12 @@ export const MobileNav: React.FC = () => {
       </button>
 
       <button
-        onClick={() => setActiveTab('learn')}
+        onClick={() => {
+          setSelectedLessonSubTab('theory');
+          setActiveTab('learn');
+        }}
         className={`flex flex-col items-center gap-0.5 text-[10px] font-bold transition ${
-          activeTab === 'learn' ? 'text-teal-400 font-black' : 'hover:text-slate-200'
+          activeTab === 'learn' && selectedLessonSubTab === 'theory' ? 'text-teal-400 font-black' : 'hover:text-slate-200'
         }`}
       >
         <BookOpen className="w-5 h-5" />
@@ -105,9 +111,12 @@ export const MobileNav: React.FC = () => {
       </button>
 
       <button
-        onClick={() => setActiveTab('grapher')}
+        onClick={() => {
+          setSelectedLessonSubTab('grapher');
+          setActiveTab('learn');
+        }}
         className={`flex flex-col items-center gap-0.5 text-[10px] font-bold transition ${
-          activeTab === 'grapher' ? 'text-teal-400 font-black' : 'hover:text-slate-200'
+          activeTab === 'learn' && selectedLessonSubTab === 'grapher' ? 'text-teal-400 font-black' : 'hover:text-slate-200'
         }`}
       >
         <span className="text-xs font-mono font-bold">f(x)</span>
@@ -115,9 +124,12 @@ export const MobileNav: React.FC = () => {
       </button>
 
       <button
-        onClick={() => setActiveTab('practice')}
+        onClick={() => {
+          setSelectedLessonSubTab('practice');
+          setActiveTab('learn');
+        }}
         className={`flex flex-col items-center gap-0.5 text-[10px] font-bold transition ${
-          activeTab === 'practice' ? 'text-teal-400 font-black' : 'hover:text-slate-200'
+          activeTab === 'learn' && selectedLessonSubTab === 'practice' ? 'text-teal-400 font-black' : 'hover:text-slate-200'
         }`}
       >
         <Sparkles className="w-5 h-5" />

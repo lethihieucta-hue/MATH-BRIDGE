@@ -155,7 +155,10 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {/* Lab 1: Function Grapher */}
           <div
-            onClick={() => setActiveTab('grapher')}
+            onClick={() => {
+              setSelectedLessonSubTab('grapher');
+              setActiveTab('learn');
+            }}
             className="sc-card p-5 rounded-3xl cursor-pointer group space-y-3"
           >
             <div className="w-10 h-10 rounded-2xl bg-teal-50 text-teal-700 flex items-center justify-center font-mono font-black text-sm group-hover:scale-110 transition-transform">
@@ -177,7 +180,10 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
 
           {/* Lab 2: Speed Match Minigame */}
           <div
-            onClick={() => setActiveTab('minigame')}
+            onClick={() => {
+              setSelectedLessonSubTab('minigame');
+              setActiveTab('learn');
+            }}
             className="sc-card p-5 rounded-3xl cursor-pointer group space-y-3"
           >
             <div className="w-10 h-10 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold text-base group-hover:scale-110 transition-transform">
@@ -199,7 +205,10 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
 
           {/* Lab 3: Math Reading Lab */}
           <div
-            onClick={() => setActiveTab('reading')}
+            onClick={() => {
+              setSelectedLessonSubTab('reading');
+              setActiveTab('learn');
+            }}
             className="sc-card p-5 rounded-3xl cursor-pointer group space-y-3"
           >
             <div className="w-10 h-10 rounded-2xl bg-indigo-50 text-indigo-700 flex items-center justify-center font-bold text-sm group-hover:scale-110 transition-transform">
@@ -247,7 +256,10 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
         {/* Vocab */}
         <div
-          onClick={() => setActiveTab('vocabulary')}
+          onClick={() => {
+            setSelectedLessonSubTab('vocab');
+            setActiveTab('learn');
+          }}
           className="sc-card p-4 rounded-2xl cursor-pointer group"
         >
           <div className="w-8 h-8 rounded-xl bg-teal-50 text-teal-700 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
@@ -261,7 +273,10 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
 
         {/* Lessons */}
         <div
-          onClick={() => setActiveTab('learn')}
+          onClick={() => {
+            setSelectedLessonSubTab('theory');
+            setActiveTab('learn');
+          }}
           className="sc-card p-4 rounded-2xl cursor-pointer group"
         >
           <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
@@ -275,7 +290,10 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
 
         {/* Accuracy */}
         <div
-          onClick={() => setActiveTab('practice')}
+          onClick={() => {
+            setSelectedLessonSubTab('practice');
+            setActiveTab('learn');
+          }}
           className="sc-card p-4 rounded-2xl cursor-pointer group"
         >
           <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
@@ -381,10 +399,38 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
               </p>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                 {[
-                  { title: '1. Thuật Ngữ (Vocab)', action: () => setActiveTab('vocabulary'), color: 'bg-teal-50/80 text-teal-800 border-teal-200' },
-                  { title: '2. Mẫu Câu (Patterns)', action: () => setActiveTab('sentences'), color: 'bg-sky-50/80 text-sky-800 border-sky-200' },
-                  { title: '3. Bài Học (Lessons)', action: () => setActiveTab('learn'), color: 'bg-indigo-50/80 text-indigo-800 border-indigo-200' },
-                  { title: '4. Luyện Tập (Practice)', action: () => setActiveTab('practice'), color: 'bg-amber-50/80 text-amber-800 border-amber-200' },
+                  {
+                    title: '1. Thuật Ngữ (Vocab)',
+                    action: () => {
+                      setSelectedLessonSubTab('vocab');
+                      setActiveTab('learn');
+                    },
+                    color: 'bg-teal-50/80 text-teal-800 border-teal-200',
+                  },
+                  {
+                    title: '2. Mẫu Câu (Patterns)',
+                    action: () => {
+                      setSelectedLessonSubTab('sentences');
+                      setActiveTab('learn');
+                    },
+                    color: 'bg-sky-50/80 text-sky-800 border-sky-200',
+                  },
+                  {
+                    title: '3. Bài Học (Theory)',
+                    action: () => {
+                      setSelectedLessonSubTab('theory');
+                      setActiveTab('learn');
+                    },
+                    color: 'bg-indigo-50/80 text-indigo-800 border-indigo-200',
+                  },
+                  {
+                    title: '4. Luyện Tập (Practice)',
+                    action: () => {
+                      setSelectedLessonSubTab('practice');
+                      setActiveTab('learn');
+                    },
+                    color: 'bg-amber-50/80 text-amber-800 border-amber-200',
+                  },
                 ].map((step, idx) => (
                   <button
                     key={idx}

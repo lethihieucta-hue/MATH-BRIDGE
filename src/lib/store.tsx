@@ -12,6 +12,10 @@ interface AppContextType {
   setActiveTab: (tab: string) => void;
   selectedGrade: number;
   setSelectedGrade: (grade: number) => void;
+  selectedLessonId: string | null;
+  setSelectedLessonId: (id: string | null) => void;
+  selectedLessonSubTab: string;
+  setSelectedLessonSubTab: (subTab: string) => void;
   languageMode: LanguageMode;
   setLanguageMode: (mode: LanguageMode) => void;
   currentLevel: MathEnglishLevel;
@@ -42,6 +46,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [currentRole, setRoleState] = useState<Role>('STUDENT');
   const [activeTab, setActiveTab] = useState<string>('dashboard');
   const [selectedGrade, setSelectedGrade] = useState<number>(10);
+  const [selectedLessonId, setSelectedLessonId] = useState<string | null>('les-10-6-2');
+  const [selectedLessonSubTab, setSelectedLessonSubTab] = useState<string>('theory');
   const [languageMode, setLanguageMode] = useState<LanguageMode>('BILINGUAL');
   const [currentLevel, setCurrentLevel] = useState<MathEnglishLevel>(2);
   const [notification, setNotification] = useState<string | null>(null);
@@ -127,6 +133,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setActiveTab,
         selectedGrade,
         setSelectedGrade,
+        selectedLessonId,
+        setSelectedLessonId,
+        selectedLessonSubTab,
+        setSelectedLessonSubTab,
         languageMode,
         setLanguageMode,
         currentLevel,

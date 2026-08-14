@@ -90,8 +90,12 @@ export const SentencePatternsModule: React.FC = () => {
                       <Volume2 className="w-4 h-4" />
                     </button>
                   </div>
-                  <h3 className="text-sm font-extrabold text-slate-900 mt-2">{sp.pattern_en}</h3>
-                  <p className="text-xs text-slate-500 mt-0.5">→ {sp.pattern_vi}</p>
+                  <h3 className="text-sm font-extrabold text-slate-900 mt-2">
+                    <MathRenderer content={sp.pattern_en} inline />
+                  </h3>
+                  <p className="text-xs text-slate-500 mt-0.5">
+                    → <MathRenderer content={sp.pattern_vi} inline />
+                  </p>
                 </div>
               );
             })}
@@ -108,7 +112,7 @@ export const SentencePatternsModule: React.FC = () => {
                     Mẫu câu chính (Core Pattern)
                   </span>
                   <h2 className="text-xl sm:text-2xl font-black text-slate-900 mt-2 flex items-center gap-2">
-                    {activePattern.pattern_en}
+                    <MathRenderer content={activePattern.pattern_en} inline />
                     <button
                       onClick={() => speakEnglishWord(activePattern.pattern_en)}
                       className="p-1.5 rounded-full bg-teal-100 text-teal-800 hover:bg-teal-200"
@@ -116,7 +120,9 @@ export const SentencePatternsModule: React.FC = () => {
                       <Volume2 className="w-4 h-4" />
                     </button>
                   </h2>
-                  <p className="text-sm font-bold text-teal-800 mt-1">Dịch nghĩa: {activePattern.pattern_vi}</p>
+                  <p className="text-sm font-bold text-teal-800 mt-1">
+                    Dịch nghĩa: <MathRenderer content={activePattern.pattern_vi} inline />
+                  </p>
                 </div>
               </div>
 
@@ -137,7 +143,9 @@ export const SentencePatternsModule: React.FC = () => {
                   <div className="text-sm font-extrabold text-slate-900 leading-relaxed">
                     <MathRenderer content={activePattern.example_en} inline />
                   </div>
-                  <p className="text-xs text-slate-600">→ {activePattern.example_vi}</p>
+                  <p className="text-xs text-slate-600">
+                    → <MathRenderer content={activePattern.example_vi} inline />
+                  </p>
                 </div>
               </div>
 
@@ -149,10 +157,12 @@ export const SentencePatternsModule: React.FC = () => {
                     Luyện tập ghép câu (Pattern Check)
                   </h3>
                 </div>
-                <p className="text-xs text-slate-700">
+                <div className="text-xs text-slate-700">
                   Dịch câu sau sang tiếng Anh dùng mẫu câu trên: <br />
-                  <span className="font-bold text-slate-900">"{activePattern.example_vi}"</span>
-                </p>
+                  <span className="font-bold text-slate-900">
+                    "<MathRenderer content={activePattern.example_vi} inline />"
+                  </span>
+                </div>
 
                 <div className="flex items-center gap-2">
                   <input

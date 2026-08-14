@@ -337,14 +337,18 @@ export const VocabularyModule: React.FC = () => {
                   {item.definition_en && (
                     <div className="text-xs text-slate-600 leading-relaxed">
                       <span className="font-semibold text-slate-800">Định nghĩa Math: </span>
-                      {item.definition_en}
+                      <MathRenderer content={item.definition_en} inline />
                     </div>
                   )}
 
                   {item.example_en && (
                     <div className="text-xs bg-slate-50 p-2.5 rounded-xl border border-slate-100 space-y-1">
-                      <p className="text-slate-800 font-medium italic">"{item.example_en}"</p>
-                      <p className="text-slate-500 text-[11px]">→ {item.example_vi}</p>
+                      <div className="text-slate-800 font-medium italic">
+                        "<MathRenderer content={item.example_en} inline />"
+                      </div>
+                      <div className="text-slate-500 text-[11px]">
+                        → <MathRenderer content={item.example_vi} inline />
+                      </div>
                     </div>
                   )}
                 </div>

@@ -125,15 +125,15 @@ export const MathRenderer: React.FC<MathRendererProps> = ({
         .replace(/(\\[a-zA-Z]+(?:\{[^}]*\})*)/g, '$$$1$$');
     }
 
-    // 3. Tokenize by $$...$$ (block math) and $...$ (inline math)
-    const regex = /(\$\$[\s\S]*?\$\$|\$[\s\S]*?\$)/g;
+    // 3. Tokenize by $$...$$ (block math) and $...$ (inline math) safely
+    const regex = /(\$\$[\s\S]*?\$\$|\$[^$\n]+?\$)/g;
     const parts = normalized.split(regex);
 
     return parts.map((part, idx) => {
       if (!part) return null;
 
       // Block Math $$...$$
-      if (part.startsWith('$$') && part.endsWith('$$')) {
+      if (part.startsWith('$$') && part.endsWith('$$') && part.length > 4) {
         const latex = part.slice(2, -2).trim();
         const html = renderLatexSafe(latex, false);
         return (
@@ -146,13 +146,13 @@ export const MathRenderer: React.FC<MathRendererProps> = ({
       }
 
       // Inline Math $...$
-      if (part.startsWith('$') && part.endsWith('$')) {
+      if (part.startsWith('$') && part.endsWith('$') && part.length > 2) {
         const latex = part.slice(1, -1).trim();
         const html = renderLatexSafe(latex, true);
         return (
           <span
             key={idx}
-            className="inline-block align-middle px-1 font-serif text-teal-900 font-semibold"
+            className="inline-block align-middle px-0.5 font-serif text-teal-900 font-medium"
             dangerouslySetInnerHTML={{ __html: html }}
           />
         );

@@ -70,7 +70,7 @@ export const Header: React.FC = () => {
                 <>
                   <button
                     onClick={() => setActiveTab('dashboard')}
-                    className={`px-3 py-1.5 rounded-xl transition flex items-center gap-1.5 ${
+                    className={`px-3 py-1.5 rounded-xl transition flex items-center gap-1.5 cursor-pointer ${
                       activeTab === 'dashboard'
                         ? 'bg-gradient-to-r from-teal-500 to-emerald-500 text-slate-950 font-extrabold shadow-sm'
                         : 'text-slate-300 hover:text-white hover:bg-slate-800/50'
@@ -79,9 +79,12 @@ export const Header: React.FC = () => {
                     <span>Tổng Quan</span>
                   </button>
                   <button
-                    onClick={() => setActiveTab('vocabulary')}
-                    className={`px-3 py-1.5 rounded-xl transition ${
-                      activeTab === 'vocabulary'
+                    onClick={() => {
+                      setSelectedLessonSubTab('vocab');
+                      setActiveTab('learn');
+                    }}
+                    className={`px-3 py-1.5 rounded-xl transition cursor-pointer ${
+                      activeTab === 'learn' && selectedLessonSubTab === 'vocab'
                         ? 'bg-gradient-to-r from-teal-500 to-emerald-500 text-slate-950 font-extrabold shadow-sm'
                         : 'text-slate-300 hover:text-white hover:bg-slate-800/50'
                     }`}
@@ -89,9 +92,12 @@ export const Header: React.FC = () => {
                     1. Từ Vựng
                   </button>
                   <button
-                    onClick={() => setActiveTab('sentences')}
-                    className={`px-3 py-1.5 rounded-xl transition ${
-                      activeTab === 'sentences'
+                    onClick={() => {
+                      setSelectedLessonSubTab('sentences');
+                      setActiveTab('learn');
+                    }}
+                    className={`px-3 py-1.5 rounded-xl transition cursor-pointer ${
+                      activeTab === 'learn' && selectedLessonSubTab === 'sentences'
                         ? 'bg-gradient-to-r from-teal-500 to-emerald-500 text-slate-950 font-extrabold shadow-sm'
                         : 'text-slate-300 hover:text-white hover:bg-slate-800/50'
                     }`}
@@ -99,19 +105,25 @@ export const Header: React.FC = () => {
                     2. Mẫu Câu
                   </button>
                   <button
-                    onClick={() => setActiveTab('learn')}
-                    className={`px-3 py-1.5 rounded-xl transition ${
-                      activeTab === 'learn'
+                    onClick={() => {
+                      setSelectedLessonSubTab('theory');
+                      setActiveTab('learn');
+                    }}
+                    className={`px-3 py-1.5 rounded-xl transition cursor-pointer ${
+                      activeTab === 'learn' && selectedLessonSubTab === 'theory'
                         ? 'bg-gradient-to-r from-teal-500 to-emerald-500 text-slate-950 font-extrabold shadow-sm'
                         : 'text-slate-300 hover:text-white hover:bg-slate-800/50'
                     }`}
                   >
-                    3. Bài Học
+                    3. Bài Học (Hub)
                   </button>
                   <button
-                    onClick={() => setActiveTab('reading')}
-                    className={`px-3 py-1.5 rounded-xl transition ${
-                      activeTab === 'reading'
+                    onClick={() => {
+                      setSelectedLessonSubTab('reading');
+                      setActiveTab('learn');
+                    }}
+                    className={`px-3 py-1.5 rounded-xl transition cursor-pointer ${
+                      activeTab === 'learn' && selectedLessonSubTab === 'reading'
                         ? 'bg-gradient-to-r from-teal-500 to-emerald-500 text-slate-950 font-extrabold shadow-sm'
                         : 'text-slate-300 hover:text-white hover:bg-slate-800/50'
                     }`}
@@ -119,9 +131,12 @@ export const Header: React.FC = () => {
                     4. Đọc Đề
                   </button>
                   <button
-                    onClick={() => setActiveTab('grapher')}
-                    className={`px-3 py-1.5 rounded-xl transition flex items-center gap-1 ${
-                      activeTab === 'grapher'
+                    onClick={() => {
+                      setSelectedLessonSubTab('grapher');
+                      setActiveTab('learn');
+                    }}
+                    className={`px-3 py-1.5 rounded-xl transition flex items-center gap-1 cursor-pointer ${
+                      activeTab === 'learn' && selectedLessonSubTab === 'grapher'
                         ? 'bg-gradient-to-r from-teal-500 to-emerald-500 text-slate-950 font-extrabold shadow-sm'
                         : 'text-slate-300 hover:text-white hover:bg-slate-800/50'
                     }`}
@@ -129,9 +144,12 @@ export const Header: React.FC = () => {
                     <span className="text-[11px] font-mono">f(x)</span> Đồ Thị
                   </button>
                   <button
-                    onClick={() => setActiveTab('minigame')}
-                    className={`px-3 py-1.5 rounded-xl transition flex items-center gap-1 ${
-                      activeTab === 'minigame'
+                    onClick={() => {
+                      setSelectedLessonSubTab('minigame');
+                      setActiveTab('learn');
+                    }}
+                    className={`px-3 py-1.5 rounded-xl transition flex items-center gap-1 cursor-pointer ${
+                      activeTab === 'learn' && selectedLessonSubTab === 'minigame'
                         ? 'bg-gradient-to-r from-teal-500 to-emerald-500 text-slate-950 font-extrabold shadow-sm'
                         : 'text-slate-300 hover:text-white hover:bg-slate-800/50'
                     }`}
@@ -139,9 +157,12 @@ export const Header: React.FC = () => {
                     ⚡ Minigame
                   </button>
                   <button
-                    onClick={() => setActiveTab('practice')}
-                    className={`px-3 py-1.5 rounded-xl transition ${
-                      activeTab === 'practice'
+                    onClick={() => {
+                      setSelectedLessonSubTab('practice');
+                      setActiveTab('learn');
+                    }}
+                    className={`px-3 py-1.5 rounded-xl transition cursor-pointer ${
+                      activeTab === 'learn' && selectedLessonSubTab === 'practice'
                         ? 'bg-gradient-to-r from-teal-500 to-emerald-500 text-slate-950 font-extrabold shadow-sm'
                         : 'text-slate-300 hover:text-white hover:bg-slate-800/50'
                     }`}
@@ -150,7 +171,7 @@ export const Header: React.FC = () => {
                   </button>
                   <button
                     onClick={() => setActiveTab('tests')}
-                    className={`px-3 py-1.5 rounded-xl transition ${
+                    className={`px-3 py-1.5 rounded-xl transition cursor-pointer ${
                       activeTab === 'tests'
                         ? 'bg-gradient-to-r from-teal-500 to-emerald-500 text-slate-950 font-extrabold shadow-sm'
                         : 'text-slate-300 hover:text-white hover:bg-slate-800/50'
@@ -160,7 +181,7 @@ export const Header: React.FC = () => {
                   </button>
                   <button
                     onClick={() => setActiveTab('progress')}
-                    className={`px-3 py-1.5 rounded-xl transition ${
+                    className={`px-3 py-1.5 rounded-xl transition cursor-pointer ${
                       activeTab === 'progress'
                         ? 'bg-gradient-to-r from-teal-500 to-emerald-500 text-slate-950 font-extrabold shadow-sm'
                         : 'text-slate-300 hover:text-white hover:bg-slate-800/50'
