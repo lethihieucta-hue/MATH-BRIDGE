@@ -36,8 +36,6 @@ export const Header: React.FC = () => {
 
   return (
     <>
-  return (
-    <>
       <header className="bg-[#0B0F19]/95 backdrop-blur-md text-white sticky top-0 z-40 border-b border-slate-800/80 shadow-[0_4px_30px_rgba(0,0,0,0.3)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 gap-3">
