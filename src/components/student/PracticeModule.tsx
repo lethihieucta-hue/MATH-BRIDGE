@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useAppStore } from '../../lib/store';
-import { Question, HintType, ErrorClassification } from '../../types';
+import { Question, HintType } from '../../types';
 import { MathRenderer } from '../math/MathRenderer';
 import { speakEnglishWord } from '../../lib/audio';
+import { apiFetch } from '../../lib/dataService';
+import { AiStepSolverModal } from '../math/AiStepSolverModal';
+import { diagnoseMathErrorAi, hasApiKey } from '../../lib/geminiService';
 import {
   Sparkles,
   HelpCircle,
@@ -14,6 +17,8 @@ import {
   Bookmark,
   ArrowRight,
   RotateCcw,
+  Bot,
+  RefreshCw,
 } from 'lucide-react';
 
 export const PracticeModule: React.FC = () => {
@@ -26,26 +31,28 @@ export const PracticeModule: React.FC = () => {
   const [hintCount, setHintCount] = useState(0);
   const [result, setResult] = useState<any>(null);
 
-  // Diagnostic feedback state
+  // AI 3-Step Modal State
+  const [isAiModalOpen, setIsAiModalOpen] = useState(false);
+
+  // AI Diagnostic Analysis State
   const [showDiagnostic, setShowDiagnostic] = useState(false);
-  const [diagnosticResult, setDiagnosticResult] = useState<string | null>(null);
+  const [aiDiagnosticLoading, setAiDiagnosticLoading] = useState(false);
+  const [aiDiagnosticFeedback, setAiDiagnosticFeedback] = useState<string | null>(null);
 
   useEffect(() => {
     fetchQuestions();
   }, [selectedGrade]);
 
-  const fetchQuestions = () => {
+  const fetchQuestions = async () => {
     setLoading(true);
-    fetch('/api/questions')
-      .then((res) => res.json())
-      .then((data) => {
-        setQuestions(data || []);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error('Error fetching questions:', err);
-        setLoading(false);
-      });
+    try {
+      const data = await apiFetch<Question[]>('/api/questions');
+      setQuestions(data || []);
+    } catch (err) {
+      console.error('Error fetching questions:', err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleHintClick = (type: HintType) => {
@@ -54,7 +61,7 @@ export const PracticeModule: React.FC = () => {
 
     const q = questions[currentIndex];
     if (q) {
-      fetch('/api/hint-log', {
+      apiFetch('/api/hint-log', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -71,27 +78,38 @@ export const PracticeModule: React.FC = () => {
     const currentQ = questions[currentIndex];
 
     try {
-      const res = await fetch('/api/practice/submit', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          student_id: user?.id || 'usr-student-1',
-          question_id: currentQ.id,
-          student_answer: selectedOption,
-          response_time: 15,
-          language_mode: 'BILINGUAL',
-          hint_count: hintCount,
-        }),
-      });
+      const is_correct = (selectedOption || '').toUpperCase() === (currentQ.correct_answer || '').toUpperCase();
+      const data = {
+        is_correct,
+        question_solution: currentQ.solution_vi || currentQ.solution_en || 'Lời giải chi tiết',
+      };
 
-      const data = await res.json();
       setResult(data);
 
-      if (!data.is_correct) {
+      if (!is_correct) {
         setShowDiagnostic(true);
       }
     } catch (e) {
       console.error('Submit practice error:', e);
+    }
+  };
+
+  const runAiDiagnostic = async () => {
+    const currentQ = questions[currentIndex];
+    if (!currentQ || !selectedOption) return;
+
+    setAiDiagnosticLoading(true);
+    const diag = await diagnoseMathErrorAi(
+      currentQ.question_en,
+      selectedOption,
+      currentQ.correct_answer,
+      currentQ.solution_en || currentQ.solution_vi
+    );
+    setAiDiagnosticLoading(false);
+    if (diag.success) {
+      setAiDiagnosticFeedback(diag.content);
+    } else {
+      setAiDiagnosticFeedback(`Lỗi phân tích: ${diag.rawError || diag.error}`);
     }
   };
 
@@ -101,8 +119,8 @@ export const PracticeModule: React.FC = () => {
     setActiveHint(null);
     setHintCount(0);
     setShowDiagnostic(false);
-    setDiagnosticResult(null);
-    setCurrentIndex((prev) => (prev + 1) % questions.length);
+    setAiDiagnosticFeedback(null);
+    setCurrentIndex((prev) => (prev + 1) % (questions.length || 1));
   };
 
   if (loading) {
@@ -114,12 +132,12 @@ export const PracticeModule: React.FC = () => {
     );
   }
 
-  const currentQ = questions[currentIndex];
+  const currentQ = questions[currentIndex] || questions[0];
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-6 space-y-6 pb-24 md:pb-12">
       {/* Header */}
-      <div className="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-2xs flex items-center justify-between">
+      <div className="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
             <Sparkles className="w-6 h-6 text-teal-600" />
@@ -132,9 +150,16 @@ export const PracticeModule: React.FC = () => {
           </p>
         </div>
 
-        <span className="text-xs font-bold bg-teal-100 text-teal-800 px-3 py-1.5 rounded-full border border-teal-200">
-          {currentQ?.question_type || 'MCQ'}
-        </span>
+        <div className="flex items-center gap-2">
+          {/* AI 3-Step Solver Button */}
+          <button
+            onClick={() => setIsAiModalOpen(true)}
+            className="flex items-center gap-1.5 px-3.5 py-2 bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white font-extrabold text-xs rounded-2xl shadow-md transition transform hover:scale-105"
+          >
+            <Sparkles className="w-4 h-4 text-amber-300" />
+            <span>Trợ Lý AI Phân Tích 3 Bước</span>
+          </button>
+        </div>
       </div>
 
       {currentQ && (
@@ -147,7 +172,7 @@ export const PracticeModule: React.FC = () => {
               </span>
               <button
                 onClick={() => speakEnglishWord(currentQ.question_en)}
-                className="p-1.5 rounded-full bg-slate-100 text-slate-700 hover:bg-slate-200"
+                className="p-1.5 rounded-full bg-slate-100 text-slate-700 hover:bg-slate-200 transition"
                 title="Nghe phát âm đề bài tiếng Anh"
               >
                 <Volume2 className="w-4 h-4" />
@@ -159,7 +184,7 @@ export const PracticeModule: React.FC = () => {
             </div>
 
             {currentQ.question_vi && (
-              <p className="text-xs text-slate-500 font-medium">
+              <p className="text-xs text-slate-500 font-medium italic">
                 Gợi ý dịch: "{currentQ.question_vi}"
               </p>
             )}
@@ -203,7 +228,7 @@ export const PracticeModule: React.FC = () => {
 
             {/* Active Hint Content Card */}
             {activeHint && (
-              <div className="mt-3 p-4 rounded-2xl bg-amber-50/90 border border-amber-200 text-xs text-amber-950 space-y-2">
+              <div className="mt-3 p-4 rounded-2xl bg-amber-50/90 border border-amber-200 text-xs text-amber-950 space-y-2 animate-in fade-in duration-150">
                 {activeHint === 'vocabulary' && currentQ.vocabulary_support && (
                   <div>
                     <span className="font-bold">Từ vựng then chốt trong đề:</span>
@@ -295,17 +320,29 @@ export const PracticeModule: React.FC = () => {
                 result.is_correct ? 'bg-emerald-50 border-emerald-300 text-emerald-950' : 'bg-rose-50 border-rose-300 text-rose-950'
               }`}
             >
-              <div className="flex items-center gap-2 font-extrabold text-sm">
-                {result.is_correct ? (
-                  <>
-                    <CheckCircle2 className="w-5 h-5 text-emerald-600" />
-                    <span>Chính xác! (Correct)</span>
-                  </>
-                ) : (
-                  <>
-                    <XCircle className="w-5 h-5 text-rose-600" />
-                    <span>Chưa chính xác (Incorrect)</span>
-                  </>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 font-extrabold text-sm">
+                  {result.is_correct ? (
+                    <>
+                      <CheckCircle2 className="w-5 h-5 text-emerald-600" />
+                      <span>Chính xác! (Correct)</span>
+                    </>
+                  ) : (
+                    <>
+                      <XCircle className="w-5 h-5 text-rose-600" />
+                      <span>Chưa chính xác (Incorrect)</span>
+                    </>
+                  )}
+                </div>
+
+                {!result.is_correct && (
+                  <button
+                    onClick={() => setIsAiModalOpen(true)}
+                    className="flex items-center gap-1 px-3 py-1 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-lg text-[11px] transition shadow-xs"
+                  >
+                    <Sparkles className="w-3 h-3" />
+                    <span>Xem AI Giải 3 Bước</span>
+                  </button>
                 )}
               </div>
 
@@ -318,41 +355,50 @@ export const PracticeModule: React.FC = () => {
             </div>
           )}
 
-          {/* Diagnostic Error Follow-up Question (Pedagogical requirement) */}
-          {showDiagnostic && (
-            <div className="p-4 rounded-2xl bg-indigo-50 border border-indigo-200 space-y-3 text-xs text-indigo-950">
-              <p className="font-bold flex items-center gap-1.5 text-indigo-900">
-                <HelpCircle className="w-4 h-4 text-indigo-600" /> Phân tích chẩn đoán lỗi (Diagnostic Analysis):
-              </p>
-              <p className="text-slate-700">
-                Bạn không trả lời đúng câu trên. Hãy cho biết lý do chính khiến bạn gặp khó khăn?
-              </p>
-              <div className="flex flex-wrap gap-2">
+          {/* Diagnostic Error Follow-up Question */}
+          {showDiagnostic && !result?.is_correct && (
+            <div className="p-5 rounded-2xl bg-indigo-50 border border-indigo-200 space-y-3 text-xs text-indigo-950">
+              <div className="flex items-center justify-between">
+                <p className="font-extrabold flex items-center gap-1.5 text-indigo-900">
+                  <HelpCircle className="w-4 h-4 text-indigo-600" />
+                  <span>Phân Tích Chẩn Đoán Lỗi Sai (MEI Diagnostic):</span>
+                </p>
+
                 <button
-                  onClick={() => {
-                    setDiagnosticResult('LANGUAGE_ERROR');
-                    showNotification('Đã ghi nhận: Cần bổ sung thêm từ vựng Toán tiếng Anh');
-                    setShowDiagnostic(false);
-                  }}
-                  className="px-3 py-1.5 bg-white border border-indigo-200 rounded-xl font-bold hover:bg-indigo-100"
+                  onClick={runAiDiagnostic}
+                  disabled={aiDiagnosticLoading}
+                  className="px-3 py-1 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white font-bold rounded-lg text-[11px] flex items-center gap-1 shadow-xs transition"
                 >
-                  Không hiểu từ vựng tiếng Anh trong đề bài (Language Error)
-                </button>
-                <button
-                  onClick={() => {
-                    setDiagnosticResult('MATH_ERROR');
-                    showNotification('Đã ghi nhận: Hiểu thuật ngữ nhưng tính toán / áp dụng công thức nhầm');
-                    setShowDiagnostic(false);
-                  }}
-                  className="px-3 py-1.5 bg-white border border-indigo-200 rounded-xl font-bold hover:bg-indigo-100"
-                >
-                  Hiểu đề nhưng nhầm công thức / tính toán sai (Math Error)
+                  {aiDiagnosticLoading ? (
+                    <RefreshCw className="w-3 h-3 animate-spin" />
+                  ) : (
+                    <Bot className="w-3.5 h-3.5" />
+                  )}
+                  <span>AI Chẩn Đoán Lỗi</span>
                 </button>
               </div>
+
+              {aiDiagnosticFeedback ? (
+                <div className="bg-white p-4 rounded-xl border border-indigo-200 leading-relaxed text-slate-800 space-y-1">
+                  <MathRenderer content={aiDiagnosticFeedback} />
+                </div>
+              ) : (
+                <p className="text-slate-600">
+                  Bạn có muốn Trợ lý AI Gemini phân tích chi tiết nguyên nhân câu trả lời chưa đúng của bạn là do tiếng Anh hay do công thức toán?
+                </p>
+              )}
             </div>
           )}
         </div>
       )}
+
+      {/* AI 3-Step Solver Modal */}
+      <AiStepSolverModal
+        isOpen={isAiModalOpen}
+        onClose={() => setIsAiModalOpen(false)}
+        problemText={currentQ?.question_en || ''}
+        problemTitle={`Câu hỏi ${currentIndex + 1} - Toán Lớp ${selectedGrade}`}
+      />
     </div>
   );
 };

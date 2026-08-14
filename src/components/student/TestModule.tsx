@@ -4,6 +4,7 @@ import { Test, Question } from '../../types';
 import { MathRenderer } from '../math/MathRenderer';
 import { TestResultView } from './TestResultView';
 import { speakEnglishWord } from '../../lib/audio';
+import { apiFetch } from '../../lib/dataService';
 import { GraduationCap, Clock, AlertCircle, CheckCircle2, PlayCircle, Volume2, ArrowRight } from 'lucide-react';
 
 export const TestModule: React.FC = () => {
@@ -38,32 +39,31 @@ export const TestModule: React.FC = () => {
     return () => clearInterval(timer);
   }, [activeTest, completedAttempt]);
 
-  const fetchTests = () => {
+  const fetchTests = async () => {
     setLoading(true);
-    fetch('/api/tests')
-      .then((res) => res.json())
-      .then((data) => {
-        setTests(data || []);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error('Error fetching tests:', err);
-        setLoading(false);
-      });
+    try {
+      const data = await apiFetch<Test[]>('/api/tests');
+      setTests(data || []);
+    } catch (err) {
+      console.error('Error fetching tests:', err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const startTest = async (testId: string) => {
     try {
-      const res = await fetch(`/api/tests/${testId}/take`);
-      const data = await res.json();
-      if (data.test && data.questions) {
-        setActiveTest(data.test);
-        setTestQuestions(data.questions);
-        setCurrentQIndex(0);
-        setStudentAnswers({});
-        setTimeLeft((data.test.duration_minutes || 15) * 60);
-        setCompletedAttempt(null);
-      }
+      const allQ = await apiFetch<Question[]>('/api/questions');
+      const targetTest = tests.find((t) => t.id === testId) || tests[0];
+      const matchedQ = (allQ || []).filter((q) => targetTest.question_ids.includes(q.id));
+      const questionsToUse = matchedQ.length > 0 ? matchedQ : (allQ || []).slice(0, 3);
+
+      setActiveTest(targetTest);
+      setTestQuestions(questionsToUse);
+      setCurrentQIndex(0);
+      setStudentAnswers({});
+      setTimeLeft((targetTest.duration_minutes || 15) * 60);
+      setCompletedAttempt(null);
     } catch (e) {
       console.error('Start test error:', e);
     }
@@ -72,29 +72,33 @@ export const TestModule: React.FC = () => {
   const submitTest = async () => {
     if (!activeTest) return;
 
-    const answersPayload = testQuestions.map((q) => ({
-      question_id: q.id,
-      student_answer: studentAnswers[q.id] || '',
-      hint_count: 0,
-    }));
+    let correctCount = 0;
+    const answersPayload = testQuestions.map((q) => {
+      const isCorrect = (studentAnswers[q.id] || '').toUpperCase() === (q.correct_answer || '').toUpperCase();
+      if (isCorrect) correctCount++;
+      return {
+        question_id: q.id,
+        student_answer: studentAnswers[q.id] || '',
+        is_correct: isCorrect,
+        points: isCorrect ? 10 : 0,
+        hint_count: 0,
+      };
+    });
 
-    try {
-      const res = await fetch(`/api/tests/${activeTest.id}/submit`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          student_id: user?.id || 'usr-student-1',
-          answers: answersPayload,
-        }),
-      });
+    const finalScore = Math.round((correctCount / (testQuestions.length || 1)) * 100);
 
-      const data = await res.json();
-      if (data.attempt) {
-        setCompletedAttempt(data.attempt);
-      }
-    } catch (e) {
-      console.error('Submit test error:', e);
-    }
+    const attempt = {
+      id: `ta-${Date.now()}`,
+      test_id: activeTest.id,
+      student_id: user?.id || 'usr-student-1',
+      score: finalScore,
+      math_score: finalScore,
+      english_math_score: Math.round(finalScore * (activeTest.english_ratio / 100)),
+      status: 'COMPLETED',
+      answers: answersPayload,
+    };
+
+    setCompletedAttempt(attempt);
   };
 
   if (loading) {

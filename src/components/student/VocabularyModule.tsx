@@ -3,6 +3,7 @@ import { useAppStore } from '../../lib/store';
 import { VocabularyItem } from '../../types';
 import { speakEnglishWord } from '../../lib/audio';
 import { MathRenderer } from '../math/MathRenderer';
+import { apiFetch } from '../../lib/dataService';
 import {
   Volume2,
   Heart,
@@ -41,7 +42,7 @@ export const VocabularyModule: React.FC = () => {
     fetchVocab();
   }, [selectedTopic, filterLevel]);
 
-  const fetchVocab = () => {
+  const fetchVocab = async () => {
     setLoading(true);
     let url = '/api/vocabulary';
     const params = new URLSearchParams();
@@ -49,22 +50,19 @@ export const VocabularyModule: React.FC = () => {
     if (filterLevel > 0) params.append('level', filterLevel.toString());
     if (params.toString()) url += `?${params.toString()}`;
 
-    fetch(url)
-      .then((res) => res.json())
-      .then((data) => {
-        setVocabList(data || []);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error('Error fetching vocabulary:', err);
-        setLoading(false);
-      });
+    try {
+      const data = await apiFetch<VocabularyItem[]>(url);
+      setVocabList(data || []);
+    } catch (err) {
+      console.error('Error fetching vocabulary:', err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const toggleFavorite = async (id: string) => {
     try {
-      const res = await fetch(`/api/vocabulary/${id}/toggle-favorite`, { method: 'POST' });
-      const data = await res.json();
+      const data = await apiFetch(`/api/vocabulary/${id}/toggle-favorite`, { method: 'POST' });
       setVocabList((prev) =>
         prev.map((v) => (v.id === id ? { ...v, is_favorite: data.is_favorite } : v))
       );
@@ -76,8 +74,7 @@ export const VocabularyModule: React.FC = () => {
 
   const toggleLearned = async (id: string) => {
     try {
-      const res = await fetch(`/api/vocabulary/${id}/toggle-learned`, { method: 'POST' });
-      const data = await res.json();
+      const data = await apiFetch(`/api/vocabulary/${id}/toggle-learned`, { method: 'POST' });
       setVocabList((prev) =>
         prev.map((v) => (v.id === id ? { ...v, is_learned: data.is_learned } : v))
       );

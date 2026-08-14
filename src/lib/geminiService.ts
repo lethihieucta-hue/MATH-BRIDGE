@@ -1,0 +1,456 @@
+// Gemini AI Multi-Model Service with Auto-Fallback and Granular Step Retry
+// Compliant with AI_INSTRUCTIONS.md
+
+export type GeminiModelId = 
+  | 'gemini-3-flash-preview'
+  | 'gemini-3-pro-preview'
+  | 'gemini-2.5-flash';
+
+export interface ModelInfo {
+  id: GeminiModelId;
+  name: string;
+  badge: string;
+  tagline: string;
+  description: string;
+  isDefault?: boolean;
+}
+
+export const SUPPORTED_MODELS: ModelInfo[] = [
+  {
+    id: 'gemini-3-flash-preview',
+    name: 'Gemini 3 Flash Preview',
+    badge: 'Mặc định (Siêu tốc)',
+    tagline: 'Phản hồi cực nhanh & tối ưu cho học tập',
+    description: 'Thích hợp cho phân tích từ vựng, dịch thuật toán học và tạo gợi ý nhanh.',
+    isDefault: true,
+  },
+  {
+    id: 'gemini-3-pro-preview',
+    name: 'Gemini 3 Pro Preview',
+    badge: 'Chuyên sâu (Reasoning)',
+    tagline: 'Lập luận toán học & tư duy logic phức tạp',
+    description: 'Xử lý các bài toán hình học không gian, giải tích lớp 12 và lời giải đa bước.',
+  },
+  {
+    id: 'gemini-2.5-flash',
+    name: 'Gemini 2.5 Flash',
+    badge: 'Dự phòng (Ổn định)',
+    tagline: 'Độ ổn định cao và hạn ngạch dồi dào',
+    description: 'Model dự phòng đáng tin cậy khi các phiên bản preview quá tải hoặc hết quota.',
+  },
+];
+
+export const FALLBACK_CHAIN: GeminiModelId[] = [
+  'gemini-3-flash-preview',
+  'gemini-3-pro-preview',
+  'gemini-2.5-flash',
+];
+
+const STORAGE_KEY_API_KEY = 'math_bridge_gemini_api_key';
+const STORAGE_KEY_SELECTED_MODEL = 'math_bridge_selected_model';
+
+// Retrieve stored API key
+export function getStoredApiKey(): string {
+  if (typeof window === 'undefined') return '';
+  return localStorage.getItem(STORAGE_KEY_API_KEY)?.trim() || '';
+}
+
+// Store API key
+export function setStoredApiKey(key: string): void {
+  if (typeof window === 'undefined') return;
+  if (!key) {
+    localStorage.removeItem(STORAGE_KEY_API_KEY);
+  } else {
+    localStorage.setItem(STORAGE_KEY_API_KEY, key.trim());
+  }
+}
+
+// Retrieve selected model
+export function getStoredSelectedModel(): GeminiModelId {
+  if (typeof window === 'undefined') return 'gemini-3-flash-preview';
+  const saved = localStorage.getItem(STORAGE_KEY_SELECTED_MODEL) as GeminiModelId;
+  if (saved && FALLBACK_CHAIN.includes(saved)) {
+    return saved;
+  }
+  return 'gemini-3-flash-preview';
+}
+
+// Store selected model
+export function setStoredSelectedModel(model: GeminiModelId): void {
+  if (typeof window === 'undefined') return;
+  localStorage.setItem(STORAGE_KEY_SELECTED_MODEL, model);
+}
+
+// Check if user has configured an API key
+export function hasApiKey(): boolean {
+  const key = getStoredApiKey();
+  return Boolean(key && key.length > 5);
+}
+
+export interface StepExecutionResult {
+  success: boolean;
+  content: string;
+  usedModel?: GeminiModelId;
+  fallbackCount: number;
+  error?: string;
+  rawError?: string;
+}
+
+// Helper to call Gemini REST API
+async function callGeminiApi(
+  model: GeminiModelId,
+  apiKey: string,
+  prompt: string,
+  systemInstruction?: string
+): Promise<string> {
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+
+  const contents: any[] = [
+    {
+      role: 'user',
+      parts: [{ text: prompt }],
+    },
+  ];
+
+  const body: any = {
+    contents,
+    generationConfig: {
+      temperature: 0.2,
+      topP: 0.95,
+      maxOutputTokens: 2048,
+    },
+  };
+
+  if (systemInstruction) {
+    body.systemInstruction = {
+      parts: [{ text: systemInstruction }],
+    };
+  }
+
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(body),
+  });
+
+  if (!response.ok) {
+    let errorDetail = '';
+    try {
+      const errorJson = await response.json();
+      const err = errorJson.error;
+      if (err) {
+        errorDetail = `${response.status} ${err.status || ''}: ${err.message || JSON.stringify(err)}`;
+      }
+    } catch {
+      errorDetail = `${response.status} ${response.statusText}`;
+    }
+
+    if (!errorDetail) {
+      errorDetail = `${response.status} ${response.statusText || 'API_CALL_FAILED'}`;
+    }
+
+    throw new Error(errorDetail);
+  }
+
+  const data = await response.json();
+  const candidate = data.candidates?.[0];
+  const text = candidate?.content?.parts?.map((p: any) => p.text).join('') || '';
+
+  if (!text) {
+    throw new Error('500 EMPTY_RESPONSE: Model returned an empty response.');
+  }
+
+  return text;
+}
+
+// Test API Key connection
+export async function testGeminiApiKey(apiKey: string): Promise<{ success: boolean; message: string }> {
+  if (!apiKey || apiKey.trim().length < 10) {
+    return { success: false, message: 'API Key không hợp lệ hoặc quá ngắn.' };
+  }
+  try {
+    const res = await callGeminiApi(
+      'gemini-3-flash-preview',
+      apiKey.trim(),
+      'Reply strictly with the single word: OK'
+    );
+    if (res.includes('OK') || res.length > 0) {
+      return { success: true, message: 'Kết nối API Key thành công với Google AI Studio!' };
+    }
+    return { success: true, message: 'Kết nối thành công!' };
+  } catch (err: any) {
+    // If gemini-3-flash-preview fails, try gemini-2.5-flash to verify if key itself is valid
+    try {
+      await callGeminiApi('gemini-2.5-flash', apiKey.trim(), 'Say OK');
+      return { success: true, message: 'Kết nối API Key thành công qua Gemini 2.5 Flash!' };
+    } catch (err2: any) {
+      return { success: false, message: err.message || err2.message || 'Không thể kết nối đến Gemini API' };
+    }
+  }
+}
+
+/**
+ * Execute a single prompt or step with automatic fallback across the model chain.
+ * If active model fails, it tries the next model in FALLBACK_CHAIN.
+ * If all models fail, returns verbatim API error.
+ */
+export async function executeWithFallback(
+  prompt: string,
+  options?: {
+    systemInstruction?: string;
+    preferredModel?: GeminiModelId;
+    onModelAttempt?: (model: GeminiModelId, attemptIndex: number) => void;
+  }
+): Promise<StepExecutionResult> {
+  const apiKey = getStoredApiKey();
+  if (!apiKey) {
+    return {
+      success: false,
+      content: '',
+      fallbackCount: 0,
+      error: 'Chưa cấu hình API Key. Vui lòng nhấn vào nút Settings trên Header để nhập key.',
+      rawError: '401 UNAUTHENTICATED: Missing API Key',
+    };
+  }
+
+  const startModel = options?.preferredModel || getStoredSelectedModel() || 'gemini-3-flash-preview';
+
+  // Build model priority list starting from chosen model, then remaining models
+  const orderedModels: GeminiModelId[] = [
+    startModel,
+    ...FALLBACK_CHAIN.filter((m) => m !== startModel),
+  ];
+
+  let lastRawError = '';
+  let fallbackCount = 0;
+
+  for (let i = 0; i < orderedModels.length; i++) {
+    const currentModel = orderedModels[i];
+    options?.onModelAttempt?.(currentModel, i);
+
+    try {
+      const result = await callGeminiApi(
+        currentModel,
+        apiKey,
+        prompt,
+        options?.systemInstruction
+      );
+
+      return {
+        success: true,
+        content: result,
+        usedModel: currentModel,
+        fallbackCount: i,
+      };
+    } catch (err: any) {
+      fallbackCount = i + 1;
+      lastRawError = err.message || String(err);
+      console.warn(`[Math-Bridge AI] Model ${currentModel} failed with error:`, lastRawError);
+      // Loop continues to next model in fallback chain
+    }
+  }
+
+  // All models failed -> Return verbatim error
+  return {
+    success: false,
+    content: '',
+    fallbackCount,
+    error: `Tất cả ${orderedModels.length} mô hình AI trong chuỗi Fallback đều thất bại.`,
+    rawError: lastRawError || '429 RESOURCE_EXHAUSTED: All fallback models exhausted',
+  };
+}
+
+// ---------------- Specialized Prompts for MATH-BRIDGE ----------------
+
+const MATH_SYSTEM_INSTRUCTION = `Bạn là Trợ lý AI Chuyên gia Giảng dạy Toán THPT bằng Tiếng Anh (Math in English) cho học sinh Việt Nam thuộc dự án MATH-BRIDGE.
+Nhiệm vụ của bạn là hỗ trợ học sinh và giáo viên hiểu rõ ngôn ngữ toán tiếng Anh, thuật ngữ, cấu trúc câu và phương pháp giải toán theo chuẩn chương trình GDPT 2018.
+Yêu cầu:
+- Trình bày công thức toán học dưới dạng LaTeX KaTeX chuẩn (ví dụ: $f(x) = x^2 - 4x + 3$, $\\Delta = b^2 - 4ac$, $I\\left(-\\frac{b}{2a}, -\\frac{\\Delta}{4a}\\right)$).
+- Luôn cung cấp phần giải thích song ngữ (Anh - Việt) rõ ràng, chuẩn xác ngữ nghĩa toán học.
+- Giữ phong cách sư phạm thân thiện, khuyến khích tư duy logic.`;
+
+/**
+ * Step 1: Phân tích Cấu trúc & Thuật ngữ Đề Toán (Language & Structure Breakdown)
+ */
+export async function explainMathStep1_LanguageAndStructure(
+  problemText: string,
+  preferredModel?: GeminiModelId,
+  onAttempt?: (m: GeminiModelId, idx: number) => void
+): Promise<StepExecutionResult> {
+  const prompt = `Phân tích BƯỚC 1 cho đề bài toán sau:
+Đề bài: "${problemText}"
+
+Hãy thực hiện BƯỚC 1: Phân tích ngôn ngữ và cấu trúc đề bài (Language & Structure Breakdown):
+1. **Key Math Terms (Thuật ngữ cốt lõi)**: Liệt kê các từ vựng tiếng Anh quan trọng trong đề bài, phiên âm IPA, dịch nghĩa tiếng Việt và ý nghĩa toán học.
+2. **Given (Giả thiết đề bài cho)**: Tóm tắt chính xác các điều kiện, hàm số hoặc số liệu đã cho bằng cả tiếng Anh và tiếng Việt.
+3. **Required (Yêu cầu cần tìm)**: Chỉ rõ đề bài yêu cầu tìm gì (Domain, Vertex, Max/Min, Derivative, Roots...) bằng cả tiếng Anh và tiếng Việt.
+4. **Sentence Pattern (Mẫu câu thường gặp)**: Nêu mẫu câu tiếng Anh được sử dụng trong bài và cách dịch chuẩn.
+
+Trình bày ngắn gọn, khoa học, dùng định dạng Markdown và LaTeX rõ ràng.`;
+
+  return executeWithFallback(prompt, {
+    systemInstruction: MATH_SYSTEM_INSTRUCTION,
+    preferredModel,
+    onModelAttempt: onAttempt,
+  });
+}
+
+/**
+ * Step 2: Định hướng Chiến lược & Công thức Toán học (Math Strategy & Formulas)
+ */
+export async function explainMathStep2_StrategyAndFormulas(
+  problemText: string,
+  step1Context: string,
+  preferredModel?: GeminiModelId,
+  onAttempt?: (m: GeminiModelId, idx: number) => void
+): Promise<StepExecutionResult> {
+  const prompt = `Dựa trên đề bài: "${problemText}"
+Và kết quả phân tích Bước 1:
+${step1Context}
+
+Hãy thực hiện BƯỚC 2: Định hướng Chiến lược & Công thức Toán học (Math Strategy & Formulas):
+1. **Mathematical Approach (Phương pháp giải)**: Nêu hướng tư duy và các bước toán học cần làm (2-3 bước chính).
+2. **Core Formulas & Theorems (Công thức & Định lý cốt lõi)**: Viết các công thức LaTeX cần sử dụng và giải thích từng đại lượng.
+3. **Common Pitfalls (Lỗi sai thường gặp)**: Cảnh báo học sinh lỗi ngữ pháp toán học hoặc lỗi tính toán hay mắc phải.
+
+Trình bày súc tích, làm nổi bật công thức LaTeX.`;
+
+  return executeWithFallback(prompt, {
+    systemInstruction: MATH_SYSTEM_INSTRUCTION,
+    preferredModel,
+    onModelAttempt: onAttempt,
+  });
+}
+
+/**
+ * Step 3: Lời giải Chi tiết Song ngữ & Bài tập Tương tự (Bilingual Solution & Practice)
+ */
+export async function explainMathStep3_SolutionAndPractice(
+  problemText: string,
+  step1Context: string,
+  step2Context: string,
+  preferredModel?: GeminiModelId,
+  onAttempt?: (m: GeminiModelId, idx: number) => void
+): Promise<StepExecutionResult> {
+  const prompt = `Dựa trên đề bài: "${problemText}"
+Phân tích Bước 1:
+${step1Context}
+Chiến lược Bước 2:
+${step2Context}
+
+Hãy thực hiện BƯỚC 3: Lời giải Chi tiết Song ngữ & Bài tập tương tự (Detailed Bilingual Solution & Practice):
+1. **Detailed Step-by-Step Solution (Lời giải chi tiết từng dòng)**:
+   - Trình bày từng bước tính toán song ngữ (Tiếng Anh trước, dịch/chú thích Tiếng Việt ngay bên cạnh hoặc phía dưới).
+   - Sử dụng LaTeX chuẩn cho mọi biến số và phép tính.
+2. **Final Answer (Đáp số cuối cùng)**: Đóng khung hoặc in đậm đáp án rõ ràng.
+3. **Similar Practice Question (1 Bài tập tương tự bằng Tiếng Anh)**: Đưa ra 1 bài tập có cấu trúc tương đương kèm đáp án ngắn để học sinh tự luyện.`;
+
+  return executeWithFallback(prompt, {
+    systemInstruction: MATH_SYSTEM_INSTRUCTION,
+    preferredModel,
+    onModelAttempt: onAttempt,
+  });
+}
+
+/**
+ * Teacher AI Generator: Sinh câu hỏi trắc nghiệm Toán tiếng Anh
+ */
+export async function generateBilingualQuestionAi(
+  topicName: string,
+  grade: number,
+  difficulty: 'EASY' | 'MEDIUM' | 'HARD',
+  englishRatio: number
+): Promise<StepExecutionResult> {
+  const prompt = `Hãy tạo 1 câu hỏi trắc nghiệm Toán THPT song ngữ Anh-Việt theo yêu cầu sau:
+- Khối lớp: Lớp ${grade} (Chương trình Toán THPT Việt Nam)
+- Chủ đề: ${topicName}
+- Độ khó: ${difficulty}
+- Tỷ lệ tiếng Anh mong muốn: ${englishRatio}%
+
+Yêu cầu trả về đúng định dạng JSON (không kèm chữ nào khác ngoài JSON):
+\`\`\`json
+{
+  "question_en": "Nội dung câu hỏi bằng tiếng Anh (chứa công thức LaTeX $...$)",
+  "question_vi": "Bản dịch/gợi ý tiếng Việt của câu hỏi",
+  "options": [
+    { "option_key": "A", "content_en": "Option A in English", "content_vi": "Lựa chọn A tiếng Việt", "is_correct": true },
+    { "option_key": "B", "content_en": "Option B in English", "content_vi": "Lựa chọn B tiếng Việt", "is_correct": false },
+    { "option_key": "C", "content_en": "Option C in English", "content_vi": "Lựa chọn C tiếng Việt", "is_correct": false },
+    { "option_key": "D", "content_en": "Option D in English", "content_vi": "Lựa chọn D tiếng Việt", "is_correct": false }
+  ],
+  "correct_answer": "A",
+  "solution_en": "Detailed solution in English with LaTeX",
+  "solution_vi": "Lời giải chi tiết bằng tiếng Việt",
+  "vocabulary_support": [
+    { "word": "term", "meaning": "nghĩa tiếng Việt" }
+  ]
+}
+\`\`\``;
+
+  return executeWithFallback(prompt, {
+    systemInstruction: MATH_SYSTEM_INSTRUCTION,
+  });
+}
+
+/**
+ * Teacher AI Generator: Sinh từ vựng & bài học song ngữ
+ */
+export async function generateBilingualVocabLessonAi(
+  topicName: string,
+  grade: number
+): Promise<StepExecutionResult> {
+  const prompt = `Hãy soạn học liệu song ngữ cho chủ đề Toán: "${topicName}" (Toán Lớp ${grade}).
+Yêu cầu trả về đúng định dạng JSON:
+\`\`\`json
+{
+  "vocabulary": [
+    {
+      "word": "từ tiếng Anh",
+      "ipa": "/phiên âm IPA/",
+      "meaning_vi": "nghĩa tiếng Việt",
+      "definition_en": "Math definition in English",
+      "example_en": "Example sentence in English",
+      "example_vi": "Bản dịch ví dụ tiếng Việt",
+      "formula": "Công thức LaTeX nếu có"
+    }
+  ],
+  "lesson": {
+    "title_vi": "Tên bài học tiếng Việt",
+    "title_en": "Lesson Title in English",
+    "key_concepts_vi": "Khái niệm cốt lõi bằng tiếng Việt",
+    "key_concepts_en": "Core concepts in English",
+    "formula_list": ["f(x) = ...", "..."]
+  }
+}
+\`\`\``;
+
+  return executeWithFallback(prompt, {
+    systemInstruction: MATH_SYSTEM_INSTRUCTION,
+  });
+}
+
+/**
+ * Student Diagnostic Error Analyzer
+ */
+export async function diagnoseMathErrorAi(
+  questionText: string,
+  studentAnswer: string,
+  correctAnswer: string,
+  solution: string
+): Promise<StepExecutionResult> {
+  const prompt = `Phân tích nguyên nhân học sinh làm sai câu hỏi Toán tiếng Anh:
+- Đề bài: "${questionText}"
+- Câu trả lời của học sinh: "${studentAnswer}"
+- Đáp án đúng: "${correctAnswer}"
+- Lời giải mẫu: "${solution}"
+
+Hãy đưa ra nhận xét ngắn gọn gồm:
+1. **Error Classification (Phân loại lỗi)**: Lỗi do Ngôn ngữ tiếng Anh (hiểu nhầm từ vựng/câu lệnh) hay do Kiến thức Toán (tính sai/áp dụng sai công thức).
+2. **Diagnostic Feedback (Lời khuyên khắc phục)**: Chỉ ra đúng điểm sai và cách ghi nhớ từ vựng/công thức.`;
+
+  return executeWithFallback(prompt, {
+    systemInstruction: MATH_SYSTEM_INSTRUCTION,
+  });
+}

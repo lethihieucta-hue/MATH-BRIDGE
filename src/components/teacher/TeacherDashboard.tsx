@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAppStore } from '../../lib/store';
+import { apiFetch } from '../../lib/dataService';
 import {
   Compass,
   Users,
@@ -28,23 +29,21 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ setActiveTab
     fetchClasses();
   }, []);
 
-  const fetchClasses = () => {
-    fetch('/api/teacher/classes')
-      .then((res) => res.json())
-      .then((data) => {
-        setClasses(data || []);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error('Error fetching teacher classes:', err);
-        setLoading(false);
-      });
+  const fetchClasses = async () => {
+    try {
+      const data = await apiFetch<any[]>('/api/teacher/classes');
+      setClasses(data || []);
+    } catch (err) {
+      console.error('Error fetching teacher classes:', err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const createClass = async () => {
     if (!classNameInput) return;
     try {
-      const res = await fetch('/api/teacher/classes', {
+      const data = await apiFetch<any>('/api/teacher/classes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -55,8 +54,7 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ setActiveTab
           school_year: '2025-2026',
         }),
       });
-      const data = await res.json();
-      if (data.class) {
+      if (data?.class) {
         showNotification(`Đã tạo lớp thành công! Mã lớp: ${data.class.class_code}`);
         setClassNameInput('');
         setIsNewClassModalOpen(false);

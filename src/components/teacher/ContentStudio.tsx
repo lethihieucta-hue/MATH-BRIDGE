@@ -1,10 +1,17 @@
 import React, { useState } from 'react';
 import { useAppStore } from '../../lib/store';
-import { BookOpen, BookMarked, Layers, Plus, CheckCircle2 } from 'lucide-react';
+import { apiFetch } from '../../lib/dataService';
+import { generateBilingualVocabLessonAi, hasApiKey } from '../../lib/geminiService';
+import { BookOpen, BookMarked, Layers, Plus, CheckCircle2, Sparkles, RefreshCw, AlertCircle, Bot } from 'lucide-react';
 
 export const ContentStudio: React.FC = () => {
-  const { showNotification } = useAppStore();
+  const { showNotification, selectedGrade } = useAppStore();
   const [activeTab, setActiveTab] = useState<'VOCAB' | 'LESSON'>('VOCAB');
+
+  // AI Prompt State
+  const [aiTopicInput, setAiTopicInput] = useState('');
+  const [isAiGenerating, setIsAiGenerating] = useState(false);
+  const [aiError, setAiError] = useState<string | null>(null);
 
   // Vocab form state
   const [word, setWord] = useState('');
@@ -21,10 +28,58 @@ export const ContentStudio: React.FC = () => {
   const [keyConceptsVi, setKeyConceptsVi] = useState('');
   const [keyConceptsEn, setKeyConceptsEn] = useState('');
 
+  // Generate with Gemini AI
+  const handleAiAutoFill = async () => {
+    if (!aiTopicInput.trim()) return;
+
+    setIsAiGenerating(true);
+    setAiError(null);
+
+    const result = await generateBilingualVocabLessonAi(aiTopicInput.trim(), selectedGrade);
+    setIsAiGenerating(false);
+
+    if (!result.success) {
+      setAiError(result.rawError || result.error || 'Không thể sinh học liệu bằng AI');
+      return;
+    }
+
+    try {
+      // Parse JSON from result
+      const jsonMatch = result.content.match(/\{[\s\S]*\}/);
+      if (!jsonMatch) {
+        setAiError('Mô hình không trả về định dạng JSON hợp lệ.');
+        return;
+      }
+      const data = JSON.parse(jsonMatch[0]);
+
+      if (data.vocabulary && data.vocabulary.length > 0) {
+        const v = data.vocabulary[0];
+        setWord(v.word || '');
+        setIpa(v.ipa || '');
+        setMeaningVi(v.meaning_vi || '');
+        setDefEn(v.definition_en || '');
+        setExEn(v.example_en || '');
+        setExVi(v.example_vi || '');
+        setFormula(v.formula || '');
+      }
+
+      if (data.lesson) {
+        setTitleVi(data.lesson.title_vi || '');
+        setTitleEn(data.lesson.title_en || '');
+        setKeyConceptsVi(data.lesson.key_concepts_vi || '');
+        setKeyConceptsEn(data.lesson.key_concepts_en || '');
+      }
+
+      showNotification('✨ AI Gemini đã điền sẵn dữ liệu học liệu song ngữ!');
+    } catch (e: any) {
+      setAiError(`Lỗi phân tích cú pháp AI: ${e.message}`);
+    }
+  };
+
   const submitVocab = async () => {
     if (!word || !meaningVi) return;
     try {
-      const res = await fetch('/api/vocabulary', {
+      const data = await apiFetch('/api/vocabulary', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -40,7 +95,6 @@ export const ContentStudio: React.FC = () => {
           language_level: 2,
         }),
       });
-      const data = await res.json();
       if (data.vocabulary) {
         showNotification(`Đã tạo từ vựng mới: ${word}`);
         setWord('');
@@ -59,7 +113,7 @@ export const ContentStudio: React.FC = () => {
   const submitLesson = async () => {
     if (!titleVi || !titleEn) return;
     try {
-      const res = await fetch('/api/lessons', {
+      const data = await apiFetch('/api/lessons', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -77,7 +131,6 @@ export const ContentStudio: React.FC = () => {
           created_by: 'usr-teacher-1',
         }),
       });
-      const data = await res.json();
       if (data.lesson) {
         showNotification(`Đã xuất bản bài học mới: ${titleVi}`);
         setTitleVi('');
@@ -98,11 +151,11 @@ export const ContentStudio: React.FC = () => {
           <div className="flex items-center gap-2">
             <BookOpen className="w-6 h-6 text-teal-600" />
             <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900">
-              Content Studio (Biên Soạn Học Liệu)
+              Content Studio (Biên Soạn Học Liệu AI)
             </h1>
           </div>
           <p className="text-xs text-slate-500 mt-0.5">
-            Tạo Từ vựng, Mẫu câu và Bài học song ngữ chuẩn giáo trình
+            Tạo Từ vựng, Mẫu câu và Bài học song ngữ chuẩn giáo trình với Trợ lý AI
           </p>
         </div>
 
@@ -126,6 +179,54 @@ export const ContentStudio: React.FC = () => {
         </div>
       </div>
 
+      {/* AI Copilot Box for Teachers */}
+      <div className="bg-gradient-to-r from-teal-950 via-slate-900 to-slate-900 p-6 rounded-3xl border border-teal-800/80 text-white space-y-3 shadow-xl">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-xl bg-teal-500 text-slate-950 flex items-center justify-center font-black">
+              <Sparkles className="w-4 h-4" />
+            </div>
+            <div>
+              <h3 className="font-extrabold text-xs text-white">
+                Trợ Lý AI Tự Động Soạn Học Liệu Song Ngữ
+              </h3>
+              <p className="text-[11px] text-teal-300">
+                Nhập chủ đề hoặc từ khóa toán $\to$ AI tự động điền IPA, định nghĩa, ví dụ, KaTeX
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex flex-col sm:flex-row items-center gap-2">
+          <input
+            type="text"
+            value={aiTopicInput}
+            onChange={(e) => setAiTopicInput(e.target.value)}
+            placeholder="Ví dụ: Đạo hàm hàm số lượng giác (Lớp 11) hoặc Parabol (Lớp 10)..."
+            className="w-full px-4 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-xs text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 font-medium"
+          />
+          <button
+            onClick={handleAiAutoFill}
+            disabled={isAiGenerating || !aiTopicInput.trim()}
+            className="w-full sm:w-auto shrink-0 px-5 py-2.5 bg-teal-500 hover:bg-teal-400 disabled:opacity-50 text-slate-950 font-black text-xs rounded-xl shadow-md transition flex items-center justify-center gap-2"
+          >
+            {isAiGenerating ? (
+              <RefreshCw className="w-4 h-4 animate-spin text-slate-950" />
+            ) : (
+              <Sparkles className="w-4 h-4" />
+            )}
+            <span>{isAiGenerating ? 'AI Đang Soạn...' : 'AI Điền Tự Động'}</span>
+          </button>
+        </div>
+
+        {aiError && (
+          <div className="p-3 bg-rose-950/80 border border-rose-600 rounded-xl text-xs text-rose-300 flex items-center gap-2">
+            <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
+            <span className="font-mono text-[11px]">{aiError}</span>
+          </div>
+        )}
+      </div>
+
       {/* FORM 1: VOCABULARY */}
       {activeTab === 'VOCAB' && (
         <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-2xs space-y-5">
@@ -139,7 +240,7 @@ export const ContentStudio: React.FC = () => {
                 value={word}
                 onChange={(e) => setWord(e.target.value)}
                 placeholder="Ví dụ: derivative"
-                className="w-full mt-1 p-3 rounded-xl border border-slate-300 bg-white"
+                className="w-full mt-1 p-3 rounded-xl border border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-teal-500"
               />
             </div>
 
@@ -150,7 +251,7 @@ export const ContentStudio: React.FC = () => {
                 value={ipa}
                 onChange={(e) => setIpa(e.target.value)}
                 placeholder="Ví dụ: /dɪˈrɪv.ə.tɪv/"
-                className="w-full mt-1 p-3 rounded-xl border border-slate-300 bg-white font-mono"
+                className="w-full mt-1 p-3 rounded-xl border border-slate-300 bg-white font-mono focus:outline-none focus:ring-2 focus:ring-teal-500"
               />
             </div>
 
@@ -161,7 +262,7 @@ export const ContentStudio: React.FC = () => {
                 value={meaningVi}
                 onChange={(e) => setMeaningVi(e.target.value)}
                 placeholder="Ví dụ: đạo hàm"
-                className="w-full mt-1 p-3 rounded-xl border border-slate-300 bg-white font-bold text-teal-900"
+                className="w-full mt-1 p-3 rounded-xl border border-slate-300 bg-white font-bold text-teal-900 focus:outline-none focus:ring-2 focus:ring-teal-500"
               />
             </div>
 
@@ -172,7 +273,7 @@ export const ContentStudio: React.FC = () => {
                 value={formula}
                 onChange={(e) => setFormula(e.target.value)}
                 placeholder="Ví dụ: f'(x)"
-                className="w-full mt-1 p-3 rounded-xl border border-slate-300 bg-white font-mono"
+                className="w-full mt-1 p-3 rounded-xl border border-slate-300 bg-white font-mono focus:outline-none focus:ring-2 focus:ring-teal-500"
               />
             </div>
           </div>
@@ -185,7 +286,7 @@ export const ContentStudio: React.FC = () => {
                 value={defEn}
                 onChange={(e) => setDefEn(e.target.value)}
                 placeholder="Nhập định nghĩa tiếng Anh..."
-                className="w-full mt-1 p-3 rounded-xl border border-slate-300 bg-white"
+                className="w-full mt-1 p-3 rounded-xl border border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-teal-500"
               />
             </div>
 
@@ -197,7 +298,7 @@ export const ContentStudio: React.FC = () => {
                   value={exEn}
                   onChange={(e) => setExEn(e.target.value)}
                   placeholder="Ví dụ: Find the derivative of f(x)..."
-                  className="w-full mt-1 p-3 rounded-xl border border-slate-300 bg-white"
+                  className="w-full mt-1 p-3 rounded-xl border border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-teal-500"
                 />
               </div>
 
@@ -208,7 +309,7 @@ export const ContentStudio: React.FC = () => {
                   value={exVi}
                   onChange={(e) => setExVi(e.target.value)}
                   placeholder="Ví dụ: Tính đạo hàm của f(x)..."
-                  className="w-full mt-1 p-3 rounded-xl border border-slate-300 bg-white"
+                  className="w-full mt-1 p-3 rounded-xl border border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-teal-500"
                 />
               </div>
             </div>
@@ -237,7 +338,7 @@ export const ContentStudio: React.FC = () => {
                 value={titleVi}
                 onChange={(e) => setTitleVi(e.target.value)}
                 placeholder="Ví dụ: Bài 2: Tập Xác Định Của Hàm Số"
-                className="w-full mt-1 p-3 rounded-xl border border-slate-300 bg-white"
+                className="w-full mt-1 p-3 rounded-xl border border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-teal-500"
               />
             </div>
 
@@ -248,7 +349,7 @@ export const ContentStudio: React.FC = () => {
                 value={titleEn}
                 onChange={(e) => setTitleEn(e.target.value)}
                 placeholder="Ví dụ: Lesson 2: Domain and Range of Functions"
-                className="w-full mt-1 p-3 rounded-xl border border-slate-300 bg-white"
+                className="w-full mt-1 p-3 rounded-xl border border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-teal-500"
               />
             </div>
           </div>
@@ -261,7 +362,7 @@ export const ContentStudio: React.FC = () => {
                 value={keyConceptsVi}
                 onChange={(e) => setKeyConceptsVi(e.target.value)}
                 placeholder="Nhập nội dung lý thuyết tiếng Việt..."
-                className="w-full mt-1 p-3 rounded-xl border border-slate-300 bg-white"
+                className="w-full mt-1 p-3 rounded-xl border border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-teal-500"
               />
             </div>
 
@@ -272,7 +373,7 @@ export const ContentStudio: React.FC = () => {
                 value={keyConceptsEn}
                 onChange={(e) => setKeyConceptsEn(e.target.value)}
                 placeholder="Nhập nội dung lý thuyết tiếng Anh..."
-                className="w-full mt-1 p-3 rounded-xl border border-slate-300 bg-white"
+                className="w-full mt-1 p-3 rounded-xl border border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-teal-500"
               />
             </div>
           </div>

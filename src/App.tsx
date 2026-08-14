@@ -13,6 +13,8 @@ import { PracticeModule } from './components/student/PracticeModule';
 import { TestModule } from './components/student/TestModule';
 import { StudentProgressView } from './components/student/StudentProgressView';
 import { StudentProfile } from './components/student/StudentProfile';
+import { InteractiveFunctionGrapher } from './components/math/InteractiveFunctionGrapher';
+import { SpeedVocabMatchGame } from './components/student/SpeedVocabMatchGame';
 
 // Teacher Components
 import { TeacherDashboard } from './components/teacher/TeacherDashboard';
@@ -51,6 +53,10 @@ export default function App() {
         return <BilingualLessonModule />;
       case 'reading':
         return <MathReadingModule />;
+      case 'grapher':
+        return <InteractiveFunctionGrapher />;
+      case 'minigame':
+        return <SpeedVocabMatchGame />;
       case 'practice':
         return <PracticeModule />;
       case 'tests':

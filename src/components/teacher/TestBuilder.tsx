@@ -2,32 +2,48 @@ import React, { useState, useEffect } from 'react';
 import { useAppStore } from '../../lib/store';
 import { Question } from '../../types';
 import { MathRenderer } from '../math/MathRenderer';
-import { GraduationCap, Sliders, Clock, Plus, CheckCircle2, FileQuestion } from 'lucide-react';
+import { apiFetch } from '../../lib/dataService';
+import { PrintableWorksheetModal } from './PrintableWorksheetModal';
+import {
+  GraduationCap,
+  Sliders,
+  Clock,
+  Plus,
+  CheckCircle2,
+  FileQuestion,
+  Sparkles,
+  Printer,
+  FileText,
+} from 'lucide-react';
 
 export const TestBuilder: React.FC = () => {
-  const { showNotification } = useAppStore();
+  const { showNotification, selectedGrade } = useAppStore();
   const [testTitle, setTestTitle] = useState('');
   const [duration, setDuration] = useState(15);
   const [englishRatio, setEnglishRatio] = useState(40);
   const [allQuestions, setAllQuestions] = useState<Question[]>([]);
   const [selectedQIds, setSelectedQIds] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isWorksheetModalOpen, setIsWorksheetModalOpen] = useState(false);
 
   useEffect(() => {
-    fetch('/api/questions')
-      .then((res) => res.json())
-      .then((data) => {
-        setAllQuestions(data || []);
-        if (data && data.length > 0) {
-          setSelectedQIds(data.map((q: any) => q.id));
-        }
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error('Error fetching questions for test builder:', err);
-        setLoading(false);
-      });
-  }, []);
+    fetchQuestions();
+  }, [selectedGrade]);
+
+  const fetchQuestions = async () => {
+    setLoading(true);
+    try {
+      const data = await apiFetch<Question[]>('/api/questions');
+      setAllQuestions(data || []);
+      if (data && data.length > 0) {
+        setSelectedQIds(data.map((q: any) => q.id));
+      }
+    } catch (err) {
+      console.error('Error fetching questions for test builder:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const toggleQuestionSelect = (id: string) => {
     setSelectedQIds((prev) =>
@@ -35,11 +51,20 @@ export const TestBuilder: React.FC = () => {
     );
   };
 
+  const selectAll = () => {
+    setSelectedQIds(allQuestions.map((q) => q.id));
+  };
+
+  const autoSuggestAiTest = () => {
+    setTestTitle(`Kiểm tra 15 phút: Toán Lớp ${selectedGrade} (${englishRatio}% Tiếng Anh)`);
+    showNotification('✨ Đã tự động tạo tên và cấu hình bài test!');
+  };
+
   const createTest = async () => {
     if (!testTitle) return;
 
     try {
-      const res = await fetch('/api/tests', {
+      const data = await apiFetch('/api/tests', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -55,7 +80,6 @@ export const TestBuilder: React.FC = () => {
         }),
       });
 
-      const data = await res.json();
       if (data.test) {
         showNotification(`Đã tạo bài kiểm tra "${testTitle}" (${englishRatio}% Tiếng Anh) thành công!`);
         setTestTitle('');
@@ -65,10 +89,12 @@ export const TestBuilder: React.FC = () => {
     }
   };
 
+  const selectedQuestionsList = allQuestions.filter((q) => selectedQIds.includes(q.id));
+
   return (
     <div className="max-w-4xl mx-auto px-4 py-6 space-y-6 pb-24 md:pb-12">
       {/* Header */}
-      <div className="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-2xs">
+      <div className="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-2xl bg-indigo-100 text-indigo-800 flex items-center justify-center font-bold">
             <GraduationCap className="w-5 h-5" />
@@ -82,6 +108,25 @@ export const TestBuilder: React.FC = () => {
             </p>
           </div>
         </div>
+
+        <div className="flex items-center gap-2">
+          <button
+            onClick={autoSuggestAiTest}
+            className="inline-flex items-center gap-1.5 px-3 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-extrabold text-xs rounded-xl border border-indigo-200 transition"
+          >
+            <Sparkles className="w-4 h-4 text-indigo-600" />
+            <span>Gợi ý tên</span>
+          </button>
+
+          <button
+            onClick={() => setIsWorksheetModalOpen(true)}
+            disabled={selectedQIds.length === 0}
+            className="inline-flex items-center gap-1.5 px-4 py-2 bg-teal-600 hover:bg-teal-700 disabled:opacity-50 text-white font-extrabold text-xs rounded-xl shadow-xs transition"
+          >
+            <FileText className="w-4 h-4" />
+            <span>Xuất Phiếu A4 (Word/Print)</span>
+          </button>
+        </div>
       </div>
 
       <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-2xs space-y-6">
@@ -94,7 +139,7 @@ export const TestBuilder: React.FC = () => {
               value={testTitle}
               onChange={(e) => setTestTitle(e.target.value)}
               placeholder="Ví dụ: Kiểm tra 15 phút: Hàm Số Bậc Hai"
-              className="w-full mt-1 p-3 rounded-xl border border-slate-300 bg-white"
+              className="w-full mt-1 p-3 rounded-xl border border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 font-medium"
             />
           </div>
 
@@ -104,7 +149,7 @@ export const TestBuilder: React.FC = () => {
               type="number"
               value={duration}
               onChange={(e) => setDuration(parseInt(e.target.value, 10) || 15)}
-              className="w-full mt-1 p-3 rounded-xl border border-slate-300 bg-white font-bold"
+              className="w-full mt-1 p-3 rounded-xl border border-slate-300 bg-white font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
           </div>
         </div>
@@ -139,9 +184,17 @@ export const TestBuilder: React.FC = () => {
 
         {/* Question Selector List */}
         <div className="space-y-3 pt-2">
-          <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500">
-            Chọn câu hỏi vào đề ({selectedQIds.length} / {allQuestions.length} câu)
-          </h2>
+          <div className="flex items-center justify-between">
+            <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500">
+              Chọn câu hỏi vào đề ({selectedQIds.length} / {allQuestions.length} câu)
+            </h2>
+            <button
+              onClick={selectAll}
+              className="text-xs text-indigo-600 hover:text-indigo-800 font-bold"
+            >
+              Chọn tất cả
+            </button>
+          </div>
 
           <div className="space-y-2 max-h-80 overflow-y-auto pr-1">
             {allQuestions.map((q) => {
@@ -170,14 +223,34 @@ export const TestBuilder: React.FC = () => {
           </div>
         </div>
 
-        <button
-          onClick={createTest}
-          disabled={!testTitle || selectedQIds.length === 0}
-          className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white font-extrabold text-xs rounded-xl shadow-md transition"
-        >
-          Lưu & Gán Đề Kiểm Tra Cho Lớp
-        </button>
+        <div className="pt-2 flex flex-col sm:flex-row items-center gap-3">
+          <button
+            onClick={() => setIsWorksheetModalOpen(true)}
+            disabled={selectedQIds.length === 0}
+            className="w-full sm:w-1/2 py-3 bg-slate-100 hover:bg-slate-200 disabled:opacity-50 text-slate-800 font-extrabold text-xs rounded-xl border border-slate-300 transition flex items-center justify-center gap-2"
+          >
+            <Printer className="w-4 h-4 text-teal-600" />
+            <span>Xem & Xuất Phiếu In A4</span>
+          </button>
+
+          <button
+            onClick={createTest}
+            disabled={!testTitle || selectedQIds.length === 0}
+            className="w-full sm:w-1/2 py-3 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white font-extrabold text-xs rounded-xl shadow-md transition"
+          >
+            Lưu & Gán Đề Cho Lớp
+          </button>
+        </div>
       </div>
+
+      {/* Printable Worksheet Modal */}
+      <PrintableWorksheetModal
+        isOpen={isWorksheetModalOpen}
+        onClose={() => setIsWorksheetModalOpen(false)}
+        testTitle={testTitle || `Đề Kiểm Tra Toán Lớp ${selectedGrade}`}
+        questions={selectedQuestionsList.length > 0 ? selectedQuestionsList : allQuestions.slice(0, 3)}
+        englishRatio={englishRatio}
+      />
     </div>
   );
 };

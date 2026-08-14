@@ -3,6 +3,7 @@ import { useAppStore } from '../../lib/store';
 import { Lesson, LanguageMode } from '../../types';
 import { MathRenderer } from '../math/MathRenderer';
 import { speakEnglishWord } from '../../lib/audio';
+import { apiFetch } from '../../lib/dataService';
 import {
   BookOpen,
   Globe2,
@@ -21,8 +22,7 @@ export const BilingualLessonModule: React.FC = () => {
   const [activeLesson, setActiveLesson] = useState<Lesson | null>(null);
 
   useEffect(() => {
-    fetch('/api/lessons')
-      .then((res) => res.json())
+    apiFetch<Lesson[]>('/api/lessons')
       .then((data) => {
         setLessons(data || []);
         if (data && data.length > 0) setActiveLesson(data[0]);
@@ -32,7 +32,7 @@ export const BilingualLessonModule: React.FC = () => {
         console.error('Error fetching lessons:', err);
         setLoading(false);
       });
-  }, []);
+  }, [selectedGrade]);
 
   if (loading) {
     return (

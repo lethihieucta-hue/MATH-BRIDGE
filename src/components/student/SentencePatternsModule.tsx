@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { SentencePattern } from '../../types';
 import { speakEnglishWord } from '../../lib/audio';
 import { MathRenderer } from '../math/MathRenderer';
+import { apiFetch } from '../../lib/dataService';
 import { Volume2, Layers, Sparkles, CheckCircle2, ChevronRight, HelpCircle } from 'lucide-react';
 
 export const SentencePatternsModule: React.FC = () => {
@@ -12,8 +13,7 @@ export const SentencePatternsModule: React.FC = () => {
   const [quizFeedback, setQuizFeedback] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch('/api/sentence-patterns')
-      .then((res) => res.json())
+    apiFetch<SentencePattern[]>('/api/sentence-patterns')
       .then((data) => {
         setPatterns(data || []);
         if (data && data.length > 0) setActivePattern(data[0]);

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { apiFetch } from '../../lib/dataService';
 import { BarChart3, Users, AlertCircle, HelpCircle, Lightbulb, Zap, TrendingUp } from 'lucide-react';
 
 export const TeacherAnalytics: React.FC = () => {
@@ -6,8 +7,7 @@ export const TeacherAnalytics: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/api/teacher/classes/cls-10a1/analytics')
-      .then((res) => res.json())
+    apiFetch<any>('/api/teacher/classes/cls-10a1/analytics')
       .then((data) => {
         setClassAnalytics(data || {});
         setLoading(false);

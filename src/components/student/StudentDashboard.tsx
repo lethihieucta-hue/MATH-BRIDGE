@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAppStore } from '../../lib/store';
 import { LevelBadge } from './LevelBadge';
+import { apiFetch } from '../../lib/dataService';
 import {
   BookMarked,
   CheckCircle2,
@@ -19,23 +20,21 @@ import {
 } from 'lucide-react';
 
 interface StudentDashboardProps {
-  setActiveTab: (tab: string) => void;
+  setActiveTab?: (tab: string) => void;
   setSelectedTopicId?: (topicId: string) => void;
 }
 
 export const StudentDashboard: React.FC<StudentDashboardProps> = ({
-  setActiveTab,
+  setActiveTab: propSetActiveTab,
   setSelectedTopicId,
 }) => {
-  const { user, selectedGrade, currentLevel } = useAppStore();
+  const { user, selectedGrade, currentLevel, setActiveTab: storeSetActiveTab } = useAppStore();
+  const setActiveTab = propSetActiveTab || storeSetActiveTab;
   const [summary, setSummary] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/api/student/dashboard-summary', {
-      headers: { 'x-user-id': user?.id || '' },
-    })
-      .then((res) => res.json())
+    apiFetch('/api/student/dashboard-summary')
       .then((data) => {
         setSummary(data);
         setLoading(false);

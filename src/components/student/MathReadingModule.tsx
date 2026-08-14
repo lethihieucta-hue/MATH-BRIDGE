@@ -1,7 +1,16 @@
 import React, { useState } from 'react';
 import { MathRenderer } from '../math/MathRenderer';
 import { speakEnglishWord } from '../../lib/audio';
-import { FileQuestion, CheckCircle2, Sparkles, Volume2, ArrowRight, HelpCircle } from 'lucide-react';
+import { AiStepSolverModal } from '../math/AiStepSolverModal';
+import {
+  FileQuestion,
+  CheckCircle2,
+  Sparkles,
+  Volume2,
+  ArrowRight,
+  HelpCircle,
+  Edit3,
+} from 'lucide-react';
 
 export const MathReadingModule: React.FC = () => {
   const [step, setStep] = useState<'ANALYZE' | 'SOLVE'>('ANALYZE');
@@ -9,6 +18,9 @@ export const MathReadingModule: React.FC = () => {
   const [selectedRequired, setSelectedRequired] = useState<string | null>(null);
   const [selectedKeyword, setSelectedKeyword] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<string | null>(null);
+  const [isAiModalOpen, setIsAiModalOpen] = useState(false);
+  const [customProblem, setCustomProblem] = useState('');
+  const [isCustomMode, setIsCustomMode] = useState(false);
 
   const sampleProblem = {
     english_text: 'Given the function f(x) = x^2 - 4x + 3, determine its minimum value on the interval [0, 5].',
@@ -31,6 +43,8 @@ export const MathReadingModule: React.FC = () => {
     solution: 'The vertex x_I = -b/(2a) = 2 in [0, 5]. f(2) = 2^2 - 4(2) + 3 = -1. f(0) = 3, f(5) = 8. Thus, minimum value is -1 at x = 2.',
   };
 
+  const currentProblemText = isCustomMode && customProblem.trim() ? customProblem : sampleProblem.english_text;
+
   const checkAnalysis = () => {
     if (selectedGiven === 'g1' && selectedRequired === 'r1' && selectedKeyword === 'k1') {
       setFeedback('🎉 Tuyệt vời! Bạn đã phân tích đúng 100% cấu trúc đề toán tiếng Anh.');
@@ -42,7 +56,7 @@ export const MathReadingModule: React.FC = () => {
   return (
     <div className="max-w-4xl mx-auto px-4 py-6 space-y-6 pb-24 md:pb-12">
       {/* Header */}
-      <div className="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-2xs">
+      <div className="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-2xl bg-indigo-100 text-indigo-800 flex items-center justify-center font-bold">
             <FileQuestion className="w-5 h-5" />
@@ -52,11 +66,54 @@ export const MathReadingModule: React.FC = () => {
               Math Reading Comprehension (Đọc & Phân Tích Đề Bài)
             </h1>
             <p className="text-xs text-slate-500 mt-0.5">
-              Tập trung thấu hiểu đề toán tiếng Anh trước khi bắt tay vào tính toán!
+              Thấu hiểu cấu trúc, từ khóa và ý đồ toán học trong đề bài tiếng Anh
             </p>
           </div>
         </div>
+
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setIsCustomMode(!isCustomMode)}
+            className="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition flex items-center gap-1.5"
+          >
+            <Edit3 className="w-3.5 h-3.5" />
+            <span>{isCustomMode ? 'Xem Đề Mẫu' : 'Nhập Đề Của Bạn'}</span>
+          </button>
+
+          <button
+            onClick={() => setIsAiModalOpen(true)}
+            className="flex items-center gap-1.5 px-3.5 py-2 bg-teal-600 hover:bg-teal-700 text-white font-extrabold text-xs rounded-xl shadow-md transition"
+          >
+            <Sparkles className="w-4 h-4 text-amber-300" />
+            <span>AI Giải Mã Đề 3 Bước</span>
+          </button>
+        </div>
       </div>
+
+      {/* Custom Problem Input */}
+      {isCustomMode && (
+        <div className="bg-white p-6 rounded-3xl border border-teal-200 shadow-2xs space-y-3">
+          <label className="font-extrabold text-xs text-slate-900 flex items-center gap-1.5">
+            <Edit3 className="w-4 h-4 text-teal-600" />
+            <span>Nhập đề toán tiếng Anh bất kỳ để AI phân tích:</span>
+          </label>
+          <textarea
+            rows={3}
+            value={customProblem}
+            onChange={(e) => setCustomProblem(e.target.value)}
+            placeholder="Ví dụ: Find the domain of the function f(x) = sqrt(4 - x^2)..."
+            className="w-full p-4 rounded-2xl border border-slate-300 bg-slate-50 text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-teal-500 font-medium"
+          />
+          <button
+            onClick={() => setIsAiModalOpen(true)}
+            disabled={!customProblem.trim()}
+            className="w-full py-2.5 bg-teal-600 hover:bg-teal-700 disabled:opacity-50 text-white font-extrabold text-xs rounded-xl shadow-md transition flex items-center justify-center gap-2"
+          >
+            <Sparkles className="w-4 h-4" />
+            <span>Phân Tích Đề Này Bằng AI (3 Bước)</span>
+          </button>
+        </div>
+      )}
 
       {/* Main Problem Display Card */}
       <div className="bg-slate-900 text-white p-6 sm:p-8 rounded-3xl space-y-4 shadow-xl border border-slate-800 relative overflow-hidden">
@@ -64,25 +121,35 @@ export const MathReadingModule: React.FC = () => {
           <span className="text-xs font-bold text-teal-400 bg-teal-950/80 px-3 py-1 rounded-full border border-teal-800">
             English Math Problem
           </span>
-          <button
-            onClick={() => speakEnglishWord(sampleProblem.english_text)}
-            className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-800 hover:bg-slate-700 text-xs text-teal-300 font-bold transition"
-          >
-            <Volume2 className="w-4 h-4" /> Nghe đọc đề
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => speakEnglishWord(currentProblemText)}
+              className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-800 hover:bg-slate-700 text-xs text-teal-300 font-bold transition"
+            >
+              <Volume2 className="w-4 h-4" /> Nghe đọc
+            </button>
+            <button
+              onClick={() => setIsAiModalOpen(true)}
+              className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-teal-600 hover:bg-teal-500 text-xs text-white font-bold transition"
+            >
+              <Sparkles className="w-3.5 h-3.5" /> AI 3 Bước
+            </button>
+          </div>
         </div>
 
         <div className="text-lg sm:text-xl font-bold leading-relaxed text-slate-100">
-          <MathRenderer content={sampleProblem.english_text} inline />
+          <MathRenderer content={currentProblemText} inline />
         </div>
 
-        <p className="text-xs text-slate-400 italic">
-          Gợi ý tiếng Việt: "{sampleProblem.vietnamese_translation}"
-        </p>
+        {!isCustomMode && (
+          <p className="text-xs text-slate-400 italic">
+            Gợi ý tiếng Việt: "{sampleProblem.vietnamese_translation}"
+          </p>
+        )}
       </div>
 
       {/* STEP 1: ANALYZE QUESTION STRUCTURE */}
-      {step === 'ANALYZE' && (
+      {!isCustomMode && step === 'ANALYZE' && (
         <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-2xs space-y-6">
           <h2 className="text-base font-extrabold text-slate-900 border-b pb-3">
             Bước 1: Xác định cấu trúc đề bài (Problem Structure Analysis)
@@ -157,16 +224,16 @@ export const MathReadingModule: React.FC = () => {
           <div className="pt-4 flex items-center justify-between border-t border-slate-100">
             <button
               onClick={checkAnalysis}
-              className="px-5 py-2.5 bg-slate-900 text-white font-bold text-xs rounded-xl hover:bg-slate-800"
+              className="px-5 py-2.5 bg-slate-900 text-white font-bold text-xs rounded-xl hover:bg-slate-800 transition"
             >
               Kiểm tra phân tích
             </button>
 
             <button
               onClick={() => setStep('SOLVE')}
-              className="inline-flex items-center gap-2 px-6 py-2.5 bg-teal-600 text-white font-extrabold text-xs rounded-xl hover:bg-teal-700 shadow-md shadow-teal-600/20"
+              className="inline-flex items-center gap-2 px-6 py-2.5 bg-teal-600 text-white font-extrabold text-xs rounded-xl hover:bg-teal-700 shadow-md transition"
             >
-              Chuyển sang Giải Bài (Solve Problem) <ArrowRight className="w-4 h-4" />
+              Chuyển sang Giải Bài <ArrowRight className="w-4 h-4" />
             </button>
           </div>
 
@@ -179,7 +246,7 @@ export const MathReadingModule: React.FC = () => {
       )}
 
       {/* STEP 2: SOLVE PROBLEM */}
-      {step === 'SOLVE' && (
+      {!isCustomMode && step === 'SOLVE' && (
         <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-2xs space-y-6">
           <h2 className="text-base font-extrabold text-slate-900 border-b pb-3">
             Bước 2: Lời giải toán bằng tiếng Anh (Mathematical Solution)
@@ -194,12 +261,20 @@ export const MathReadingModule: React.FC = () => {
 
           <button
             onClick={() => setStep('ANALYZE')}
-            className="px-5 py-2.5 bg-slate-100 text-slate-700 font-bold text-xs rounded-xl hover:bg-slate-200"
+            className="px-5 py-2.5 bg-slate-100 text-slate-700 font-bold text-xs rounded-xl hover:bg-slate-200 transition"
           >
             ← Quay lại Phân tích đề
           </button>
         </div>
       )}
+
+      {/* AI 3-Step Solver Modal */}
+      <AiStepSolverModal
+        isOpen={isAiModalOpen}
+        onClose={() => setIsAiModalOpen(false)}
+        problemText={currentProblemText}
+        problemTitle="Đọc hiểu & Phân tích Đề Toán"
+      />
     </div>
   );
 };

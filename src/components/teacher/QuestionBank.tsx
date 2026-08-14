@@ -2,10 +2,26 @@ import React, { useState, useEffect } from 'react';
 import { useAppStore } from '../../lib/store';
 import { Question } from '../../types';
 import { MathRenderer } from '../math/MathRenderer';
-import { FileQuestion, Plus, Search, Filter, Edit, Trash2, Eye, Copy, CheckCircle2 } from 'lucide-react';
+import { apiFetch } from '../../lib/dataService';
+import { generateBilingualQuestionAi, hasApiKey } from '../../lib/geminiService';
+import {
+  FileQuestion,
+  Plus,
+  Search,
+  Filter,
+  Edit,
+  Trash2,
+  Eye,
+  Copy,
+  CheckCircle2,
+  Sparkles,
+  RefreshCw,
+  AlertCircle,
+  X,
+} from 'lucide-react';
 
 export const QuestionBank: React.FC = () => {
-  const { showNotification } = useAppStore();
+  const { showNotification, selectedGrade } = useAppStore();
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -22,21 +38,28 @@ export const QuestionBank: React.FC = () => {
   const [correctKey, setCorrectKey] = useState('A');
   const [solutionVi, setSolutionVi] = useState('');
 
+  // AI Generator state
+  const [isAiGenModalOpen, setIsAiGenModalOpen] = useState(false);
+  const [aiTopic, setAiTopic] = useState('Hàm số bậc hai và cực trị');
+  const [aiDifficulty, setAiDifficulty] = useState<'EASY' | 'MEDIUM' | 'HARD'>('MEDIUM');
+  const [aiEnglishRatio, setAiEnglishRatio] = useState<number>(50);
+  const [aiGenerating, setAiGenerating] = useState(false);
+  const [aiGenError, setAiGenError] = useState<string | null>(null);
+
   useEffect(() => {
     fetchQuestions();
   }, []);
 
-  const fetchQuestions = () => {
-    fetch('/api/questions')
-      .then((res) => res.json())
-      .then((data) => {
-        setQuestions(data || []);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error('Error fetching questions:', err);
-        setLoading(false);
-      });
+  const fetchQuestions = async () => {
+    setLoading(true);
+    try {
+      const data = await apiFetch<Question[]>('/api/questions');
+      setQuestions(data || []);
+    } catch (err) {
+      console.error('Error fetching questions:', err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const createQuestion = async () => {
@@ -64,12 +87,11 @@ export const QuestionBank: React.FC = () => {
     };
 
     try {
-      const res = await fetch('/api/questions', {
+      const data = await apiFetch('/api/questions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
-      const data = await res.json();
       if (data.question) {
         showNotification('Đã tạo câu hỏi mới vào Ngân Hàng Đề!');
         setIsNewQModalOpen(false);
@@ -77,10 +99,61 @@ export const QuestionBank: React.FC = () => {
         setQEn('');
         setOptA('');
         setOptB('');
+        setOptC('');
+        setOptD('');
         fetchQuestions();
       }
     } catch (e) {
       console.error(e);
+    }
+  };
+
+  const handleGenerateAiQuestion = async () => {
+    if (!aiTopic.trim()) return;
+    setAiGenerating(true);
+    setAiGenError(null);
+
+    const result = await generateBilingualQuestionAi(
+      aiTopic.trim(),
+      selectedGrade,
+      aiDifficulty,
+      aiEnglishRatio
+    );
+
+    setAiGenerating(false);
+
+    if (!result.success) {
+      setAiGenError(result.rawError || result.error || 'Lỗi khi tạo câu hỏi');
+      return;
+    }
+
+    try {
+      const jsonMatch = result.content.match(/\{[\s\S]*\}/);
+      if (!jsonMatch) {
+        setAiGenError('Không tìm thấy định dạng JSON hợp lệ từ AI.');
+        return;
+      }
+      const data = JSON.parse(jsonMatch[0]);
+
+      setQEn(data.question_en || '');
+      setQVi(data.question_vi || '');
+      setSolutionVi(data.solution_vi || data.solution_en || '');
+      setCorrectKey(data.correct_answer || 'A');
+
+      if (data.options && Array.isArray(data.options)) {
+        data.options.forEach((opt: any) => {
+          if (opt.option_key === 'A') setOptA(opt.content_en || opt.content_vi || '');
+          if (opt.option_key === 'B') setOptB(opt.content_en || opt.content_vi || '');
+          if (opt.option_key === 'C') setOptC(opt.content_en || opt.content_vi || '');
+          if (opt.option_key === 'D') setOptD(opt.content_en || opt.content_vi || '');
+        });
+      }
+
+      setIsAiGenModalOpen(false);
+      setIsNewQModalOpen(true);
+      showNotification('✨ AI Gemini đã sinh câu hỏi trắc nghiệm thành công!');
+    } catch (e: any) {
+      setAiGenError(`Lỗi phân tích cú pháp: ${e.message}`);
     }
   };
 
@@ -101,16 +174,26 @@ export const QuestionBank: React.FC = () => {
             </h1>
           </div>
           <p className="text-xs text-slate-500 mt-0.5">
-            Quản lý kho câu hỏi Toán Tiếng Anh hỗ trợ công thức KaTeX & gợi ý từ vựng
+            Quản lý kho câu hỏi Toán Tiếng Anh hỗ trợ công thức KaTeX & tạo tự động bằng AI Gemini
           </p>
         </div>
 
-        <button
-          onClick={() => setIsNewQModalOpen(true)}
-          className="inline-flex items-center gap-2 px-5 py-2.5 bg-teal-600 hover:bg-teal-700 text-white font-extrabold text-xs rounded-xl shadow-md transition"
-        >
-          <Plus className="w-4 h-4" /> Thêm Câu Hỏi Mới
-        </button>
+        <div className="flex items-center gap-2">
+          {/* AI Generator Button */}
+          <button
+            onClick={() => setIsAiGenModalOpen(true)}
+            className="inline-flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white font-extrabold text-xs rounded-xl shadow-md transition"
+          >
+            <Sparkles className="w-4 h-4 text-amber-300" /> AI Tạo Câu Hỏi Mới
+          </button>
+
+          <button
+            onClick={() => setIsNewQModalOpen(true)}
+            className="inline-flex items-center gap-2 px-4 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs rounded-xl shadow-md transition"
+          >
+            <Plus className="w-4 h-4" /> Nhập Thủ Công
+          </button>
+        </div>
       </div>
 
       {/* Search */}
@@ -148,35 +231,35 @@ export const QuestionBank: React.FC = () => {
               <div className="flex items-center gap-1">
                 <button
                   onClick={() => setPreviewQuestion(q)}
-                  className="p-1.5 rounded-xl border text-slate-600 hover:bg-slate-100 transition"
-                  title="Xem trước"
+                  className="p-1.5 text-slate-400 hover:text-slate-700 rounded-lg"
+                  title="Xem chi tiết"
                 >
                   <Eye className="w-4 h-4" />
                 </button>
               </div>
             </div>
 
-            <div className="space-y-1">
-              <div className="text-sm font-bold text-slate-900 leading-relaxed">
-                <MathRenderer content={q.question_en} inline />
-              </div>
-              {q.question_vi && <p className="text-xs text-slate-500">→ {q.question_vi}</p>}
+            <div className="text-sm font-bold text-slate-900 leading-relaxed">
+              <MathRenderer content={q.question_en} inline />
             </div>
 
-            {/* Options Preview */}
             {q.options && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
                 {q.options.map((opt) => (
                   <div
                     key={opt.option_key}
-                    className={`p-2.5 rounded-xl border text-xs font-medium flex items-center gap-2 ${
-                      opt.is_correct ? 'bg-emerald-50 border-emerald-300 text-emerald-950 font-bold' : 'bg-slate-50 border-slate-200 text-slate-700'
+                    className={`p-2.5 rounded-xl border flex items-center gap-2 ${
+                      opt.is_correct
+                        ? 'bg-emerald-50 border-emerald-300 text-emerald-950 font-bold'
+                        : 'bg-slate-50 border-slate-200 text-slate-700'
                     }`}
                   >
                     <span className="w-5 h-5 rounded-md bg-white border font-bold text-[10px] flex items-center justify-center">
                       {opt.option_key}
                     </span>
-                    <MathRenderer content={opt.content_en || opt.content_vi} inline />
+                    <span>
+                      <MathRenderer content={opt.content_en || opt.content_vi} inline />
+                    </span>
                   </div>
                 ))}
               </div>
@@ -185,112 +268,211 @@ export const QuestionBank: React.FC = () => {
         ))}
       </div>
 
-      {/* New Question Modal */}
-      {isNewQModalOpen && (
-        <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-xl w-full p-6 shadow-xl space-y-4 max-h-[90vh] overflow-y-auto">
-            <h3 className="text-lg font-extrabold text-slate-900">Thêm Câu Hỏi Mới Vào Ngân Hàng</h3>
+      {/* AI Generate Question Modal */}
+      {isAiGenModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-xs">
+          <div className="bg-white w-full max-w-lg rounded-3xl p-6 shadow-2xl border border-slate-200 space-y-4">
+            <div className="flex items-center justify-between border-b pb-3">
+              <div className="flex items-center gap-2">
+                <Sparkles className="w-5 h-5 text-teal-600" />
+                <h3 className="font-extrabold text-slate-900 text-sm">
+                  AI Sinh Câu Hỏi Trắc Nghiệm Toán Tiếng Anh
+                </h3>
+              </div>
+              <button
+                onClick={() => setIsAiGenModalOpen(false)}
+                className="text-slate-400 hover:text-slate-700"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
 
             <div className="space-y-3 text-xs">
               <div>
-                <label className="font-bold text-slate-700">Đề bài tiếng Anh (Chấp nhận công thức $x^2$):</label>
+                <label className="font-bold text-slate-700">Chủ đề bài toán: *</label>
+                <input
+                  type="text"
+                  value={aiTopic}
+                  onChange={(e) => setAiTopic(e.target.value)}
+                  placeholder="Ví dụ: Tập xác định hàm số, Tọa độ đỉnh Parabol, Đạo hàm..."
+                  className="w-full mt-1 p-3 rounded-xl border border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-teal-500 font-medium"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="font-bold text-slate-700">Độ khó:</label>
+                  <select
+                    value={aiDifficulty}
+                    onChange={(e) => setAiDifficulty(e.target.value as any)}
+                    className="w-full mt-1 p-2.5 rounded-xl border border-slate-300 bg-white font-bold"
+                  >
+                    <option value="EASY">Dễ (Level 1)</option>
+                    <option value="MEDIUM">Trung Bình (Level 2)</option>
+                    <option value="HARD">Nâng Cao (Level 3)</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="font-bold text-slate-700">Tỷ lệ Tiếng Anh: {aiEnglishRatio}%</label>
+                  <input
+                    type="range"
+                    min={20}
+                    max={100}
+                    step={10}
+                    value={aiEnglishRatio}
+                    onChange={(e) => setAiEnglishRatio(parseInt(e.target.value, 10))}
+                    className="w-full mt-3 accent-teal-600 cursor-pointer"
+                  />
+                </div>
+              </div>
+
+              {aiGenError && (
+                <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl text-rose-800 text-[11px] font-mono">
+                  {aiGenError}
+                </div>
+              )}
+            </div>
+
+            <div className="flex items-center justify-end gap-2 pt-2 border-t">
+              <button
+                onClick={() => setIsAiGenModalOpen(false)}
+                className="px-4 py-2 text-xs font-bold text-slate-600 hover:text-slate-900 rounded-xl"
+              >
+                Hủy
+              </button>
+              <button
+                onClick={handleGenerateAiQuestion}
+                disabled={aiGenerating || !aiTopic.trim()}
+                className="px-5 py-2.5 bg-teal-600 hover:bg-teal-700 disabled:opacity-50 text-white font-extrabold text-xs rounded-xl shadow-md transition flex items-center gap-2"
+              >
+                {aiGenerating ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+                <span>{aiGenerating ? 'AI Đang Tạo Câu Hỏi...' : 'Bắt Đầu Tạo'}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Manual Add Question Modal */}
+      {isNewQModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-xs">
+          <div className="bg-white w-full max-w-2xl rounded-3xl p-6 sm:p-8 shadow-2xl border border-slate-200 space-y-4 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between border-b pb-3">
+              <h3 className="font-extrabold text-slate-900 text-sm">
+                Thêm Câu Hỏi Trắc Nghiệm Mới
+              </h3>
+              <button
+                onClick={() => setIsNewQModalOpen(false)}
+                className="text-slate-400 hover:text-slate-700"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="space-y-3 text-xs">
+              <div>
+                <label className="font-bold text-slate-700">Nội dung câu hỏi bằng Tiếng Anh (English Question): *</label>
                 <textarea
                   rows={2}
                   value={qEn}
                   onChange={(e) => setQEn(e.target.value)}
-                  placeholder="Ví dụ: Find the vertex of the parabola y = x^2 - 4x + 3."
-                  className="w-full mt-1 p-3 rounded-xl border border-slate-300 bg-white"
+                  placeholder="Ví dụ: Find the domain of the function f(x) = \sqrt{x - 3}..."
+                  className="w-full mt-1 p-3 rounded-xl border border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-teal-500 font-medium"
                 />
               </div>
 
               <div>
-                <label className="font-bold text-slate-700">Dịch đề tiếng Việt (Gợi ý):</label>
+                <label className="font-bold text-slate-700">Dịch nghĩa câu hỏi tiếng Việt (Gợi ý):</label>
                 <input
                   type="text"
                   value={qVi}
                   onChange={(e) => setQVi(e.target.value)}
-                  placeholder="Ví dụ: Tìm tọa độ đỉnh của parabol y = x^2 - 4x + 3."
+                  placeholder="Ví dụ: Tìm tập xác định của hàm số..."
                   className="w-full mt-1 p-3 rounded-xl border border-slate-300 bg-white"
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="font-bold text-slate-700">Đáp án A:</label>
+                  <label className="font-bold text-slate-700">Lựa chọn A: *</label>
                   <input
                     type="text"
                     value={optA}
                     onChange={(e) => setOptA(e.target.value)}
-                    className="w-full mt-1 p-2.5 rounded-xl border border-slate-300"
+                    className="w-full mt-1 p-2.5 rounded-xl border border-slate-300 bg-white font-mono"
                   />
                 </div>
                 <div>
-                  <label className="font-bold text-slate-700">Đáp án B:</label>
+                  <label className="font-bold text-slate-700">Lựa chọn B: *</label>
                   <input
                     type="text"
                     value={optB}
                     onChange={(e) => setOptB(e.target.value)}
-                    className="w-full mt-1 p-2.5 rounded-xl border border-slate-300"
+                    className="w-full mt-1 p-2.5 rounded-xl border border-slate-300 bg-white font-mono"
                   />
                 </div>
                 <div>
-                  <label className="font-bold text-slate-700">Đáp án C:</label>
+                  <label className="font-bold text-slate-700">Lựa chọn C:</label>
                   <input
                     type="text"
                     value={optC}
                     onChange={(e) => setOptC(e.target.value)}
-                    className="w-full mt-1 p-2.5 rounded-xl border border-slate-300"
+                    className="w-full mt-1 p-2.5 rounded-xl border border-slate-300 bg-white font-mono"
                   />
                 </div>
                 <div>
-                  <label className="font-bold text-slate-700">Đáp án D:</label>
+                  <label className="font-bold text-slate-700">Lựa chọn D:</label>
                   <input
                     type="text"
                     value={optD}
                     onChange={(e) => setOptD(e.target.value)}
-                    className="w-full mt-1 p-2.5 rounded-xl border border-slate-300"
+                    className="w-full mt-1 p-2.5 rounded-xl border border-slate-300 bg-white font-mono"
                   />
                 </div>
               </div>
 
-              <div>
-                <label className="font-bold text-slate-700">Đáp án Đúng:</label>
-                <select
-                  value={correctKey}
-                  onChange={(e) => setCorrectKey(e.target.value)}
-                  className="w-full mt-1 p-2.5 rounded-xl border border-slate-300 font-bold"
-                >
-                  <option value="A">Khóa A</option>
-                  <option value="B">Khóa B</option>
-                  <option value="C">Khóa C</option>
-                  <option value="D">Khóa D</option>
-                </select>
-              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="font-bold text-slate-700">Đáp án đúng: *</label>
+                  <select
+                    value={correctKey}
+                    onChange={(e) => setCorrectKey(e.target.value)}
+                    className="w-full mt-1 p-2.5 rounded-xl border border-slate-300 bg-white font-bold text-teal-800"
+                  >
+                    <option value="A">Đáp án A</option>
+                    <option value="B">Đáp án B</option>
+                    <option value="C">Đáp án C</option>
+                    <option value="D">Đáp án D</option>
+                  </select>
+                </div>
 
-              <div>
-                <label className="font-bold text-slate-700">Hướng dẫn lời giải:</label>
-                <textarea
-                  rows={2}
-                  value={solutionVi}
-                  onChange={(e) => setSolutionVi(e.target.value)}
-                  placeholder="Nhập lời giải vắn tắt..."
-                  className="w-full mt-1 p-3 rounded-xl border border-slate-300"
-                />
+                <div>
+                  <label className="font-bold text-slate-700">Lời giải chi tiết:</label>
+                  <input
+                    type="text"
+                    value={solutionVi}
+                    onChange={(e) => setSolutionVi(e.target.value)}
+                    placeholder="Giải thích từng bước..."
+                    className="w-full mt-1 p-2.5 rounded-xl border border-slate-300 bg-white"
+                  />
+                </div>
               </div>
             </div>
 
-            <div className="pt-2 flex items-center gap-2">
+            <div className="flex items-center justify-end gap-2 pt-3 border-t">
               <button
                 onClick={() => setIsNewQModalOpen(false)}
-                className="flex-1 py-2.5 bg-slate-100 text-slate-700 font-bold text-xs rounded-xl"
+                className="px-4 py-2 text-xs font-bold text-slate-600 hover:text-slate-900 rounded-xl"
               >
                 Hủy
               </button>
               <button
                 onClick={createQuestion}
-                className="flex-1 py-2.5 bg-teal-600 text-white font-bold text-xs rounded-xl hover:bg-teal-700"
+                disabled={!qEn || !optA || !optB}
+                className="px-5 py-2.5 bg-teal-600 hover:bg-teal-700 disabled:opacity-50 text-white font-extrabold text-xs rounded-xl shadow-md transition"
               >
-                Lưu Vào Ngân Hàng
+                Lưu Vào Ngân Hàng Đề
               </button>
             </div>
           </div>
