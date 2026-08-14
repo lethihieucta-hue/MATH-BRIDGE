@@ -36,48 +36,56 @@ export const Header: React.FC = () => {
 
   return (
     <>
-      <header className="bg-slate-900 text-white sticky top-0 z-40 border-b border-slate-800 shadow-lg">
+  return (
+    <>
+      <header className="bg-[#0B0F19]/95 backdrop-blur-md text-white sticky top-0 z-40 border-b border-slate-800/80 shadow-[0_4px_30px_rgba(0,0,0,0.3)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 gap-3">
-            {/* Logo & Title */}
+            {/* Logo & Scientific Title */}
             <div
               onClick={() => setActiveTab(currentRole === 'TEACHER' ? 'teacher-dashboard' : 'dashboard')}
               className="flex items-center gap-3 cursor-pointer group shrink-0"
             >
-              <div className="w-10 h-10 rounded-2xl bg-teal-500 text-slate-950 flex items-center justify-center font-black text-xl shadow-md group-hover:scale-105 transition-transform">
-                M
+              <div className="relative w-10 h-10 rounded-2xl bg-gradient-to-tr from-teal-600 via-emerald-500 to-teal-300 p-0.5 shadow-md shadow-teal-500/20 group-hover:scale-105 transition-transform">
+                <div className="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center font-mono font-black text-teal-300 text-lg">
+                  ∫x
+                </div>
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="font-black text-lg sm:text-xl tracking-tight text-white group-hover:text-teal-400 transition-colors">
+                  <span className="font-black text-base sm:text-lg tracking-tight bg-gradient-to-r from-white via-slate-100 to-slate-300 bg-clip-text text-transparent group-hover:text-teal-300 transition-colors">
                     MATH-BRIDGE
                   </span>
-                  <span className="text-[10px] font-extrabold bg-teal-950 text-teal-300 border border-teal-800 px-2 py-0.5 rounded-full">
-                    THPT
+                  <span className="text-[10px] font-mono font-bold bg-teal-950/90 text-teal-300 border border-teal-700/60 px-2 py-0.5 rounded-full shadow-2xs">
+                    KNTT 2018
                   </span>
                 </div>
                 <p className="text-[10px] text-slate-400 font-medium hidden sm:block">
-                  Learn Mathematics Through English
+                  Scientific Bilingual Mathematics Hub
                 </p>
               </div>
             </div>
 
             {/* Student / Teacher Navigation Tabs for Desktop */}
-            <nav className="hidden xl:flex items-center space-x-1 bg-slate-800/80 p-1 rounded-2xl border border-slate-700/60 text-xs font-bold">
+            <nav className="hidden xl:flex items-center space-x-1 bg-slate-900/90 p-1 rounded-2xl border border-slate-800/90 text-xs font-bold shadow-inner">
               {currentRole === 'STUDENT' ? (
                 <>
                   <button
                     onClick={() => setActiveTab('dashboard')}
-                    className={`px-3 py-1.5 rounded-xl transition ${
-                      activeTab === 'dashboard' ? 'bg-teal-500 text-slate-950 shadow-2xs' : 'text-slate-300 hover:text-white'
+                    className={`px-3 py-1.5 rounded-xl transition flex items-center gap-1.5 ${
+                      activeTab === 'dashboard'
+                        ? 'bg-gradient-to-r from-teal-500 to-emerald-500 text-slate-950 font-extrabold shadow-sm'
+                        : 'text-slate-300 hover:text-white hover:bg-slate-800/50'
                     }`}
                   >
-                    Tổng Quan
+                    <span>Tổng Quan</span>
                   </button>
                   <button
                     onClick={() => setActiveTab('vocabulary')}
                     className={`px-3 py-1.5 rounded-xl transition ${
-                      activeTab === 'vocabulary' ? 'bg-teal-500 text-slate-950 shadow-2xs' : 'text-slate-300 hover:text-white'
+                      activeTab === 'vocabulary'
+                        ? 'bg-gradient-to-r from-teal-500 to-emerald-500 text-slate-950 font-extrabold shadow-sm'
+                        : 'text-slate-300 hover:text-white hover:bg-slate-800/50'
                     }`}
                   >
                     1. Từ Vựng
@@ -85,7 +93,9 @@ export const Header: React.FC = () => {
                   <button
                     onClick={() => setActiveTab('sentences')}
                     className={`px-3 py-1.5 rounded-xl transition ${
-                      activeTab === 'sentences' ? 'bg-teal-500 text-slate-950 shadow-2xs' : 'text-slate-300 hover:text-white'
+                      activeTab === 'sentences'
+                        ? 'bg-gradient-to-r from-teal-500 to-emerald-500 text-slate-950 font-extrabold shadow-sm'
+                        : 'text-slate-300 hover:text-white hover:bg-slate-800/50'
                     }`}
                   >
                     2. Mẫu Câu
@@ -93,7 +103,9 @@ export const Header: React.FC = () => {
                   <button
                     onClick={() => setActiveTab('learn')}
                     className={`px-3 py-1.5 rounded-xl transition ${
-                      activeTab === 'learn' ? 'bg-teal-500 text-slate-950 shadow-2xs' : 'text-slate-300 hover:text-white'
+                      activeTab === 'learn'
+                        ? 'bg-gradient-to-r from-teal-500 to-emerald-500 text-slate-950 font-extrabold shadow-sm'
+                        : 'text-slate-300 hover:text-white hover:bg-slate-800/50'
                     }`}
                   >
                     3. Bài Học
@@ -101,31 +113,39 @@ export const Header: React.FC = () => {
                   <button
                     onClick={() => setActiveTab('reading')}
                     className={`px-3 py-1.5 rounded-xl transition ${
-                      activeTab === 'reading' ? 'bg-teal-500 text-slate-950 shadow-2xs' : 'text-slate-300 hover:text-white'
+                      activeTab === 'reading'
+                        ? 'bg-gradient-to-r from-teal-500 to-emerald-500 text-slate-950 font-extrabold shadow-sm'
+                        : 'text-slate-300 hover:text-white hover:bg-slate-800/50'
                     }`}
                   >
                     4. Đọc Đề
                   </button>
                   <button
                     onClick={() => setActiveTab('grapher')}
-                    className={`px-3 py-1.5 rounded-xl transition ${
-                      activeTab === 'grapher' ? 'bg-teal-500 text-slate-950 shadow-2xs' : 'text-slate-300 hover:text-white'
+                    className={`px-3 py-1.5 rounded-xl transition flex items-center gap-1 ${
+                      activeTab === 'grapher'
+                        ? 'bg-gradient-to-r from-teal-500 to-emerald-500 text-slate-950 font-extrabold shadow-sm'
+                        : 'text-slate-300 hover:text-white hover:bg-slate-800/50'
                     }`}
                   >
-                    5. Đồ Thị
+                    <span className="text-[11px] font-mono">f(x)</span> Đồ Thị
                   </button>
                   <button
                     onClick={() => setActiveTab('minigame')}
-                    className={`px-3 py-1.5 rounded-xl transition ${
-                      activeTab === 'minigame' ? 'bg-teal-500 text-slate-950 shadow-2xs' : 'text-slate-300 hover:text-white'
+                    className={`px-3 py-1.5 rounded-xl transition flex items-center gap-1 ${
+                      activeTab === 'minigame'
+                        ? 'bg-gradient-to-r from-teal-500 to-emerald-500 text-slate-950 font-extrabold shadow-sm'
+                        : 'text-slate-300 hover:text-white hover:bg-slate-800/50'
                     }`}
                   >
-                    6. Minigame
+                    ⚡ Minigame
                   </button>
                   <button
                     onClick={() => setActiveTab('practice')}
                     className={`px-3 py-1.5 rounded-xl transition ${
-                      activeTab === 'practice' ? 'bg-teal-500 text-slate-950 shadow-2xs' : 'text-slate-300 hover:text-white'
+                      activeTab === 'practice'
+                        ? 'bg-gradient-to-r from-teal-500 to-emerald-500 text-slate-950 font-extrabold shadow-sm'
+                        : 'text-slate-300 hover:text-white hover:bg-slate-800/50'
                     }`}
                   >
                     Luyện Tập
@@ -133,7 +153,9 @@ export const Header: React.FC = () => {
                   <button
                     onClick={() => setActiveTab('tests')}
                     className={`px-3 py-1.5 rounded-xl transition ${
-                      activeTab === 'tests' ? 'bg-teal-500 text-slate-950 shadow-2xs' : 'text-slate-300 hover:text-white'
+                      activeTab === 'tests'
+                        ? 'bg-gradient-to-r from-teal-500 to-emerald-500 text-slate-950 font-extrabold shadow-sm'
+                        : 'text-slate-300 hover:text-white hover:bg-slate-800/50'
                     }`}
                   >
                     Kiểm Tra
@@ -141,67 +163,79 @@ export const Header: React.FC = () => {
                   <button
                     onClick={() => setActiveTab('progress')}
                     className={`px-3 py-1.5 rounded-xl transition ${
-                      activeTab === 'progress' ? 'bg-teal-500 text-slate-950 shadow-2xs' : 'text-slate-300 hover:text-white'
+                      activeTab === 'progress'
+                        ? 'bg-gradient-to-r from-teal-500 to-emerald-500 text-slate-950 font-extrabold shadow-sm'
+                        : 'text-slate-300 hover:text-white hover:bg-slate-800/50'
                     }`}
                   >
-                    Chỉ Số MEI
+                    Radar MEI
                   </button>
                 </>
               ) : (
                 <>
                   <button
                     onClick={() => setActiveTab('teacher-dashboard')}
-                    className={`px-3 py-1.5 rounded-xl transition ${
-                      activeTab === 'teacher-dashboard' ? 'bg-teal-500 text-slate-950 shadow-2xs' : 'text-slate-300 hover:text-white'
+                    className={`px-3.5 py-1.5 rounded-xl transition ${
+                      activeTab === 'teacher-dashboard'
+                        ? 'bg-gradient-to-r from-teal-500 to-emerald-500 text-slate-950 font-extrabold shadow-sm'
+                        : 'text-slate-300 hover:text-white hover:bg-slate-800/50'
                     }`}
                   >
                     Lớp Học
                   </button>
                   <button
                     onClick={() => setActiveTab('question-bank')}
-                    className={`px-3 py-1.5 rounded-xl transition ${
-                      activeTab === 'question-bank' ? 'bg-teal-500 text-slate-950 shadow-2xs' : 'text-slate-300 hover:text-white'
+                    className={`px-3.5 py-1.5 rounded-xl transition ${
+                      activeTab === 'question-bank'
+                        ? 'bg-gradient-to-r from-teal-500 to-emerald-500 text-slate-950 font-extrabold shadow-sm'
+                        : 'text-slate-300 hover:text-white hover:bg-slate-800/50'
                     }`}
                   >
                     Ngân Hàng Đề
                   </button>
                   <button
                     onClick={() => setActiveTab('content-studio')}
-                    className={`px-3 py-1.5 rounded-xl transition ${
-                      activeTab === 'content-studio' ? 'bg-teal-500 text-slate-950 shadow-2xs' : 'text-slate-300 hover:text-white'
+                    className={`px-3.5 py-1.5 rounded-xl transition ${
+                      activeTab === 'content-studio'
+                        ? 'bg-gradient-to-r from-teal-500 to-emerald-500 text-slate-950 font-extrabold shadow-sm'
+                        : 'text-slate-300 hover:text-white hover:bg-slate-800/50'
                     }`}
                   >
                     Biên Soạn AI
                   </button>
                   <button
                     onClick={() => setActiveTab('test-builder')}
-                    className={`px-3 py-1.5 rounded-xl transition ${
-                      activeTab === 'test-builder' ? 'bg-teal-500 text-slate-950 shadow-2xs' : 'text-slate-300 hover:text-white'
+                    className={`px-3.5 py-1.5 rounded-xl transition ${
+                      activeTab === 'test-builder'
+                        ? 'bg-gradient-to-r from-teal-500 to-emerald-500 text-slate-950 font-extrabold shadow-sm'
+                        : 'text-slate-300 hover:text-white hover:bg-slate-800/50'
                     }`}
                   >
                     Tạo Đề %
                   </button>
                   <button
                     onClick={() => setActiveTab('teacher-analytics')}
-                    className={`px-3 py-1.5 rounded-xl transition ${
-                      activeTab === 'teacher-analytics' ? 'bg-teal-500 text-slate-950 shadow-2xs' : 'text-slate-300 hover:text-white'
+                    className={`px-3.5 py-1.5 rounded-xl transition ${
+                      activeTab === 'teacher-analytics'
+                        ? 'bg-gradient-to-r from-teal-500 to-emerald-500 text-slate-950 font-extrabold shadow-sm'
+                        : 'text-slate-300 hover:text-white hover:bg-slate-800/50'
                     }`}
                   >
-                    Phân Tích
+                    Phân Tích MEI
                   </button>
                 </>
               )}
             </nav>
 
             {/* Right Controls: API Key Settings Button & Grade & Role */}
-            <div className="flex items-center gap-2.5">
+            <div className="flex items-center gap-2">
               {/* Settings / API Key Button - STRICTLY COMPLIANT WITH AI_INSTRUCTIONS.md */}
               <button
                 onClick={() => setIsSettingsOpen(true)}
-                className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold transition shadow-xs ${
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition shadow-xs ${
                   !apiKeyConfigured
                     ? 'bg-rose-950/80 border-2 border-rose-500 text-rose-300 hover:bg-rose-900/90 ring-2 ring-rose-500/30'
-                    : 'bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700'
+                    : 'bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700/80'
                 }`}
                 title="Cài đặt Google Gemini AI & Quản lý API Key"
               >
@@ -227,37 +261,46 @@ export const Header: React.FC = () => {
                     </span>
                   ) : (
                     <span className="text-teal-300 font-bold hidden sm:inline">
-                      Gemini AI: Sẵn sàng
+                      Gemini Ready
                     </span>
                   )}
                 </div>
               </button>
 
               {/* Grade Selector */}
-              <select
-                value={selectedGrade}
-                onChange={(e) => setSelectedGrade(parseInt(e.target.value, 10))}
-                className="bg-slate-800 text-white text-xs font-bold px-2.5 py-1.5 rounded-xl border border-slate-700 focus:outline-none focus:ring-2 focus:ring-teal-500 cursor-pointer"
-              >
-                <option value={10}>Lớp 10</option>
-                <option value={11}>Lớp 11</option>
-                <option value={12}>Lớp 12</option>
-              </select>
+              <div className="relative">
+                <select
+                  value={selectedGrade}
+                  onChange={(e) => setSelectedGrade(parseInt(e.target.value, 10))}
+                  className="bg-slate-900 text-teal-300 text-xs font-mono font-bold px-3 py-1.5 rounded-xl border border-slate-700/80 focus:outline-none focus:ring-2 focus:ring-teal-500 cursor-pointer appearance-none pr-7 shadow-xs"
+                >
+                  <option value={10}>10 KNTT</option>
+                  <option value={11}>11 KNTT</option>
+                  <option value={12}>12 KNTT</option>
+                </select>
+                <span className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 text-[10px]">
+                  ▼
+                </span>
+              </div>
 
               {/* Role Switcher */}
-              <div className="flex items-center bg-slate-800 p-0.5 rounded-xl border border-slate-700 text-xs font-bold">
+              <div className="flex items-center bg-slate-900 p-0.5 rounded-xl border border-slate-800 text-xs font-bold">
                 <button
                   onClick={() => setRole('STUDENT')}
-                  className={`px-2 py-1 rounded-lg transition ${
-                    currentRole === 'STUDENT' ? 'bg-teal-500 text-slate-950 shadow-2xs' : 'text-slate-400 hover:text-white'
+                  className={`px-2.5 py-1 rounded-lg transition ${
+                    currentRole === 'STUDENT'
+                      ? 'bg-gradient-to-r from-teal-500 to-emerald-500 text-slate-950 font-extrabold shadow-xs'
+                      : 'text-slate-400 hover:text-white'
                   }`}
                 >
                   Học Sinh
                 </button>
                 <button
                   onClick={() => setRole('TEACHER')}
-                  className={`px-2 py-1 rounded-lg transition ${
-                    currentRole === 'TEACHER' ? 'bg-teal-500 text-slate-950 shadow-2xs' : 'text-slate-400 hover:text-white'
+                  className={`px-2.5 py-1 rounded-lg transition ${
+                    currentRole === 'TEACHER'
+                      ? 'bg-gradient-to-r from-teal-500 to-emerald-500 text-slate-950 font-extrabold shadow-xs'
+                      : 'text-slate-400 hover:text-white'
                   }`}
                 >
                   Giáo Viên

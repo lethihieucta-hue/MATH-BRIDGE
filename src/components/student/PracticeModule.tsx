@@ -47,7 +47,19 @@ export const PracticeModule: React.FC = () => {
     setLoading(true);
     try {
       const data = await apiFetch<Question[]>('/api/questions');
-      setQuestions(data || []);
+      const all = data || [];
+      const filtered = all.filter(
+        (q) =>
+          q.topic_id?.includes(`top-${selectedGrade}`) ||
+          (selectedGrade === 10 && q.id.startsWith('q-1')) ||
+          (selectedGrade === 11 && q.id.startsWith('q-2')) ||
+          (selectedGrade === 12 && q.id.startsWith('q-3'))
+      );
+      const toShow = filtered.length > 0 ? filtered : all;
+      setQuestions(toShow);
+      setCurrentIndex(0);
+      setSelectedOption(null);
+      setResult(null);
     } catch (err) {
       console.error('Error fetching questions:', err);
     } finally {

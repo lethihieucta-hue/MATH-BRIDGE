@@ -56,7 +56,15 @@ export const VocabularyModule: React.FC = () => {
 
     try {
       const data = await apiFetch<VocabularyItem[]>(url);
-      setVocabList(data || []);
+      const all = data || [];
+      const filtered = all.filter(
+        (v) =>
+          v.topic_id?.includes(`top-${selectedGrade}`) ||
+          v.id?.includes(`voc-${selectedGrade}-`) ||
+          !v.topic_id
+      );
+      const toShow = filtered.length > 0 ? filtered : all;
+      setVocabList(toShow);
     } catch (err) {
       console.error('Error fetching vocabulary:', err);
     } finally {

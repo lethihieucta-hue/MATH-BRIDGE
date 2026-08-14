@@ -33,8 +33,16 @@ export const BilingualLessonModule: React.FC = () => {
     setLoading(true);
     try {
       const data = await apiFetch<Lesson[]>('/api/lessons');
-      setLessons(data || []);
-      if (data && data.length > 0) setActiveLesson(data[0]);
+      const all = data || [];
+      const filtered = all.filter(
+        (l) =>
+          l.topic_id?.includes(`top-${selectedGrade}`) ||
+          l.id?.includes(`-${selectedGrade}-`) ||
+          l.id?.includes(`les-${selectedGrade}`)
+      );
+      const toShow = filtered.length > 0 ? filtered : all;
+      setLessons(toShow);
+      if (toShow.length > 0) setActiveLesson(toShow[0]);
     } catch (err) {
       console.error('Error fetching lessons:', err);
     } finally {
