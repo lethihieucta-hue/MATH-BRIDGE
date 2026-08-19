@@ -44,9 +44,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   });
 
   const [currentRole, setRoleState] = useState<Role>('STUDENT');
-  const [activeTab, setActiveTab] = useState<string>('dashboard');
-  const [selectedGrade, setSelectedGrade] = useState<number>(10);
-  const [selectedLessonId, setSelectedLessonId] = useState<string | null>('les-10-6-2');
+  const [activeTab, setActiveTab] = useState<string>('learn');
+  const [selectedGrade, setSelectedGrade] = useState<number>(12);
+  const [selectedLessonId, setSelectedLessonId] = useState<string | null>('les-12-1-1');
   const [selectedLessonSubTab, setSelectedLessonSubTab] = useState<string>('theory');
   const [languageMode, setLanguageMode] = useState<LanguageMode>('BILINGUAL');
   const [currentLevel, setCurrentLevel] = useState<MathEnglishLevel>(2);

@@ -35,7 +35,13 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
   setActiveTab: propSetActiveTab,
   setSelectedTopicId,
 }) => {
-  const { user, selectedGrade, currentLevel, setActiveTab: storeSetActiveTab } = useAppStore();
+  const {
+    user,
+    selectedGrade,
+    currentLevel,
+    setActiveTab: storeSetActiveTab,
+    setSelectedLessonSubTab,
+  } = useAppStore();
   const setActiveTab = propSetActiveTab || storeSetActiveTab;
   const [summary, setSummary] = useState<any>(null);
   const [loading, setLoading] = useState(true);

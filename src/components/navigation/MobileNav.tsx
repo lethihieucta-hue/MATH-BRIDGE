@@ -2,26 +2,22 @@ import React from 'react';
 import { useAppStore } from '../../lib/store';
 import {
   Home,
-  BookMarked,
-  Layers,
   BookOpen,
-  FileQuestion,
-  Sparkles,
   GraduationCap,
-  BarChart3,
-  User,
   Activity,
+  FileQuestion,
+  Layers,
 } from 'lucide-react';
 
 export const MobileNav: React.FC = () => {
-  const { currentRole, activeTab, setActiveTab, selectedLessonSubTab, setSelectedLessonSubTab } = useAppStore();
+  const { currentRole, activeTab, setActiveTab } = useAppStore();
 
   if (currentRole === 'TEACHER') {
     return (
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#0B0F19]/95 backdrop-blur-xl border-t border-slate-800/80 px-2 py-2 flex justify-around items-center text-slate-400 shadow-2xl">
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#111322]/95 backdrop-blur-xl border-t border-slate-800 px-2 py-2 flex justify-around items-center text-slate-400 shadow-2xl">
         <button
           onClick={() => setActiveTab('teacher-dashboard')}
-          className={`flex flex-col items-center gap-0.5 text-[10px] font-bold transition ${
+          className={`flex flex-col items-center gap-0.5 text-[10px] font-bold transition cursor-pointer ${
             activeTab === 'teacher-dashboard' ? 'text-teal-400 font-black' : 'hover:text-slate-200'
           }`}
         >
@@ -31,7 +27,7 @@ export const MobileNav: React.FC = () => {
 
         <button
           onClick={() => setActiveTab('question-bank')}
-          className={`flex flex-col items-center gap-0.5 text-[10px] font-bold transition ${
+          className={`flex flex-col items-center gap-0.5 text-[10px] font-bold transition cursor-pointer ${
             activeTab === 'question-bank' ? 'text-teal-400 font-black' : 'hover:text-slate-200'
           }`}
         >
@@ -41,7 +37,7 @@ export const MobileNav: React.FC = () => {
 
         <button
           onClick={() => setActiveTab('content-studio')}
-          className={`flex flex-col items-center gap-0.5 text-[10px] font-bold transition ${
+          className={`flex flex-col items-center gap-0.5 text-[10px] font-bold transition cursor-pointer ${
             activeTab === 'content-studio' ? 'text-teal-400 font-black' : 'hover:text-slate-200'
           }`}
         >
@@ -50,22 +46,12 @@ export const MobileNav: React.FC = () => {
         </button>
 
         <button
-          onClick={() => setActiveTab('test-builder')}
-          className={`flex flex-col items-center gap-0.5 text-[10px] font-bold transition ${
-            activeTab === 'test-builder' ? 'text-teal-400 font-black' : 'hover:text-slate-200'
-          }`}
-        >
-          <GraduationCap className="w-5 h-5" />
-          <span>Tạo Đề %</span>
-        </button>
-
-        <button
           onClick={() => setActiveTab('teacher-analytics')}
-          className={`flex flex-col items-center gap-0.5 text-[10px] font-bold transition ${
+          className={`flex flex-col items-center gap-0.5 text-[10px] font-bold transition cursor-pointer ${
             activeTab === 'teacher-analytics' ? 'text-teal-400 font-black' : 'hover:text-slate-200'
           }`}
         >
-          <BarChart3 className="w-5 h-5" />
+          <Activity className="w-5 h-5" />
           <span>Phân Tích</span>
         </button>
       </div>
@@ -73,11 +59,21 @@ export const MobileNav: React.FC = () => {
   }
 
   return (
-    <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#0B0F19]/95 backdrop-blur-xl border-t border-slate-800/80 px-2 py-2 flex justify-around items-center text-slate-400 shadow-2xl">
+    <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#111322]/95 backdrop-blur-xl border-t border-slate-800 px-2 py-2 flex justify-around items-center text-slate-400 shadow-2xl">
+      <button
+        onClick={() => setActiveTab('learn')}
+        className={`flex flex-col items-center gap-0.5 text-[10px] font-bold transition cursor-pointer ${
+          activeTab === 'learn' ? 'text-violet-400 font-black' : 'hover:text-slate-200'
+        }`}
+      >
+        <BookOpen className="w-5 h-5" />
+        <span>Chuyên Đề</span>
+      </button>
+
       <button
         onClick={() => setActiveTab('dashboard')}
-        className={`flex flex-col items-center gap-0.5 text-[10px] font-bold transition ${
-          activeTab === 'dashboard' ? 'text-teal-400 font-black' : 'hover:text-slate-200'
+        className={`flex flex-col items-center gap-0.5 text-[10px] font-bold transition cursor-pointer ${
+          activeTab === 'dashboard' ? 'text-violet-400 font-black' : 'hover:text-slate-200'
         }`}
       >
         <Home className="w-5 h-5" />
@@ -85,61 +81,19 @@ export const MobileNav: React.FC = () => {
       </button>
 
       <button
-        onClick={() => {
-          setSelectedLessonSubTab('vocab');
-          setActiveTab('learn');
-        }}
-        className={`flex flex-col items-center gap-0.5 text-[10px] font-bold transition ${
-          activeTab === 'learn' && selectedLessonSubTab === 'vocab' ? 'text-teal-400 font-black' : 'hover:text-slate-200'
+        onClick={() => setActiveTab('tests')}
+        className={`flex flex-col items-center gap-0.5 text-[10px] font-bold transition cursor-pointer ${
+          activeTab === 'tests' ? 'text-violet-400 font-black' : 'hover:text-slate-200'
         }`}
       >
-        <BookMarked className="w-5 h-5" />
-        <span>Từ Vựng</span>
-      </button>
-
-      <button
-        onClick={() => {
-          setSelectedLessonSubTab('theory');
-          setActiveTab('learn');
-        }}
-        className={`flex flex-col items-center gap-0.5 text-[10px] font-bold transition ${
-          activeTab === 'learn' && selectedLessonSubTab === 'theory' ? 'text-teal-400 font-black' : 'hover:text-slate-200'
-        }`}
-      >
-        <BookOpen className="w-5 h-5" />
-        <span>Bài Học</span>
-      </button>
-
-      <button
-        onClick={() => {
-          setSelectedLessonSubTab('grapher');
-          setActiveTab('learn');
-        }}
-        className={`flex flex-col items-center gap-0.5 text-[10px] font-bold transition ${
-          activeTab === 'learn' && selectedLessonSubTab === 'grapher' ? 'text-teal-400 font-black' : 'hover:text-slate-200'
-        }`}
-      >
-        <span className="text-xs font-mono font-bold">f(x)</span>
-        <span>Đồ Thị</span>
-      </button>
-
-      <button
-        onClick={() => {
-          setSelectedLessonSubTab('practice');
-          setActiveTab('learn');
-        }}
-        className={`flex flex-col items-center gap-0.5 text-[10px] font-bold transition ${
-          activeTab === 'learn' && selectedLessonSubTab === 'practice' ? 'text-teal-400 font-black' : 'hover:text-slate-200'
-        }`}
-      >
-        <Sparkles className="w-5 h-5" />
-        <span>Luyện Tập</span>
+        <GraduationCap className="w-5 h-5" />
+        <span>Kiểm Tra</span>
       </button>
 
       <button
         onClick={() => setActiveTab('progress')}
-        className={`flex flex-col items-center gap-0.5 text-[10px] font-bold transition ${
-          activeTab === 'progress' ? 'text-teal-400 font-black' : 'hover:text-slate-200'
+        className={`flex flex-col items-center gap-0.5 text-[10px] font-bold transition cursor-pointer ${
+          activeTab === 'progress' ? 'text-violet-400 font-black' : 'hover:text-slate-200'
         }`}
       >
         <Activity className="w-5 h-5" />

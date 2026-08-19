@@ -1,5 +1,6 @@
 /**
  * MATH-BRIDGE Types & Interfaces
+ * Comprehensive Bilingual Mathematics for Vietnamese High Schools (GDPT 2018)
  */
 
 export type UserRole = 'student' | 'teacher' | 'admin';
@@ -8,7 +9,7 @@ export type MathEnglishLevel = 1 | 2 | 3 | 4 | 5;
 
 export type LanguageMode = 'VIETNAMESE' | 'BILINGUAL' | 'ENGLISH';
 
-export type QuestionType = 'MCQ' | 'TRUE_FALSE' | 'SHORT' | 'NUMERIC';
+export type QuestionType = 'MCQ' | 'TRUE_FALSE' | 'SHORT' | 'NUMERIC' | 'ESSAY';
 
 export type QuestionDifficulty = 'EASY' | 'MEDIUM' | 'HARD';
 
@@ -78,6 +79,21 @@ export interface Topic {
   order_index: number;
 }
 
+export interface MathType {
+  id: string;
+  lesson_id: string;
+  code: string; // "Dạng 1", "Dạng 2"...
+  title_vi: string;
+  title_en: string;
+  description_vi?: string;
+  description_en?: string;
+  order_index: number;
+  sample_count_tn?: number;
+  sample_count_ds?: number;
+  sample_count_tln?: number;
+  sample_count_tl?: number;
+}
+
 export interface VocabularyItem {
   id: string;
   topic_id: string;
@@ -107,23 +123,45 @@ export interface SentencePattern {
   usage_note?: string;
 }
 
+export interface SolutionStep {
+  step_number: number;
+  title_vi: string;
+  title_en: string;
+  content_vi: string;
+  content_en: string;
+  formula?: string;
+}
+
+export interface WorkedExample {
+  id?: string;
+  type_id?: string;
+  type_code?: string; // "Dạng 1", "Dạng 2"...
+  title_vi: string;
+  title_en: string;
+  problem_vi: string;
+  problem_en: string;
+  solution_vi?: string;
+  solution_en?: string;
+  solution_steps?: SolutionStep[];
+  conclusion_vi?: string;
+  conclusion_en?: string;
+  key_steps?: string[];
+}
+
 export interface Lesson {
   id: string;
+  chapter_id?: string;
   topic_id: string;
   title_vi: string;
   title_en: string;
+  order_index?: number;
   learning_objectives: string[];
-  vocabulary_list: string[]; // word IDs or words
+  vocabulary_list: string[];
   key_concepts_vi: string;
   key_concepts_en: string;
   formulas: string[];
-  worked_examples: {
-    problem_en: string;
-    problem_vi: string;
-    solution_en: string;
-    solution_vi: string;
-    key_steps: string[];
-  }[];
+  types?: MathType[];
+  worked_examples: WorkedExample[];
   quick_quiz_questions?: string[];
   status: ContentStatus;
   language_level: MathEnglishLevel;
@@ -141,7 +179,9 @@ export interface QuestionOption {
 export interface Question {
   id: string;
   topic_id: string;
+  type_id?: string;
   question_type: QuestionType;
+  format_type?: 'TN' | 'DS' | 'TLN' | 'TL';
   difficulty: QuestionDifficulty;
   language_level: MathEnglishLevel;
   question_vi: string;
@@ -163,13 +203,34 @@ export interface Question {
   required_info?: string;
 }
 
+export interface SelectedTypeCountConfig {
+  type_id: string;
+  type_code: string;
+  title_vi: string;
+  title_en: string;
+  tn_count: number;
+  ds_count: number;
+  tln_count: number;
+  tl_count: number;
+}
+
+export interface WorksheetExportConfig {
+  exportPreset: 'EXERCISE' | 'THEMATIC' | 'WORKSHEET' | 'OUTLINE';
+  documentTitle: string;
+  includeTheorySummary: boolean;
+  includeWorkedExamples: boolean;
+  includeAnswerKeyTable: boolean;
+  includeDetailedSolutions: boolean;
+  bilingualMode: boolean;
+}
+
 export interface PracticeAttempt {
   id: string;
   student_id: string;
   question_id: string;
   student_answer: string;
   is_correct: boolean;
-  response_time: number; // in seconds
+  response_time: number;
   language_mode: LanguageMode;
   hint_count: number;
   error_type?: ErrorClassification;
@@ -183,7 +244,7 @@ export interface Test {
   teacher_id: string;
   teacher_name?: string;
   duration_minutes: number;
-  english_ratio: number; // 10 to 100%
+  english_ratio: number;
   start_at?: string;
   end_at?: string;
   max_attempts: number;
@@ -239,11 +300,11 @@ export interface StudentLevel {
 export interface MEIScore {
   id: string;
   student_id: string;
-  vocabulary_score: number; // V (0-100)
-  reading_score: number; // R (0-100)
-  problem_solving_score: number; // P (0-100)
-  expression_score: number; // E (0-100)
-  mei_score: number; // 0.25V + 0.25R + 0.30P + 0.20E
+  vocabulary_score: number;
+  reading_score: number;
+  problem_solving_score: number;
+  expression_score: number;
+  mei_score: number;
   calculated_at: string;
 }
 
