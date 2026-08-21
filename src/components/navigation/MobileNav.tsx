@@ -16,19 +16,19 @@ export const MobileNav: React.FC = () => {
     return (
       <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#111322]/95 backdrop-blur-xl border-t border-slate-800 px-2 py-2 flex justify-around items-center text-slate-400 shadow-2xl">
         <button
-          onClick={() => setActiveTab('teacher-dashboard')}
+          onClick={() => setActiveTab('learn')}
           className={`flex flex-col items-center gap-0.5 text-[10px] font-bold transition cursor-pointer ${
-            activeTab === 'teacher-dashboard' ? 'text-teal-400 font-black' : 'hover:text-slate-200'
+            activeTab === 'learn' ? 'text-violet-400 font-black' : 'hover:text-slate-200'
           }`}
         >
-          <Home className="w-5 h-5" />
-          <span>Lớp Học</span>
+          <BookOpen className="w-5 h-5" />
+          <span>Soạn Phiếu</span>
         </button>
 
         <button
           onClick={() => setActiveTab('question-bank')}
           className={`flex flex-col items-center gap-0.5 text-[10px] font-bold transition cursor-pointer ${
-            activeTab === 'question-bank' ? 'text-teal-400 font-black' : 'hover:text-slate-200'
+            activeTab === 'question-bank' ? 'text-violet-400 font-black' : 'hover:text-slate-200'
           }`}
         >
           <FileQuestion className="w-5 h-5" />
@@ -38,21 +38,31 @@ export const MobileNav: React.FC = () => {
         <button
           onClick={() => setActiveTab('content-studio')}
           className={`flex flex-col items-center gap-0.5 text-[10px] font-bold transition cursor-pointer ${
-            activeTab === 'content-studio' ? 'text-teal-400 font-black' : 'hover:text-slate-200'
+            activeTab === 'content-studio' ? 'text-violet-400 font-black' : 'hover:text-slate-200'
           }`}
         >
-          <BookOpen className="w-5 h-5" />
+          <Layers className="w-5 h-5" />
           <span>Biên Soạn AI</span>
         </button>
 
         <button
-          onClick={() => setActiveTab('teacher-analytics')}
+          onClick={() => setActiveTab('test-builder')}
           className={`flex flex-col items-center gap-0.5 text-[10px] font-bold transition cursor-pointer ${
-            activeTab === 'teacher-analytics' ? 'text-teal-400 font-black' : 'hover:text-slate-200'
+            activeTab === 'test-builder' ? 'text-violet-400 font-black' : 'hover:text-slate-200'
           }`}
         >
-          <Activity className="w-5 h-5" />
-          <span>Phân Tích</span>
+          <GraduationCap className="w-5 h-5" />
+          <span>Tạo Đề</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('teacher-dashboard')}
+          className={`flex flex-col items-center gap-0.5 text-[10px] font-bold transition cursor-pointer ${
+            activeTab === 'teacher-dashboard' ? 'text-violet-400 font-black' : 'hover:text-slate-200'
+          }`}
+        >
+          <Home className="w-5 h-5" />
+          <span>Lớp Học</span>
         </button>
       </div>
     );

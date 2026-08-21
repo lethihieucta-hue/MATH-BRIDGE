@@ -90,97 +90,71 @@ export const Header: React.FC = () => {
               })}
             </div>
 
-            {/* Center-Right: Navigation Tabs */}
-            <nav className="hidden 2xl:flex items-center space-x-1 bg-[#1E2238]/90 p-1 rounded-2xl border border-slate-700/60 text-xs font-bold shadow-inner">
-              {currentRole === 'STUDENT' ? (
-                <>
-                  <button
-                    onClick={() => {
-                      setSelectedLessonSubTab('theory');
-                      setActiveTab('learn');
-                    }}
-                    className={`px-3 py-1.5 rounded-xl transition cursor-pointer flex items-center gap-1.5 ${
-                      activeTab === 'learn'
-                        ? 'bg-gradient-to-r from-teal-500 to-emerald-500 text-slate-950 font-extrabold shadow-xs'
-                        : 'text-slate-300 hover:text-white hover:bg-slate-800/60'
-                    }`}
-                  >
-                    <BookOpen className="w-3.5 h-3.5" />
-                    <span>Bài Học (Chuyên Đề)</span>
-                  </button>
-                  <button
-                    onClick={() => setActiveTab('dashboard')}
-                    className={`px-3 py-1.5 rounded-xl transition flex items-center gap-1.5 cursor-pointer ${
-                      activeTab === 'dashboard'
-                        ? 'bg-gradient-to-r from-teal-500 to-emerald-500 text-slate-950 font-extrabold shadow-xs'
-                        : 'text-slate-300 hover:text-white hover:bg-slate-800/60'
-                    }`}
-                  >
-                    <Compass className="w-3.5 h-3.5" />
-                    <span>Tổng Quan</span>
-                  </button>
-                  <button
-                    onClick={() => setActiveTab('tests')}
-                    className={`px-3 py-1.5 rounded-xl transition cursor-pointer flex items-center gap-1.5 ${
-                      activeTab === 'tests'
-                        ? 'bg-gradient-to-r from-teal-500 to-emerald-500 text-slate-950 font-extrabold shadow-xs'
-                        : 'text-slate-300 hover:text-white hover:bg-slate-800/60'
-                    }`}
-                  >
-                    <GraduationCap className="w-3.5 h-3.5" />
-                    <span>Kiểm Tra</span>
-                  </button>
-                  <button
-                    onClick={() => setActiveTab('progress')}
-                    className={`px-3 py-1.5 rounded-xl transition cursor-pointer flex items-center gap-1.5 ${
-                      activeTab === 'progress'
-                        ? 'bg-gradient-to-r from-teal-500 to-emerald-500 text-slate-950 font-extrabold shadow-xs'
-                        : 'text-slate-300 hover:text-white hover:bg-slate-800/60'
-                    }`}
-                  >
-                    <Activity className="w-3.5 h-3.5" />
-                    <span>Radar MEI</span>
-                  </button>
-                </>
-              ) : (
-                <>
-                  <button
-                    onClick={() => setActiveTab('teacher-dashboard')}
-                    className={`px-3.5 py-1.5 rounded-xl transition ${
-                      activeTab === 'teacher-dashboard'
-                        ? 'bg-gradient-to-r from-teal-500 to-emerald-500 text-slate-950 font-extrabold'
-                        : 'text-slate-300 hover:text-white'
-                    }`}
-                  >
-                    Lớp Học
-                  </button>
-                  <button
-                    onClick={() => setActiveTab('question-bank')}
-                    className={`px-3.5 py-1.5 rounded-xl transition ${
-                      activeTab === 'question-bank'
-                        ? 'bg-gradient-to-r from-teal-500 to-emerald-500 text-slate-950 font-extrabold'
-                        : 'text-slate-300 hover:text-white'
-                    }`}
-                  >
-                    Ngân Hàng Đề
-                  </button>
-                  <button
-                    onClick={() => setActiveTab('content-studio')}
-                    className={`px-3.5 py-1.5 rounded-xl transition ${
-                      activeTab === 'content-studio'
-                        ? 'bg-gradient-to-r from-teal-500 to-emerald-500 text-slate-950 font-extrabold'
-                        : 'text-slate-300 hover:text-white'
-                    }`}
-                  >
-                    Biên Soạn AI
-                  </button>
-                </>
-              )}
+            {/* Center-Right: Navigation Tabs specifically for Teachers */}
+            <nav className="hidden lg:flex items-center space-x-1 bg-[#1E2238]/90 p-1 rounded-2xl border border-slate-700/60 text-xs font-bold shadow-inner">
+              <button
+                onClick={() => {
+                  setSelectedLessonSubTab('theory');
+                  setActiveTab('learn');
+                }}
+                className={`px-3.5 py-1.5 rounded-xl transition cursor-pointer flex items-center gap-1.5 ${
+                  activeTab === 'learn'
+                    ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-extrabold shadow-xs'
+                    : 'text-slate-300 hover:text-white hover:bg-slate-800/60'
+                }`}
+              >
+                <BookOpen className="w-3.5 h-3.5" />
+                <span>Soạn Phiếu & Chuyên Đề</span>
+              </button>
+              <button
+                onClick={() => setActiveTab('question-bank')}
+                className={`px-3.5 py-1.5 rounded-xl transition cursor-pointer flex items-center gap-1.5 ${
+                  activeTab === 'question-bank'
+                    ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-extrabold shadow-xs'
+                    : 'text-slate-300 hover:text-white hover:bg-slate-800/60'
+                }`}
+              >
+                <FileQuestion className="w-3.5 h-3.5" />
+                <span>Ngân Hàng Đề</span>
+              </button>
+              <button
+                onClick={() => setActiveTab('content-studio')}
+                className={`px-3.5 py-1.5 rounded-xl transition cursor-pointer flex items-center gap-1.5 ${
+                  activeTab === 'content-studio'
+                    ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-extrabold shadow-xs'
+                    : 'text-slate-300 hover:text-white hover:bg-slate-800/60'
+                }`}
+              >
+                <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+                <span>Biên Soạn AI</span>
+              </button>
+              <button
+                onClick={() => setActiveTab('test-builder')}
+                className={`px-3.5 py-1.5 rounded-xl transition cursor-pointer flex items-center gap-1.5 ${
+                  activeTab === 'test-builder'
+                    ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-extrabold shadow-xs'
+                    : 'text-slate-300 hover:text-white hover:bg-slate-800/60'
+                }`}
+              >
+                <GraduationCap className="w-3.5 h-3.5" />
+                <span>Tạo Bài Test</span>
+              </button>
+              <button
+                onClick={() => setActiveTab('teacher-dashboard')}
+                className={`px-3.5 py-1.5 rounded-xl transition cursor-pointer flex items-center gap-1.5 ${
+                  activeTab === 'teacher-dashboard'
+                    ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-extrabold shadow-xs'
+                    : 'text-slate-300 hover:text-white hover:bg-slate-800/60'
+                }`}
+              >
+                <Compass className="w-3.5 h-3.5" />
+                <span>Quản Lý Lớp</span>
+              </button>
             </nav>
 
-            {/* Right: Author Info & Controls */}
+            {/* Right: Author Info & Gemini Controls */}
             <div className="flex items-center gap-2.5">
-              {/* Author & Contact Info as requested */}
+              {/* Author & Contact Info */}
               <div className="hidden xl:flex flex-col items-end text-right pr-2 border-r border-slate-800">
                 <div className="text-xs font-bold text-slate-200 flex items-center gap-1.5">
                   <span className="text-slate-400">Tác giả:</span>
@@ -216,34 +190,10 @@ export const Header: React.FC = () => {
                     }`}
                   />
                 </div>
-                <span className="hidden lg:inline text-[11px] font-bold">
+                <span className="hidden sm:inline text-[11px] font-bold">
                   {apiKeyConfigured ? 'Gemini Ready' : 'Cài API Key'}
                 </span>
               </button>
-
-              {/* Role Switcher */}
-              <div className="flex items-center bg-[#1E2238] p-0.5 rounded-xl border border-slate-700 text-xs font-bold">
-                <button
-                  onClick={() => setRole('STUDENT')}
-                  className={`px-2.5 py-1 rounded-lg transition cursor-pointer ${
-                    currentRole === 'STUDENT'
-                      ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-extrabold shadow-xs'
-                      : 'text-slate-400 hover:text-white'
-                  }`}
-                >
-                  Học Sinh
-                </button>
-                <button
-                  onClick={() => setRole('TEACHER')}
-                  className={`px-2.5 py-1 rounded-lg transition cursor-pointer ${
-                    currentRole === 'TEACHER'
-                      ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-extrabold shadow-xs'
-                      : 'text-slate-400 hover:text-white'
-                  }`}
-                >
-                  Giáo Viên
-                </button>
-              </div>
             </div>
           </div>
         </div>

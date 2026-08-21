@@ -32,32 +32,32 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<UserProfile | null>({
-    id: 'usr-student-1',
-    full_name: 'Nguyễn Văn An',
-    email: 'student@mathbridge.edu.vn',
-    role: 'student',
+    id: 'usr-teacher-1',
+    full_name: 'Lê Thị Hiếu',
+    email: 'lehieu@thptchauthanha.edu.vn',
+    role: 'teacher',
     school_name: 'THPT Châu Thành A',
-    grade_id: 10,
-    current_level: 2,
-    xp: 450,
-    streak_days: 5,
+    grade_id: 12,
+    current_level: 3,
+    xp: 2500,
+    streak_days: 30,
   });
 
-  const [currentRole, setRoleState] = useState<Role>('STUDENT');
+  const [currentRole, setRoleState] = useState<Role>('TEACHER');
   const [activeTab, setActiveTab] = useState<string>('learn');
   const [selectedGrade, setSelectedGrade] = useState<number>(12);
   const [selectedLessonId, setSelectedLessonId] = useState<string | null>('les-12-1-1');
   const [selectedLessonSubTab, setSelectedLessonSubTab] = useState<string>('theory');
   const [languageMode, setLanguageMode] = useState<LanguageMode>('BILINGUAL');
-  const [currentLevel, setCurrentLevel] = useState<MathEnglishLevel>(2);
+  const [currentLevel, setCurrentLevel] = useState<MathEnglishLevel>(3);
   const [notification, setNotification] = useState<string | null>(null);
 
   const setRole = (role: Role) => {
     setRoleState(role);
     if (role === 'TEACHER') {
-      setActiveTab('teacher-dashboard');
+      setActiveTab('learn');
     } else {
-      setActiveTab('dashboard');
+      setActiveTab('learn');
     }
   };
 

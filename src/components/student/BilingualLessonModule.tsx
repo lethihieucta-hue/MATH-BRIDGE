@@ -459,9 +459,9 @@ export const BilingualLessonModule: React.FC = () => {
   });
 
   // Calculate total counts for stats header
-  const totalChaptersCount = chapters.length || 6;
-  const totalLessonsCount = lessons.length || 19;
-  const totalTypesCount = 57;
+  const totalChaptersCount = chapters.length;
+  const totalLessonsCount = lessons.length;
+  const totalTypesCount = lessons.reduce((acc, l) => acc + (l.types?.length || 0), 0);
 
   // Selected types list for right sidebar
   const selectedTypesList = (activeLesson?.types || []).filter((t) => selectedTypeIds.includes(t.id));
