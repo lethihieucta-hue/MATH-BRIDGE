@@ -4,6 +4,7 @@ import { Chapter, Lesson, MathType, WorkedExample, Question, LanguageMode } from
 import { MathRenderer } from '../math/MathRenderer';
 import { speakEnglishWord } from '../../lib/audio';
 import { apiFetch } from '../../lib/dataService';
+import { generateCompleteLessonWorksheetAi, hasApiKey } from '../../lib/geminiService';
 import {
   BookOpen,
   Search,
@@ -30,6 +31,9 @@ import {
   Clock,
   PlayCircle,
   RotateCcw,
+  Loader2,
+  Bot,
+  Wand2,
 } from 'lucide-react';
 
 export const BilingualLessonModule: React.FC = () => {
@@ -48,6 +52,7 @@ export const BilingualLessonModule: React.FC = () => {
   const [lessons, setLessons] = useState<Lesson[]>([]);
   const [allQuestions, setAllQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isAiGeneratingWorksheet, setIsAiGeneratingWorksheet] = useState(false);
 
   // Active Selection States
   const [activeChapterId, setActiveChapterId] = useState<string | null>(null);
@@ -97,20 +102,20 @@ export const BilingualLessonModule: React.FC = () => {
       setChapters(gradeChapters);
       setAllQuestions(questionsData || []);
 
-      // Filter lessons belonging to this grade
+      const gradeChapterIds = gradeChapters.map((c) => c.id);
       const gradeLessons = (lessonsData || []).filter(
-        (l) => l.chapter_id?.includes(`-${selectedGrade}-`) || l.id.includes(`-${selectedGrade}-`) || l.topic_id?.includes(`top-${selectedGrade}`)
+        (l) => (l.chapter_id && gradeChapterIds.includes(l.chapter_id)) || l.id.includes(`-${selectedGrade}-`) || l.topic_id?.includes(`top-${selectedGrade}`)
       );
-      setLessons(gradeLessons.length > 0 ? gradeLessons : lessonsData || []);
+      setLessons(gradeLessons);
 
-      // Expand first chapter by default
+      // Expand all chapters by default
       if (gradeChapters.length > 0) {
         setExpandedChapterIds(gradeChapters.map((c) => c.id));
         setActiveChapterId(gradeChapters[0].id);
       }
 
       // Pick target active lesson
-      let targetLesson = gradeLessons[0] || lessonsData?.[0] || null;
+      let targetLesson = gradeLessons[0] || null;
       if (selectedLessonId) {
         const found = gradeLessons.find((l) => l.id === selectedLessonId);
         if (found) targetLesson = found;
@@ -120,7 +125,7 @@ export const BilingualLessonModule: React.FC = () => {
       if (targetLesson) {
         setSelectedLessonId(targetLesson.id);
         // Default select all types of this lesson
-        const typeIds = targetLesson.types?.map((t) => t.id) || ['type-12-1-1', 'type-12-1-2', 'type-12-1-3'];
+        const typeIds = targetLesson.types?.map((t) => t.id) || [];
         setSelectedTypeIds(typeIds);
 
         const initCounts: Record<string, { tn: number; ds: number; tln: number; tl: number }> = {};
@@ -128,6 +133,9 @@ export const BilingualLessonModule: React.FC = () => {
           initCounts[tId] = { tn: 2, ds: 1, tln: 1, tl: 1 };
         });
         setTypeQuestionCounts(initCounts);
+      } else {
+        setSelectedTypeIds([]);
+        setTypeQuestionCounts({});
       }
 
       setDocumentTitle(`PHIẾU BÀI TẬP TOÁN ${selectedGrade}`);
@@ -135,6 +143,122 @@ export const BilingualLessonModule: React.FC = () => {
       console.error('Error loading curriculum data:', e);
     } finally {
       setLoading(false);
+    }
+  };
+
+  // AI Auto-Generate Worksheet for Active Lesson
+  const handleAiGenerateWorksheet = async () => {
+    if (!activeLesson) return;
+    if (!hasApiKey()) {
+      showNotification('⚠️ Vui lòng nhấn vào nút Settings trên Header để nhập API Key Google AI Studio trước khi sinh bài tập!');
+      return;
+    }
+
+    const activeChap = chapters.find((c) => c.id === activeLesson.chapter_id);
+    const chapterName = activeChap ? activeChap.name_vi : `Toán Lớp ${selectedGrade}`;
+
+    setIsAiGeneratingWorksheet(true);
+    showNotification(`🤖 AI Gemini đang soạn thảo toàn bộ phiếu học tập song ngữ cho "${activeLesson.title_vi}"...`);
+
+    try {
+      const result = await generateCompleteLessonWorksheetAi(
+        activeLesson.title_vi,
+        chapterName,
+        selectedGrade
+      );
+
+      if (!result.success) {
+        showNotification(`❌ Lỗi AI: ${result.rawError || result.error || 'Không thể sinh bài tập'}`);
+        return;
+      }
+
+      const jsonMatch = result.content.match(/\{[\s\S]*\}/);
+      if (!jsonMatch) {
+        showNotification('❌ Mô hình không trả về định dạng JSON hợp lệ.');
+        return;
+      }
+
+      const data = JSON.parse(jsonMatch[0]);
+
+      // Update active lesson with AI data
+      const updatedLesson: Lesson = {
+        ...activeLesson,
+        key_concepts_vi: data.key_concepts_vi || activeLesson.key_concepts_vi,
+        key_concepts_en: data.key_concepts_en || activeLesson.key_concepts_en,
+        formulas: data.formulas || activeLesson.formulas || [],
+        vocabulary_list: data.vocabulary_terms
+          ? data.vocabulary_terms.map((v: any) => `${v.word} (${v.meaning || ''})`)
+          : activeLesson.vocabulary_list,
+        types: data.types
+          ? data.types.map((t: any, idx: number) => ({
+              id: `type-ai-${activeLesson.id}-${idx + 1}`,
+              lesson_id: activeLesson.id,
+              code: t.code || `Dạng ${idx + 1}`,
+              title_vi: t.title_vi || 'Dạng toán',
+              title_en: t.title_en || 'Math Type',
+              order_index: idx + 1,
+            }))
+          : activeLesson.types,
+        worked_examples: data.worked_examples
+          ? data.worked_examples.map((we: any, idx: number) => ({
+              id: `we-ai-${activeLesson.id}-${idx + 1}`,
+              type_id: `type-ai-${activeLesson.id}-1`,
+              type_code: we.type_code || `Dạng ${idx + 1}`,
+              title_vi: we.title_vi || `Ví dụ ${idx + 1}`,
+              title_en: we.title_en || `Example ${idx + 1}`,
+              problem_vi: we.problem_vi || '',
+              problem_en: we.problem_en || '',
+              solution_vi: we.solution_vi || '',
+              solution_en: we.solution_en || '',
+            }))
+          : activeLesson.worked_examples,
+      };
+
+      // Save updated lesson to DB
+      await apiFetch('/api/lessons', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedLesson),
+      });
+
+      // Save questions to DB
+      if (data.questions && Array.isArray(data.questions)) {
+        for (let i = 0; i < data.questions.length; i++) {
+          const q = data.questions[i];
+          const newQ = {
+            topic_id: activeLesson.topic_id || `top-${activeLesson.id}`,
+            type_id: updatedLesson.types?.[0]?.id,
+            question_type: q.question_type || 'MCQ',
+            format_type: q.format_type || 'TN',
+            difficulty: 'MEDIUM',
+            language_level: 2,
+            question_vi: q.question_vi || '',
+            question_en: q.question_en || '',
+            options: q.options || [],
+            solution_vi: q.solution_vi || 'Lời giải chi tiết',
+            solution_en: q.solution_en || 'Detailed solution',
+            correct_answer: q.correct_answer || 'A',
+            math_skill: activeLesson.title_vi,
+            english_skill: activeLesson.title_en,
+            status: 'PUBLISHED',
+            created_by: 'usr-teacher-1',
+          };
+          await apiFetch('/api/questions', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(newQ),
+          });
+        }
+      }
+
+      await loadCurriculumData();
+      setActiveLesson(updatedLesson);
+      showNotification(`✨ AI Gemini đã biên soạn thành công toàn bộ phiếu học tập cho: ${activeLesson.title_vi}!`);
+    } catch (err: any) {
+      console.error('Error generating worksheet:', err);
+      showNotification(`❌ Lỗi phân tích: ${err.message}`);
+    } finally {
+      setIsAiGeneratingWorksheet(false);
     }
   };
 
@@ -223,10 +347,20 @@ export const BilingualLessonModule: React.FC = () => {
     window.print();
   };
 
+  // Filter questions for the active lesson
+  const displayedQuestions = allQuestions.filter((q) => {
+    if (!activeLesson) return false;
+    if (q.topic_id && activeLesson.topic_id && q.topic_id === activeLesson.topic_id) return true;
+    if (q.id && activeLesson.id && q.id.includes(activeLesson.id.replace('les-', 'q-'))) return true;
+    if (q.type_id && selectedTypeIds.includes(q.type_id)) return true;
+    if (activeLesson.types && activeLesson.types.some((t) => t.id === q.type_id)) return true;
+    return false;
+  });
+
   // Export Action: Copy Word Text
   const handleCopyWord = () => {
     let content = `=========================================================\n`;
-    content += `SỞ GD&ĐT • TRƯỜNG THPT NGÔ QUYỀN\n`;
+    content += `SỞ GD&ĐT • TRƯỜNG THPT CHÂU THÀNH A\n`;
     content += `${documentTitle.toUpperCase()}\n`;
     if (activeLesson) {
       content += `${activeLesson.title_vi.toUpperCase()}\n`;
@@ -249,7 +383,7 @@ export const BilingualLessonModule: React.FC = () => {
     }
 
     content += `C. BÀI TẬP TỰ LUYỆN:\n`;
-    allQuestions.forEach((q, i) => {
+    displayedQuestions.forEach((q, i) => {
       content += `Câu ${i + 1}: ${q.question_vi}\n`;
       if (q.options) {
         q.options.forEach((opt) => {
@@ -270,6 +404,7 @@ export const BilingualLessonModule: React.FC = () => {
     <style>body { font-family: 'Times New Roman', serif; line-height: 1.5; margin: 30px; }</style>
     </head><body>`;
 
+    docContent += `<h2 style='text-align:center;'>TRƯỜNG THPT CHÂU THÀNH A</h2>`;
     docContent += `<h2 style='text-align:center;'>${documentTitle}</h2>`;
     if (activeLesson) {
       docContent += `<h3 style='text-align:center;'>${activeLesson.title_vi}</h3>`;
@@ -289,7 +424,7 @@ export const BilingualLessonModule: React.FC = () => {
     }
 
     docContent += `<h3>C. BÀI TẬP TỰ LUYỆN</h3>`;
-    allQuestions.forEach((q, idx) => {
+    displayedQuestions.forEach((q, idx) => {
       docContent += `<p><strong>Câu ${idx + 1}:</strong> ${q.question_vi}</p>`;
       if (q.options) {
         docContent += `<ul>`;
@@ -313,6 +448,8 @@ export const BilingualLessonModule: React.FC = () => {
     URL.revokeObjectURL(url);
     showNotification('📥 Đã tải file Microsoft Word (.doc) về máy tính!');
   };
+
+
 
   // Filter worked examples to selected types
   const displayedExamples = (activeLesson?.worked_examples || []).filter((we) => {
@@ -396,9 +533,7 @@ export const BilingualLessonModule: React.FC = () => {
                 {chapters.map((chap, cIdx) => {
                   const romanNumerals = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII'];
                   const isExpanded = expandedChapterIds.includes(chap.id);
-                  const chapterLessons = lessons.filter(
-                    (l) => l.chapter_id === chap.id || l.id.includes(`-${selectedGrade}-${cIdx + 1}`) || cIdx === 0
-                  );
+                  const chapterLessons = lessons.filter((l) => l.chapter_id === chap.id);
 
                   return (
                     <div key={chap.id} className="border border-slate-200/80 rounded-xl overflow-hidden bg-slate-50/50">
@@ -423,60 +558,62 @@ export const BilingualLessonModule: React.FC = () => {
                       {/* Lessons in Chapter */}
                       {isExpanded && (
                         <div className="p-1.5 space-y-1.5 bg-white">
-                          {chapterLessons.map((les) => {
-                            const isLessonActive = activeLesson?.id === les.id;
-                            const types = les.types || [
-                              { id: 'type-12-1-1', lesson_id: les.id, code: 'Dạng 1', title_vi: 'Tìm khoảng đơn điệu của hàm số', title_en: '', order_index: 1 },
-                              { id: 'type-12-1-2', lesson_id: les.id, code: 'Dạng 2', title_vi: 'Tìm cực trị của hàm số', title_en: '', order_index: 2 },
-                              { id: 'type-12-1-3', lesson_id: les.id, code: 'Dạng 3', title_vi: 'Đọc bảng biến thiên, tìm tham số $m$', title_en: '', order_index: 3 },
-                            ];
+                          {chapterLessons.length === 0 ? (
+                            <p className="text-[11px] text-slate-400 italic py-1 pl-4">Chưa có bài học</p>
+                          ) : (
+                            chapterLessons.map((les) => {
+                              const isLessonActive = activeLesson?.id === les.id;
+                              const types = les.types || [];
 
-                            return (
-                              <div key={les.id} className="space-y-1 pl-1">
-                                {/* Lesson Title Bar */}
-                                <div
-                                  onClick={() => handleSelectLesson(les)}
-                                  className={`p-2 rounded-lg cursor-pointer flex items-center justify-between transition ${
-                                    isLessonActive
-                                      ? 'bg-violet-50 text-violet-950 font-black border border-violet-300'
-                                      : 'hover:bg-slate-100 text-slate-800 font-semibold'
-                                  }`}
-                                >
-                                  <span className="text-[11.5px] leading-snug line-clamp-2">
-                                    {les.title_vi}
-                                  </span>
-                                </div>
+                              return (
+                                <div key={les.id} className="space-y-1 pl-1">
+                                  {/* Lesson Title Bar */}
+                                  <div
+                                    onClick={() => handleSelectLesson(les)}
+                                    className={`p-2 rounded-lg cursor-pointer flex items-center justify-between transition ${
+                                      isLessonActive
+                                        ? 'bg-violet-50 text-violet-950 font-black border border-violet-300'
+                                        : 'hover:bg-slate-100 text-slate-800 font-semibold'
+                                    }`}
+                                  >
+                                    <span className="text-[11.5px] leading-snug line-clamp-2">
+                                      {les.title_vi}
+                                    </span>
+                                  </div>
 
-                                {/* Math Types (Dạng toán checkboxes) */}
-                                <div className="pl-3 space-y-1">
-                                  {types.map((type) => {
-                                    const isTypeChecked = selectedTypeIds.includes(type.id);
-                                    return (
-                                      <div
-                                        key={type.id}
-                                        onClick={(e) => toggleTypeSelection(type, e)}
-                                        className={`p-1.5 rounded-lg flex items-center gap-2 cursor-pointer transition text-[11px] ${
-                                          isTypeChecked
-                                            ? 'bg-violet-100/90 text-violet-950 font-bold border border-violet-300 shadow-2xs'
-                                            : 'hover:bg-slate-100 text-slate-600'
-                                        }`}
-                                      >
-                                        <input
-                                          type="checkbox"
-                                          checked={isTypeChecked}
-                                          onChange={() => {}}
-                                          className="w-3.5 h-3.5 text-violet-600 rounded cursor-pointer accent-violet-600"
-                                        />
-                                        <span className="leading-tight line-clamp-1">
-                                          {type.code}. {type.title_vi}
-                                        </span>
-                                      </div>
-                                    );
-                                  })}
+                                  {/* Math Types (Dạng toán checkboxes) */}
+                                  {types.length > 0 && (
+                                    <div className="pl-3 space-y-1">
+                                      {types.map((type) => {
+                                        const isTypeChecked = selectedTypeIds.includes(type.id);
+                                        return (
+                                          <div
+                                            key={type.id}
+                                            onClick={(e) => toggleTypeSelection(type, e)}
+                                            className={`p-1.5 rounded-lg flex items-center gap-2 cursor-pointer transition text-[11px] ${
+                                              isTypeChecked
+                                                ? 'bg-violet-100/90 text-violet-950 font-bold border border-violet-300 shadow-2xs'
+                                                : 'hover:bg-slate-100 text-slate-600'
+                                            }`}
+                                          >
+                                            <input
+                                              type="checkbox"
+                                              checked={isTypeChecked}
+                                              onChange={() => {}}
+                                              className="w-3.5 h-3.5 text-violet-600 rounded cursor-pointer accent-violet-600"
+                                            />
+                                            <span className="leading-tight line-clamp-1">
+                                              {type.code}. {type.title_vi}
+                                            </span>
+                                          </div>
+                                        );
+                                      })}
+                                    </div>
+                                  )}
                                 </div>
-                              </div>
-                            );
-                          })}
+                              );
+                            })
+                          )}
                         </div>
                       )}
                     </div>
@@ -520,10 +657,25 @@ export const BilingualLessonModule: React.FC = () => {
                 </button>
               </div>
 
-              {/* Middle: Page count badge */}
-              <span className="text-[11px] font-bold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-lg hidden sm:inline">
-                2 trang A4
-              </span>
+              {/* AI Auto-Generate Button on Toolbar */}
+              <button
+                onClick={handleAiGenerateWorksheet}
+                disabled={isAiGeneratingWorksheet}
+                className="px-3 py-1.5 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white text-xs font-black rounded-xl shadow-xs transition flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                title="Dùng Gemini AI tự động sinh nội dung lý thuyết, bài tập mẫu và bài tập 4 dạng cho bài học này"
+              >
+                {isAiGeneratingWorksheet ? (
+                  <>
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    <span>AI đang soạn...</span>
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+                    <span>✨ AI Soạn phiếu học tập</span>
+                  </>
+                )}
+              </button>
 
               {/* Right: Zoom & Language Controls */}
               <div className="flex items-center gap-1.5">
@@ -594,7 +746,7 @@ export const BilingualLessonModule: React.FC = () => {
                 <div className="border-b-2 border-slate-900 pb-3 mb-6 font-sans">
                   <div className="flex justify-between items-start text-xs">
                     <div>
-                      <p className="font-bold uppercase text-slate-700">SỞ GD&ĐT TỈNH / THPT NGÔ QUYỀN</p>
+                      <p className="font-bold uppercase text-slate-700">SỞ GD&ĐT TỈNH / THPT CHÂU THÀNH A</p>
                       <p className="font-extrabold text-violet-900 uppercase">TỔ TOÁN - TIẾNG ANH</p>
                     </div>
                     <div className="text-right">
@@ -605,27 +757,32 @@ export const BilingualLessonModule: React.FC = () => {
                 </div>
 
                 {/* Document Main Title */}
-                <div className="text-center space-y-1 mb-6 font-sans">
-                  <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight uppercase">
-                    {documentTitle}
-                  </h1>
-                  <h2 className="text-sm sm:text-base font-bold text-violet-900 uppercase">
-                    {activeLesson?.title_vi || 'BÀI 1. TÍNH ĐƠN ĐIỆU VÀ CỰC TRỊ CỦA HÀM SỐ'}
-                  </h2>
-                  <p className="text-xs text-slate-500 italic">
-                    Chương I. Ứng dụng đạo hàm để khảo sát và vẽ đồ thị hàm số — Toán {selectedGrade} KNTT
-                  </p>
-                  {languageMode === 'BILINGUAL' && (
-                    <p className="text-xs font-bold text-teal-700 font-sans">
-                      {activeLesson?.title_en || 'Monotonicity and Extrema of Functions'}
-                    </p>
-                  )}
-                </div>
+                {(() => {
+                  const activeChap = chapters.find((c) => c.id === activeLesson?.chapter_id) || chapters[0];
+                  return (
+                    <div className="text-center space-y-1 mb-6 font-sans">
+                      <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight uppercase">
+                        {documentTitle}
+                      </h1>
+                      <h2 className="text-sm sm:text-base font-bold text-violet-900 uppercase">
+                        {activeLesson?.title_vi || `CHUYÊN ĐỀ TOÁN ${selectedGrade}`}
+                      </h2>
+                      <p className="text-xs text-slate-500 italic">
+                        {activeChap ? `${activeChap.name_vi} — Toán ${selectedGrade} KNTT` : `Toán ${selectedGrade} KNTT`}
+                      </p>
+                      {languageMode === 'BILINGUAL' && activeLesson?.title_en && (
+                        <p className="text-xs font-bold text-teal-700 font-sans">
+                          {activeLesson.title_en}
+                        </p>
+                      )}
+                    </div>
+                  );
+                })()}
 
                 {/* ========================================================= */}
                 {/* SECTION A: TÓM TẮT LÝ THUYẾT */}
                 {/* ========================================================= */}
-                {includeTheory && (
+                {includeTheory && activeLesson && (
                   <div className="space-y-3 mb-8">
                     <div className="flex items-center gap-2 border-b border-violet-200 pb-1">
                       <h3 className="font-sans font-black text-sm sm:text-base text-violet-950 uppercase">
@@ -637,17 +794,30 @@ export const BilingualLessonModule: React.FC = () => {
                     </div>
 
                     <div className="text-xs sm:text-sm text-slate-800 space-y-2 pl-2">
-                      <ul className="list-disc pl-5 space-y-1.5">
-                        <li>
-                          <MathRenderer content="$f'(x) > 0$ trên $K$ thì hàm số $f$ đồng biến trên $K$; $f'(x) < 0$ trên $K$ thì $f$ nghịch biến trên $K$." inline />
-                        </li>
-                        <li>
-                          <MathRenderer content="$x_0$ là điểm cực trị của hàm số nếu đạo hàm $f'(x)$ đổi dấu khi $x$ đi qua $x_0$." inline />
-                        </li>
-                        <li>
-                          <strong>Quy tắc xét tính đơn điệu & cực trị:</strong> Tìm tập xác định $\to$ Tính đạo hàm $f'(x) \to$ Giải phương trình $f'(x) = 0 \to$ Lập bảng biến thiên $\to$ Kết luận.
-                        </li>
-                      </ul>
+                      {/* Key Concepts */}
+                      {activeLesson.key_concepts_vi && (
+                        <div className="space-y-1.5 leading-relaxed">
+                          {activeLesson.key_concepts_vi.split('\n').map((line, idx) => (
+                            <div key={idx} className="flex items-start gap-1">
+                              <MathRenderer content={languageMode === 'ENGLISH' && activeLesson.key_concepts_en ? activeLesson.key_concepts_en.split('\n')[idx] || line : line} />
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* Formulas */}
+                      {activeLesson.formulas && activeLesson.formulas.length > 0 && (
+                        <div className="p-2.5 bg-slate-50 rounded-xl border border-slate-200 mt-2 space-y-1">
+                          <p className="font-bold text-violet-900 text-xs uppercase font-sans">Công thức trọng tâm:</p>
+                          <div className="space-y-1 pl-2 font-mono text-xs">
+                            {activeLesson.formulas.map((f, i) => (
+                              <div key={i}>
+                                <MathRenderer content={`$$${f}$$`} />
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
 
                       {/* Bilingual Vocabulary Pill Container */}
                       <div className="mt-3 p-3 bg-violet-50/80 rounded-xl border border-violet-200 text-xs font-sans space-y-1.5">
@@ -657,7 +827,7 @@ export const BilingualLessonModule: React.FC = () => {
                             Thuật ngữ toán học tiếng Anh cốt lõi:
                           </span>
                           <button
-                            onClick={() => speakEnglishWord('Monotonicity, Extrema, Strictly Increasing, Derivative')}
+                            onClick={() => speakEnglishWord(activeLesson.vocabulary_list?.join(', ') || activeLesson.title_en || 'Mathematics')}
                             className="p-1 text-violet-700 hover:text-violet-900 rounded cursor-pointer"
                             title="Nghe phát âm chuẩn"
                           >
@@ -665,7 +835,15 @@ export const BilingualLessonModule: React.FC = () => {
                           </button>
                         </div>
                         <p className="text-slate-700 leading-relaxed">
-                          • <strong>Strictly Increasing:</strong> Đồng biến • <strong>Strictly Decreasing:</strong> Nghịch biến • <strong>Local Extrema:</strong> Cực trị • <strong>Derivative:</strong> Đạo hàm • <strong>Variation Table:</strong> Bảng biến thiên.
+                          {activeLesson.vocabulary_list && activeLesson.vocabulary_list.length > 0 ? (
+                            activeLesson.vocabulary_list.map((voc, vIdx) => (
+                              <span key={vIdx} className="mr-3 inline-block">
+                                • <strong>{voc}</strong>
+                              </span>
+                            ))
+                          ) : (
+                            <span>• <strong>{activeLesson.title_en}</strong></span>
+                          )}
                         </p>
                       </div>
                     </div>
@@ -687,40 +865,55 @@ export const BilingualLessonModule: React.FC = () => {
                     </div>
 
                     <div className="space-y-5 text-xs sm:text-sm">
-                      {displayedExamples.map((ex, idx) => (
-                        <div key={idx} className="space-y-2 border-b border-slate-100 pb-4">
-                          <div className="flex items-center justify-between">
-                            <h4 className="font-sans font-bold text-violet-900">
-                              {ex.type_code || `Dạng ${idx + 1}`}
-                            </h4>
-                            <button
-                              onClick={() => speakEnglishWord(ex.problem_en)}
-                              className="p-1 text-slate-400 hover:text-violet-700 cursor-pointer"
-                              title="Nghe phát âm tiếng Anh"
-                            >
-                              <Volume2 className="w-3.5 h-3.5" />
-                            </button>
-                          </div>
-
-                          <div className="font-medium text-slate-900">
-                            <strong>{ex.title_vi || `Ví dụ ${idx + 1}`}:</strong>{' '}
-                            <MathRenderer content={ex.problem_vi} inline />
-                          </div>
-
-                          {languageMode === 'BILINGUAL' && ex.problem_en && (
-                            <div className="text-xs text-teal-800 font-sans italic pl-3 border-l-2 border-teal-300">
-                              <MathRenderer content={ex.problem_en} inline />
-                            </div>
-                          )}
-
-                          <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 text-xs sm:text-sm text-slate-800 space-y-1">
-                            <p className="font-bold font-sans text-rose-800">Lời giải chi tiết:</p>
-                            <div className="leading-relaxed">
-                              <MathRenderer content={ex.solution_vi || ex.solution_en || ''} />
-                            </div>
-                          </div>
+                      {displayedExamples.length === 0 ? (
+                        <div className="p-4 bg-slate-50 rounded-xl border border-dashed border-slate-300 text-center text-slate-500">
+                          <p className="text-xs">Chưa có bài tập mẫu được lưu cho dạng toán này.</p>
+                          <button
+                            onClick={handleAiGenerateWorksheet}
+                            disabled={isAiGeneratingWorksheet}
+                            className="mt-2 px-3 py-1 bg-violet-100 hover:bg-violet-200 text-violet-800 text-xs font-bold rounded-lg transition"
+                          >
+                            ✨ AI Tự sinh bài tập mẫu
+                          </button>
                         </div>
-                      ))}
+                      ) : (
+                        displayedExamples.map((ex, idx) => (
+                          <div key={idx} className="space-y-2 border-b border-slate-100 pb-4">
+                            <div className="flex items-center justify-between">
+                              <h4 className="font-sans font-bold text-violet-900">
+                                {ex.type_code || `Dạng ${idx + 1}`}
+                              </h4>
+                              {ex.problem_en && (
+                                <button
+                                  onClick={() => speakEnglishWord(ex.problem_en)}
+                                  className="p-1 text-slate-400 hover:text-violet-700 cursor-pointer"
+                                  title="Nghe phát âm tiếng Anh"
+                                >
+                                  <Volume2 className="w-3.5 h-3.5" />
+                                </button>
+                              )}
+                            </div>
+
+                            <div className="font-medium text-slate-900">
+                              <strong>{ex.title_vi || `Ví dụ ${idx + 1}`}:</strong>{' '}
+                              <MathRenderer content={ex.problem_vi} inline />
+                            </div>
+
+                            {languageMode === 'BILINGUAL' && ex.problem_en && (
+                              <div className="text-xs text-teal-800 font-sans italic pl-3 border-l-2 border-teal-300">
+                                <MathRenderer content={ex.problem_en} inline />
+                              </div>
+                            )}
+
+                            <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 text-xs sm:text-sm text-slate-800 space-y-1">
+                              <p className="font-bold font-sans text-rose-800">Lời giải chi tiết:</p>
+                              <div className="leading-relaxed">
+                                <MathRenderer content={ex.solution_vi || ex.solution_en || ''} />
+                              </div>
+                            </div>
+                          </div>
+                        ))
+                      )}
                     </div>
                   </div>
                 )}
@@ -728,141 +921,169 @@ export const BilingualLessonModule: React.FC = () => {
                 {/* ========================================================= */}
                 {/* SECTION C: BÀI TẬP TỰ LUYỆN 4 DẠNG THỨC GDPT 2018 */}
                 {/* ========================================================= */}
-                <div className="space-y-5 mb-8">
-                  <div className="flex items-center justify-between border-b border-violet-200 pb-1">
-                    <h3 className="font-sans font-black text-sm sm:text-base text-violet-950 uppercase">
-                      C. BÀI TẬP TỰ LUYỆN SONG NGỮ (Theo 4 dạng thức GDPT 2018)
-                    </h3>
-                  </div>
+                {(() => {
+                  const tnQuestions = displayedQuestions.filter((q) => q.format_type === 'TN' || q.question_type === 'MCQ');
+                  const dsQuestions = displayedQuestions.filter((q) => q.format_type === 'DS' || q.question_type === 'TRUE_FALSE');
+                  const tlnQuestions = displayedQuestions.filter((q) => q.format_type === 'TLN' || q.question_type === 'SHORT');
+                  const tlQuestions = displayedQuestions.filter((q) => q.format_type === 'TL' || q.question_type === 'ESSAY');
 
-                  {/* PHẦN I: TRẮC NGHIỆM NHIỀU LỰA CHỌN (TN) */}
-                  <div className="space-y-3">
-                    <p className="font-sans font-bold text-xs sm:text-sm text-violet-900 uppercase">
-                      PHẦN I. CÂU TRẮC NGHIỆM NHIỀU LỰA CHỌN (TN)
-                    </p>
-                    <div className="space-y-4 text-xs sm:text-sm">
-                      {allQuestions.filter((q) => q.format_type === 'TN' || q.question_type === 'MCQ').slice(0, 3).map((q, idx) => (
-                        <div key={q.id} className="space-y-1.5">
-                          <div>
-                            <span className="font-sans font-bold text-slate-900 mr-1.5">Câu {idx + 1}:</span>
-                            <MathRenderer content={languageMode === 'ENGLISH' ? q.question_en : q.question_vi} inline />
-                          </div>
+                  return (
+                    <div className="space-y-5 mb-8">
+                      <div className="flex items-center justify-between border-b border-violet-200 pb-1">
+                        <h3 className="font-sans font-black text-sm sm:text-base text-violet-950 uppercase">
+                          C. BÀI TẬP TỰ LUYỆN SONG NGỮ (Theo 4 dạng thức GDPT 2018)
+                        </h3>
+                      </div>
 
-                          {languageMode === 'BILINGUAL' && (
-                            <p className="text-xs text-teal-800 italic pl-5 font-sans">
-                              (En: <MathRenderer content={q.question_en} inline />)
-                            </p>
+                      {displayedQuestions.length === 0 ? (
+                        <div className="p-6 bg-violet-50/60 rounded-2xl border border-dashed border-violet-300 text-center space-y-3 font-sans">
+                          <p className="text-xs font-bold text-violet-950">
+                            Chưa có câu hỏi tự luyện cho bài học này trong ngân hàng đề.
+                          </p>
+                          <p className="text-[11px] text-slate-600 max-w-md mx-auto">
+                            Thầy/Cô có thể bấm nút bên dưới để Gemini AI tự động sinh đầy đủ 4 dạng câu hỏi (Trắc nghiệm, Đúng/Sai, Trả lời ngắn, Tự luận) chuẩn GDPT 2018 ngay lập tức!
+                          </p>
+                          <button
+                            onClick={handleAiGenerateWorksheet}
+                            disabled={isAiGeneratingWorksheet}
+                            className="px-4 py-2 bg-violet-600 hover:bg-violet-700 text-white text-xs font-extrabold rounded-xl shadow-xs transition inline-flex items-center gap-1.5"
+                          >
+                            <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+                            {isAiGeneratingWorksheet ? 'AI đang soạn bài tập...' : '✨ AI Soạn câu hỏi theo bài này'}
+                          </button>
+                        </div>
+                      ) : (
+                        <>
+                          {/* PHẦN I: TRẮC NGHIỆM NHIỀU LỰA CHỌN (TN) */}
+                          {tnQuestions.length > 0 && (
+                            <div className="space-y-3">
+                              <p className="font-sans font-bold text-xs sm:text-sm text-violet-900 uppercase">
+                                PHẦN I. CÂU TRẮC NGHIỆM NHIỀU LỰA CHỌN (TN)
+                              </p>
+                              <div className="space-y-4 text-xs sm:text-sm">
+                                {tnQuestions.map((q, idx) => (
+                                  <div key={q.id} className="space-y-1.5">
+                                    <div>
+                                      <span className="font-sans font-bold text-slate-900 mr-1.5">Câu {idx + 1}:</span>
+                                      <MathRenderer content={languageMode === 'ENGLISH' ? q.question_en : q.question_vi} inline />
+                                    </div>
+
+                                    {languageMode === 'BILINGUAL' && q.question_en && (
+                                      <p className="text-xs text-teal-800 italic pl-5 font-sans">
+                                        (En: <MathRenderer content={q.question_en} inline />)
+                                      </p>
+                                    )}
+
+                                    {q.options && (
+                                      <div className="grid grid-cols-2 gap-2 pl-5 pt-1 font-sans">
+                                        {q.options.map((opt) => (
+                                          <div key={opt.option_key} className="flex items-center gap-1.5">
+                                            <span className="font-bold">{opt.option_key}.</span>
+                                            <MathRenderer content={opt.content_vi || opt.content_en} inline />
+                                          </div>
+                                        ))}
+                                      </div>
+                                    )}
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
                           )}
 
-                          {q.options && (
-                            <div className="grid grid-cols-2 gap-2 pl-5 pt-1 font-sans">
-                              {q.options.map((opt) => (
-                                <div key={opt.option_key} className="flex items-center gap-1.5">
-                                  <span className="font-bold">{opt.option_key}.</span>
-                                  <MathRenderer content={opt.content_vi || opt.content_en} inline />
+                          {/* PHẦN II: TRẮC NGHIỆM ĐÚNG / SAI (Đ/S) */}
+                          {dsQuestions.length > 0 && (
+                            <div className="space-y-3 pt-2">
+                              <p className="font-sans font-bold text-xs sm:text-sm text-violet-900 uppercase">
+                                PHẦN II. CÂU TRẮC NGHIỆM ĐÚNG / SAI (Đ/S)
+                              </p>
+                              {dsQuestions.map((q, idx) => (
+                                <div key={q.id} className="space-y-2 text-xs sm:text-sm">
+                                  <div>
+                                    <span className="font-sans font-bold text-slate-900 mr-1.5">Câu {idx + 1}:</span>
+                                    <MathRenderer content={q.question_vi} inline />
+                                  </div>
+                                  {q.options && (
+                                    <div className="grid grid-cols-1 gap-1.5 pl-5 font-sans text-xs">
+                                      {q.options.map((opt) => (
+                                        <div key={opt.option_key} className="flex items-center justify-between p-2 rounded-lg bg-slate-50 border border-slate-200">
+                                          <div>
+                                            <span className="font-bold mr-1.5">{opt.option_key})</span>
+                                            <MathRenderer content={opt.content_vi} inline />
+                                          </div>
+                                          <div className="flex gap-2 text-[11px] font-bold">
+                                            <span className="px-2 py-0.5 border border-slate-300 rounded bg-white">Đ</span>
+                                            <span className="px-2 py-0.5 border border-slate-300 rounded bg-white">S</span>
+                                          </div>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  )}
                                 </div>
                               ))}
                             </div>
                           )}
-                        </div>
-                      ))}
+
+                          {/* PHẦN III: TRẢ LỜI NGẮN (TLN) */}
+                          {tlnQuestions.length > 0 && (
+                            <div className="space-y-3 pt-2">
+                              <p className="font-sans font-bold text-xs sm:text-sm text-violet-900 uppercase">
+                                PHẦN III. CÂU TRẮC NGHIỆM TRẢ LỜI NGẮN (TLN)
+                              </p>
+                              {tlnQuestions.map((q, idx) => (
+                                <div key={q.id} className="space-y-1.5 text-xs sm:text-sm">
+                                  <div>
+                                    <span className="font-sans font-bold text-slate-900 mr-1.5">Câu {idx + 1}:</span>
+                                    <MathRenderer content={q.question_vi} inline />
+                                  </div>
+                                  <div className="pl-5 font-sans text-xs text-slate-500">
+                                    Đáp số: [ ____________________ ]
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+
+                          {/* PHẦN IV: TỰ LUẬN (TL) */}
+                          {tlQuestions.length > 0 && (
+                            <div className="space-y-3 pt-2">
+                              <p className="font-sans font-bold text-xs sm:text-sm text-violet-900 uppercase">
+                                PHẦN IV. CÂU HỎI TỰ LUẬN (TL)
+                              </p>
+                              {tlQuestions.map((q, idx) => (
+                                <div key={q.id} className="space-y-1.5 text-xs sm:text-sm">
+                                  <div>
+                                    <span className="font-sans font-bold text-slate-900 mr-1.5">Câu {idx + 1}:</span>
+                                    <MathRenderer content={q.question_vi} inline />
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </>
+                      )}
                     </div>
-                  </div>
-
-                  {/* PHẦN II: TRẮC NGHIỆM ĐÚNG / SAI (Đ/S) */}
-                  <div className="space-y-3 pt-2">
-                    <p className="font-sans font-bold text-xs sm:text-sm text-violet-900 uppercase">
-                      PHẦN II. CÂU TRẮC NGHIỆM ĐÚNG / SAI (Đ/S)
-                    </p>
-                    {allQuestions.filter((q) => q.format_type === 'DS' || q.question_type === 'TRUE_FALSE').slice(0, 1).map((q, idx) => (
-                      <div key={q.id} className="space-y-2 text-xs sm:text-sm">
-                        <div>
-                          <span className="font-sans font-bold text-slate-900 mr-1.5">Câu {idx + 1}:</span>
-                          <MathRenderer content={q.question_vi} inline />
-                        </div>
-                        {q.options && (
-                          <div className="grid grid-cols-1 gap-1.5 pl-5 font-sans text-xs">
-                            {q.options.map((opt) => (
-                              <div key={opt.option_key} className="flex items-center justify-between p-2 rounded-lg bg-slate-50 border border-slate-200">
-                                <div>
-                                  <span className="font-bold mr-1.5">{opt.option_key})</span>
-                                  <MathRenderer content={opt.content_vi} inline />
-                                </div>
-                                <div className="flex gap-2 text-[11px] font-bold">
-                                  <span className="px-2 py-0.5 border border-slate-300 rounded bg-white">Đ</span>
-                                  <span className="px-2 py-0.5 border border-slate-300 rounded bg-white">S</span>
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* PHẦN III: TRẢ LỜI NGẮN (TLN) */}
-                  <div className="space-y-3 pt-2">
-                    <p className="font-sans font-bold text-xs sm:text-sm text-violet-900 uppercase">
-                      PHẦN III. CÂU TRẮC NGHIỆM TRẢ LỜI NGẮN (TLN)
-                    </p>
-                    {allQuestions.filter((q) => q.format_type === 'TLN' || q.question_type === 'SHORT').slice(0, 1).map((q, idx) => (
-                      <div key={q.id} className="space-y-1.5 text-xs sm:text-sm">
-                        <div>
-                          <span className="font-sans font-bold text-slate-900 mr-1.5">Câu {idx + 1}:</span>
-                          <MathRenderer content={q.question_vi} inline />
-                        </div>
-                        <div className="pl-5 font-sans text-xs text-slate-500">
-                          Đáp số: [ ____________________ ]
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* PHẦN IV: TỰ LUẬN (TL) */}
-                  <div className="space-y-3 pt-2">
-                    <p className="font-sans font-bold text-xs sm:text-sm text-violet-900 uppercase">
-                      PHẦN IV. CÂU HỎI TỰ LUẬN (TL)
-                    </p>
-                    {allQuestions.filter((q) => q.format_type === 'TL' || q.question_type === 'ESSAY').slice(0, 1).map((q, idx) => (
-                      <div key={q.id} className="space-y-1.5 text-xs sm:text-sm">
-                        <div>
-                          <span className="font-sans font-bold text-slate-900 mr-1.5">Câu {idx + 1}:</span>
-                          <MathRenderer content={q.question_vi} inline />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+                  );
+                })()}
 
                 {/* ========================================================= */}
                 {/* SECTION D: BẢNG ĐÁP SỐ CUỐI BÀI */}
                 {/* ========================================================= */}
-                {includeAnswerKey && (
+                {includeAnswerKey && displayedQuestions.length > 0 && (
                   <div className="mt-8 pt-4 border-t-2 border-dashed border-slate-300 font-sans text-xs">
                     <p className="font-bold text-center uppercase text-slate-700 mb-2">
                       BẢNG ĐÁP SỐ GỌN (ANSWER KEY)
                     </p>
                     <div className="grid grid-cols-4 sm:grid-cols-6 gap-1.5 text-center border border-slate-300 p-2 rounded-xl bg-slate-50/50">
-                      <div className="p-1 border border-slate-200 bg-white rounded">
-                        <div className="font-bold text-slate-400 text-[10px]">1 (TN)</div>
-                        <div className="font-bold text-violet-800">A</div>
-                      </div>
-                      <div className="p-1 border border-slate-200 bg-white rounded">
-                        <div className="font-bold text-slate-400 text-[10px]">2 (TN)</div>
-                        <div className="font-bold text-violet-800">A</div>
-                      </div>
-                      <div className="p-1 border border-slate-200 bg-white rounded">
-                        <div className="font-bold text-slate-400 text-[10px]">1 (Đ/S)</div>
-                        <div className="font-bold text-violet-800">Đ-Đ-S-Đ</div>
-                      </div>
-                      <div className="p-1 border border-slate-200 bg-white rounded">
-                        <div className="font-bold text-slate-400 text-[10px]">1 (TLN)</div>
-                        <div className="font-bold text-violet-800">3</div>
-                      </div>
-                      <div className="p-1 border border-slate-200 bg-white rounded">
-                        <div className="font-bold text-slate-400 text-[10px]">1 (TL)</div>
-                        <div className="font-bold text-violet-800">[-1; 2]</div>
-                      </div>
+                      {displayedQuestions.map((q, qIdx) => (
+                        <div key={q.id || qIdx} className="p-1 border border-slate-200 bg-white rounded">
+                          <div className="font-bold text-slate-400 text-[10px]">
+                            {qIdx + 1} ({q.format_type || 'TN'})
+                          </div>
+                          <div className="font-bold text-violet-800 text-xs truncate" title={q.correct_answer}>
+                            {q.correct_answer || 'Xem giải'}
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 )}

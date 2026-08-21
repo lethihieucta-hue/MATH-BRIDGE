@@ -67,7 +67,7 @@ export const TeacherAnalytics: React.FC = () => {
         <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-2xs space-y-2">
           <p className="text-[10px] font-bold text-slate-400 uppercase">Sĩ số học sinh</p>
           <p className="text-3xl font-black text-slate-900">38 học sinh</p>
-          <p className="text-xs text-teal-700 font-bold">Lớp 10A1 • THPT Ngô Quyền</p>
+          <p className="text-xs text-teal-700 font-bold">Lớp 10A1 • THPT Châu Thành A</p>
         </div>
 
         <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-2xs space-y-2">

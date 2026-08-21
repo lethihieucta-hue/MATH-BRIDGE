@@ -36,7 +36,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     full_name: 'Nguyễn Văn An',
     email: 'student@mathbridge.edu.vn',
     role: 'student',
-    school_name: 'THPT Ngô Quyền',
+    school_name: 'THPT Châu Thành A',
     grade_id: 10,
     current_level: 2,
     xp: 450,

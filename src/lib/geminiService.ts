@@ -454,3 +454,152 @@ Hãy đưa ra nhận xét ngắn gọn gồm:
     systemInstruction: MATH_SYSTEM_INSTRUCTION,
   });
 }
+
+/**
+ * Tự động soạn toàn bộ phiếu học tập song ngữ (Lý thuyết, Thuật ngữ, Bài tập mẫu, 4 Dạng câu hỏi GDPT 2018) bằng Gemini AI
+ */
+export async function generateCompleteLessonWorksheetAi(
+  lessonTitle: string,
+  chapterName: string,
+  grade: number
+): Promise<StepExecutionResult> {
+  const prompt = `Bạn là Chuyên gia biên soạn tài liệu Giảng dạy Toán THPT bằng Tiếng Anh (Math in English) theo chuẩn chương trình GDPT 2018 (Bộ sách Kết Nối Tri Thức).
+Hãy soạn thảo đầy đủ nội dung phiếu học tập song ngữ cho bài học sau:
+- Khối lớp: Lớp ${grade}
+- Chương: ${chapterName}
+- Bài học: ${lessonTitle}
+
+Yêu cầu trả về đúng định dạng JSON CHÍNH XÁC (không kèm giải thích hay văn bản ngoài JSON):
+\`\`\`json
+{
+  "key_concepts_vi": "Tóm tắt lý thuyết cốt lõi bằng tiếng Việt (dùng định dạng Markdown, công thức toán trong $...$). Có các gạch đầu dòng rõ ràng.",
+  "key_concepts_en": "Core theoretical summary in English with LaTeX $...$.",
+  "formulas": [
+    "Công thức LaTeX quan trọng 1",
+    "Công thức LaTeX quan trọng 2"
+  ],
+  "vocabulary_terms": [
+    {
+      "word": "Term in English",
+      "meaning": "Nghĩa tiếng Việt",
+      "ipa": "/.../",
+      "example": "Example sentence using the term in math context"
+    },
+    {
+      "word": "Second Term",
+      "meaning": "Nghĩa tiếng Việt 2",
+      "ipa": "/.../",
+      "example": "Example sentence 2"
+    },
+    {
+      "word": "Third Term",
+      "meaning": "Nghĩa tiếng Việt 3",
+      "ipa": "/.../",
+      "example": "Example sentence 3"
+    }
+  ],
+  "types": [
+    {
+      "code": "Dạng 1",
+      "title_vi": "Tên dạng toán 1",
+      "title_en": "Math Type 1 in English"
+    },
+    {
+      "code": "Dạng 2",
+      "title_vi": "Tên dạng toán 2",
+      "title_en": "Math Type 2 in English"
+    }
+  ],
+  "worked_examples": [
+    {
+      "type_code": "Dạng 1. Tên dạng toán 1",
+      "title_vi": "Ví dụ 1: Tên ví dụ",
+      "title_en": "Example 1: Title in English",
+      "problem_vi": "Đề bài ví dụ bằng tiếng Việt (chứa công thức LaTeX $...$)",
+      "problem_en": "Problem statement in English (with LaTeX $...$)",
+      "solution_vi": "Lời giải chi tiết từng bước bằng tiếng Việt",
+      "solution_en": "Detailed step-by-step solution in English"
+    },
+    {
+      "type_code": "Dạng 2. Tên dạng toán 2",
+      "title_vi": "Ví dụ 2: Tên ví dụ 2",
+      "title_en": "Example 2: Title in English",
+      "problem_vi": "Đề bài ví dụ 2 bằng tiếng Việt",
+      "problem_en": "Problem statement 2 in English",
+      "solution_vi": "Lời giải chi tiết ví dụ 2 bằng tiếng Việt",
+      "solution_en": "Detailed solution 2 in English"
+    }
+  ],
+  "questions": [
+    {
+      "format_type": "TN",
+      "question_type": "MCQ",
+      "question_vi": "Nội dung câu hỏi trắc nghiệm nhiều lựa chọn 1 tiếng Việt (dùng $...$)",
+      "question_en": "Multiple choice question 1 in English",
+      "options": [
+        { "option_key": "A", "content_vi": "Phương án A", "content_en": "Option A", "is_correct": true },
+        { "option_key": "B", "content_vi": "Phương án B", "content_en": "Option B", "is_correct": false },
+        { "option_key": "C", "content_vi": "Phương án C", "content_en": "Option C", "is_correct": false },
+        { "option_key": "D", "content_vi": "Phương án D", "content_en": "Option D", "is_correct": false }
+      ],
+      "correct_answer": "A",
+      "solution_vi": "Lời giải chi tiết câu TN 1",
+      "solution_en": "Detailed solution 1"
+    },
+    {
+      "format_type": "TN",
+      "question_type": "MCQ",
+      "question_vi": "Nội dung câu hỏi trắc nghiệm nhiều lựa chọn 2 tiếng Việt",
+      "question_en": "Multiple choice question 2 in English",
+      "options": [
+        { "option_key": "A", "content_vi": "Phương án A", "content_en": "Option A", "is_correct": false },
+        { "option_key": "B", "content_vi": "Phương án B", "content_en": "Option B", "is_correct": true },
+        { "option_key": "C", "content_vi": "Phương án C", "content_en": "Option C", "is_correct": false },
+        { "option_key": "D", "content_vi": "Phương án D", "content_en": "Option D", "is_correct": false }
+      ],
+      "correct_answer": "B",
+      "solution_vi": "Lời giải chi tiết câu TN 2",
+      "solution_en": "Detailed solution 2"
+    },
+    {
+      "format_type": "DS",
+      "question_type": "TRUE_FALSE",
+      "question_vi": "Cho giả thiết... Xét tính đúng/sai của các mệnh đề sau:",
+      "question_en": "Given ... Determine whether each of the following statements is True (Đ) or False (S):",
+      "options": [
+        { "option_key": "a", "content_vi": "Mệnh đề a", "content_en": "Statement a", "is_correct": true },
+        { "option_key": "b", "content_vi": "Mệnh đề b", "content_en": "Statement b", "is_correct": true },
+        { "option_key": "c", "content_vi": "Mệnh đề c", "content_en": "Statement c", "is_correct": false },
+        { "option_key": "d", "content_vi": "Mệnh đề d", "content_en": "Statement d", "is_correct": true }
+      ],
+      "correct_answer": "a-Đ, b-Đ, c-S, d-Đ",
+      "solution_vi": "Lời giải chi tiết cho 4 ý a, b, c, d",
+      "solution_en": "Detailed explanation"
+    },
+    {
+      "format_type": "TLN",
+      "question_type": "SHORT",
+      "question_vi": "Nội dung câu hỏi trắc nghiệm trả lời ngắn (kết quả là một số):",
+      "question_en": "Short answer question (resulting in a number):",
+      "correct_answer": "5",
+      "solution_vi": "Lời giải chi tiết ra đáp số 5",
+      "solution_en": "Detailed solution"
+    },
+    {
+      "format_type": "TL",
+      "question_type": "ESSAY",
+      "question_vi": "Nội dung câu hỏi tự luận toán học:",
+      "question_en": "Essay question:",
+      "correct_answer": "Lời giải chi tiết",
+      "solution_vi": "Các bước giải tự luận chi tiết",
+      "solution_en": "Step-by-step essay solution"
+    }
+  ]
+}
+\`\`\``;
+
+  return executeWithFallback(prompt, {
+    systemInstruction: MATH_SYSTEM_INSTRUCTION,
+  });
+}
+

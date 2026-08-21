@@ -54,7 +54,7 @@ export const StudentProfile: React.FC = () => {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 text-center">
             <p className="text-[10px] uppercase font-bold text-slate-400">Trường Học</p>
-            <p className="text-sm font-extrabold text-slate-800 mt-1">{user?.school_name || 'THPT Ngô Quyền'}</p>
+            <p className="text-sm font-extrabold text-slate-800 mt-1">{user?.school_name || 'THPT Châu Thành A'}</p>
           </div>
           <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 text-center">
             <p className="text-[10px] uppercase font-bold text-slate-400">Khối Lớp</p>

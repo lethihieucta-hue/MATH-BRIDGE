@@ -29,7 +29,7 @@ export const PrintableWorksheetModal: React.FC<PrintableWorksheetModalProps> = (
   };
 
   const handleCopyText = () => {
-    let content = `TRƯỜNG THPT NGÔ QUYỀN\nBỘ MÔN: TOÁN BẰNG TIẾNG ANH\n${testTitle.toUpperCase()}\n\n`;
+    let content = `TRƯỜNG THPT CHÂU THÀNH A\nBỘ MÔN: TOÁN BẰNG TIẾNG ANH\n${testTitle.toUpperCase()}\n\n`;
     questions.forEach((q, idx) => {
       content += `Câu ${idx + 1}: ${q.question_en}\n`;
       if (q.question_vi) content += `(Gợi ý dịch: ${q.question_vi})\n`;
@@ -90,8 +90,8 @@ export const PrintableWorksheetModal: React.FC<PrintableWorksheetModalProps> = (
             {/* Header School Information */}
             <div className="grid grid-cols-2 gap-4 border-b-2 border-slate-900 pb-4 text-xs font-sans">
               <div>
-                <p className="font-bold uppercase tracking-wide">SỞ GD&ĐT TỈNH HƯNG YÊN</p>
-                <p className="font-extrabold uppercase">TRƯỜNG THPT NGÔ QUYỀN</p>
+                <p className="font-bold uppercase tracking-wide">SỞ GD&ĐT TỈNH</p>
+                <p className="font-extrabold uppercase">TRƯỜNG THPT CHÂU THÀNH A</p>
                 <p className="italic text-slate-600 mt-0.5">Tổ Toán - Tiếng Anh</p>
               </div>
               <div className="text-right">
