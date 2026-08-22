@@ -69,28 +69,30 @@ export const TestBuilder: React.FC = () => {
     const lower = prompt.toLowerCase();
     let matches: Question[] = [];
 
-    if (lower.includes('logarit') || lower.includes('lôgarit') || lower.includes('mũ') || lower.includes('lũy thừa') || lower.includes('exponential') || lower.includes('logarithm')) {
-      matches = FULL_QUESTION_BANK.filter((q) => q.topic_id?.includes('11-6') || q.id.includes('11-6'));
+    if (lower.includes('vectơ') || lower.includes('toạ độ') || lower.includes('tọa độ') || lower.includes('oxyz') || lower.includes('không gian')) {
+      matches = FULL_QUESTION_BANK.filter((q) => q.topic_id?.startsWith('top-12-2'));
+    } else if (lower.includes('logarit') || lower.includes('lôgarit') || lower.includes('mũ') || lower.includes('lũy thừa') || lower.includes('exponential') || lower.includes('logarithm')) {
+      matches = FULL_QUESTION_BANK.filter((q) => q.topic_id === 'top-11-6-1');
+    } else if (lower.includes('tiếp tuyến') || (lower.includes('đạo hàm') && (lower.includes('11') || grade === 11))) {
+      matches = FULL_QUESTION_BANK.filter((q) => q.topic_id === 'top-11-7-1');
     } else if (lower.includes('tiệm cận') || lower.includes('asymptote')) {
-      matches = FULL_QUESTION_BANK.filter((q) => q.topic_id?.includes('12-1-3') || q.id.includes('12-3'));
+      matches = FULL_QUESTION_BANK.filter((q) => q.topic_id === 'top-12-1-3');
     } else if (lower.includes('gtln') || lower.includes('gtnn') || lower.includes('giá trị lớn nhất') || lower.includes('giá trị nhỏ nhất') || lower.includes('tối ưu')) {
-      matches = FULL_QUESTION_BANK.filter((q) => q.topic_id?.includes('12-1-2') || q.id.includes('12-2'));
-    } else if (lower.includes('đơn điệu') || lower.includes('cực trị') || lower.includes('đồng biến') || lower.includes('nghịch biến') || lower.includes('đạo hàm')) {
-      matches = FULL_QUESTION_BANK.filter((q) => q.topic_id?.includes('12-1') || q.topic_id?.includes('11-7'));
-    } else if (lower.includes('vectơ') || lower.includes('tọa độ') || lower.includes('toạ độ') || lower.includes('oxyz') || lower.includes('không gian')) {
-      matches = FULL_QUESTION_BANK.filter((q) => q.topic_id?.includes('12-2') || q.topic_id?.includes('10-4'));
+      matches = FULL_QUESTION_BANK.filter((q) => q.topic_id === 'top-12-1-2');
+    } else if (lower.includes('đơn điệu') || lower.includes('cực trị') || lower.includes('đồng biến') || lower.includes('nghịch biến') || lower.includes('khảo sát') || lower.includes('đạo hàm')) {
+      matches = FULL_QUESTION_BANK.filter((q) => q.topic_id === 'top-12-1-1');
+    } else if (lower.includes('cấp số cộng') || (lower.includes('cộng') && lower.includes('cấp số'))) {
+      matches = FULL_QUESTION_BANK.filter((q) => q.topic_id === 'top-11-2-2');
+    } else if (lower.includes('cấp số nhân') || (lower.includes('nhân') && lower.includes('cấp số'))) {
+      matches = FULL_QUESTION_BANK.filter((q) => q.topic_id === 'top-11-2-3');
     } else if (lower.includes('dãy số') || lower.includes('sequence')) {
-      matches = FULL_QUESTION_BANK.filter((q) => q.topic_id?.includes('11-2-1') || q.id.includes('11-2-1'));
-    } else if (lower.includes('cộng') || lower.includes('arithmetic')) {
-      matches = FULL_QUESTION_BANK.filter((q) => q.topic_id?.includes('11-2-2') || q.id.includes('11-2-2'));
-    } else if (lower.includes('nhân') || lower.includes('geometric')) {
-      matches = FULL_QUESTION_BANK.filter((q) => q.topic_id?.includes('11-2-3') || q.id.includes('11-2-3'));
+      matches = FULL_QUESTION_BANK.filter((q) => q.topic_id === 'top-11-2-1');
     } else if (lower.includes('lượng giác') || lower.includes('trigonometric') || lower.includes('sin') || lower.includes('cos')) {
-      matches = FULL_QUESTION_BANK.filter((q) => q.topic_id?.includes('11-1') || q.topic_id?.includes('10-3'));
+      matches = FULL_QUESTION_BANK.filter((q) => q.topic_id?.startsWith('top-11-1'));
     } else if (lower.includes('mệnh đề') || lower.includes('tập hợp') || lower.includes('proposition') || lower.includes('set')) {
-      matches = FULL_QUESTION_BANK.filter((q) => q.topic_id?.includes('10-1'));
+      matches = FULL_QUESTION_BANK.filter((q) => q.topic_id === 'top-10-1-1');
     } else if (lower.includes('parabol') || lower.includes('bậc hai')) {
-      matches = FULL_QUESTION_BANK.filter((q) => q.topic_id?.includes('10-6'));
+      matches = FULL_QUESTION_BANK.filter((q) => q.topic_id === 'top-10-6-1');
     }
 
     if (matches.length > 0) return matches;

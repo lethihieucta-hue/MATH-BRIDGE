@@ -99,6 +99,8 @@ export const MathRenderer: React.FC<MathRendererProps> = ({
   const renderMixedContent = (text: string) => {
     // 1. Normalize LaTeX delimiters: \[...\] to $$...$$ and \(...\) to $...$
     let normalized = text
+      .replace(/\\\$/g, '$')
+      .replace(/`/g, '')
       .replace(/\\\[([\s\S]*?)\\\]/g, '$$$$$1$$$$')
       .replace(/\\\(([\s\S]*?)\\\)/g, '$$$1$$');
 
