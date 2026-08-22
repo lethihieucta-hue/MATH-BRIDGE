@@ -23,8 +23,35 @@ import { ContentStudio } from './components/teacher/ContentStudio';
 import { TestBuilder } from './components/teacher/TestBuilder';
 import { TeacherAnalytics } from './components/teacher/TeacherAnalytics';
 
+// Online Exam Taking Component
+import { OnlineExamRoom } from './components/online_exam/OnlineExamRoom';
+
 export default function App() {
   const { currentRole, activeTab, setActiveTab, notification, clearNotification } = useAppStore();
+
+  // Detect if user opened an online exam link via ?onlineExamId=...
+  const [hasOnlineExamParam, setHasOnlineExamParam] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const p = new URLSearchParams(window.location.search);
+      return Boolean(p.get('onlineExamId') || p.get('examId'));
+    }
+    return false;
+  });
+
+  if (hasOnlineExamParam || activeTab === 'online-exam') {
+    return (
+      <OnlineExamRoom
+        onExit={() => {
+          if (window.history.pushState) {
+            const newUrl = window.location.pathname;
+            window.history.pushState({ path: newUrl }, '', newUrl);
+          }
+          setHasOnlineExamParam(false);
+          setActiveTab('learn');
+        }}
+      />
+    );
+  }
 
   const renderContent = () => {
     if (currentRole === 'TEACHER') {

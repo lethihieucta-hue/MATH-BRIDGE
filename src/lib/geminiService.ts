@@ -603,7 +603,6 @@ Yêu cầu trả về đúng định dạng JSON CHÍNH XÁC (không kèm giải
   });
 }
 
-// AI Generator for Exam Tests from single teacher prompt description
 export async function generateExamTestFromDescriptionAi(
   description: string,
   grade: number = 11
@@ -615,10 +614,14 @@ YÊU CẦU MÔ TẢ CỦA GIÁO VIÊN:
 "${description}"
 (Khối lớp: Lớp ${grade})
 
-HÃY TỰ ĐỘNG PHÂN TÍCH YÊU CẦU (về nội dung/chủ đề, số lượng câu hỏi, thời gian làm bài và tỷ lệ % tiếng Anh) VÀ SINH RA KẾT QUẢ DƯỚI DẠNG ĐỊNH DẠNG JSON DUY NHẤT THEO SCHEMA SAU:
+QUAN TRỌNG VỀ SỐ LƯỢNG CÂU HỎI:
+- Hãy phân tích số lượng câu hỏi mà giáo viên yêu cầu (Ví dụ: "10 câu", "15 câu", "5 câu").
+- Mảng "questions" trong JSON PHẢI CÓ ĐỦ CHÍNH XÁC số lượng câu hỏi đó (Ví dụ giáo viên yêu cầu 10 câu thì phải tạo đúng 10 câu hỏi độc lập, không được rút gọn hay cắt xén).
+
+HÃY TỰ ĐỘNG PHÂN TÍCH YÊU CẦU VÀ SINH RA KẾT QUẢ DƯỚI DẠNG ĐỊNH DẠNG JSON DUY NHẤT THEO SCHEMA SAU:
 {
-  "test_title": "Tên bài kiểm tra (Ví dụ: ĐỀ KIỂM TRA 15 PHÚT: DÃY SỐ VÀ CẤP SỐ CỘNG)",
-  "test_title_en": "15-Minute Test: Sequences and Arithmetic Progressions",
+  "test_title": "Tên bài kiểm tra (Ví dụ: ĐỀ KIỂM TRA 15 PHÚT: GIÁ TRỊ LỚN NHẤT VÀ NHỎ NHẤT CỦA HÀM SỐ)",
+  "test_title_en": "15-Minute Test: Maximum and Minimum Values of Functions",
   "duration_minutes": 15,
   "english_ratio": 50,
   "instructions_vi": "Thời gian làm bài: 15 phút. Học sinh làm bài trực tiếp vào đề.",
