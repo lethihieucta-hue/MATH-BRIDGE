@@ -115,9 +115,9 @@ async function callGeminiApi(
   const body: any = {
     contents,
     generationConfig: {
-      temperature: 0.2,
+      temperature: 0.3,
       topP: 0.95,
-      maxOutputTokens: 2048,
+      maxOutputTokens: 8192,
     },
   };
 

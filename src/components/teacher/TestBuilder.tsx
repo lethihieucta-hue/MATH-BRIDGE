@@ -2,7 +2,6 @@ import React, { useState, useRef } from 'react';
 import { useAppStore } from '../../lib/store';
 import { Question } from '../../types';
 import { MathRenderer } from '../math/MathRenderer';
-import { apiFetch } from '../../lib/dataService';
 import { hasApiKey, generateExamTestFromDescriptionAi } from '../../lib/geminiService';
 import { FULL_QUESTION_BANK } from '../../lib/questionBankData';
 import {
@@ -10,14 +9,7 @@ import {
   Printer,
   FileDown,
   Copy,
-  Sliders,
-  Clock,
-  HelpCircle,
-  RotateCcw,
   CheckCircle2,
-  Bookmark,
-  Check,
-  Send,
   Loader2,
   FileText,
 } from 'lucide-react';
@@ -38,48 +30,95 @@ export const TestBuilder: React.FC = () => {
 
   // Single description prompt state
   const [promptDescription, setPromptDescription] = useState(
-    `Tạo đề kiểm tra 15 phút về Dãy số và Cấp số cộng lớp 11, gồm 10 câu (6 câu trắc nghiệm, 2 câu đúng sai, 2 câu trả lời ngắn), tỷ lệ tiếng Anh 50%.`
+    `Tạo bài kiểm tra 1 tiết 45 phút về Hàm số Lũy thừa, Mũ và Logarit lớp 12, gồm 15 câu chuẩn cấu trúc quốc tế hoàn toàn 100% bằng Tiếng Anh.`
   );
   const [isGenerating, setIsGenerating] = useState(false);
-  const [zoomLevel, setZoomLevel] = useState(100);
   const [includeAnswerKey, setIncludeAnswerKey] = useState(true);
   const [includeCandidateBox, setIncludeCandidateBox] = useState(true);
 
   // Quick Preset Chips
   const PRESET_CHIPS = [
     {
-      label: `Đề 15p: Dãy số & Cấp số cộng (10 câu, 50% TA)`,
-      text: `Tạo đề kiểm tra 15 phút về Dãy số và Cấp số cộng lớp ${selectedGrade}, gồm 10 câu (6 câu trắc nghiệm TN, 2 câu đúng sai Đ/S, 2 câu trả lời ngắn TLN), tỷ lệ tiếng Anh 50%.`,
-    },
-    {
-      label: `Đề 45p: Khảo sát hàm số & Tiệm cận (20 câu, 60% TA)`,
-      text: `Tạo đề kiểm tra 1 tiết 45 phút về Khảo sát sự biến thiên và tiệm cận của đồ thị hàm số lớp ${selectedGrade}, gồm 20 câu (12 TN, 4 Đ/S, 4 TLN), tỷ lệ tiếng Anh 60%.`,
-    },
-    {
-      label: `Đề 15p: Cấp số nhân & Giới hạn (10 câu, 40% TA)`,
-      text: `Tạo đề kiểm tra 15 phút về Cấp số nhân và Giới hạn dãy số lớp ${selectedGrade}, gồm 10 câu theo cấu trúc GDPT 2018 (4 TN, 2 Đ/S, 2 TLN, 2 TL), tỷ lệ tiếng Anh 40%.`,
-    },
-    {
-      label: `Đề 1 tiết: Lũy thừa, Mũ & Logarit (15 câu, 100% TA)`,
+      label: `Đề 1 tiết: Lũy thừa, Mũ & Logarit (100% TA)`,
       text: `Tạo bài kiểm tra 1 tiết 45 phút về Hàm số Lũy thừa, Mũ và Logarit lớp ${selectedGrade}, gồm 15 câu chuẩn cấu trúc quốc tế hoàn toàn 100% bằng Tiếng Anh.`,
     },
     {
-      label: `Đề 15p: Mệnh đề & Tập hợp (10 câu, 50% TA)`,
-      text: `Tạo đề kiểm tra 15 phút về Mệnh đề toán học và Tập hợp số lớp ${selectedGrade}, gồm 10 câu (6 câu TN, 2 câu Đ/S, 2 câu TLN), tỷ lệ tiếng Anh 50%.`,
+      label: `Đề 15p: Dãy số & Cấp số cộng (50% TA)`,
+      text: `Tạo đề kiểm tra 15 phút về Dãy số và Cấp số cộng lớp 11, gồm 10 câu (6 câu trắc nghiệm TN, 2 câu đúng sai Đ/S, 2 câu trả lời ngắn TLN), tỷ lệ tiếng Anh 50%.`,
+    },
+    {
+      label: `Đề 45p: Khảo sát hàm số & Tiệm cận (60% TA)`,
+      text: `Tạo đề kiểm tra 1 tiết 45 phút về Tính đơn điệu, Cực trị và Đường tiệm cận của đồ thị hàm số lớp 12, gồm 20 câu (12 TN, 4 Đ/S, 4 TLN), tỷ lệ tiếng Anh 60%.`,
+    },
+    {
+      label: `Đề 15p: GTLN & GTNN và Bài toán thực tế (50% TA)`,
+      text: `Tạo đề kiểm tra 15 phút về Giá trị lớn nhất, giá trị nhỏ nhất của hàm số và bài toán tối ưu hoá thực tế lớp 12, gồm 10 câu, tỷ lệ tiếng Anh 50%.`,
+    },
+    {
+      label: `Đề 45p: Vectơ & Hệ toạ độ Oxyz (70% TA)`,
+      text: `Tạo bài kiểm tra 45 phút về Vectơ trong không gian và Hệ toạ độ Oxyz lớp 12, gồm 15 câu, tỷ lệ tiếng Anh 70%.`,
+    },
+    {
+      label: `Đề 15p: Mệnh đề & Tập hợp (50% TA)`,
+      text: `Tạo đề kiểm tra 15 phút về Mệnh đề toán học và Tập hợp số lớp 10, gồm 10 câu (6 câu TN, 2 câu Đ/S, 2 câu TLN), tỷ lệ tiếng Anh 50%.`,
     },
   ];
 
+  // Helper to filter questions from FULL_QUESTION_BANK based on prompt keywords
+  const filterQuestionsFromPrompt = (prompt: string, grade: number): Question[] => {
+    const lower = prompt.toLowerCase();
+    let matches: Question[] = [];
+
+    if (lower.includes('logarit') || lower.includes('lôgarit') || lower.includes('mũ') || lower.includes('lũy thừa') || lower.includes('exponential') || lower.includes('logarithm')) {
+      matches = FULL_QUESTION_BANK.filter((q) => q.topic_id?.includes('11-6') || q.id.includes('11-6'));
+    } else if (lower.includes('tiệm cận') || lower.includes('asymptote')) {
+      matches = FULL_QUESTION_BANK.filter((q) => q.topic_id?.includes('12-1-3') || q.id.includes('12-3'));
+    } else if (lower.includes('gtln') || lower.includes('gtnn') || lower.includes('giá trị lớn nhất') || lower.includes('giá trị nhỏ nhất') || lower.includes('tối ưu')) {
+      matches = FULL_QUESTION_BANK.filter((q) => q.topic_id?.includes('12-1-2') || q.id.includes('12-2'));
+    } else if (lower.includes('đơn điệu') || lower.includes('cực trị') || lower.includes('đồng biến') || lower.includes('nghịch biến') || lower.includes('đạo hàm')) {
+      matches = FULL_QUESTION_BANK.filter((q) => q.topic_id?.includes('12-1') || q.topic_id?.includes('11-7'));
+    } else if (lower.includes('vectơ') || lower.includes('tọa độ') || lower.includes('toạ độ') || lower.includes('oxyz') || lower.includes('không gian')) {
+      matches = FULL_QUESTION_BANK.filter((q) => q.topic_id?.includes('12-2') || q.topic_id?.includes('10-4'));
+    } else if (lower.includes('dãy số') || lower.includes('sequence')) {
+      matches = FULL_QUESTION_BANK.filter((q) => q.topic_id?.includes('11-2-1') || q.id.includes('11-2-1'));
+    } else if (lower.includes('cộng') || lower.includes('arithmetic')) {
+      matches = FULL_QUESTION_BANK.filter((q) => q.topic_id?.includes('11-2-2') || q.id.includes('11-2-2'));
+    } else if (lower.includes('nhân') || lower.includes('geometric')) {
+      matches = FULL_QUESTION_BANK.filter((q) => q.topic_id?.includes('11-2-3') || q.id.includes('11-2-3'));
+    } else if (lower.includes('lượng giác') || lower.includes('trigonometric') || lower.includes('sin') || lower.includes('cos')) {
+      matches = FULL_QUESTION_BANK.filter((q) => q.topic_id?.includes('11-1') || q.topic_id?.includes('10-3'));
+    } else if (lower.includes('mệnh đề') || lower.includes('tập hợp') || lower.includes('proposition') || lower.includes('set')) {
+      matches = FULL_QUESTION_BANK.filter((q) => q.topic_id?.includes('10-1'));
+    } else if (lower.includes('parabol') || lower.includes('bậc hai')) {
+      matches = FULL_QUESTION_BANK.filter((q) => q.topic_id?.includes('10-6'));
+    }
+
+    if (matches.length > 0) return matches;
+
+    // Fallback by grade
+    if (lower.includes('12') || grade === 12) {
+      matches = FULL_QUESTION_BANK.filter((q) => q.topic_id?.includes('-12-'));
+    } else if (lower.includes('11') || grade === 11) {
+      matches = FULL_QUESTION_BANK.filter((q) => q.topic_id?.includes('-11-'));
+    } else {
+      matches = FULL_QUESTION_BANK.filter((q) => q.topic_id?.includes('-10-'));
+    }
+
+    return matches.length > 0 ? matches : FULL_QUESTION_BANK;
+  };
+
   // Initial generated test default state
   const [currentTest, setCurrentTest] = useState<GeneratedTestState>(() => {
-    const initialQuestions = FULL_QUESTION_BANK.slice(0, 10);
+    const logQuestions = FULL_QUESTION_BANK.filter((q) => q.topic_id?.includes('11-6') || q.id.includes('11-6'));
+    const initialList = logQuestions.length > 0 ? logQuestions : FULL_QUESTION_BANK.slice(0, 10);
     return {
-      title: `ĐỀ KIỂM TRA ĐÁNH GIÁ NĂNG LỰC TOÁN ${selectedGrade}`,
-      title_en: `MATHEMATICS ASSESSMENT TEST - GRADE ${selectedGrade}`,
-      duration: 15,
-      englishRatio: 50,
-      instructions_vi: `Thời gian làm bài: 15 phút (Không kể thời gian phát đề). Học sinh làm bài trực tiếp vào đề thi.`,
-      instructions_en: `Time allowed: 15 minutes. Write your answers directly on this paper.`,
-      questions: initialQuestions,
+      title: `ĐỀ KIỂM TRA 45 PHÚT: HÀM SỐ LŨY THỪA, MŨ VÀ LOGARIT`,
+      title_en: `45-MINUTE TEST: EXPONENTIAL AND LOGARITHMIC FUNCTIONS`,
+      duration: 45,
+      englishRatio: 100,
+      instructions_vi: `Thời gian làm bài: 45 phút (Không kể phát đề). Học sinh làm bài trực tiếp vào đề thi.`,
+      instructions_en: `Time allowed: 45 minutes. Write your answers directly on this paper. No calculator or notes permitted.`,
+      questions: initialList,
     };
   });
 
@@ -92,11 +131,40 @@ export const TestBuilder: React.FC = () => {
 
     setIsGenerating(true);
 
+    // Parse parameters from prompt text
+    const lowerPrompt = promptDescription.toLowerCase();
+    let detectedGrade = selectedGrade;
+    if (lowerPrompt.includes('lớp 12') || lowerPrompt.includes('khối 12') || lowerPrompt.includes('grade 12')) detectedGrade = 12;
+    else if (lowerPrompt.includes('lớp 11') || lowerPrompt.includes('khối 11') || lowerPrompt.includes('grade 11')) detectedGrade = 11;
+    else if (lowerPrompt.includes('lớp 10') || lowerPrompt.includes('khối 10') || lowerPrompt.includes('grade 10')) detectedGrade = 10;
+
+    let targetCount = 10;
+    const matchCount = lowerPrompt.match(/(\d+)\s*(câu|bài|questions)/i);
+    if (matchCount && matchCount[1]) {
+      targetCount = Math.min(25, Math.max(4, parseInt(matchCount[1], 10)));
+    }
+
+    let detectedDuration = 15;
+    const matchDuration = lowerPrompt.match(/(\d+)\s*(phút|mins|m|p)/i);
+    if (matchDuration && matchDuration[1]) {
+      detectedDuration = parseInt(matchDuration[1], 10);
+    } else if (lowerPrompt.includes('1 tiết') || lowerPrompt.includes('45')) {
+      detectedDuration = 45;
+    }
+
+    let detectedRatio = 50;
+    const matchRatio = lowerPrompt.match(/(\d+)\s*%/);
+    if (matchRatio && matchRatio[1]) {
+      detectedRatio = parseInt(matchRatio[1], 10);
+    } else if (lowerPrompt.includes('100%') || lowerPrompt.includes('hoàn toàn bằng tiếng anh') || lowerPrompt.includes('thuần tiếng anh') || lowerPrompt.includes('pure english')) {
+      detectedRatio = 100;
+    }
+
     // Try Gemini API if key is set
     if (hasApiKey()) {
       showNotification('🤖 Gemini AI đang phân tích yêu cầu và soạn bài test chuẩn GDPT 2018...');
       try {
-        const result = await generateExamTestFromDescriptionAi(promptDescription, selectedGrade);
+        const result = await generateExamTestFromDescriptionAi(promptDescription, detectedGrade);
         if (result && result.success && result.content) {
           const jsonMatch = result.content.match(/\{[\s\S]*\}/);
           if (jsonMatch) {
@@ -104,7 +172,7 @@ export const TestBuilder: React.FC = () => {
             if (data.questions && data.questions.length > 0) {
               const formattedQuestions: Question[] = data.questions.map((q: any, idx: number) => ({
                 id: `ai-test-q-${Date.now()}-${idx + 1}`,
-                topic_id: `top-custom-${selectedGrade}`,
+                topic_id: `top-custom-${detectedGrade}`,
                 question_type: q.question_type || 'MCQ',
                 format_type: q.format_type || 'TN',
                 difficulty: 'MEDIUM',
@@ -122,12 +190,12 @@ export const TestBuilder: React.FC = () => {
               }));
 
               setCurrentTest({
-                title: data.test_title || `ĐỀ KIỂM TRA TOÁN LỚP ${selectedGrade}`,
-                title_en: data.test_title_en || `GRADE ${selectedGrade} MATH TEST`,
-                duration: data.duration_minutes || 15,
-                englishRatio: data.english_ratio || 50,
-                instructions_vi: data.instructions_vi || 'Thời gian làm bài: 15 phút. Học sinh làm bài trực tiếp vào đề.',
-                instructions_en: data.instructions_en || 'Time allowed: 15 minutes.',
+                title: data.test_title || `ĐỀ KIỂM TRA ${detectedDuration} PHÚT: TOÁN LỚP ${detectedGrade}`,
+                title_en: data.test_title_en || `${detectedDuration}-MINUTE TEST: MATHEMATICS GRADE ${detectedGrade}`,
+                duration: data.duration_minutes || detectedDuration,
+                englishRatio: data.english_ratio || detectedRatio,
+                instructions_vi: data.instructions_vi || `Thời gian làm bài: ${detectedDuration} phút. Học sinh làm bài trực tiếp vào đề.`,
+                instructions_en: data.instructions_en || `Time allowed: ${detectedDuration} minutes. Write your answers directly on this paper.`,
                 questions: formattedQuestions,
               });
 
@@ -142,51 +210,44 @@ export const TestBuilder: React.FC = () => {
       }
     }
 
-    // Fallback: Parse prompt description locally and pick suitable questions from FULL_QUESTION_BANK
-    const lowerPrompt = promptDescription.toLowerCase();
-    let targetCount = 10;
-    const matchCount = lowerPrompt.match(/(\d+)\s*(câu|bài|questions)/i);
-    if (matchCount && matchCount[1]) {
-      targetCount = Math.min(25, Math.max(4, parseInt(matchCount[1], 10)));
+    // Fallback: Pick accurately filtered questions by topic from Question Bank
+    const candidateQuestions = filterQuestionsFromPrompt(promptDescription, detectedGrade);
+    
+    // Pick questions according to targetCount
+    let selected: Question[] = [];
+    if (candidateQuestions.length <= targetCount) {
+      selected = candidateQuestions;
+    } else {
+      const shuffled = [...candidateQuestions].sort(() => 0.5 - Math.random());
+      selected = shuffled.slice(0, targetCount);
     }
 
-    let detectedDuration = 15;
-    const matchDuration = lowerPrompt.match(/(\d+)\s*(phút|mins|m|p)/i);
-    if (matchDuration && matchDuration[1]) {
-      detectedDuration = parseInt(matchDuration[1], 10);
+    // Extract title from prompt
+    let titleVi = `ĐỀ KIỂM TRA ${detectedDuration} PHÚT: TOÁN LỚP ${detectedGrade}`;
+    let titleEn = `${detectedDuration}-MINUTE TEST: MATHEMATICS GRADE ${detectedGrade}`;
+    if (lowerPrompt.includes('logarit') || lowerPrompt.includes('mũ') || lowerPrompt.includes('lũy thừa')) {
+      titleVi = `ĐỀ KIỂM TRA ${detectedDuration} PHÚT: HÀM SỐ LŨY THỪA, MŨ VÀ LOGARIT`;
+      titleEn = `${detectedDuration}-MINUTE TEST: EXPONENTIAL AND LOGARITHMIC FUNCTIONS`;
+    } else if (lowerPrompt.includes('tiệm cận')) {
+      titleVi = `ĐỀ KIỂM TRA ${detectedDuration} PHÚT: ĐƯỜNG TIỆM CẬN CỦA ĐỒ THỊ HÀM SỐ`;
+      titleEn = `${detectedDuration}-MINUTE TEST: ASYMPTOTES OF FUNCTION GRAPHS`;
+    } else if (lowerPrompt.includes('gtln') || lowerPrompt.includes('gtnn') || lowerPrompt.includes('lớn nhất')) {
+      titleVi = `ĐỀ KIỂM TRA ${detectedDuration} PHÚT: GIÁ TRỊ LỚN NHẤT VÀ NHỎ NHẤT CỦA HÀM SỐ`;
+      titleEn = `${detectedDuration}-MINUTE TEST: MAXIMUM AND MINIMUM VALUES OF FUNCTIONS`;
+    } else if (lowerPrompt.includes('đơn điệu') || lowerPrompt.includes('cực trị') || lowerPrompt.includes('khảo sát')) {
+      titleVi = `ĐỀ KIỂM TRA ${detectedDuration} PHÚT: TÍNH ĐƠN ĐIỆU VÀ CỰC TRỊ CỦA HÀM SỐ`;
+      titleEn = `${detectedDuration}-MINUTE TEST: MONOTONICITY AND EXTREMA OF FUNCTIONS`;
+    } else if (lowerPrompt.includes('vectơ') || lowerPrompt.includes('oxyz')) {
+      titleVi = `ĐỀ KIỂM TRA ${detectedDuration} PHÚT: VECTƠ VÀ HỆ TOẠ ĐỘ TRONG KHÔNG GIAN`;
+      titleEn = `${detectedDuration}-MINUTE TEST: VECTORS AND 3D COORDINATE SYSTEMS`;
+    } else if (lowerPrompt.includes('dãy số') || lowerPrompt.includes('cấp số cộng')) {
+      titleVi = `ĐỀ KIỂM TRA ${detectedDuration} PHÚT: DÃY SỐ VÀ CẤP SỐ CỘNG`;
+      titleEn = `${detectedDuration}-MINUTE TEST: SEQUENCES AND ARITHMETIC PROGRESSIONS`;
     }
-
-    let detectedRatio = 50;
-    const matchRatio = lowerPrompt.match(/(\d+)\s*%/);
-    if (matchRatio && matchRatio[1]) {
-      detectedRatio = parseInt(matchRatio[1], 10);
-    }
-
-    // Filter relevant questions by keyword
-    let candidateQuestions = FULL_QUESTION_BANK;
-    if (lowerPrompt.includes('dãy số') || lowerPrompt.includes('sequence')) {
-      candidateQuestions = candidateQuestions.filter((q) => q.id.includes('les-11-1-5') || q.id.includes('les-11-1-6') || q.id.includes('les-11-1-7'));
-    } else if (lowerPrompt.includes('cộng') || lowerPrompt.includes('arithmetic')) {
-      candidateQuestions = candidateQuestions.filter((q) => q.id.includes('les-11-1-6'));
-    } else if (lowerPrompt.includes('nhân') || lowerPrompt.includes('geometric')) {
-      candidateQuestions = candidateQuestions.filter((q) => q.id.includes('les-11-1-7'));
-    } else if (lowerPrompt.includes('hàm số') || lowerPrompt.includes('bậc hai')) {
-      candidateQuestions = candidateQuestions.filter((q) => q.id.includes('les-10-3-2') || q.id.includes('les-12-1-1'));
-    } else if (lowerPrompt.includes('mệnh đề') || lowerPrompt.includes('tập hợp')) {
-      candidateQuestions = candidateQuestions.filter((q) => q.id.includes('les-10-1-1'));
-    }
-
-    if (candidateQuestions.length < targetCount) {
-      candidateQuestions = FULL_QUESTION_BANK;
-    }
-
-    // Shuffle and pick questions across 4 formats
-    const shuffled = [...candidateQuestions].sort(() => 0.5 - Math.random());
-    const selected = shuffled.slice(0, targetCount);
 
     setCurrentTest({
-      title: `ĐỀ KIỂM TRA ${detectedDuration} PHÚT: TOÁN LỚP ${selectedGrade} (${detectedRatio}% TIẾNG ANH)`,
-      title_en: `${detectedDuration}-MINUTE TEST: MATHEMATICS GRADE ${selectedGrade} (${detectedRatio}% ENGLISH)`,
+      title: titleVi,
+      title_en: titleEn,
       duration: detectedDuration,
       englishRatio: detectedRatio,
       instructions_vi: `Thời gian làm bài: ${detectedDuration} phút. Học sinh làm bài trực tiếp vào đề thi. Không sử dụng tài liệu.`,
@@ -194,7 +255,7 @@ export const TestBuilder: React.FC = () => {
       questions: selected,
     });
 
-    showNotification(`✨ Đã tạo bài kiểm tra (${selected.length} câu, ${detectedRatio}% Tiếng Anh) từ ngân hàng câu hỏi chuẩn!`);
+    showNotification(`✨ Đã biên soạn bài test đúng chuyên đề (${selected.length} câu, ${detectedRatio}% Tiếng Anh)!`);
     setIsGenerating(false);
   };
 
@@ -205,27 +266,42 @@ export const TestBuilder: React.FC = () => {
 
   // Export: Copy to Word Clipboard
   const handleCopyWord = () => {
+    const isPureEnglish = currentTest.englishRatio >= 80;
     let content = `=========================================================\n`;
     content += `TRƯỜNG THPT CHÂU THÀNH A\n`;
     content += `TỔ TOÁN\n`;
-    content += `${currentTest.title.toUpperCase()}\n`;
-    content += `Thời gian làm bài: ${currentTest.duration} phút | Tỷ lệ tiếng Anh: ${currentTest.englishRatio}%\n`;
+    content += `${isPureEnglish ? currentTest.title_en.toUpperCase() : currentTest.title.toUpperCase()}\n`;
+    content += `Thời gian / Time: ${currentTest.duration} phút | Tỷ lệ tiếng Anh: ${currentTest.englishRatio}%\n`;
     content += `=========================================================\n\n`;
 
     if (includeCandidateBox) {
-      content += `Họ và tên học sinh: ..................................................... Lớp: .......... SBD: ............\n`;
-      content += `Điểm số: [      ] | Lời phê của giáo viên: ........................................................\n\n`;
+      if (isPureEnglish) {
+        content += `Student Full Name: ..................................................... Class: .......... Candidate ID: ............\n`;
+        content += `Score: [      ] | Teacher's Feedback: ........................................................\n\n`;
+      } else {
+        content += `Họ và tên học sinh: ..................................................... Lớp: .......... SBD: ............\n`;
+        content += `Điểm số: [      ] | Lời phê của giáo viên: ........................................................\n\n`;
+      }
     }
 
     currentTest.questions.forEach((q, idx) => {
-      content += `Câu ${idx + 1} (${q.format_type || 'TN'}): ${q.question_vi}\n`;
-      if (q.question_en) {
-        content += `(En: ${q.question_en})\n`;
-      }
-      if (q.options && q.options.length > 0) {
-        q.options.forEach((opt) => {
-          content += `   ${opt.option_key}. ${opt.content_vi || opt.content_en}\n`;
-        });
+      if (isPureEnglish) {
+        content += `Question ${idx + 1} (${q.format_type || 'MCQ'}): ${q.question_en || q.question_vi}\n`;
+        if (q.options && q.options.length > 0) {
+          q.options.forEach((opt) => {
+            content += `   ${opt.option_key}. ${opt.content_en || opt.content_vi}\n`;
+          });
+        }
+      } else {
+        content += `Câu ${idx + 1} (${q.format_type || 'TN'}): ${q.question_vi}\n`;
+        if (q.question_en && currentTest.englishRatio >= 40) {
+          content += `   (En: ${q.question_en})\n`;
+        }
+        if (q.options && q.options.length > 0) {
+          q.options.forEach((opt) => {
+            content += `   ${opt.option_key}. ${opt.content_vi || opt.content_en}\n`;
+          });
+        }
       }
       content += `\n`;
     });
@@ -243,6 +319,7 @@ export const TestBuilder: React.FC = () => {
 
   // Export: Download .doc Word file
   const handleDownloadDoc = () => {
+    const isPureEnglish = currentTest.englishRatio >= 80;
     let docContent = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
     <head><meta charset='utf-8'><title>${currentTest.title}</title>
     <style>
@@ -263,26 +340,37 @@ export const TestBuilder: React.FC = () => {
       </tr>
     </table>`;
 
-    docContent += `<h2 style='text-align:center; text-transform:uppercase;'>${currentTest.title}</h2>`;
-    docContent += `<p style='text-align:center; font-style:italic;'>${currentTest.instructions_vi}</p>`;
+    docContent += `<h2 style='text-align:center; text-transform:uppercase;'>${isPureEnglish ? currentTest.title_en : currentTest.title}</h2>`;
+    docContent += `<p style='text-align:center; font-style:italic;'>${isPureEnglish ? currentTest.instructions_en : currentTest.instructions_vi}</p>`;
 
     if (includeCandidateBox) {
-      docContent += `<div class='candidate-box'>
-        <p>Họ và tên: ............................................................................ Lớp: ................. SBD: .................</p>
-        <p>Điểm số: ................................... Lời phê của Thầy/Cô: ................................................................</p>
-      </div>`;
+      if (isPureEnglish) {
+        docContent += `<div class='candidate-box'>
+          <p>Student Name: ............................................................................ Class: ................. Candidate ID: .................</p>
+          <p>Score: ................................... Teacher's Feedback: ................................................................</p>
+        </div>`;
+      } else {
+        docContent += `<div class='candidate-box'>
+          <p>Họ và tên: ............................................................................ Lớp: ................. SBD: .................</p>
+          <p>Điểm số: ................................... Lời phê của Thầy/Cô: ................................................................</p>
+        </div>`;
+      }
     }
 
     currentTest.questions.forEach((q, idx) => {
-      docContent += `<div class='question-item'>
-        <p><strong>Câu ${idx + 1} (${q.format_type || 'TN'}):</strong> ${q.question_vi}</p>`;
-      if (q.question_en) {
-        docContent += `<p style='color: #0d9488; font-style: italic; margin-left: 20px;'>En: ${q.question_en}</p>`;
+      docContent += `<div class='question-item'>`;
+      if (isPureEnglish) {
+        docContent += `<p><strong>Question ${idx + 1} (${q.format_type || 'MCQ'}):</strong> ${q.question_en || q.question_vi}</p>`;
+      } else {
+        docContent += `<p><strong>Câu ${idx + 1} (${q.format_type || 'TN'}):</strong> ${q.question_vi}</p>`;
+        if (q.question_en && currentTest.englishRatio >= 40) {
+          docContent += `<p style='color: #0d9488; font-style: italic; margin-left: 20px;'>En: ${q.question_en}</p>`;
+        }
       }
       if (q.options && q.options.length > 0) {
         docContent += `<ul>`;
         q.options.forEach((opt) => {
-          docContent += `<li><strong>${opt.option_key}.</strong> ${opt.content_vi || opt.content_en}</li>`;
+          docContent += `<li><strong>${opt.option_key}.</strong> ${isPureEnglish ? (opt.content_en || opt.content_vi) : (opt.content_vi || opt.content_en)}</li>`;
         });
         docContent += `</ul>`;
       }
@@ -317,6 +405,8 @@ export const TestBuilder: React.FC = () => {
   const dsList = currentTest.questions.filter((q) => q.format_type === 'DS' || q.question_type === 'TRUE_FALSE');
   const tlnList = currentTest.questions.filter((q) => q.format_type === 'TLN' || q.question_type === 'SHORT');
   const tlList = currentTest.questions.filter((q) => q.format_type === 'TL' || q.question_type === 'ESSAY');
+
+  const isPureEnglish = currentTest.englishRatio >= 80;
 
   return (
     <div className="w-full bg-[#F3F4F8] min-h-screen text-slate-900 font-sans pb-24">
@@ -375,7 +465,7 @@ export const TestBuilder: React.FC = () => {
                 value={promptDescription}
                 onChange={(e) => setPromptDescription(e.target.value)}
                 rows={3}
-                placeholder="Nhập mô tả đề bài (Ví dụ: Tạo đề 15 phút về Dãy số và Cấp số cộng lớp 11, gồm 10 câu, 50% tiếng Anh...)"
+                placeholder="Nhập mô tả đề bài (Ví dụ: Tạo bài kiểm tra 1 tiết 45 phút về Hàm số Lũy thừa, Mũ và Logarit lớp 12, gồm 15 câu 100% bằng Tiếng Anh...)"
                 className="w-full p-3.5 sm:p-4 text-xs sm:text-sm bg-slate-50/70 focus:bg-white border border-slate-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-violet-500 font-medium text-slate-800 transition leading-relaxed shadow-inner"
               />
             </div>
@@ -431,7 +521,7 @@ export const TestBuilder: React.FC = () => {
                 </span>
               </div>
 
-              {/* Toggles & Zoom */}
+              {/* Toggles & Options */}
               <div className="flex items-center gap-3 text-xs">
                 <label className="flex items-center gap-1.5 cursor-pointer select-none font-bold text-slate-700">
                   <input
@@ -459,7 +549,6 @@ export const TestBuilder: React.FC = () => {
             <div className="bg-slate-200/80 p-3 sm:p-6 rounded-3xl overflow-x-auto flex justify-center border border-slate-300 shadow-inner">
               <div
                 ref={printAreaRef}
-                style={{ transform: `scale(${zoomLevel / 100})`, transformOrigin: 'top center' }}
                 className="bg-white w-full max-w-[210mm] min-h-[297mm] p-8 sm:p-12 shadow-2xl border border-slate-300 text-slate-900 font-serif leading-relaxed transition-transform duration-150 print:shadow-none print:border-none print:m-0 print:p-6"
               >
                 {/* Header: Strictly THPT CHÂU THÀNH A / TỔ TOÁN */}
@@ -470,9 +559,12 @@ export const TestBuilder: React.FC = () => {
                       <p className="font-black text-violet-900 uppercase text-xs mt-0.5">TỔ TOÁN</p>
                     </div>
                     <div className="text-right">
-                      <p className="font-bold text-slate-700 uppercase">ĐỀ KIỂM TRA ĐÁNH GIÁ GDPT 2018</p>
+                      <p className="font-bold text-slate-700 uppercase">
+                        {isPureEnglish ? 'MATHEMATICS ASSESSMENT TEST' : 'ĐỀ KIỂM TRA ĐÁNH GIÁ GDPT 2018'}
+                      </p>
                       <p className="font-mono text-slate-500 text-[11px]">
-                        Thời gian: <strong>{currentTest.duration} phút</strong> (Không kể phát đề)
+                        {isPureEnglish ? 'Time allowed: ' : 'Thời gian: '}
+                        <strong>{currentTest.duration} phút / mins</strong>
                       </p>
                     </div>
                   </div>
@@ -481,15 +573,15 @@ export const TestBuilder: React.FC = () => {
                 {/* Exam Title */}
                 <div className="text-center space-y-1 mb-6 font-sans">
                   <h1 className="text-lg sm:text-xl font-black text-slate-900 tracking-tight uppercase">
-                    {currentTest.title}
+                    {isPureEnglish ? currentTest.title_en : currentTest.title}
                   </h1>
-                  {currentTest.title_en && (
+                  {!isPureEnglish && currentTest.title_en && (
                     <p className="text-xs font-bold text-teal-800 italic">
                       {currentTest.title_en}
                     </p>
                   )}
                   <p className="text-[11px] text-slate-500 italic">
-                    {currentTest.instructions_vi}
+                    {isPureEnglish ? currentTest.instructions_en : currentTest.instructions_vi}
                   </p>
                 </div>
 
@@ -498,21 +590,26 @@ export const TestBuilder: React.FC = () => {
                   <div className="mb-6 p-3 rounded-xl border border-slate-400 bg-slate-50/50 font-sans text-xs space-y-2">
                     <div className="flex flex-wrap justify-between items-center gap-2">
                       <div>
-                        Họ và tên học sinh: <strong className="border-b border-dotted border-slate-500 inline-block min-w-[180px]">&nbsp;</strong>
+                        {isPureEnglish ? 'Student Name: ' : 'Họ và tên học sinh: '}
+                        <strong className="border-b border-dotted border-slate-500 inline-block min-w-[180px]">&nbsp;</strong>
                       </div>
                       <div>
-                        Lớp: <strong className="border-b border-dotted border-slate-500 inline-block min-w-[60px]">&nbsp;</strong>
+                        {isPureEnglish ? 'Class: ' : 'Lớp: '}
+                        <strong className="border-b border-dotted border-slate-500 inline-block min-w-[60px]">&nbsp;</strong>
                       </div>
                       <div>
-                        Số báo danh (SBD): <strong className="border-b border-dotted border-slate-500 inline-block min-w-[70px]">&nbsp;</strong>
+                        {isPureEnglish ? 'Candidate ID: ' : 'Số báo danh (SBD): '}
+                        <strong className="border-b border-dotted border-slate-500 inline-block min-w-[70px]">&nbsp;</strong>
                       </div>
                     </div>
                     <div className="flex justify-between items-center pt-1 border-t border-slate-200">
                       <div>
-                        Điểm số: <span className="inline-block w-12 h-6 border border-slate-400 text-center align-middle font-bold"></span>
+                        {isPureEnglish ? 'Score: ' : 'Điểm số: '}
+                        <span className="inline-block w-12 h-6 border border-slate-400 text-center align-middle font-bold"></span>
                       </div>
                       <div className="flex-1 pl-4">
-                        Lời phê của Thầy/Cô: <span className="border-b border-dotted border-slate-400 inline-block w-[75%]">&nbsp;</span>
+                        {isPureEnglish ? "Teacher's Feedback: " : 'Lời phê của Thầy/Cô: '}
+                        <span className="border-b border-dotted border-slate-400 inline-block w-[75%]">&nbsp;</span>
                       </div>
                     </div>
                   </div>
@@ -527,17 +624,21 @@ export const TestBuilder: React.FC = () => {
                   {tnList.length > 0 && (
                     <div className="space-y-3">
                       <div className="font-sans font-bold text-xs sm:text-sm text-violet-950 uppercase border-b border-slate-200 pb-1">
-                        PHẦN I. CÂU TRẮC NGHIỆM NHIỀU LỰA CHỌN ({tnList.length} câu)
+                        {isPureEnglish
+                          ? `SECTION I. MULTIPLE CHOICE QUESTIONS (${tnList.length} QUESTIONS)`
+                          : `PHẦN I. CÂU TRẮC NGHIỆM NHIỀU LỰA CHỌN (${tnList.length} CÂU)`}
                       </div>
                       <div className="space-y-4">
                         {tnList.map((q, idx) => (
                           <div key={q.id || idx} className="space-y-1.5">
                             <div>
-                              <span className="font-sans font-bold text-slate-900 mr-1.5">Câu {idx + 1}:</span>
-                              <MathRenderer content={q.question_vi} inline />
+                              <span className="font-sans font-bold text-slate-900 mr-1.5">
+                                {isPureEnglish ? `Question ${idx + 1}:` : `Câu ${idx + 1}:`}
+                              </span>
+                              <MathRenderer content={isPureEnglish ? (q.question_en || q.question_vi) : q.question_vi} inline />
                             </div>
 
-                            {q.question_en && (
+                            {!isPureEnglish && q.question_en && currentTest.englishRatio >= 40 && (
                               <p className="text-xs text-teal-800 italic pl-5 font-sans">
                                 (En: <MathRenderer content={q.question_en} inline />)
                               </p>
@@ -548,7 +649,7 @@ export const TestBuilder: React.FC = () => {
                                 {q.options.map((opt) => (
                                   <div key={opt.option_key} className="flex items-center gap-1.5">
                                     <span className="font-bold">{opt.option_key}.</span>
-                                    <MathRenderer content={opt.content_vi || opt.content_en} inline />
+                                    <MathRenderer content={isPureEnglish ? (opt.content_en || opt.content_vi) : (opt.content_vi || opt.content_en)} inline />
                                   </div>
                                 ))}
                               </div>
@@ -563,13 +664,17 @@ export const TestBuilder: React.FC = () => {
                   {dsList.length > 0 && (
                     <div className="space-y-3 pt-2">
                       <div className="font-sans font-bold text-xs sm:text-sm text-violet-950 uppercase border-b border-slate-200 pb-1">
-                        PHẦN II. CÂU TRẮC NGHIỆM ĐÚNG / SAI ({dsList.length} câu)
+                        {isPureEnglish
+                          ? `SECTION II. TRUE / FALSE QUESTIONS (${dsList.length} QUESTIONS)`
+                          : `PHẦN II. CÂU TRẮC NGHIỆM ĐÚNG / SAI (${dsList.length} CÂU)`}
                       </div>
                       {dsList.map((q, idx) => (
                         <div key={q.id || idx} className="space-y-2">
                           <div>
-                            <span className="font-sans font-bold text-slate-900 mr-1.5">Câu {idx + 1}:</span>
-                            <MathRenderer content={q.question_vi} inline />
+                            <span className="font-sans font-bold text-slate-900 mr-1.5">
+                              {isPureEnglish ? `Question ${idx + 1}:` : `Câu ${idx + 1}:`}
+                            </span>
+                            <MathRenderer content={isPureEnglish ? (q.question_en || q.question_vi) : q.question_vi} inline />
                           </div>
                           {q.options && (
                             <div className="grid grid-cols-1 gap-1.5 pl-5 font-sans text-xs">
@@ -577,11 +682,15 @@ export const TestBuilder: React.FC = () => {
                                 <div key={opt.option_key} className="flex items-center justify-between p-2 rounded-lg bg-slate-50 border border-slate-200">
                                   <div>
                                     <span className="font-bold mr-1.5">{opt.option_key})</span>
-                                    <MathRenderer content={opt.content_vi || opt.content_en} inline />
+                                    <MathRenderer content={isPureEnglish ? (opt.content_en || opt.content_vi) : (opt.content_vi || opt.content_en)} inline />
                                   </div>
                                   <div className="flex gap-2 text-[11px] font-bold">
-                                    <span className="px-2 py-0.5 border border-slate-300 rounded bg-white">Đ</span>
-                                    <span className="px-2 py-0.5 border border-slate-300 rounded bg-white">S</span>
+                                    <span className="px-2 py-0.5 border border-slate-300 rounded bg-white">
+                                      {isPureEnglish ? 'T' : 'Đ'}
+                                    </span>
+                                    <span className="px-2 py-0.5 border border-slate-300 rounded bg-white">
+                                      {isPureEnglish ? 'F' : 'S'}
+                                    </span>
                                   </div>
                                 </div>
                               ))}
@@ -596,16 +705,20 @@ export const TestBuilder: React.FC = () => {
                   {tlnList.length > 0 && (
                     <div className="space-y-3 pt-2">
                       <div className="font-sans font-bold text-xs sm:text-sm text-violet-950 uppercase border-b border-slate-200 pb-1">
-                        PHẦN III. CÂU TRẮC NGHIỆM TRẢ LỜI NGẮN ({tlnList.length} câu)
+                        {isPureEnglish
+                          ? `SECTION III. SHORT ANSWER QUESTIONS (${tlnList.length} QUESTIONS)`
+                          : `PHẦN III. CÂU TRẮC NGHIỆM TRẢ LỜI NGẮN (${tlnList.length} CÂU)`}
                       </div>
                       {tlnList.map((q, idx) => (
                         <div key={q.id || idx} className="space-y-1.5">
                           <div>
-                            <span className="font-sans font-bold text-slate-900 mr-1.5">Câu {idx + 1}:</span>
-                            <MathRenderer content={q.question_vi} inline />
+                            <span className="font-sans font-bold text-slate-900 mr-1.5">
+                              {isPureEnglish ? `Question ${idx + 1}:` : `Câu ${idx + 1}:`}
+                            </span>
+                            <MathRenderer content={isPureEnglish ? (q.question_en || q.question_vi) : q.question_vi} inline />
                           </div>
                           <div className="pl-5 font-sans text-xs text-slate-500">
-                            Đáp số: [ ____________________ ]
+                            {isPureEnglish ? 'Answer: [ ____________________ ]' : 'Đáp số: [ ____________________ ]'}
                           </div>
                         </div>
                       ))}
@@ -616,13 +729,17 @@ export const TestBuilder: React.FC = () => {
                   {tlList.length > 0 && (
                     <div className="space-y-3 pt-2">
                       <div className="font-sans font-bold text-xs sm:text-sm text-violet-950 uppercase border-b border-slate-200 pb-1">
-                        PHẦN IV. CÂU HỎI TỰ LUẬN ({tlList.length} câu)
+                        {isPureEnglish
+                          ? `SECTION IV. ESSAY / EXTENDED RESPONSE (${tlList.length} QUESTIONS)`
+                          : `PHẦN IV. CÂU HỎI TỰ LUẬN (${tlList.length} CÂU)`}
                       </div>
                       {tlList.map((q, idx) => (
                         <div key={q.id || idx} className="space-y-1.5">
                           <div>
-                            <span className="font-sans font-bold text-slate-900 mr-1.5">Câu {idx + 1}:</span>
-                            <MathRenderer content={q.question_vi} inline />
+                            <span className="font-sans font-bold text-slate-900 mr-1.5">
+                              {isPureEnglish ? `Question ${idx + 1}:` : `Câu ${idx + 1}:`}
+                            </span>
+                            <MathRenderer content={isPureEnglish ? (q.question_en || q.question_vi) : q.question_vi} inline />
                           </div>
                         </div>
                       ))}
@@ -630,9 +747,9 @@ export const TestBuilder: React.FC = () => {
                   )}
                 </div>
 
-                {/* ========================================================================= */}
+                {/* ========================================================= */}
                 {/* BẢNG ĐÁP ÁN (ANSWER KEY) */}
-                {/* ========================================================================= */}
+                {/* ========================================================= */}
                 {includeAnswerKey && currentTest.questions.length > 0 && (
                   <div className="mt-8 pt-4 border-t-2 border-dashed border-slate-300 font-sans text-xs">
                     <p className="font-bold text-center uppercase text-slate-700 mb-2">
@@ -655,7 +772,7 @@ export const TestBuilder: React.FC = () => {
 
                 {/* Footer Signoff */}
                 <div className="text-center pt-8 text-xs italic font-sans text-slate-400">
-                  --- HẾT ---
+                  --- {isPureEnglish ? 'END OF TEST' : 'HẾT'} ---
                 </div>
               </div>
             </div>
