@@ -19,8 +19,9 @@ import {
 } from '../types';
 
 import { FULL_CHAPTERS, FULL_LESSONS } from './curriculumData';
+import { FULL_QUESTION_BANK, DEFAULT_WORKED_EXAMPLES } from './questionBankData';
 
-const DB_KEY = 'math_bridge_client_db_v7';
+const DB_KEY = 'math_bridge_client_db_v8';
 
 export const INITIAL_DATA = {
   profiles: [
@@ -64,12 +65,19 @@ export const INITIAL_DATA = {
   // =========================================================================
   // DANH SÁCH BÀI HỌC VÀ CÁC DẠNG TOÁN ỨNG DỤNG THỰC TẾ CHI TIẾT
   // =========================================================================
-  lessons: FULL_LESSONS,
+  lessons: FULL_LESSONS.map((l) => {
+    const defaultWe = DEFAULT_WORKED_EXAMPLES[l.id] || [];
+    return {
+      ...l,
+      worked_examples: (l.worked_examples && l.worked_examples.length > 0) ? l.worked_examples : defaultWe,
+    };
+  }),
 
   // =========================================================================
   // BỘ CÂU HỎI LUYỆN TẬP 4 DẠNG THỨC GDPT 2018 (TN, Đ/S, TLN, TL)
   // =========================================================================
   questions: [
+    ...FULL_QUESTION_BANK,
     // --- LỚP 12 - BÀI 1: TÍNH ĐƠN ĐIỆU & CỰC TRỊ ---
     // Phần 1: Trắc nghiệm 4 lựa chọn (TN)
     {
@@ -545,19 +553,25 @@ function getLocalDb() {
     }
 
     // Ensure all lessons and math types from INITIAL_DATA are present or updated
-    if (!parsed.lessons) {
+    if (!parsed.lessons || parsed.lessons.length < INITIAL_DATA.lessons.length) {
       parsed.lessons = INITIAL_DATA.lessons;
       changed = true;
     } else {
-      const existingIds = new Set(parsed.lessons.map((l: any) => l.id));
       INITIAL_DATA.lessons.forEach((initL) => {
-        if (!existingIds.has(initL.id)) {
+        const idx = parsed.lessons.findIndex((l: any) => l.id === initL.id);
+        if (idx === -1) {
           parsed.lessons.push(initL);
           changed = true;
         } else {
-          const idx = parsed.lessons.findIndex((l: any) => l.id === initL.id);
-          if (idx !== -1 && (!parsed.lessons[idx].types || parsed.lessons[idx].types.length < (initL.types?.length || 0))) {
-            parsed.lessons[idx] = initL;
+          // If worked_examples is empty in stored lesson, backfill from INITIAL_DATA
+          if (!parsed.lessons[idx].worked_examples || parsed.lessons[idx].worked_examples.length === 0) {
+            if (initL.worked_examples && initL.worked_examples.length > 0) {
+              parsed.lessons[idx].worked_examples = initL.worked_examples;
+              changed = true;
+            }
+          }
+          if (!parsed.lessons[idx].types || parsed.lessons[idx].types.length < (initL.types?.length || 0)) {
+            parsed.lessons[idx].types = initL.types;
             changed = true;
           }
         }
@@ -565,10 +579,14 @@ function getLocalDb() {
     }
 
     // Ensure questions from INITIAL_DATA are present
-    if (!parsed.questions || parsed.questions.length < INITIAL_DATA.questions.length) {
-      parsed.questions = INITIAL_DATA.questions;
-      changed = true;
-    }
+    const existingQIds = new Set((parsed.questions || []).map((q: any) => q.id));
+    INITIAL_DATA.questions.forEach((q) => {
+      if (!existingQIds.has(q.id)) {
+        if (!parsed.questions) parsed.questions = [];
+        parsed.questions.push(q);
+        changed = true;
+      }
+    });
 
     // Update school name in profiles
     if (parsed.profiles) {

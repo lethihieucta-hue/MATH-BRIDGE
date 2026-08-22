@@ -41,7 +41,7 @@ export const Header: React.FC = () => {
           <div className="flex items-center justify-between h-16 gap-2 sm:gap-4">
             {/* Left: Scientific Branding Title */}
             <div
-              onClick={() => setActiveTab(currentRole === 'TEACHER' ? 'teacher-dashboard' : 'learn')}
+              onClick={() => setActiveTab('learn')}
               className="flex items-center gap-3 cursor-pointer group shrink-0"
             >
               <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-violet-600 via-indigo-500 to-teal-400 p-0.5 shadow-md shadow-violet-500/20 group-hover:scale-105 transition-transform flex items-center justify-center">
@@ -73,8 +73,7 @@ export const Header: React.FC = () => {
                     key={grade}
                     onClick={() => {
                       setSelectedGrade(grade);
-                      // If user is on learning hub, make sure they stay in learn mode
-                      if (activeTab !== 'teacher-dashboard' && activeTab !== 'teacher-analytics') {
+                      if (activeTab !== 'test-builder') {
                         setActiveTab('learn');
                       }
                     }}
@@ -90,65 +89,32 @@ export const Header: React.FC = () => {
               })}
             </div>
 
-            {/* Center-Right: Navigation Tabs specifically for Teachers */}
+            {/* Center-Right: Navigation Tabs specifically for Teachers (Soạn Phiếu & Tạo Bài Test) */}
             <nav className="hidden lg:flex items-center space-x-1 bg-[#1E2238]/90 p-1 rounded-2xl border border-slate-700/60 text-xs font-bold shadow-inner">
               <button
                 onClick={() => {
                   setSelectedLessonSubTab('theory');
                   setActiveTab('learn');
                 }}
-                className={`px-3.5 py-1.5 rounded-xl transition cursor-pointer flex items-center gap-1.5 ${
+                className={`px-4 py-1.5 rounded-xl transition cursor-pointer flex items-center gap-1.5 ${
                   activeTab === 'learn'
                     ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-extrabold shadow-xs'
                     : 'text-slate-300 hover:text-white hover:bg-slate-800/60'
                 }`}
               >
-                <BookOpen className="w-3.5 h-3.5" />
+                <BookOpen className="w-4 h-4" />
                 <span>Soạn Phiếu & Chuyên Đề</span>
               </button>
               <button
-                onClick={() => setActiveTab('question-bank')}
-                className={`px-3.5 py-1.5 rounded-xl transition cursor-pointer flex items-center gap-1.5 ${
-                  activeTab === 'question-bank'
-                    ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-extrabold shadow-xs'
-                    : 'text-slate-300 hover:text-white hover:bg-slate-800/60'
-                }`}
-              >
-                <FileQuestion className="w-3.5 h-3.5" />
-                <span>Ngân Hàng Đề</span>
-              </button>
-              <button
-                onClick={() => setActiveTab('content-studio')}
-                className={`px-3.5 py-1.5 rounded-xl transition cursor-pointer flex items-center gap-1.5 ${
-                  activeTab === 'content-studio'
-                    ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-extrabold shadow-xs'
-                    : 'text-slate-300 hover:text-white hover:bg-slate-800/60'
-                }`}
-              >
-                <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-                <span>Biên Soạn AI</span>
-              </button>
-              <button
                 onClick={() => setActiveTab('test-builder')}
-                className={`px-3.5 py-1.5 rounded-xl transition cursor-pointer flex items-center gap-1.5 ${
+                className={`px-4 py-1.5 rounded-xl transition cursor-pointer flex items-center gap-1.5 ${
                   activeTab === 'test-builder'
                     ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-extrabold shadow-xs'
                     : 'text-slate-300 hover:text-white hover:bg-slate-800/60'
                 }`}
               >
-                <GraduationCap className="w-3.5 h-3.5" />
+                <GraduationCap className="w-4 h-4" />
                 <span>Tạo Bài Test</span>
-              </button>
-              <button
-                onClick={() => setActiveTab('teacher-dashboard')}
-                className={`px-3.5 py-1.5 rounded-xl transition cursor-pointer flex items-center gap-1.5 ${
-                  activeTab === 'teacher-dashboard'
-                    ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-extrabold shadow-xs'
-                    : 'text-slate-300 hover:text-white hover:bg-slate-800/60'
-                }`}
-              >
-                <Compass className="w-3.5 h-3.5" />
-                <span>Quản Lý Lớp</span>
               </button>
             </nav>
 

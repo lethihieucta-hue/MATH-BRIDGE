@@ -29,18 +29,9 @@ export default function App() {
   const renderContent = () => {
     if (currentRole === 'TEACHER') {
       switch (activeTab) {
-        case 'learn':
-          return <BilingualLessonModule />;
-        case 'question-bank':
-          return <QuestionBank />;
-        case 'content-studio':
-          return <ContentStudio />;
         case 'test-builder':
           return <TestBuilder />;
-        case 'teacher-analytics':
-          return <TeacherAnalytics />;
-        case 'teacher-dashboard':
-          return <TeacherDashboard setActiveTab={setActiveTab} />;
+        case 'learn':
         default:
           return <BilingualLessonModule />;
       }

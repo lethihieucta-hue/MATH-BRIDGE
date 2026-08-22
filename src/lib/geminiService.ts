@@ -603,3 +603,81 @@ Yêu cầu trả về đúng định dạng JSON CHÍNH XÁC (không kèm giải
   });
 }
 
+// AI Generator for Exam Tests from single teacher prompt description
+export async function generateExamTestFromDescriptionAi(
+  description: string,
+  grade: number = 11
+): Promise<StepExecutionResult> {
+  const prompt = `Bạn là chuyên gia khảo thí & giáo viên chuyên Toán THPT Việt Nam và giáo viên Toán tiếng Anh Cambridge/IB.
+Hãy biên soạn một đề kiểm tra / bài test đánh giá năng lực Toán song ngữ chuẩn cấu trúc GDPT 2018 dựa theo yêu cầu của giáo viên:
+
+YÊU CẦU MÔ TẢ CỦA GIÁO VIÊN:
+"${description}"
+(Khối lớp: Lớp ${grade})
+
+HÃY TỰ ĐỘNG PHÂN TÍCH YÊU CẦU (về nội dung/chủ đề, số lượng câu hỏi, thời gian làm bài và tỷ lệ % tiếng Anh) VÀ SINH RA KẾT QUẢ DƯỚI DẠNG ĐỊNH DẠNG JSON DUY NHẤT THEO SCHEMA SAU:
+{
+  "test_title": "Tên bài kiểm tra (Ví dụ: ĐỀ KIỂM TRA 15 PHÚT: DÃY SỐ VÀ CẤP SỐ CỘNG)",
+  "test_title_en": "15-Minute Test: Sequences and Arithmetic Progressions",
+  "duration_minutes": 15,
+  "english_ratio": 50,
+  "instructions_vi": "Thời gian làm bài: 15 phút. Học sinh làm bài trực tiếp vào đề.",
+  "instructions_en": "Time allowed: 15 minutes. Write your answers directly on this paper.",
+  "questions": [
+    {
+      "format_type": "TN",
+      "question_type": "MCQ",
+      "question_vi": "Đề câu hỏi tiếng Việt (công thức LaTeX $...$)",
+      "question_en": "Question in English",
+      "options": [
+        { "option_key": "A", "content_vi": "Phương án A", "content_en": "Option A", "is_correct": true },
+        { "option_key": "B", "content_vi": "Phương án B", "content_en": "Option B", "is_correct": false },
+        { "option_key": "C", "content_vi": "Phương án C", "content_en": "Option C", "is_correct": false },
+        { "option_key": "D", "content_vi": "Phương án D", "content_en": "Option D", "is_correct": false }
+      ],
+      "correct_answer": "A",
+      "solution_vi": "Lời giải chi tiết tiếng Việt",
+      "solution_en": "Detailed solution in English"
+    },
+    {
+      "format_type": "DS",
+      "question_type": "TRUE_FALSE",
+      "question_vi": "Cho... Các mệnh đề sau đúng hay sai:",
+      "question_en": "Given... Are the following statements True or False:",
+      "options": [
+        { "option_key": "a", "content_vi": "Mệnh đề a", "content_en": "Statement a", "is_correct": true },
+        { "option_key": "b", "content_vi": "Mệnh đề b", "content_en": "Statement b", "is_correct": true },
+        { "option_key": "c", "content_vi": "Mệnh đề c", "content_en": "Statement c", "is_correct": false },
+        { "option_key": "d", "content_vi": "Mệnh đề d", "content_en": "Statement d", "is_correct": true }
+      ],
+      "correct_answer": "a-Đ, b-Đ, c-S, d-Đ",
+      "solution_vi": "Giải thích chi tiết",
+      "solution_en": "Detailed explanation"
+    },
+    {
+      "format_type": "TLN",
+      "question_type": "SHORT",
+      "question_vi": "Câu hỏi trả lời ngắn (kết quả là số):",
+      "question_en": "Short-answer question:",
+      "correct_answer": "10",
+      "solution_vi": "Lời giải chi tiết",
+      "solution_en": "Detailed solution"
+    },
+    {
+      "format_type": "TL",
+      "question_type": "ESSAY",
+      "question_vi": "Câu hỏi tự luận:",
+      "question_en": "Essay question:",
+      "correct_answer": "Xem lời giải",
+      "solution_vi": "Các bước giải tự luận chi tiết",
+      "solution_en": "Detailed essay solution"
+    }
+  ]
+}`;
+
+  return executeWithFallback(prompt, {
+    systemInstruction: MATH_SYSTEM_INSTRUCTION,
+  });
+}
+
+

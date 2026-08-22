@@ -5,6 +5,7 @@ import { MathRenderer } from '../math/MathRenderer';
 import { speakEnglishWord } from '../../lib/audio';
 import { apiFetch } from '../../lib/dataService';
 import { generateCompleteLessonWorksheetAi, hasApiKey } from '../../lib/geminiService';
+import { getQuestionsForLesson, getWorkedExamplesForLesson } from '../../lib/questionBankData';
 import {
   BookOpen,
   Search,
@@ -149,117 +150,131 @@ export const BilingualLessonModule: React.FC = () => {
   // AI Auto-Generate Worksheet for Active Lesson
   const handleAiGenerateWorksheet = async () => {
     if (!activeLesson) return;
-    if (!hasApiKey()) {
-      showNotification('⚠️ Vui lòng nhấn vào nút Settings trên Header để nhập API Key Google AI Studio trước khi sinh bài tập!');
-      return;
-    }
 
     const activeChap = chapters.find((c) => c.id === activeLesson.chapter_id);
     const chapterName = activeChap ? activeChap.name_vi : `Toán Lớp ${selectedGrade}`;
 
     setIsAiGeneratingWorksheet(true);
-    showNotification(`🤖 AI Gemini đang soạn thảo toàn bộ phiếu học tập song ngữ cho "${activeLesson.title_vi}"...`);
 
-    try {
-      const result = await generateCompleteLessonWorksheetAi(
-        activeLesson.title_vi,
-        chapterName,
-        selectedGrade
-      );
+    if (hasApiKey()) {
+      showNotification(`🤖 AI Gemini đang soạn thảo phiếu học tập song ngữ cho "${activeLesson.title_vi}"...`);
+      try {
+        const result = await generateCompleteLessonWorksheetAi(
+          activeLesson.title_vi,
+          chapterName,
+          selectedGrade
+        );
 
-      if (!result.success) {
-        showNotification(`❌ Lỗi AI: ${result.rawError || result.error || 'Không thể sinh bài tập'}`);
-        return;
+        if (result && result.success && result.content) {
+          const jsonMatch = result.content.match(/\{[\s\S]*\}/);
+          if (jsonMatch) {
+            const data = JSON.parse(jsonMatch[0]);
+
+            // Update active lesson with AI data
+            const updatedLesson: Lesson = {
+              ...activeLesson,
+              key_concepts_vi: data.key_concepts_vi || activeLesson.key_concepts_vi,
+              key_concepts_en: data.key_concepts_en || activeLesson.key_concepts_en,
+              formulas: data.formulas || activeLesson.formulas || [],
+              vocabulary_list: data.vocabulary_terms
+                ? data.vocabulary_terms.map((v: any) => `${v.word} (${v.meaning || ''})`)
+                : activeLesson.vocabulary_list,
+              types: data.types
+                ? data.types.map((t: any, idx: number) => ({
+                    id: `type-ai-${activeLesson.id}-${idx + 1}`,
+                    lesson_id: activeLesson.id,
+                    code: t.code || `Dạng ${idx + 1}`,
+                    title_vi: t.title_vi || 'Dạng toán',
+                    title_en: t.title_en || 'Math Type',
+                    order_index: idx + 1,
+                  }))
+                : activeLesson.types,
+              worked_examples: data.worked_examples
+                ? data.worked_examples.map((we: any, idx: number) => ({
+                    id: `we-ai-${activeLesson.id}-${idx + 1}`,
+                    type_id: `type-ai-${activeLesson.id}-1`,
+                    type_code: we.type_code || `Dạng ${idx + 1}`,
+                    title_vi: we.title_vi || `Ví dụ ${idx + 1}`,
+                    title_en: we.title_en || `Example ${idx + 1}`,
+                    problem_vi: we.problem_vi || '',
+                    problem_en: we.problem_en || '',
+                    solution_vi: we.solution_vi || '',
+                    solution_en: we.solution_en || '',
+                  }))
+                : activeLesson.worked_examples,
+            };
+
+            await apiFetch('/api/lessons', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(updatedLesson),
+            });
+
+            if (data.questions && Array.isArray(data.questions)) {
+              for (let i = 0; i < data.questions.length; i++) {
+                const q = data.questions[i];
+                const newQ = {
+                  topic_id: activeLesson.topic_id || `top-${activeLesson.id}`,
+                  type_id: updatedLesson.types?.[0]?.id,
+                  question_type: q.question_type || 'MCQ',
+                  format_type: q.format_type || 'TN',
+                  difficulty: 'MEDIUM',
+                  language_level: 2,
+                  question_vi: q.question_vi || '',
+                  question_en: q.question_en || '',
+                  options: q.options || [],
+                  solution_vi: q.solution_vi || 'Lời giải chi tiết',
+                  solution_en: q.solution_en || 'Detailed solution',
+                  correct_answer: q.correct_answer || 'A',
+                  math_skill: activeLesson.title_vi,
+                  english_skill: activeLesson.title_en,
+                  status: 'PUBLISHED',
+                  created_by: 'usr-teacher-1',
+                };
+                await apiFetch('/api/questions', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(newQ),
+                });
+              }
+            }
+
+            await loadCurriculumData();
+            setActiveLesson(updatedLesson);
+            showNotification(`✨ AI Gemini đã biên soạn thành công toàn bộ phiếu học tập cho: ${activeLesson.title_vi}!`);
+            setIsAiGeneratingWorksheet(false);
+            return;
+          }
+        }
+      } catch (err) {
+        console.warn('Gemini API call failed, loading built-in bank:', err);
       }
+    }
 
-      const jsonMatch = result.content.match(/\{[\s\S]*\}/);
-      if (!jsonMatch) {
-        showNotification('❌ Mô hình không trả về định dạng JSON hợp lệ.');
-        return;
-      }
+    // Fallback: Populate built-in high quality questions & worked examples
+    const defaultWe = getWorkedExamplesForLesson(activeLesson.id);
+    const defaultQs = getQuestionsForLesson(activeLesson.id, activeLesson.topic_id);
 
-      const data = JSON.parse(jsonMatch[0]);
+    const fallbackLesson: Lesson = {
+      ...activeLesson,
+      worked_examples: (activeLesson.worked_examples && activeLesson.worked_examples.length > 0)
+        ? activeLesson.worked_examples
+        : defaultWe,
+    };
 
-      // Update active lesson with AI data
-      const updatedLesson: Lesson = {
-        ...activeLesson,
-        key_concepts_vi: data.key_concepts_vi || activeLesson.key_concepts_vi,
-        key_concepts_en: data.key_concepts_en || activeLesson.key_concepts_en,
-        formulas: data.formulas || activeLesson.formulas || [],
-        vocabulary_list: data.vocabulary_terms
-          ? data.vocabulary_terms.map((v: any) => `${v.word} (${v.meaning || ''})`)
-          : activeLesson.vocabulary_list,
-        types: data.types
-          ? data.types.map((t: any, idx: number) => ({
-              id: `type-ai-${activeLesson.id}-${idx + 1}`,
-              lesson_id: activeLesson.id,
-              code: t.code || `Dạng ${idx + 1}`,
-              title_vi: t.title_vi || 'Dạng toán',
-              title_en: t.title_en || 'Math Type',
-              order_index: idx + 1,
-            }))
-          : activeLesson.types,
-        worked_examples: data.worked_examples
-          ? data.worked_examples.map((we: any, idx: number) => ({
-              id: `we-ai-${activeLesson.id}-${idx + 1}`,
-              type_id: `type-ai-${activeLesson.id}-1`,
-              type_code: we.type_code || `Dạng ${idx + 1}`,
-              title_vi: we.title_vi || `Ví dụ ${idx + 1}`,
-              title_en: we.title_en || `Example ${idx + 1}`,
-              problem_vi: we.problem_vi || '',
-              problem_en: we.problem_en || '',
-              solution_vi: we.solution_vi || '',
-              solution_en: we.solution_en || '',
-            }))
-          : activeLesson.worked_examples,
-      };
-
-      // Save updated lesson to DB
-      await apiFetch('/api/lessons', {
+    // Save fallback questions to DB if missing
+    for (const q of defaultQs) {
+      await apiFetch('/api/questions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updatedLesson),
+        body: JSON.stringify(q),
       });
-
-      // Save questions to DB
-      if (data.questions && Array.isArray(data.questions)) {
-        for (let i = 0; i < data.questions.length; i++) {
-          const q = data.questions[i];
-          const newQ = {
-            topic_id: activeLesson.topic_id || `top-${activeLesson.id}`,
-            type_id: updatedLesson.types?.[0]?.id,
-            question_type: q.question_type || 'MCQ',
-            format_type: q.format_type || 'TN',
-            difficulty: 'MEDIUM',
-            language_level: 2,
-            question_vi: q.question_vi || '',
-            question_en: q.question_en || '',
-            options: q.options || [],
-            solution_vi: q.solution_vi || 'Lời giải chi tiết',
-            solution_en: q.solution_en || 'Detailed solution',
-            correct_answer: q.correct_answer || 'A',
-            math_skill: activeLesson.title_vi,
-            english_skill: activeLesson.title_en,
-            status: 'PUBLISHED',
-            created_by: 'usr-teacher-1',
-          };
-          await apiFetch('/api/questions', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(newQ),
-          });
-        }
-      }
-
-      await loadCurriculumData();
-      setActiveLesson(updatedLesson);
-      showNotification(`✨ AI Gemini đã biên soạn thành công toàn bộ phiếu học tập cho: ${activeLesson.title_vi}!`);
-    } catch (err: any) {
-      console.error('Error generating worksheet:', err);
-      showNotification(`❌ Lỗi phân tích: ${err.message}`);
-    } finally {
-      setIsAiGeneratingWorksheet(false);
     }
+
+    await loadCurriculumData();
+    setActiveLesson(fallbackLesson);
+    showNotification(`✨ Đã nạp đầy đủ bài tập mẫu & 4 dạng câu hỏi GDPT 2018 cho "${activeLesson.title_vi}"!`);
+    setIsAiGeneratingWorksheet(false);
   };
 
   // Toggle chapter expansion in tree
@@ -348,7 +363,7 @@ export const BilingualLessonModule: React.FC = () => {
   };
 
   // Filter questions for the active lesson
-  const displayedQuestions = allQuestions.filter((q) => {
+  const filteredQuestions = allQuestions.filter((q) => {
     if (!activeLesson) return false;
     if (q.topic_id && activeLesson.topic_id && q.topic_id === activeLesson.topic_id) return true;
     if (q.id && activeLesson.id && q.id.includes(activeLesson.id.replace('les-', 'q-'))) return true;
@@ -357,10 +372,15 @@ export const BilingualLessonModule: React.FC = () => {
     return false;
   });
 
+  const displayedQuestions = filteredQuestions.length > 0
+    ? filteredQuestions
+    : (activeLesson ? getQuestionsForLesson(activeLesson.id, activeLesson.topic_id) : []);
+
   // Export Action: Copy Word Text
   const handleCopyWord = () => {
     let content = `=========================================================\n`;
-    content += `SỞ GD&ĐT • TRƯỜNG THPT CHÂU THÀNH A\n`;
+    content += `TRƯỜNG THPT CHÂU THÀNH A\n`;
+    content += `TỔ TOÁN\n`;
     content += `${documentTitle.toUpperCase()}\n`;
     if (activeLesson) {
       content += `${activeLesson.title_vi.toUpperCase()}\n`;
@@ -452,7 +472,11 @@ export const BilingualLessonModule: React.FC = () => {
 
 
   // Filter worked examples to selected types
-  const displayedExamples = (activeLesson?.worked_examples || []).filter((we) => {
+  const rawExamples = (activeLesson?.worked_examples && activeLesson.worked_examples.length > 0)
+    ? activeLesson.worked_examples
+    : (activeLesson ? getWorkedExamplesForLesson(activeLesson.id) : []);
+
+  const displayedExamples = rawExamples.filter((we) => {
     if (selectedTypeIds.length === 0) return true;
     if (!we.type_id) return true;
     return selectedTypeIds.includes(we.type_id);
@@ -746,8 +770,8 @@ export const BilingualLessonModule: React.FC = () => {
                 <div className="border-b-2 border-slate-900 pb-3 mb-6 font-sans">
                   <div className="flex justify-between items-start text-xs">
                     <div>
-                      <p className="font-bold uppercase text-slate-700">SỞ GD&ĐT TỈNH / THPT CHÂU THÀNH A</p>
-                      <p className="font-extrabold text-violet-900 uppercase">TỔ TOÁN - TIẾNG ANH</p>
+                      <p className="font-extrabold uppercase text-slate-800 tracking-wide text-xs">THPT CHÂU THÀNH A</p>
+                      <p className="font-black text-violet-900 uppercase text-xs mt-0.5">TỔ TOÁN</p>
                     </div>
                     <div className="text-right">
                       <p className="font-bold text-slate-700">CHUYÊN ĐỀ GDPT 2018</p>
