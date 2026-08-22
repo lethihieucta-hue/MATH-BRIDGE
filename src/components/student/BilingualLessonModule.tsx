@@ -376,10 +376,6 @@ export const BilingualLessonModule: React.FC = () => {
     ? filteredQuestions
     : (activeLesson ? getQuestionsForLesson(activeLesson.id, activeLesson.topic_id) : []);
 
-  const displayedExamples = (activeLesson?.worked_examples && activeLesson.worked_examples.length > 0)
-    ? activeLesson.worked_examples
-    : (activeLesson ? getWorkedExamplesForLesson(activeLesson.id) : []);
-
   // Export Action: Copy Word Text
   const handleCopyWord = () => {
     let content = `=========================================================\n`;
