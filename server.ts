@@ -713,6 +713,7 @@ const syncCanonicalCurriculum = (db: any) => {
       key_concepts_vi: canonical.key_concepts_vi,
       key_concepts_en: canonical.key_concepts_en,
       formulas: canonical.formulas,
+      vocabulary_list: canonical.vocabulary_list,
       types: canonical.types,
       worked_examples: (reuseStored && stored?.worked_examples?.length)
         ? migrateStoredWorkedExamples(stored.worked_examples, canonical)

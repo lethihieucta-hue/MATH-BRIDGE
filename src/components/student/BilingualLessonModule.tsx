@@ -52,6 +52,20 @@ const getDefaultCountsForType = (type?: MathType): QuestionCounts => ({
   tl: type?.sample_count_tl ?? DEFAULT_COUNTS.tl,
 });
 
+const withTimeout = async <T,>(promise: Promise<T>, ms: number, label = 'AI'): Promise<T> => {
+  let timer: number | undefined;
+  try {
+    return await Promise.race([
+      promise,
+      new Promise<T>((_, reject) => {
+        timer = window.setTimeout(() => reject(new Error(`${label} quá thời gian chờ ${Math.round(ms / 1000)} giây.`)), ms);
+      }),
+    ]);
+  } finally {
+    if (timer) window.clearTimeout(timer);
+  }
+};
+
 export const BilingualLessonModule: React.FC = () => {
   const {
     selectedGrade,
@@ -175,20 +189,24 @@ export const BilingualLessonModule: React.FC = () => {
     if (hasApiKey()) {
       showNotification(`🤖 AI Gemini đang soạn thảo phiếu học tập song ngữ cho "${activeLesson.title_vi}"...`);
       try {
-        const result = await generateCompleteLessonWorksheetAi(
-          activeLesson.title_vi,
-          chapterName,
-          selectedGrade,
-          requestedTypesForAi.map((t) => ({
-            id: t.id,
-            code: t.code,
-            title_vi: t.title_vi,
-            title_en: t.title_en,
-          })),
-          {
-            key_concepts_vi: activeLesson.key_concepts_vi,
-            formulas: activeLesson.formulas || [],
-          }
+        const result = await withTimeout(
+          generateCompleteLessonWorksheetAi(
+            activeLesson.title_vi,
+            chapterName,
+            selectedGrade,
+            requestedTypesForAi.map((t) => ({
+              id: t.id,
+              code: t.code,
+              title_vi: t.title_vi,
+              title_en: t.title_en,
+            })),
+            {
+              key_concepts_vi: activeLesson.key_concepts_vi,
+              formulas: activeLesson.formulas || [],
+            }
+          ),
+          45000,
+          'AI soạn phiếu'
         );
 
         if (result && result.success && result.content) {
@@ -203,9 +221,8 @@ export const BilingualLessonModule: React.FC = () => {
               key_concepts_vi: activeLesson.key_concepts_vi,
               key_concepts_en: activeLesson.key_concepts_en,
               formulas: activeLesson.formulas || [],
-              vocabulary_list: data.vocabulary_terms
-                ? data.vocabulary_terms.map((v: any) => `${v.word} (${v.meaning || ''})`)
-                : activeLesson.vocabulary_list,
+              // 5 từ vựng EN—VI đã được biên soạn cố định theo bài; AI không ghi đè.
+              vocabulary_list: activeLesson.vocabulary_list,
               // Preserve the curriculum's stable type IDs. AI is not allowed to rename or
               // replace math types because question routing depends on these IDs.
               types: activeLesson.types,
@@ -359,19 +376,11 @@ export const BilingualLessonModule: React.FC = () => {
         : defaultWe,
     };
 
-    // Save fallback questions to DB if missing
-    for (const q of defaultQs) {
-      await apiFetch('/api/questions', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(q),
-      });
-    }
-
+    // Canonical static questions are already part of /api/questions; do not POST duplicates.
     const refreshedQuestions = await apiFetch<Question[]>('/api/questions');
     setAllQuestions(refreshedQuestions || []);
     setActiveLesson(fallbackLesson);
-    showNotification(defaultQs.length > 0 ? `✅ Đã nạp ${defaultQs.length} câu có sẵn đúng dạng cho "${activeLesson.title_vi}".` : `⚠️ Bài này chưa có ngân hàng tĩnh đúng dạng. Hãy dùng AI soạn phiếu để tạo câu mới; hệ thống sẽ không lấy bài Cực trị làm thay thế.`);
+    showNotification(`✅ Đã dùng ngân hàng tĩnh đúng type_id cho "${activeLesson.title_vi}"; không cần chờ AI để có bài tập.`);
     setIsAiGeneratingWorksheet(false);
   };
 
@@ -503,11 +512,11 @@ export const BilingualLessonModule: React.FC = () => {
     );
     const customExact = dbExact.filter((q) => !builtInIds.has(q.id));
 
-    // Prefer AI/teacher-authored exact-type questions, then canonical exact-type questions.
-    // Structural signatures remove numeric constants so a number-only clone cannot crowd out diversity.
+    // Prefer the canonical STATIC bank first so every selected type immediately has the guaranteed 4-2-2-1 baseline.
+    // Teacher/AI extras are appended only after the static baseline. variant_tag preserves authored structural diversity.
     const seen = new Set<string>();
-    return [...customExact, ...builtIn].filter((q) => {
-      const key = `${bucketQuestion(q)}|${getQuestionStructureSignature(q.question_vi || q.question_en)}`;
+    return [...builtIn, ...customExact].filter((q) => {
+      const key = `${bucketQuestion(q)}|${q.variant_tag || getQuestionStructureSignature(q.question_vi || q.question_en)}`;
       if (seen.has(key)) return false;
       seen.add(key);
       return true;
@@ -784,23 +793,27 @@ export const BilingualLessonModule: React.FC = () => {
           const rawPool: any[] = [];
           let acceptedForKind: Question[] = [];
 
-          for (let attempt = 0; attempt < 3 && acceptedForKind.length < required; attempt += 1) {
+          for (let attempt = 0; attempt < 1 && acceptedForKind.length < required; attempt += 1) {
             const remaining = required - acceptedForKind.length;
             const requestNow: QuestionCounts = { tn: 0, ds: 0, tln: 0, tl: 0 };
             requestNow[job.kind] = remaining;
 
-            const aiResult = await generateWorksheetQuestionsByPlanAi(
-              activeLesson.title_vi,
-              chapterName,
-              selectedGrade,
-              [{
-                id: shortage.mathType.id,
-                code: shortage.mathType.code,
-                title_vi: shortage.mathType.title_vi,
-                title_en: shortage.mathType.title_en,
-                ...requestNow,
-              }],
-              { key_concepts_vi: activeLesson.key_concepts_vi, formulas: activeLesson.formulas || [] }
+            const aiResult = await withTimeout(
+              generateWorksheetQuestionsByPlanAi(
+                activeLesson.title_vi,
+                chapterName,
+                selectedGrade,
+                [{
+                  id: shortage.mathType.id,
+                  code: shortage.mathType.code,
+                  title_vi: shortage.mathType.title_vi,
+                  title_en: shortage.mathType.title_en,
+                  ...requestNow,
+                }],
+                { key_concepts_vi: activeLesson.key_concepts_vi, formulas: activeLesson.formulas || [] }
+              ),
+              12000,
+              'Gemini'
             );
 
             if (!aiResult.success || !aiResult.content) {
@@ -881,24 +894,18 @@ export const BilingualLessonModule: React.FC = () => {
   const displayedQuestions = getDisplayedQuestions();
   const shortagePlans = getShortagePlans();
 
-  // Selecting a math type (or increasing its requested counts) automatically fills the exact-type bank.
-  // Debounce avoids firing while the teacher is still editing the four count inputs.
+  // IMPORTANT: selecting a type never calls Gemini automatically anymore.
+  // The canonical static bank already guarantees 4 TN + 2 Đ/S + 2 TLN + 1 TL for every type_id.
+  // AI is only an optional manual extension when the teacher requests MORE than the static baseline.
   useEffect(() => {
-    if (!activeLesson || selectedTypeIds.length === 0 || shortagePlans.length === 0) return;
-    if (!hasApiKey() || isAiGeneratingWorksheet || isAutoGeneratingQuestions) return;
-
-    const generationKey = JSON.stringify({
-      lesson: activeLesson.id,
-      shortage: shortagePlans.map((p) => ({ id: p.mathType.id, requested: p.requested, missing: p.missing })),
-    });
-    if (autoGenerationRunRef.current === generationKey) return;
-
-    const timer = window.setTimeout(() => {
-      autoGenerationRunRef.current = generationKey;
-      void generateQuestionsForPlans(shortagePlans, 'auto');
-    }, 650);
-    return () => window.clearTimeout(timer);
-  }, [activeLesson?.id, selectedTypeIds, typeQuestionCounts, allQuestions, isAiGeneratingWorksheet, isAutoGeneratingQuestions]);
+    if (!activeLesson || selectedTypeIds.length === 0) return;
+    if (shortagePlans.length === 0) {
+      setQuestionGenerationMessage('');
+      return;
+    }
+    const missing = shortagePlans.reduce((sum, p) => sum + p.missing.tn + p.missing.ds + p.missing.tln + p.missing.tl, 0);
+    setQuestionGenerationMessage(`Ngân hàng tĩnh đã dùng hết. Nếu cần thêm ${missing} câu vượt mức 4–2–2–1, Thầy/Cô có thể bấm AI tạo thêm biến thể.`);
+  }, [activeLesson?.id, selectedTypeIds, typeQuestionCounts, allQuestions]);
 
   // Export Action: Copy Word Text
   const handleCopyWord = () => {
@@ -1381,10 +1388,10 @@ export const BilingualLessonModule: React.FC = () => {
                         <div className="flex items-center justify-between">
                           <span className="font-extrabold text-violet-900 flex items-center gap-1">
                             <Sparkles className="w-3.5 h-3.5 text-violet-600" />
-                            Thuật ngữ toán học tiếng Anh cốt lõi:
+                            5 từ vựng Toán tiếng Anh của bài:
                           </span>
                           <button
-                            onClick={() => speakEnglishWord(activeLesson.vocabulary_list?.join(', ') || activeLesson.title_en || 'Mathematics')}
+                            onClick={() => speakEnglishWord(activeLesson.vocabulary_list?.map((v) => v.split('—')[0].trim()).join(', ') || activeLesson.title_en || 'Mathematics')}
                             className="p-1 text-violet-700 hover:text-violet-900 rounded cursor-pointer"
                             title="Nghe phát âm chuẩn"
                           >
@@ -1501,13 +1508,13 @@ export const BilingualLessonModule: React.FC = () => {
                             {selectedTypeIds.length === 0
                               ? 'Chưa chọn Dạng toán nào để hiển thị bài tập.'
                               : isAutoGeneratingQuestions
-                                ? 'AI đang sinh câu hỏi đúng theo các dạng đã chọn...'
-                                : 'Các dạng đã chọn chưa có đủ câu hỏi trong ngân hàng.'}
+                                ? 'AI đang tạo thêm biến thể theo yêu cầu...'
+                                : 'Không nạp được câu từ ngân hàng tĩnh của dạng đã chọn.'}
                           </p>
                           <p className="text-xs text-slate-500 max-w-lg mx-auto leading-relaxed">
                             {selectedTypeIds.length === 0
-                              ? 'Thầy/Cô tích chọn ít nhất một Dạng toán ở cây chương trình. Khi chọn, hệ thống sẽ kiểm tra và tự sinh câu đúng type_id.'
-                              : 'Hệ thống không lấy câu của dạng/chương khác để bù. Số lượng sẽ bám đúng 4 ô TN / Đ-S / TLN / TL ở cột bên phải.'}
+                              ? 'Thầy/Cô tích chọn ít nhất một Dạng toán ở cây chương trình. Bộ tĩnh 4 TN / 2 Đ-S / 2 TLN / 1 TL sẽ hiện ngay, không gọi AI.'
+                              : 'Nếu đang dùng mức mặc định 4–2–2–1 mà vẫn trắng, hãy kiểm tra lại bản deploy vì ngân hàng tĩnh phải luôn đủ. AI chỉ dùng khi chủ động yêu cầu thêm.'}
                           </p>
                           {questionGenerationMessage && selectedTypeIds.length > 0 && (
                             <p className="text-[11px] text-violet-700 max-w-xl mx-auto leading-relaxed font-semibold">
@@ -1522,7 +1529,7 @@ export const BilingualLessonModule: React.FC = () => {
                                 className="px-4 py-2 bg-violet-600 hover:bg-violet-700 disabled:opacity-50 text-white text-xs font-extrabold rounded-xl shadow-xs transition inline-flex items-center gap-1.5"
                               >
                                 <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-                                {isAutoGeneratingQuestions ? 'AI đang sinh câu...' : '✨ Sinh đủ câu theo số lượng đã chọn'}
+                                {isAutoGeneratingQuestions ? 'AI đang tạo thêm...' : '✨ AI tạo thêm biến thể'}
                               </button>
                             </div>
                           )}
@@ -1533,10 +1540,10 @@ export const BilingualLessonModule: React.FC = () => {
                             <div className="flex items-center justify-between gap-3 p-3 rounded-xl border border-amber-200 bg-amber-50 font-sans text-xs">
                               <div>
                                 <p className="font-bold text-amber-900">
-                                  {isAutoGeneratingQuestions ? 'AI đang bổ sung số câu còn thiếu...' : 'Ngân hàng hiện chưa đủ đúng số lượng đã chọn.'}
+                                  {isAutoGeneratingQuestions ? 'AI đang tạo thêm biến thể...' : 'Số lượng yêu cầu đang vượt ngân hàng tĩnh 4–2–2–1.'}
                                 </p>
                                 <p className="text-amber-800 mt-0.5">
-                                  Thiếu {shortagePlans.reduce((sum, p) => sum + p.missing.tn + p.missing.ds + p.missing.tln + p.missing.tl, 0)} câu; hệ thống không dùng câu của dạng khác để bù.
+                                  Cần thêm {shortagePlans.reduce((sum, p) => sum + p.missing.tn + p.missing.ds + p.missing.tln + p.missing.tl, 0)} câu ngoài bộ tĩnh; hệ thống không dùng câu của dạng khác để bù.
                                 </p>
                                 {questionGenerationMessage && (
                                   <p className="text-violet-700 mt-1 font-semibold">{questionGenerationMessage}</p>
@@ -1547,7 +1554,7 @@ export const BilingualLessonModule: React.FC = () => {
                                 disabled={isAutoGeneratingQuestions}
                                 className="shrink-0 px-3 py-1.5 bg-violet-600 text-white font-bold rounded-lg disabled:opacity-50"
                               >
-                                {isAutoGeneratingQuestions ? 'Đang sinh...' : 'Sinh đủ câu'}
+                                {isAutoGeneratingQuestions ? 'Đang tạo...' : 'AI tạo thêm'}
                               </button>
                             </div>
                           )}

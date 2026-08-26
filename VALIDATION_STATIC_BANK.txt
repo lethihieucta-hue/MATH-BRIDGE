@@ -1,0 +1,17 @@
+MATH BRIDGE STATIC WORKSHEET VALIDATION
+=======================================
+Chapters: 24
+Lessons: 79
+Math types: 289
+Static questions: 2601 / 2601
+Per type: 4 TN + 2 DS + 2 TLN + 1 TL
+Static bank issues: 0
+Exact-type routing issues: 0
+Static-first baseline issues: 0
+Types with duplicate TN stems: 0
+Vocabulary lessons: 79
+Vocabulary issues: 0
+AI auto-generation on type selection: DISABLED
+AI optional extra generation: 12s timeout per format request, one attempt
+AI full worksheet: 45s timeout
+RESULT: PASS

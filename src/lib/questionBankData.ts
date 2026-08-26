@@ -1,5 +1,6 @@
 import { Question, WorkedExample } from '../types';
 import { ALL_CURRENT_TYPE_IDS, LEGACY_TYPE_MIGRATION, TYPE_LESSON_BY_ID, migrateQuestionToCurrentCurriculum } from './curriculumData';
+import { STATIC_QUESTION_BANK } from './staticQuestionBank';
 
 // =========================================================================
 // BỘ BÀI TẬP MẪU CÓ LỜI GIẢI CHI TIẾT THEO TỪNG BÀI HỌC (WORKED EXAMPLES)
@@ -1295,9 +1296,13 @@ const LEGACY_QUESTION_BANK: Question[] = [
 
 // Canonicalized bank exposed to every UI consumer (worksheet, test builder, practice module, server).
 // Legacy IDs are migrated once here so direct imports can no longer bypass curriculum migration.
-export const FULL_QUESTION_BANK: Question[] = LEGACY_QUESTION_BANK
+const MIGRATED_LEGACY_QUESTION_BANK: Question[] = LEGACY_QUESTION_BANK
   .map((q) => migrateQuestionToCurrentCurriculum(q))
   .filter((q) => !q.type_id || ALL_CURRENT_TYPE_IDS.has(q.type_id));
+
+// Static bank is the baseline for every worksheet: 4 TN + 2 Đ/S + 2 TLN + 1 TL per type_id.
+// Legacy authored questions are kept as additional examples, but the worksheet never depends on Gemini.
+export const FULL_QUESTION_BANK: Question[] = [...STATIC_QUESTION_BANK, ...MIGRATED_LEGACY_QUESTION_BANK];
 
 // =========================================================================
 // EXACT-TYPE QUESTION ROUTING & QUALITY GUARDRAILS (GDPT 2018)
@@ -1373,7 +1378,7 @@ export function getQuestionsForMathTypeStructured(typeId: string, topicId?: stri
   const dedupe = (items: Question[]) => {
     const seen = new Set<string>();
     return items.filter((q) => {
-      const signature = `${q.format_type || q.question_type}|${getQuestionStructureSignature(q.question_vi || q.question_en)}`;
+      const signature = `${q.format_type || q.question_type}|${q.variant_tag || getQuestionStructureSignature(q.question_vi || q.question_en)}`;
       if (seen.has(signature)) return false;
       seen.add(signature);
       return true;
