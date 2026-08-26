@@ -1293,89 +1293,45 @@ export type MathDomain =
   | 'GENERAL_MATH';
 
 export function detectMathDomain(typeId?: string, topicId?: string, lessonId?: string): MathDomain {
-  const key = `${typeId || ''} ${topicId || ''} ${lessonId || ''}`.toLowerCase();
+  const top = (topicId || '').toLowerCase();
+  const les = (lessonId || '').toLowerCase();
+  const typ = (typeId || '').toLowerCase();
+  const full = `${typ} ${top} ${les}`;
 
-  if (
-    key.includes('11-1') ||
-    key.includes('lượng giác') ||
-    key.includes('trigonometric') ||
-    key.includes('sin') ||
-    key.includes('cos') ||
-    key.includes('tan')
-  ) {
+  // Ưu tiên 1: Kiểm tra khối Lớp 11
+  if (top.includes('11-1') || les.includes('11-1') || full.includes('lượng giác') || full.includes('trigonometric') || full.includes('sin') || full.includes('cos') || full.includes('tan')) {
     return 'TRIGONOMETRY_11';
   }
-  if (
-    key.includes('11-2') ||
-    key.includes('dãy số') ||
-    key.includes('cấp số') ||
-    key.includes('sequence') ||
-    key.includes('progression')
-  ) {
+  if (top.includes('11-2') || les.includes('11-2') || full.includes('dãy số') || full.includes('cấp số')) {
     return 'SEQUENCES_11';
   }
-  if (
-    key.includes('11-6') ||
-    key.includes('lũy thừa') ||
-    key.includes('mũ') ||
-    key.includes('log') ||
-    key.includes('exponent')
-  ) {
+  if (top.includes('11-6') || les.includes('11-6') || full.includes('lũy thừa') || full.includes('mũ') || full.includes('log')) {
     return 'EXP_LOG_11';
   }
-  if (
-    key.includes('11-7') ||
-    key.includes('đạo hàm') ||
-    key.includes('tiếp tuyến') ||
-    key.includes('derivative')
-  ) {
+  if (top.includes('11-7') || les.includes('11-7') || (full.includes('đạo hàm') && !top.includes('12-1') && !les.includes('12-1'))) {
     return 'DERIVATIVE_11';
   }
-  if (
-    key.includes('12-2') ||
-    key.includes('12-6') ||
-    key.includes('12-7') ||
-    key.includes('12-8') ||
-    key.includes('vectơ') ||
-    key.includes('toạ độ') ||
-    key.includes('tọa độ') ||
-    key.includes('oxyz')
-  ) {
-    return 'VECTORS_OXYZ_12';
-  }
-  if (key.includes('12-1-3') || key.includes('tiệm cận') || key.includes('asymptote')) {
-    return 'ASYMPTOTE_12';
-  }
-  if (
-    key.includes('12-1-2') ||
-    key.includes('gtln') ||
-    key.includes('gtnn') ||
-    key.includes('giá trị lớn nhất') ||
-    key.includes('giá trị nhỏ nhất') ||
-    key.includes('tối ưu')
-  ) {
-    return 'MAX_MIN_12';
-  }
-  if (
-    key.includes('12-1-1') ||
-    key.includes('12-1') ||
-    key.includes('đơn điệu') ||
-    key.includes('cực trị') ||
-    key.includes('đồng biến') ||
-    key.includes('nghịch biến')
-  ) {
-    return 'MONOTONICITY_12';
-  }
-  if (
-    key.includes('10-1') ||
-    key.includes('mệnh đề') ||
-    key.includes('tập hợp') ||
-    key.includes('set')
-  ) {
+
+  // Ưu tiên 2: Kiểm tra khối Lớp 10
+  if (top.includes('10-1') || les.includes('10-1') || full.includes('mệnh đề') || full.includes('tập hợp')) {
     return 'SETS_PROPOSITIONS_10';
   }
-  if (key.includes('10-6') || key.includes('parabol') || key.includes('bậc hai')) {
+  if (top.includes('10-6') || les.includes('10-6') || full.includes('parabol') || full.includes('bậc hai')) {
     return 'PARABOLA_10';
+  }
+
+  // Ưu tiên 3: Kiểm tra khối Lớp 12
+  if (top.includes('12-2') || les.includes('12-2') || top.includes('12-5') || les.includes('12-5') || full.includes('oxyz') || full.includes('vectơ')) {
+    return 'VECTORS_OXYZ_12';
+  }
+  if (top.includes('12-1-3') || les.includes('12-1-3') || full.includes('tiệm cận') || full.includes('asymptote')) {
+    return 'ASYMPTOTE_12';
+  }
+  if (top.includes('12-1-2') || les.includes('12-1-2') || full.includes('gtln') || full.includes('gtnn')) {
+    return 'MAX_MIN_12';
+  }
+  if (top.includes('12-1-1') || les.includes('12-1-1') || full.includes('đồng biến') || full.includes('nghịch biến') || full.includes('cực trị')) {
+    return 'MONOTONICITY_12';
   }
 
   return 'GENERAL_MATH';

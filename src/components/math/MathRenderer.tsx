@@ -17,7 +17,8 @@ export const MathRenderer: React.FC<MathRendererProps> = ({
   // Safe KaTeX renderer helper
   const renderLatexSafe = (latex: string, isInline: boolean) => {
     try {
-      return katex.renderToString(latex.trim(), {
+      let clean = latex.trim().replace(/\\\\([a-zA-Z]+)/g, '\\$1');
+      return katex.renderToString(clean, {
         displayMode: !isInline,
         throwOnError: false,
       });
@@ -97,8 +98,9 @@ export const MathRenderer: React.FC<MathRendererProps> = ({
 
   // Mixed text processor: splits into Markdown / Text tokens and Math tokens
   const renderMixedContent = (text: string) => {
-    // 1. Normalize LaTeX delimiters: \[...\] to $$...$$ and \(...\) to $...$
+    // 1. Normalize LaTeX delimiters & double backslashes
     let normalized = text
+      .replace(/\\\\([a-zA-Z]+)/g, '\\$1')
       .replace(/\\\$/g, '$')
       .replace(/`/g, '')
       .replace(/\\\[([\s\S]*?)\\\]/g, '$$$$$1$$$$')

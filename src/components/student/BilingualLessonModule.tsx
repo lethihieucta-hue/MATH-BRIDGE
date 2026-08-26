@@ -123,19 +123,16 @@ export const BilingualLessonModule: React.FC = () => {
       }
 
       setActiveLesson(targetLesson);
+      setSelectedTypeIds([]);
       if (targetLesson) {
         setSelectedLessonId(targetLesson.id);
-        // Default select all types of this lesson
         const typeIds = targetLesson.types?.map((t) => t.id) || [];
-        setSelectedTypeIds(typeIds);
-
         const initCounts: Record<string, { tn: number; ds: number; tln: number; tl: number }> = {};
         typeIds.forEach((tId) => {
           initCounts[tId] = { tn: 2, ds: 1, tln: 1, tl: 1 };
         });
         setTypeQuestionCounts(initCounts);
       } else {
-        setSelectedTypeIds([]);
         setTypeQuestionCounts({});
       }
 
@@ -345,16 +342,13 @@ export const BilingualLessonModule: React.FC = () => {
   const handleSelectLesson = (lesson: Lesson) => {
     setActiveLesson(lesson);
     setSelectedLessonId(lesson.id);
-    // If no types selected from this lesson, select them
+    setSelectedTypeIds([]);
     const lessonTypeIds = lesson.types?.map((t) => t.id) || [];
-    if (lessonTypeIds.length > 0 && !lessonTypeIds.some((id) => selectedTypeIds.includes(id))) {
-      setSelectedTypeIds(lessonTypeIds);
-      const nextCounts = { ...typeQuestionCounts };
-      lessonTypeIds.forEach((tId) => {
-        nextCounts[tId] = { tn: 2, ds: 1, tln: 1, tl: 1 };
-      });
-      setTypeQuestionCounts(nextCounts);
-    }
+    const nextCounts = { ...typeQuestionCounts };
+    lessonTypeIds.forEach((tId) => {
+      nextCounts[tId] = { tn: 2, ds: 1, tln: 1, tl: 1 };
+    });
+    setTypeQuestionCounts(nextCounts);
   };
 
   // Export Action: Print PDF
@@ -364,26 +358,18 @@ export const BilingualLessonModule: React.FC = () => {
 
   // Filter questions for the active lesson and selected math types with high precision
   const getDisplayedQuestions = (): Question[] => {
-    if (!activeLesson) return [];
+    if (!activeLesson || selectedTypeIds.length === 0) return [];
 
-    if (selectedTypeIds.length > 0) {
-      let combined: Question[] = [];
-      selectedTypeIds.forEach((tId) => {
+    let combined: Question[] = [];
+    selectedTypeIds.forEach((tId) => {
+      const isTypeOfLesson = activeLesson.types?.some((t) => t.id === tId);
+      if (isTypeOfLesson) {
         const struct = getQuestionsForMathTypeStructured(tId, activeLesson.topic_id);
         combined = [...combined, ...struct.all];
-      });
-      if (combined.length > 0) return combined;
-    }
-
-    const filtered = allQuestions.filter((q) => {
-      if (q.topic_id && activeLesson.topic_id && q.topic_id === activeLesson.topic_id) return true;
-      if (q.id && activeLesson.id && q.id.includes(activeLesson.id.replace('les-', 'q-'))) return true;
-      return false;
+      }
     });
 
-    if (filtered.length > 0) return filtered;
-
-    return getQuestionsForLesson(activeLesson.id, activeLesson.topic_id);
+    return combined;
   };
 
   const displayedQuestions = getDisplayedQuestions();
@@ -972,21 +958,26 @@ export const BilingualLessonModule: React.FC = () => {
                       </div>
 
                       {displayedQuestions.length === 0 ? (
-                        <div className="p-6 bg-violet-50/60 rounded-2xl border border-dashed border-violet-300 text-center space-y-3 font-sans">
-                          <p className="text-xs font-bold text-violet-950">
-                            Chưa có câu hỏi tự luyện cho bài học này trong ngân hàng đề.
+                        <div className="p-6 bg-white rounded-2xl border border-slate-200 text-center space-y-3 font-sans shadow-xs my-4">
+                          <div className="w-10 h-10 mx-auto bg-violet-100 text-violet-700 rounded-full flex items-center justify-center font-bold text-base">
+                            💡
+                          </div>
+                          <p className="text-sm font-bold text-slate-800">
+                            Chưa chọn Dạng toán nào để hiển thị bài tập.
                           </p>
-                          <p className="text-[11px] text-slate-600 max-w-md mx-auto">
-                            Thầy/Cô có thể bấm nút bên dưới để Gemini AI tự động sinh đầy đủ 4 dạng câu hỏi (Trắc nghiệm, Đúng/Sai, Trả lời ngắn, Tự luận) chuẩn GDPT 2018 ngay lập tức!
+                          <p className="text-xs text-slate-500 max-w-lg mx-auto leading-relaxed">
+                            Thầy/Cô vui lòng tích chọn (đánh dấu check) ít nhất một Dạng toán ở danh sách bên trái để tải và chọn các câu hỏi bài tập tương ứng vào phiếu học tập.
                           </p>
-                          <button
-                            onClick={handleAiGenerateWorksheet}
-                            disabled={isAiGeneratingWorksheet}
-                            className="px-4 py-2 bg-violet-600 hover:bg-violet-700 text-white text-xs font-extrabold rounded-xl shadow-xs transition inline-flex items-center gap-1.5"
-                          >
-                            <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-                            {isAiGeneratingWorksheet ? 'AI đang soạn bài tập...' : '✨ AI Soạn câu hỏi theo bài này'}
-                          </button>
+                          <div className="pt-2">
+                            <button
+                              onClick={handleAiGenerateWorksheet}
+                              disabled={isAiGeneratingWorksheet}
+                              className="px-4 py-2 bg-violet-600 hover:bg-violet-700 text-white text-xs font-extrabold rounded-xl shadow-xs transition inline-flex items-center gap-1.5"
+                            >
+                              <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+                              {isAiGeneratingWorksheet ? 'AI đang soạn bài tập...' : '✨ AI Soạn câu hỏi theo bài này'}
+                            </button>
+                          </div>
                         </div>
                       ) : (
                         <>
