@@ -1282,14 +1282,27 @@ export const FULL_QUESTION_BANK: Question[] = [
 export type MathDomain =
   | 'TRIGONOMETRY_11'
   | 'SEQUENCES_11'
+  | 'STATISTICS_GROUPED_11'
+  | 'PARALLEL_SPATIAL_11'
+  | 'LIMITS_CONTINUITY_11'
   | 'EXP_LOG_11'
   | 'DERIVATIVE_11'
+  | 'ORTHOGONAL_SPATIAL_11'
   | 'MONOTONICITY_12'
   | 'MAX_MIN_12'
   | 'ASYMPTOTE_12'
   | 'VECTORS_OXYZ_12'
+  | 'STATISTICS_GROUPED_12'
+  | 'INTEGRALS_12'
+  | 'PLANE_LINE_SPHERE_OXYZ_12'
+  | 'PROBABILITY_CONDITIONAL_12'
   | 'SETS_PROPOSITIONS_10'
+  | 'INEQUALITIES_2VAR_10'
+  | 'TRIANGLE_TRIG_10'
+  | 'VECTORS_OXY_10'
+  | 'STATISTICS_10'
   | 'PARABOLA_10'
+  | 'OXY_GEOMETRY_10'
   | 'GENERAL_MATH';
 
 export function detectMathDomain(typeId?: string, topicId?: string, lessonId?: string): MathDomain {
@@ -1298,41 +1311,34 @@ export function detectMathDomain(typeId?: string, topicId?: string, lessonId?: s
   const typ = (typeId || '').toLowerCase();
   const full = `${typ} ${top} ${les}`;
 
-  // Ưu tiên 1: Kiểm tra khối Lớp 11
-  if (top.includes('11-1') || les.includes('11-1') || full.includes('lượng giác') || full.includes('trigonometric') || full.includes('sin') || full.includes('cos') || full.includes('tan')) {
-    return 'TRIGONOMETRY_11';
-  }
-  if (top.includes('11-2') || les.includes('11-2') || full.includes('dãy số') || full.includes('cấp số')) {
-    return 'SEQUENCES_11';
-  }
-  if (top.includes('11-6') || les.includes('11-6') || full.includes('lũy thừa') || full.includes('mũ') || full.includes('log')) {
-    return 'EXP_LOG_11';
-  }
-  if (top.includes('11-7') || les.includes('11-7') || (full.includes('đạo hàm') && !top.includes('12-1') && !les.includes('12-1'))) {
-    return 'DERIVATIVE_11';
-  }
+  // LỚP 12
+  if (top.includes('12-6') || les.includes('12-6') || full.includes('xác suất') || full.includes('bayes') || full.includes('điều kiện')) return 'PROBABILITY_CONDITIONAL_12';
+  if (top.includes('12-5') || les.includes('12-5') || full.includes('mặt phẳng') || full.includes('đường thẳng') || full.includes('mặt cầu')) return 'PLANE_LINE_SPHERE_OXYZ_12';
+  if (top.includes('12-4') || les.includes('12-4') || full.includes('nguyên hàm') || full.includes('tích phân')) return 'INTEGRALS_12';
+  if (top.includes('12-3') || les.includes('12-3') || (full.includes('phân tán') && full.includes('12'))) return 'STATISTICS_GROUPED_12';
+  if (top.includes('12-2') || les.includes('12-2') || full.includes('oxyz') || full.includes('vectơ')) return 'VECTORS_OXYZ_12';
+  if (top.includes('12-1-3') || les.includes('12-1-3') || full.includes('tiệm cận')) return 'ASYMPTOTE_12';
+  if (top.includes('12-1-2') || les.includes('12-1-2') || full.includes('gtln') || full.includes('gtnn')) return 'MAX_MIN_12';
+  if (top.includes('12-1-1') || top.includes('12-1') || les.includes('12-1') || full.includes('đồng biến') || full.includes('cực trị')) return 'MONOTONICITY_12';
 
-  // Ưu tiên 2: Kiểm tra khối Lớp 10
-  if (top.includes('10-1') || les.includes('10-1') || full.includes('mệnh đề') || full.includes('tập hợp')) {
-    return 'SETS_PROPOSITIONS_10';
-  }
-  if (top.includes('10-6') || les.includes('10-6') || full.includes('parabol') || full.includes('bậc hai')) {
-    return 'PARABOLA_10';
-  }
+  // LỚP 11
+  if (top.includes('11-8') || les.includes('11-8') || full.includes('vuông góc')) return 'ORTHOGONAL_SPATIAL_11';
+  if (top.includes('11-7') || les.includes('11-7') || full.includes('đạo hàm')) return 'DERIVATIVE_11';
+  if (top.includes('11-6') || les.includes('11-6') || full.includes('mũ') || full.includes('log')) return 'EXP_LOG_11';
+  if (top.includes('11-5') || les.includes('11-5') || full.includes('giới hạn') || full.includes('liên tục')) return 'LIMITS_CONTINUITY_11';
+  if (top.includes('11-4') || les.includes('11-4') || full.includes('song song')) return 'PARALLEL_SPATIAL_11';
+  if (top.includes('11-3') || les.includes('11-3') || (full.includes('trung tâm') && full.includes('11'))) return 'STATISTICS_GROUPED_11';
+  if (top.includes('11-2') || les.includes('11-2') || full.includes('dãy số') || full.includes('cấp số')) return 'SEQUENCES_11';
+  if (top.includes('11-1') || les.includes('11-1') || full.includes('lượng giác') || full.includes('sin') || full.includes('cos') || full.includes('tan')) return 'TRIGONOMETRY_11';
 
-  // Ưu tiên 3: Kiểm tra khối Lớp 12
-  if (top.includes('12-2') || les.includes('12-2') || top.includes('12-5') || les.includes('12-5') || full.includes('oxyz') || full.includes('vectơ')) {
-    return 'VECTORS_OXYZ_12';
-  }
-  if (top.includes('12-1-3') || les.includes('12-1-3') || full.includes('tiệm cận') || full.includes('asymptote')) {
-    return 'ASYMPTOTE_12';
-  }
-  if (top.includes('12-1-2') || les.includes('12-1-2') || full.includes('gtln') || full.includes('gtnn')) {
-    return 'MAX_MIN_12';
-  }
-  if (top.includes('12-1-1') || les.includes('12-1-1') || full.includes('đồng biến') || full.includes('nghịch biến') || full.includes('cực trị')) {
-    return 'MONOTONICITY_12';
-  }
+  // LỚP 10
+  if (top.includes('10-7') || les.includes('10-7') || full.includes('conic') || full.includes('đường tròn')) return 'OXY_GEOMETRY_10';
+  if (top.includes('10-6') || les.includes('10-6') || full.includes('parabol') || full.includes('bậc hai')) return 'PARABOLA_10';
+  if (top.includes('10-5') || les.includes('10-5') || (full.includes('số liệu') && full.includes('10'))) return 'STATISTICS_10';
+  if (top.includes('10-4') || les.includes('10-4') || (full.includes('vectơ') && full.includes('phẳng'))) return 'VECTORS_OXY_10';
+  if (top.includes('10-3') || les.includes('10-3') || full.includes('tam giác') || full.includes('heron')) return 'TRIANGLE_TRIG_10';
+  if (top.includes('10-2') || les.includes('10-2') || full.includes('bất phương trình') || full.includes('miền nghiệm')) return 'INEQUALITIES_2VAR_10';
+  if (top.includes('10-1') || les.includes('10-1') || full.includes('mệnh đề') || full.includes('tập hợp')) return 'SETS_PROPOSITIONS_10';
 
   return 'GENERAL_MATH';
 }
@@ -1812,91 +1818,6 @@ function generateDomainSpecificQuestions(domain: MathDomain, typeId: string, top
           created_by: 'usr-teacher-1',
         },
       ],
-    };
-  }
-
-  if (domain === 'SEQUENCES_11') {
-    return {
-      tn: Array.from({ length: 10 }).map((_, i) => {
-        const u1 = i + 2;
-        const d = i + 1;
-        const u10 = u1 + 9 * d;
-        return {
-          id: `seq-tn-${i + 1}`,
-          topic_id: topicId,
-          type_id: typeId,
-          question_type: 'MCQ',
-          format_type: 'TN',
-          difficulty: i % 2 === 0 ? 'EASY' : 'MEDIUM',
-          language_level: 2,
-          question_vi: `[Cấp số cộng ${i + 1}] Cho cấp số cộng $(u_n)$ có số hạng đầu $u_1 = ${u1}$ và công sai $d = ${d}$. Số hạng thứ 10 là:`,
-          question_en: `[Arithmetic Progression ${i + 1}] For AP $(u_n)$ with $u_1 = ${u1}$ and $d = ${d}$, the 10th term $u_{10}$ is:`,
-          options: [
-            { option_key: 'A', content_vi: `$${u10}$`, content_en: `$${u10}$`, is_correct: true },
-            { option_key: 'B', content_vi: `$${u10 + 2}$`, content_en: `$${u10 + 2}$`, is_correct: false },
-            { option_key: 'C', content_vi: `$${u10 - 3}$`, content_en: `$${u10 - 3}$`, is_correct: false },
-            { option_key: 'D', content_vi: `$${u10 + 5}$`, content_en: `$${u10 + 5}$`, is_correct: false },
-          ],
-          solution_vi: `$u_{10} = u_1 + 9d = ${u1} + 9(${d}) = ${u10}$.`,
-          solution_en: `$u_{10} = u_1 + 9d = ${u10}$.`,
-          correct_answer: 'A',
-          math_skill: 'Tìm số hạng tổng quát cấp số cộng',
-          english_skill: 'N-th term of AP',
-          status: 'PUBLISHED',
-          created_by: 'usr-teacher-1',
-        };
-      }),
-      ds: Array.from({ length: 4 }).map((_, i) => {
-        const u1 = (i + 1) * 3;
-        const d = 4;
-        return {
-          id: `seq-ds-${i + 1}`,
-          topic_id: topicId,
-          type_id: typeId,
-          question_type: 'TRUE_FALSE',
-          format_type: 'DS',
-          difficulty: 'MEDIUM',
-          language_level: 2,
-          question_vi: `[Đúng/Sai Dãy số ${i + 1}] Cho cấp số cộng $(u_n)$ có công thức $u_n = ${d}n + ${u1 - d}$. Xét các khẳng định:`,
-          question_en: `[T/F Sequence ${i + 1}] For AP $(u_n)$ given by $u_n = ${d}n + ${u1 - d}$. Evaluate:`,
-          options: [
-            { option_key: 'a', content_vi: `Số hạng đầu $u_1 = ${u1}$.`, content_en: `First term $u_1 = ${u1}$.`, is_correct: true },
-            { option_key: 'b', content_vi: `Công sai $d = ${d}$.`, content_en: `Common difference $d = ${d}$.`, is_correct: true },
-            { option_key: 'c', content_vi: `Số hạng thứ 5 là $u_5 = ${u1 + 4 * d}$.`, content_en: `5th term $u_5 = ${u1 + 4 * d}$.`, is_correct: true },
-            { option_key: 'd', content_vi: `Dãy số là dãy số giảm.`, content_en: `The sequence is strictly decreasing.`, is_correct: false },
-          ],
-          solution_vi: 'a-Đ; b-Đ; c-Đ; d-S (vì $d > 0$ nên là dãy số tăng).',
-          solution_en: 'a-True, b-True, c-True, d-False (increasing sequence).',
-          correct_answer: 'a-Đ, b-Đ, c-Đ, d-S',
-          math_skill: 'Khảo sát cấp số cộng',
-          english_skill: 'AP properties evaluation',
-          status: 'PUBLISHED',
-          created_by: 'usr-teacher-1',
-        };
-      }),
-      tln: Array.from({ length: 4 }).map((_, i) => {
-        const u1 = 5 + i;
-        const d = 3;
-        const ans = u1 + 9 * d;
-        return {
-          id: `seq-tln-${i + 1}`,
-          topic_id: topicId,
-          type_id: typeId,
-          question_type: 'SHORT',
-          format_type: 'TLN',
-          difficulty: 'MEDIUM',
-          language_level: 2,
-          question_vi: `[TLN Dãy số ${i + 1}] Cho cấp số cộng có $u_1 = ${u1}$ và $d = ${d}$. Tìm giá trị số hạng $u_{10}$.`,
-          question_en: `[Short Sequence ${i + 1}] Given AP with $u_1 = ${u1}$ and $d = ${d}$. Find $u_{10}$.`,
-          correct_answer: `${ans}`,
-          solution_vi: `$u_{10} = u_1 + 9d = ${u1} + 9(3) = ${ans}$.`,
-          solution_en: `$u_{10} = ${ans}$.`,
-          math_skill: 'Số hạng cấp số cộng',
-          english_skill: 'AP term calculation',
-          status: 'PUBLISHED',
-          created_by: 'usr-teacher-1',
-        };
-      }),
     };
   }
 

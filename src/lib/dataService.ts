@@ -21,7 +21,7 @@ import {
 import { FULL_CHAPTERS, FULL_LESSONS } from './curriculumData';
 import { FULL_QUESTION_BANK, DEFAULT_WORKED_EXAMPLES } from './questionBankData';
 
-const DB_KEY = 'math_bridge_client_db_v12';
+const DB_KEY = 'math_bridge_client_db_v13';
 
 export const INITIAL_DATA = {
   profiles: [

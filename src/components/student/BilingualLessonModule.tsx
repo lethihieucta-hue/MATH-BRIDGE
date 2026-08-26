@@ -1027,17 +1027,31 @@ export const BilingualLessonModule: React.FC = () => {
                                 <div key={q.id} className="space-y-2 text-xs sm:text-sm">
                                   <div>
                                     <span className="font-sans font-bold text-slate-900 mr-1.5">Câu {idx + 1}:</span>
-                                    <MathRenderer content={q.question_vi} inline />
+                                    <MathRenderer content={languageMode === 'ENGLISH' && q.question_en ? q.question_en : q.question_vi} inline />
                                   </div>
+
+                                  {languageMode === 'BILINGUAL' && q.question_en && (
+                                    <p className="text-xs text-teal-800 italic pl-5 font-sans">
+                                      (En: <MathRenderer content={q.question_en} inline />)
+                                    </p>
+                                  )}
+
                                   {q.options && (
                                     <div className="grid grid-cols-1 gap-1.5 pl-5 font-sans text-xs">
                                       {q.options.map((opt) => (
                                         <div key={opt.option_key} className="flex items-center justify-between p-2 rounded-lg bg-slate-50 border border-slate-200">
-                                          <div>
-                                            <span className="font-bold mr-1.5">{opt.option_key})</span>
-                                            <MathRenderer content={opt.content_vi} inline />
+                                          <div className="space-y-0.5">
+                                            <div>
+                                              <span className="font-bold mr-1.5">{opt.option_key})</span>
+                                              <MathRenderer content={languageMode === 'ENGLISH' && opt.content_en ? opt.content_en : opt.content_vi} inline />
+                                            </div>
+                                            {languageMode === 'BILINGUAL' && opt.content_en && (
+                                              <div className="text-[11px] text-teal-800 italic pl-4">
+                                                (En: <MathRenderer content={opt.content_en} inline />)
+                                              </div>
+                                            )}
                                           </div>
-                                          <div className="flex gap-2 text-[11px] font-bold">
+                                          <div className="flex gap-2 text-[11px] font-bold shrink-0 ml-2">
                                             <span className="px-2 py-0.5 border border-slate-300 rounded bg-white">Đ</span>
                                             <span className="px-2 py-0.5 border border-slate-300 rounded bg-white">S</span>
                                           </div>
@@ -1060,8 +1074,15 @@ export const BilingualLessonModule: React.FC = () => {
                                 <div key={q.id} className="space-y-1.5 text-xs sm:text-sm">
                                   <div>
                                     <span className="font-sans font-bold text-slate-900 mr-1.5">Câu {idx + 1}:</span>
-                                    <MathRenderer content={q.question_vi} inline />
+                                    <MathRenderer content={languageMode === 'ENGLISH' && q.question_en ? q.question_en : q.question_vi} inline />
                                   </div>
+
+                                  {languageMode === 'BILINGUAL' && q.question_en && (
+                                    <p className="text-xs text-teal-800 italic pl-5 font-sans">
+                                      (En: <MathRenderer content={q.question_en} inline />)
+                                    </p>
+                                  )}
+
                                   <div className="pl-5 font-sans text-xs text-slate-500">
                                     Đáp số: [ ____________________ ]
                                   </div>
@@ -1080,8 +1101,14 @@ export const BilingualLessonModule: React.FC = () => {
                                 <div key={q.id} className="space-y-1.5 text-xs sm:text-sm">
                                   <div>
                                     <span className="font-sans font-bold text-slate-900 mr-1.5">Câu {idx + 1}:</span>
-                                    <MathRenderer content={q.question_vi} inline />
+                                    <MathRenderer content={languageMode === 'ENGLISH' && q.question_en ? q.question_en : q.question_vi} inline />
                                   </div>
+
+                                  {languageMode === 'BILINGUAL' && q.question_en && (
+                                    <p className="text-xs text-teal-800 italic pl-5 font-sans">
+                                      (En: <MathRenderer content={q.question_en} inline />)
+                                    </p>
+                                  )}
                                 </div>
                               ))}
                             </div>
