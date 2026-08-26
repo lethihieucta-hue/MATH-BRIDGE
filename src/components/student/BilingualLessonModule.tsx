@@ -5,7 +5,7 @@ import { MathRenderer } from '../math/MathRenderer';
 import { speakEnglishWord } from '../../lib/audio';
 import { apiFetch } from '../../lib/dataService';
 import { generateCompleteLessonWorksheetAi, hasApiKey } from '../../lib/geminiService';
-import { getQuestionsForLesson, getWorkedExamplesForLesson } from '../../lib/questionBankData';
+import { getQuestionsForLesson, getQuestionsForMathTypeStructured, getWorkedExamplesForLesson } from '../../lib/questionBankData';
 import {
   BookOpen,
   Search,
@@ -362,19 +362,31 @@ export const BilingualLessonModule: React.FC = () => {
     window.print();
   };
 
-  // Filter questions for the active lesson
-  const filteredQuestions = allQuestions.filter((q) => {
-    if (!activeLesson) return false;
-    if (q.topic_id && activeLesson.topic_id && q.topic_id === activeLesson.topic_id) return true;
-    if (q.id && activeLesson.id && q.id.includes(activeLesson.id.replace('les-', 'q-'))) return true;
-    if (q.type_id && selectedTypeIds.includes(q.type_id)) return true;
-    if (activeLesson.types && activeLesson.types.some((t) => t.id === q.type_id)) return true;
-    return false;
-  });
+  // Filter questions for the active lesson and selected math types with high precision
+  const getDisplayedQuestions = (): Question[] => {
+    if (!activeLesson) return [];
 
-  const displayedQuestions = filteredQuestions.length > 0
-    ? filteredQuestions
-    : (activeLesson ? getQuestionsForLesson(activeLesson.id, activeLesson.topic_id) : []);
+    if (selectedTypeIds.length > 0) {
+      let combined: Question[] = [];
+      selectedTypeIds.forEach((tId) => {
+        const struct = getQuestionsForMathTypeStructured(tId, activeLesson.topic_id);
+        combined = [...combined, ...struct.all];
+      });
+      if (combined.length > 0) return combined;
+    }
+
+    const filtered = allQuestions.filter((q) => {
+      if (q.topic_id && activeLesson.topic_id && q.topic_id === activeLesson.topic_id) return true;
+      if (q.id && activeLesson.id && q.id.includes(activeLesson.id.replace('les-', 'q-'))) return true;
+      return false;
+    });
+
+    if (filtered.length > 0) return filtered;
+
+    return getQuestionsForLesson(activeLesson.id, activeLesson.topic_id);
+  };
+
+  const displayedQuestions = getDisplayedQuestions();
 
   // Export Action: Copy Word Text
   const handleCopyWord = () => {

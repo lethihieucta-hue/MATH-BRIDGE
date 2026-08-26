@@ -1203,11 +1203,28 @@ export const FULL_LESSONS: Lesson[] = [
       'Hiểu góc lượng giác, đơn vị radian và các hệ thức lượng giác cơ bản',
     ],
     vocabulary_list: ['Trigonometric Values', 'Radian', 'Unit Circle', 'Sine', 'Cosine'],
-    key_concepts_vi: '• Đường tròn lượng giác tâm $O$, $R=1$.\n• $\\sin^2\\alpha + \\cos^2\\alpha = 1$, $1 + \\tan^2\\alpha = \\frac{1}{\\cos^2\\alpha}$.',
-    key_concepts_en: '• Unit circle with $R=1$.\n• $\\sin^2\\alpha + \\cos^2\\alpha = 1$, $1 + \\tan^2\\alpha = \\frac{1}{\\cos^2\\alpha}$.',
+    key_concepts_vi: `1. Đường tròn lượng giác: Tâm $O(0;0)$, bán kính $R=1$, chiều dương ngược chiều kim đồng hồ, điểm gốc $A(1;0)$.
+2. Giá trị lượng giác của góc $\\alpha$:
+   • $\\sin\\alpha$ là tung độ của điểm $M$ trên đường tròn lượng giác.
+   • $\\cos\\alpha$ là hoành độ của điểm $M$ trên đường tròn lượng giác.
+   • $\\tan\\alpha = \\frac{\\sin\\alpha}{\\cos\\alpha}\\quad (\\alpha \\ne \\frac{\\pi}{2} + k\\pi)$.
+   • $\\cot\\alpha = \\frac{\\cos\\alpha}{\\sin\\alpha}\\quad (\\alpha \\ne k\\pi)$.
+3. Đơn vị đo góc: $180^\\circ = \\pi\\text{ rad} \\implies 1^\\circ = \\frac{\\pi}{180}\\text{ rad}, 1\\text{ rad} = \\left(\\frac{180}{\\pi}\\right)^\\circ$.
+4. Các hệ thức lượng giác cơ bản:
+   • $\\sin^2\\alpha + \\cos^2\\alpha = 1$.
+   • $1 + \\tan^2\\alpha = \\frac{1}{\\cos^2\\alpha}\\quad (\\cos\\alpha \\ne 0)$.
+   • $1 + \\cot^2\\alpha = \\frac{1}{\\sin^2\\alpha}\\quad (\\sin\\alpha \\ne 0)$.
+   • $\\tan\\alpha \\cdot \\cot\\alpha = 1$.`,
+    key_concepts_en: `1. Unit circle: Center $O(0,0)$, radius $R=1$, initial point $A(1,0)$.
+2. Trigonometric values of angle $\\alpha$: $\\sin\\alpha$ (y-coord), $\\cos\\alpha$ (x-coord), $\\tan\\alpha = \\sin\\alpha/\\cos\\alpha$, $\\cot\\alpha = \\cos\\alpha/\\sin\\alpha$.
+3. Radians and degrees conversion: $180^\\circ = \\pi\\text{ rad}$.
+4. Fundamental identities: $\\sin^2\\alpha + \\cos^2\\alpha = 1$, $1 + \\tan^2\\alpha = 1/\\cos^2\\alpha$, $\\tan\\alpha \\cdot \\cot\\alpha = 1$.`,
     formulas: [
       "\\sin^2\\alpha + \\cos^2\\alpha = 1",
-      "1 + \\tan^2\\alpha = \\frac{1}{\\cos^2\\alpha}",
+      "1 + \\tan^2\\alpha = \\frac{1}{\\cos^2\\alpha} \\quad (\\cos\\alpha \\ne 0)",
+      "1 + \\cot^2\\alpha = \\frac{1}{\\sin^2\\alpha} \\quad (\\sin\\alpha \\ne 0)",
+      "\\tan\\alpha \\cdot \\cot\\alpha = 1",
+      "a^\\circ = a \\cdot \\frac{\\pi}{180}\\text{ rad}, \\quad \\alpha\\text{ rad} = \\alpha \\cdot \\left(\\frac{180}{\\pi}\\right)^\\circ",
     ],
     types: [
       {
@@ -1242,15 +1259,33 @@ export const FULL_LESSONS: Lesson[] = [
     title_en: 'Lesson 2. Trigonometric Formulas',
     order_index: 2,
     learning_objectives: [
-      'Nắm vững công thức cộng, nhân đôi, biến đổi tích thành tổng và tổng thành tích',
+      'Nắm vững công thức cộng, công thức nhân đôi, công thức hạ bậc và công thức biến đổi tích thành tổng',
     ],
-    vocabulary_list: ['Addition Formulas', 'Double Angle Formulas', 'Product-to-Sum Formulas'],
-    key_concepts_vi: '• Cộng: $\\sin(a \\pm b) = \\sin a\\cos b \\pm \\cos a\\sin b$, $\\cos(a \\pm b) = \\cos a\\cos b \\mp \\sin a\\sin b$.\n• Nhân đôi: $\\sin 2a = 2\\sin a\\cos a$, $\\cos 2a = \\cos^2 a - \\sin^2 a$.',
-    key_concepts_en: '• Addition: $\\sin(a \\pm b) = \\sin a\\cos b \\pm \\cos a\\sin b$.\n• Double angle: $\\sin 2a = 2\\sin a\\cos a$, $\\cos 2a = \\cos^2 a - \\sin^2 a$.',
+    vocabulary_list: ['Addition Formulas', 'Double Angle Formulas', 'Half Angle Formulas', 'Product to Sum'],
+    key_concepts_vi: `1. Công thức cộng:
+   • $\\sin(a \\pm b) = \\sin a \\cos b \\pm \\cos a \\sin b$.
+   • $\\cos(a \\pm b) = \\cos a \\cos b \\mp \\sin a \\sin b$.
+   • $\\tan(a \\pm b) = \\frac{\\tan a \\pm \\tan b}{1 \\mp \\tan a \\tan b}$.
+2. Công thức nhân đôi:
+   • $\\sin 2a = 2\\sin a \\cos a$.
+   • $\\cos 2a = \\cos^2 a - \\sin^2 a = 2\\cos^2 a - 1 = 1 - 2\\sin^2 a$.
+   • $\\tan 2a = \\frac{2\\tan a}{1 - \\tan^2 a}$.
+3. Công thức hạ bậc:
+   • $\\sin^2 a = \\frac{1 - \\cos 2a}{2}, \\quad \\cos^2 a = \\frac{1 + \\cos 2a}{2}$.
+4. Công thức biến đổi tích thành tổng và tổng thành tích:
+   • $\\cos a \\cos b = \\frac{1}{2}[\\cos(a-b) + \\cos(a+b)]$.
+   • $\\sin a \\sin b = \\frac{1}{2}[\\cos(a-b) - \\cos(a+b)]$.
+   • $\\sin a \\cos b = \\frac{1}{2}[\\sin(a-b) + \\sin(a+b)]$.`,
+    key_concepts_en: `1. Addition formulas: $\\sin(a \\pm b) = \\sin a \\cos b \\pm \\cos a \\sin b$, $\\cos(a \\pm b) = \\cos a \\cos b \\mp \\sin a \\sin b$.
+2. Double-angle formulas: $\\sin 2a = 2\\sin a \\cos a$, $\\cos 2a = 2\\cos^2 a - 1 = 1 - 2\\sin^2 a$.
+3. Half-angle (power reduction): $\\sin^2 a = (1 - \\cos 2a)/2$, $\\cos^2 a = (1 + \\cos 2a)/2$.
+4. Product-to-sum identities: $\\cos a \\cos b = \\frac{1}{2}[\\cos(a-b) + \\cos(a+b)]$.`,
     formulas: [
-      "\\sin(a + b) = \\sin a \\cos b + \\cos a \\sin b",
+      "\\sin(a \\pm b) = \\sin a \\cos b \\pm \\cos a \\sin b",
+      "\\cos(a \\pm b) = \\cos a \\cos b \\mp \\sin a \\sin b",
       "\\sin 2a = 2\\sin a \\cos a",
-      "\\cos 2a = 2\\cos^2 a - 1",
+      "\\cos 2a = \\cos^2 a - \\sin^2 a = 2\\cos^2 a - 1 = 1 - 2\\sin^2 a",
+      "\\sin^2 a = \\frac{1 - \\cos 2a}{2}, \\quad \\cos^2 a = \\frac{1 + \\cos 2a}{2}",
     ],
     types: [
       {
@@ -1277,14 +1312,27 @@ export const FULL_LESSONS: Lesson[] = [
     title_en: 'Lesson 3. Trigonometric Functions',
     order_index: 3,
     learning_objectives: [
-      'Tìm tập xác định, chu kỳ và GTLN-GTNN của các hàm số $y = \\sin x, y = \\cos x, y = \\tan x$',
-      'Ứng dụng chu kỳ tuần hoàn mô hình hoá sóng biển và nhịp thở sinh học',
+      'Xác định tập xác định, tập giá trị, chu kỳ, tính chẵn lẻ và khoảng đơn điệu của các hàm số lượng giác',
+      'Ứng dụng mô hình dao động điều hoà con lắc đơn, thuỷ triều biển lên xuống',
     ],
     vocabulary_list: ['Periodicity', 'Amplitude', 'Domain', 'Harmonic Wave', 'Tidal Fluctuation'],
-    key_concepts_vi: '• Hàm $y = \\sin x$ và $y = \\cos x$ tuần hoàn với chu kỳ $T = 2\\pi$.\n• Hàm $y = \\tan x$ và $y = \\cot x$ tuần hoàn với chu kỳ $T = \\pi$.',
-    key_concepts_en: '• $y = \\sin x, y = \\cos x$ are periodic with period $T = 2\\pi$.\n• $y = \\tan x, y = \\cot x$ are periodic with period $T = \\pi$.',
+    key_concepts_vi: `1. Hàm số $y = \\sin x$: Tập xác định $D = \\mathbb{R}$, tập giá trị $[-1; 1]$, là hàm số lẻ, tuần hoàn với chu kỳ $T = 2\\pi$. Đồng biến trên $(-\\pi/2 + k2\\pi; \\pi/2 + k2\\pi)$, nghịch biến trên $(\\pi/2 + k2\\pi; 3\\pi/2 + k2\\pi)$.
+2. Hàm số $y = \\cos x$: Tập xác định $D = \\mathbb{R}$, tập giá trị $[-1; 1]$, là hàm số chẵn, tuần hoàn với chu kỳ $T = 2\\pi$. Nghịch biến trên $(k2\\pi; \\pi + k2\\pi)$, đồng biến trên $(-\\pi + k2\\pi; k2\\pi)$.
+3. Hàm số $y = \\tan x$: Tập xác định $D = \\mathbb{R} \\setminus \\{\\pi/2 + k\\pi, k \\in \\mathbb{Z}\\}$, tập giá trị $\\mathbb{R}$, là hàm số lẻ, tuần hoàn với chu kỳ $T = \\pi$. Đồng biến trên từng khoảng xác định.
+4. Hàm số $y = \\cot x$: Tập xác định $D = \\mathbb{R} \\setminus \\{k\\pi, k \\in \\mathbb{Z}\\}$, tập giá trị $\\mathbb{R}$, là hàm số lẻ, tuần hoàn với chu kỳ $T = \\pi$. Nghịch biến trên từng khoảng xác định.
+5. Mô hình ứng dụng thực tế:
+   • Dao động điều hoà con lắc đơn: $s(t) = A\\cos(\\omega t + \\varphi)$.
+   • Mực nước thuỷ triều: $h(t) = A\\cos(\\omega t) + B$.`,
+    key_concepts_en: `1. Sine function $y = \\sin x$: Domain $D = \\mathbb{R}$, Range $[-1, 1]$, Odd function, Period $T = 2\\pi$.
+2. Cosine function $y = \\cos x$: Domain $D = \\mathbb{R}$, Range $[-1, 1]$, Even function, Period $T = 2\\pi$.
+3. Tangent function $y = \\tan x$: Domain $D = \\mathbb{R} \\setminus \\{\\pi/2 + k\\pi\\}$, Range $\\mathbb{R}$, Odd function, Period $T = \\pi$.
+4. Cotangent function $y = \\cot x$: Domain $D = \\mathbb{R} \\setminus \\{k\\pi\\}$, Range $\\mathbb{R}$, Odd function, Period $T = \\pi$.
+5. Applications: Simple Harmonic Motion $s(t) = A\\cos(\\omega t + \\varphi)$, Tide height $h(t) = A\\cos(\\omega t) + B$.`,
     formulas: [
-      "T_{\\sin, \\cos} = 2\\pi; \\quad T_{\\tan, \\cot} = \\pi",
+      "-1 \\le \\sin x \\le 1, \\quad -1 \\le \\cos x \\le 1",
+      "T_{y = A\\sin(\\omega x + \\varphi)} = \\frac{2\\pi}{|\\omega|}, \\quad T_{y = A\\cos(\\omega x + \\varphi)} = \\frac{2\\pi}{|\\omega|}",
+      "T_{y = A\\tan(\\omega x + \\varphi)} = \\frac{\\pi}{|\\omega|}, \\quad T_{y = A\\cot(\\omega x + \\varphi)} = \\frac{\\pi}{|\\omega|}",
+      "\\sin(-x) = -\\sin x \\quad (\\text{Hàm lẻ}), \\quad \\cos(-x) = \\cos x \\quad (\\text{Hàm chẵn})",
     ],
     types: [
       {
@@ -1319,14 +1367,30 @@ export const FULL_LESSONS: Lesson[] = [
     title_en: 'Lesson 4. Basic Trigonometric Equations',
     order_index: 4,
     learning_objectives: [
-      'Giải thành thạo các phương trình $\\sin x = m, \\cos x = m, \\tan x = m, \\cot x = m$',
+      'Giải thành thạo các phương trình lượng giác cơ bản $\\sin x = m, \\cos x = m, \\tan x = m, \\cot x = m$',
     ],
     vocabulary_list: ['Trigonometric Equation', 'Principal Root', 'General Solution'],
-    key_concepts_vi: '• $\\sin x = \\sin \\alpha \\iff x = \\alpha + k2\\pi$ hoặc $x = \\pi - \\alpha + k2\\pi$.\n• $\\cos x = \\cos \\alpha \\iff x = \\pm \\alpha + k2\\pi$.\n• $\\tan x = \\tan \\alpha \\iff x = \\alpha + k\\pi$.',
-    key_concepts_en: '• $\\sin x = \\sin \\alpha \\iff x = \\alpha + k2\\pi \\lor x = \\pi - \\alpha + k2\\pi$.\n• $\\cos x = \\cos \\alpha \\iff x = \\pm \\alpha + k2\\pi$.\n• $\\tan x = \\tan \\alpha \\iff x = \\alpha + k\\pi$.',
+    key_concepts_vi: `1. Phương trình $\\sin x = m$:
+   • Điều kiện có nghiệm: $|m| \\le 1$.
+   • Công thức nghiệm: $\\sin x = \\sin \\alpha \\iff \\left[\\begin{array}{l} x = \\alpha + k2\\pi \\\\ x = \\pi - \\alpha + k2\\pi \\end{array}\\right.\\, (k \\in \\mathbb{Z})$.
+2. Phương trình $\\cos x = m$:
+   • Điều kiện có nghiệm: $|m| \\le 1$.
+   • Công thức nghiệm: $\\cos x = \\cos \\alpha \\iff x = \\pm \\alpha + k2\\pi\\, (k \\in \\mathbb{Z})$.
+3. Phương trình $\\tan x = m$:
+   • Luôn có nghiệm với mọi $m \\in \\mathbb{R}$.
+   • Công thức nghiệm: $\\tan x = \\tan \\alpha \\iff x = \\alpha + k\\pi\\, (k \\in \\mathbb{Z})$.
+4. Phương trình $\\cot x = m$:
+   • Luôn có nghiệm với mọi $m \\in \\mathbb{R}$.
+   • Công thức nghiệm: $\\cot x = \\cot \\alpha \\iff x = \\alpha + k\\pi\\, (k \\in \\mathbb{Z})$.`,
+    key_concepts_en: `1. $\\sin x = m$: Solutions exist if $|m| \\le 1$. $\\sin x = \\sin\\alpha \\iff x = \\alpha + k2\\pi \\lor x = \\pi - \\alpha + k2\\pi$.
+2. $\\cos x = m$: Solutions exist if $|m| \\le 1$. $\\cos x = \\cos\\alpha \\iff x = \\pm \\alpha + k2\\pi$.
+3. $\\tan x = m$: Solution exists for all $m$. $\\tan x = \\tan\\alpha \\iff x = \\alpha + k\\pi$.
+4. $\\cot x = m$: Solution exists for all $m$. $\\cot x = \\cot\\alpha \\iff x = \\alpha + k\\pi$.`,
     formulas: [
       "\\sin x = \\sin \\alpha \\iff \\left[\\begin{array}{l} x = \\alpha + k2\\pi \\\\ x = \\pi - \\alpha + k2\\pi \\end{array}\\right.",
       "\\cos x = \\cos \\alpha \\iff x = \\pm \\alpha + k2\\pi",
+      "\\tan x = \\tan \\alpha \\iff x = \\alpha + k\\pi",
+      "\\cot x = \\cot \\alpha \\iff x = \\alpha + k\\pi",
     ],
     types: [
       {

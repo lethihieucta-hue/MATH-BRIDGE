@@ -50,10 +50,10 @@ export const PracticeModule: React.FC = () => {
       const all = data || [];
       const filtered = all.filter(
         (q) =>
-          q.topic_id?.includes(`top-${selectedGrade}`) ||
-          (selectedGrade === 10 && q.id.startsWith('q-1')) ||
-          (selectedGrade === 11 && q.id.startsWith('q-2')) ||
-          (selectedGrade === 12 && q.id.startsWith('q-3'))
+          (q.topic_id && q.topic_id.includes(`top-${selectedGrade}-`)) ||
+          (selectedGrade === 10 && (q.topic_id?.includes('-10-') || q.id.includes('-10-'))) ||
+          (selectedGrade === 11 && (q.topic_id?.includes('-11-') || q.id.includes('-11-') || q.id.startsWith('trig-') || q.id.startsWith('seq-') || q.id.startsWith('exp-'))) ||
+          (selectedGrade === 12 && (q.topic_id?.includes('-12-') || q.id.includes('-12-')))
       );
       const toShow = filtered.length > 0 ? filtered : all;
       setQuestions(toShow);
