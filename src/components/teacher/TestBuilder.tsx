@@ -4,6 +4,7 @@ import { Question } from '../../types';
 import { MathRenderer } from '../math/MathRenderer';
 import { hasApiKey, generateExamTestFromDescriptionAi } from '../../lib/geminiService';
 import { FULL_QUESTION_BANK } from '../../lib/questionBankData';
+import { FULL_LESSONS } from '../../lib/curriculumData';
 import { OnlineExamRoom, OnlineExamData } from '../online_exam/OnlineExamRoom';
 import {
   Sparkles,
@@ -80,49 +81,94 @@ export const TestBuilder: React.FC = () => {
     },
   ];
 
-  // Helper to filter questions from FULL_QUESTION_BANK based on prompt keywords
+  // Match the teacher prompt to the canonical KNTT lesson/type IDs.
+  // IMPORTANT: a specific topic is "fail-closed": when that topic has no authored static
+  // questions yet, return an empty list instead of borrowing questions from another lesson.
+  const normalizeSearchText = (value: string) =>
+    value
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/đ/g, 'd')
+      .replace(/[^a-z0-9\s]/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+  const expandPromptAliases = (value: string) => {
+    let normalized = normalizeSearchText(value);
+    const aliases: Array<[RegExp, string]> = [
+      [/\bgtln\b/g, ' gia tri lon nhat '],
+      [/\bgtnn\b/g, ' gia tri nho nhat '],
+      [/\bbbt\b/g, ' bang bien thien '],
+      [/\boxyz\b/g, ' he toa do trong khong gian '],
+      [/\bcs cong\b/g, ' cap so cong '],
+      [/\bcs nhan\b/g, ' cap so nhan '],
+    ];
+    aliases.forEach(([pattern, replacement]) => {
+      normalized = normalized.replace(pattern, replacement);
+    });
+    return normalized.replace(/\s+/g, ' ').trim();
+  };
+
+  const SEARCH_STOP_WORDS = new Set([
+    'bai', 'lop', 'khoi', 'tao', 'de', 'kiem', 'tra', 'phut', 'cau', 'toan', 've',
+    'va', 'cua', 'cho', 'gom', 'ti', 'le', 'tieng', 'anh', 'mot', 'cac', 'dang',
+    'theo', 'phan', 'chuong', 'trong', 'bang', 'duoc', 'hoc', 'sinh',
+  ]);
+
   const filterQuestionsFromPrompt = (prompt: string, grade: number): Question[] => {
-    const lower = prompt.toLowerCase();
-    let matches: Question[] = [];
+    const normalizedPrompt = expandPromptAliases(prompt);
+    const promptTokens = new Set(
+      normalizedPrompt.split(' ').filter((token) => token.length >= 3 && !SEARCH_STOP_WORDS.has(token))
+    );
 
-    if (lower.includes('vectơ') || lower.includes('toạ độ') || lower.includes('tọa độ') || lower.includes('oxyz') || lower.includes('không gian')) {
-      matches = FULL_QUESTION_BANK.filter((q) => q.topic_id?.startsWith('top-12-2'));
-    } else if (lower.includes('gtln') || lower.includes('gtnn') || lower.includes('giá trị lớn nhất') || lower.includes('giá trị nhỏ nhất') || lower.includes('tối ưu')) {
-      matches = FULL_QUESTION_BANK.filter((q) => q.topic_id === 'top-12-1-2');
-    } else if (lower.includes('tiệm cận') || lower.includes('asymptote')) {
-      matches = FULL_QUESTION_BANK.filter((q) => q.topic_id === 'top-12-1-3');
-    } else if (lower.includes('đơn điệu') || lower.includes('cực trị') || lower.includes('đồng biến') || lower.includes('nghịch biến') || lower.includes('khảo sát')) {
-      matches = FULL_QUESTION_BANK.filter((q) => q.topic_id === 'top-12-1-1');
-    } else if (lower.includes('logarit') || lower.includes('lôgarit') || lower.includes('mũ') || lower.includes('lũy thừa') || lower.includes('exponential') || lower.includes('logarithm')) {
-      matches = FULL_QUESTION_BANK.filter((q) => q.topic_id === 'top-11-6-1');
-    } else if (lower.includes('tiếp tuyến') || (lower.includes('đạo hàm') && (lower.includes('11') || grade === 11))) {
-      matches = FULL_QUESTION_BANK.filter((q) => q.topic_id === 'top-11-7-1');
-    } else if (lower.includes('cấp số cộng') || (lower.includes('cộng') && lower.includes('cấp số'))) {
-      matches = FULL_QUESTION_BANK.filter((q) => q.topic_id === 'top-11-2-2');
-    } else if (lower.includes('cấp số nhân') || (lower.includes('nhân') && lower.includes('cấp số'))) {
-      matches = FULL_QUESTION_BANK.filter((q) => q.topic_id === 'top-11-2-3');
-    } else if (lower.includes('dãy số') || lower.includes('sequence')) {
-      matches = FULL_QUESTION_BANK.filter((q) => q.topic_id === 'top-11-2-1');
-    } else if (lower.includes('lượng giác') || lower.includes('trigonometric') || lower.includes('sin') || lower.includes('cos')) {
-      matches = FULL_QUESTION_BANK.filter((q) => q.topic_id?.startsWith('top-11-1'));
-    } else if (lower.includes('mệnh đề') || lower.includes('tập hợp') || lower.includes('proposition') || lower.includes('set')) {
-      matches = FULL_QUESTION_BANK.filter((q) => q.topic_id === 'top-10-1-1');
-    } else if (lower.includes('parabol') || lower.includes('bậc hai')) {
-      matches = FULL_QUESTION_BANK.filter((q) => q.topic_id === 'top-10-6-1');
+    const contentTokens = (value: string) =>
+      value.split(' ').filter((token) => token.length >= 3 && !SEARCH_STOP_WORDS.has(token));
+
+    const scoreAgainst = (candidate: string): number => {
+      const candidateTokens = Array.from(new Set(contentTokens(candidate)));
+      const overlap = candidateTokens.filter((token) => promptTokens.has(token));
+      // A single shared word such as "chính" or "hợp" must never be enough to route a lesson.
+      if (overlap.length < 2) return 0;
+      return overlap.reduce((sum, token) => sum + (token.length >= 7 ? 3 : 2), 0);
+    };
+
+    const gradeLessons = FULL_LESSONS.filter((lesson) => lesson.chapter_id?.startsWith(`chap-${grade}-`));
+    const scored = gradeLessons.map((lesson) => {
+      const lessonTitle = normalizeSearchText(lesson.title_vi.replace(/^Bài\s+\d+\.\s*/i, ''));
+      const typeTitles = (lesson.types || []).map((type) => normalizeSearchText(type.title_vi));
+      const lessonCoreTokens = contentTokens(lessonTitle);
+      const lessonCore = lessonCoreTokens.join(' ');
+      const promptCore = contentTokens(normalizedPrompt).join(' ');
+
+      let score = scoreAgainst(lessonTitle);
+      if (lessonCoreTokens.length >= 2 && lessonTitle.length >= 5 && normalizedPrompt.includes(lessonTitle)) score = Math.max(score, 12);
+      if (lessonCoreTokens.length >= 2 && (promptCore.includes(lessonCore) || lessonCore.includes(promptCore))) score = Math.max(score, 11);
+      for (const typeTitle of typeTitles) {
+        score = Math.max(score, scoreAgainst(typeTitle));
+        if (typeTitle.length >= 8 && normalizedPrompt.includes(typeTitle)) score = Math.max(score, 10);
+      }
+      return { lesson, score };
+    });
+
+    const bestScore = Math.max(0, ...scored.map((item) => item.score));
+    const hasSpecificTopic = bestScore >= 4;
+
+    if (hasSpecificTopic) {
+      // Keep all lessons that are genuinely close to the best match. This supports prompts such
+      // as "Nguyên hàm và tích phân" without opening the door to unrelated chapters.
+      const threshold = Math.max(4, bestScore - 2);
+      const allowedTypeIds = new Set(
+        scored
+          .filter((item) => item.score >= threshold)
+          .flatMap((item) => (item.lesson.types || []).map((type) => type.id))
+      );
+      return FULL_QUESTION_BANK.filter((q) => !!q.type_id && allowedTypeIds.has(q.type_id));
     }
 
-    if (matches.length > 0) return matches;
-
-    // Fallback by grade
-    if (lower.includes('12') || grade === 12) {
-      matches = FULL_QUESTION_BANK.filter((q) => q.topic_id?.includes('-12-'));
-    } else if (lower.includes('11') || grade === 11) {
-      matches = FULL_QUESTION_BANK.filter((q) => q.topic_id?.includes('-11-'));
-    } else {
-      matches = FULL_QUESTION_BANK.filter((q) => q.topic_id?.includes('-10-'));
-    }
-
-    return matches.length > 0 ? matches : FULL_QUESTION_BANK;
+    // A truly generic request such as "đề Toán lớp 11" may use any question from that grade.
+    // It is the only case where grade-wide fallback is allowed.
+    return FULL_QUESTION_BANK.filter((q) => q.topic_id?.startsWith(`top-${grade}-`));
   };
 
   // Initial generated test default state (10 questions on GTLN & GTNN)
@@ -135,7 +181,7 @@ export const TestBuilder: React.FC = () => {
       englishRatio: 50,
       instructions_vi: `Thời gian làm bài: 15 phút. Học sinh làm bài trực tiếp vào đề thi. Không sử dụng tài liệu.`,
       instructions_en: `Time allowed: 15 minutes. Write your answers directly on this paper.`,
-      questions: initialList.length >= 10 ? initialList.slice(0, 10) : FULL_QUESTION_BANK.slice(0, 10),
+      questions: initialList.slice(0, 10),
     };
   });
 
@@ -230,26 +276,9 @@ export const TestBuilder: React.FC = () => {
     // Fallback: Pick accurately filtered questions by topic from Question Bank
     const candidateQuestions = filterQuestionsFromPrompt(promptDescription, detectedGrade);
     
-    // Pick questions according to targetCount ensuring targetCount is strictly met
-    let selected: Question[] = [];
-    if (candidateQuestions.length < targetCount) {
-      // 1. Take all matching questions for this specific topic
-      selected = [...candidateQuestions];
-
-      // 2. Supplement with related questions from the same grade
-      const sameGrade = FULL_QUESTION_BANK.filter(
-        (q) => q.topic_id?.includes(`-${detectedGrade}-`) && !selected.some((sq) => sq.id === q.id)
-      );
-      selected = [...selected, ...sameGrade].slice(0, targetCount);
-
-      // 3. If still fewer, supplement from the entire bank
-      if (selected.length < targetCount) {
-        const remaining = FULL_QUESTION_BANK.filter((q) => !selected.some((sq) => sq.id === q.id));
-        selected = [...selected, ...remaining].slice(0, targetCount);
-      }
-    } else {
-      selected = candidateQuestions.slice(0, targetCount);
-    }
+    // Never fill a specific topic with questions from another lesson/grade just to hit a count.
+    // If the static bank is short, returning fewer correct questions is safer than a full but wrong test.
+    const selected: Question[] = candidateQuestions.slice(0, targetCount);
 
     // Extract title from prompt
     let titleVi = `ĐỀ KIỂM TRA ${detectedDuration} PHÚT: TOÁN LỚP ${detectedGrade}`;
@@ -284,7 +313,9 @@ export const TestBuilder: React.FC = () => {
       questions: selected,
     });
 
-    showNotification(`✨ Đã biên soạn bài test đúng chuyên đề (${selected.length} câu, ${detectedRatio}% Tiếng Anh)!`);
+    showNotification(selected.length < targetCount
+      ? `⚠️ Ngân hàng tĩnh hiện có ${selected.length}/${targetCount} câu đúng chuyên đề. Hệ thống không chèn câu sai bài để bù số lượng.`
+      : `✨ Đã biên soạn bài test đúng chuyên đề (${selected.length} câu, ${detectedRatio}% Tiếng Anh)!`);
     setIsGenerating(false);
   };
 

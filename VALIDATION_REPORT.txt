@@ -1,0 +1,35 @@
+AI Math Bridge — Full KNTT validation
+Date: 2026-08-26
+
+PASS:
+- 24 chapters total (Grade 10: 9, Grade 11: 9, Grade 12: 6)
+- 79 textbook lessons (Grade 10: 27, Grade 11: 33, Grade 12: 19)
+- 289 unique canonical type_id values
+- 6 variants per type = 1,734 question-generation blueprints
+- 94/94 legacy type_id values have valid migration targets
+- All legacy type IDs currently used by the static question bank have migration
+- No generic extrema/monotonicity fallback
+- No one-template Array.from numeric-clone generator
+- TestBuilder is fail-closed for specific topics; it does not fill shortages with unrelated questions
+- TestBuilder prompt routing uses canonical lesson/type IDs
+- Stored legacy lesson content is reused only when the semantic lesson title matches
+- Stored worked examples are migrated/filtered by canonical type ID
+- TypeScript core data modules pass targeted tsc --noEmit
+- Modified TS/TSX files pass syntax transpilation check
+
+Command:
+  npm run audit:curriculum
+
+Expected final line:
+  FULL KNTT AUDIT PASSED — 24 chương, 79 bài, 289 dạng, 1734 blueprint.
+
+Environment limitation:
+- Full `npm run build` could not be completed in this sandbox because dependency installation timed out and `vite` was therefore unavailable. This is an environment/dependency-install limitation, not an audit failure.
+
+Prompt-routing sanity checks after tightening keyword scoring:
+- Grade 12 "Nguyên hàm và tích phân" -> Lesson 11 Nguyên hàm + Lesson 12 Tích phân only
+- Grade 12 "cực trị đồng biến nghịch biến" -> Lesson 1 only
+- Grade 12 "mẫu số liệu ghép nhóm" -> Lessons 9 + 10 only
+- Grade 10 "hoán vị chỉnh hợp tổ hợp" -> Lesson 24 only
+- Grade 11 "đạo hàm cấp hai" -> Lesson 33 only
+- Grade 11 "công thức cộng xác suất" -> Lesson 29 only

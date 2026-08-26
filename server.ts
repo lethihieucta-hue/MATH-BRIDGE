@@ -3,6 +3,8 @@ import path from 'path';
 import fs from 'fs';
 import { createServer as createViteServer } from 'vite';
 import dotenv from 'dotenv';
+import { FULL_CHAPTERS, FULL_LESSONS, ALL_CURRENT_TYPE_IDS, LEGACY_TYPE_MIGRATION, migrateQuestionToCurrentCurriculum } from './src/lib/curriculumData';
+import { FULL_QUESTION_BANK, DEFAULT_WORKED_EXAMPLES } from './src/lib/questionBankData';
 
 dotenv.config();
 
@@ -654,18 +656,92 @@ const getInitialSeedData = () => ({
   ],
 });
 
+// Keep the server database aligned with the canonical GDPT 2018 curriculum used by the client.
+// Previously the Express seed contained only a tiny legacy curriculum, so a running server could
+// silently override the complete Grade 10-12 data from src/lib/dataService.ts.
+const isLegacyExtremaFallbackQuestion = (q: any) => {
+  const text = `${q?.question_vi || ''} ${q?.solution_vi || ''}`.toLowerCase();
+  return (
+    (/\[trắc nghiệm\s*\d+\]/i.test(text) && text.includes('x^3') && text.includes('điểm cực đại')) ||
+    (/\[đúng\/sai\s*\d+\]/i.test(text) && text.includes('-x^3 + 3x + 1')) ||
+    (/\[tln\s*\d+\]/i.test(text) && text.includes('tung độ điểm cực đại'))
+  );
+};
+
+const normalizeLessonIdentity = (title?: string): string => (title || '')
+  .toLowerCase()
+  .normalize('NFD')
+  .replace(/[\u0300-\u036f]/g, '')
+  .replace(/đ/g, 'd')
+  .replace(/^bai\s+\d+\.\s*/i, '')
+  .replace(/\s+/g, ' ')
+  .trim();
+
+const canReuseStoredLessonContent = (stored: any, canonical: any): boolean => {
+  if (!stored?.updated_at) return false;
+  return normalizeLessonIdentity(stored.title_vi) === normalizeLessonIdentity(canonical.title_vi);
+};
+
+const migrateStoredWorkedExamples = (examples: any[], canonical: any): any[] => {
+  const allowedTypeIds = new Set((canonical.types || []).map((type: any) => type.id));
+  return (examples || []).map((example: any) => {
+    const oldTypeId = example?.type_id as string | undefined;
+    const mappedTypeId = oldTypeId ? (LEGACY_TYPE_MIGRATION[oldTypeId] || oldTypeId) : undefined;
+    return { ...example, type_id: mappedTypeId };
+  }).filter((example: any) => !example.type_id || allowedTypeIds.has(example.type_id));
+};
+
+const syncCanonicalCurriculum = (db: any) => {
+  const storedLessons = new Map((db.lessons || []).map((l: any) => [l.id, l]));
+
+  db.chapters = FULL_CHAPTERS;
+  db.lessons = FULL_LESSONS.map((canonical: any) => {
+    const stored: any = storedLessons.get(canonical.id);
+    const canonicalWorked = DEFAULT_WORKED_EXAMPLES[canonical.id] || canonical.worked_examples || [];
+    const reuseStored = canReuseStoredLessonContent(stored, canonical);
+
+    // Only preserve lesson content that was explicitly updated through the app. Curriculum identity
+    // (chapter/topic/title/type IDs) always comes from the canonical source so routing cannot drift.
+    const merged = reuseStored ? { ...canonical, ...stored } : { ...canonical };
+    return {
+      ...merged,
+      id: canonical.id,
+      chapter_id: canonical.chapter_id,
+      topic_id: canonical.topic_id,
+      title_vi: canonical.title_vi,
+      title_en: canonical.title_en,
+      types: canonical.types,
+      worked_examples: (reuseStored && stored?.worked_examples?.length)
+        ? migrateStoredWorkedExamples(stored.worked_examples, canonical)
+        : canonicalWorked,
+    };
+  });
+
+  const canonicalQuestions = FULL_QUESTION_BANK;
+  const canonicalIds = new Set(canonicalQuestions.map((q: any) => q.id));
+  const customQuestions = (db.questions || []).filter(
+    (q: any) => !canonicalIds.has(q.id) && !isLegacyExtremaFallbackQuestion(q)
+  ).map((q: any) => migrateQuestionToCurrentCurriculum(q)).filter((q: any) => !q.type_id || ALL_CURRENT_TYPE_IDS.has(q.type_id));
+  db.questions = [...canonicalQuestions, ...customQuestions];
+  return db;
+};
+
 // Helper to get db or create initial
 const getDb = () => {
   if (!fs.existsSync(DB_FILE)) {
-    const seed = getInitialSeedData();
+    const seed = syncCanonicalCurriculum(getInitialSeedData());
     fs.writeFileSync(DB_FILE, JSON.stringify(seed, null, 2), 'utf-8');
     return seed;
   }
   try {
     const content = fs.readFileSync(DB_FILE, 'utf-8');
-    return JSON.parse(content);
+    const parsed = JSON.parse(content);
+    const synced = syncCanonicalCurriculum(parsed);
+    // Persist migrations so legacy chapter/question data cannot reappear on the next request.
+    fs.writeFileSync(DB_FILE, JSON.stringify(synced, null, 2), 'utf-8');
+    return synced;
   } catch (err) {
-    const seed = getInitialSeedData();
+    const seed = syncCanonicalCurriculum(getInitialSeedData());
     fs.writeFileSync(DB_FILE, JSON.stringify(seed, null, 2), 'utf-8');
     return seed;
   }
@@ -814,17 +890,42 @@ app.get('/api/lessons', (req, res) => {
 
 app.post('/api/lessons', (req, res) => {
   const db = getDb();
-  const newLesson = {
-    id: `les-${Date.now()}`,
+  const requestedId = req.body?.id as string | undefined;
+  const existingIndex = requestedId ? db.lessons.findIndex((l: any) => l.id === requestedId) : -1;
+  const lesson = {
     ...req.body,
-    created_at: new Date().toISOString(),
+    id: requestedId || `les-${Date.now()}`,
+    created_at: req.body?.created_at || new Date().toISOString(),
+    updated_at: new Date().toISOString(),
   };
-  db.lessons.push(newLesson);
+  if (existingIndex >= 0) db.lessons[existingIndex] = { ...db.lessons[existingIndex], ...lesson };
+  else db.lessons.push(lesson);
   saveDb(db);
-  res.json({ success: true, lesson: newLesson });
+  res.json({ success: true, lesson });
 });
 
 // Questions Bank
+app.post('/api/questions/replace-types', (req, res) => {
+  const db = getDb();
+  const typeIds = new Set<string>((req.body?.type_ids || []).filter(Boolean));
+  const incoming = Array.isArray(req.body?.questions) ? req.body.questions : [];
+
+  const canonicalIds = new Set(FULL_QUESTION_BANK.map((q: any) => q.id));
+  db.questions = (db.questions || []).filter(
+    (q: any) => canonicalIds.has(q.id) || !q.type_id || !typeIds.has(q.type_id)
+  );
+  const now = new Date().toISOString();
+  const saved = incoming.map((q: any, idx: number) => ({
+    ...q,
+    id: q.id || `q-ai-${Date.now()}-${idx}-${Math.random().toString(36).slice(2, 7)}`,
+    created_at: q.created_at || now,
+    updated_at: now,
+  }));
+  db.questions.push(...saved);
+  saveDb(db);
+  res.json({ success: true, count: saved.length, questions: saved });
+});
+
 app.get('/api/questions', (req, res) => {
   const topicId = req.query.topic_id as string;
   const difficulty = req.query.difficulty as string;
@@ -845,14 +946,18 @@ app.get('/api/questions', (req, res) => {
 
 app.post('/api/questions', (req, res) => {
   const db = getDb();
-  const newQ = {
-    id: `q-${Date.now()}`,
+  const requestedId = req.body?.id as string | undefined;
+  const existingIndex = requestedId ? db.questions.findIndex((q: any) => q.id === requestedId) : -1;
+  const question = {
     ...req.body,
-    created_at: new Date().toISOString(),
+    id: requestedId || `q-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    created_at: req.body?.created_at || new Date().toISOString(),
+    updated_at: new Date().toISOString(),
   };
-  db.questions.push(newQ);
+  if (existingIndex >= 0) db.questions[existingIndex] = { ...db.questions[existingIndex], ...question };
+  else db.questions.push(question);
   saveDb(db);
-  res.json({ success: true, question: newQ });
+  res.json({ success: true, question });
 });
 
 // Practice submit with diagnostic error classification

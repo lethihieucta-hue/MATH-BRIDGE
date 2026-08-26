@@ -5,7 +5,13 @@ import { MathRenderer } from '../math/MathRenderer';
 import { speakEnglishWord } from '../../lib/audio';
 import { apiFetch } from '../../lib/dataService';
 import { generateCompleteLessonWorksheetAi, hasApiKey } from '../../lib/geminiService';
-import { getQuestionsForLesson, getQuestionsForMathTypeStructured, getWorkedExamplesForLesson } from '../../lib/questionBankData';
+import {
+  getQuestionsForMathTypeStructured,
+  getWorkedExamplesForLesson,
+  getQuestionStructureSignature,
+  isQuestionCompatibleWithTopic,
+} from '../../lib/questionBankData';
+import { getAllowedVariantTags } from '../../lib/questionBlueprintData';
 import {
   BookOpen,
   Search,
@@ -159,7 +165,17 @@ export const BilingualLessonModule: React.FC = () => {
         const result = await generateCompleteLessonWorksheetAi(
           activeLesson.title_vi,
           chapterName,
-          selectedGrade
+          selectedGrade,
+          (activeLesson.types || []).map((t) => ({
+            id: t.id,
+            code: t.code,
+            title_vi: t.title_vi,
+            title_en: t.title_en,
+          })),
+          {
+            key_concepts_vi: activeLesson.key_concepts_vi,
+            formulas: activeLesson.formulas || [],
+          }
         );
 
         if (result && result.success && result.content) {
@@ -176,28 +192,30 @@ export const BilingualLessonModule: React.FC = () => {
               vocabulary_list: data.vocabulary_terms
                 ? data.vocabulary_terms.map((v: any) => `${v.word} (${v.meaning || ''})`)
                 : activeLesson.vocabulary_list,
-              types: data.types
-                ? data.types.map((t: any, idx: number) => ({
-                    id: `type-ai-${activeLesson.id}-${idx + 1}`,
-                    lesson_id: activeLesson.id,
-                    code: t.code || `Dạng ${idx + 1}`,
-                    title_vi: t.title_vi || 'Dạng toán',
-                    title_en: t.title_en || 'Math Type',
-                    order_index: idx + 1,
-                  }))
-                : activeLesson.types,
+              // Preserve the curriculum's stable type IDs. AI is not allowed to rename or
+              // replace math types because question routing depends on these IDs.
+              types: activeLesson.types,
               worked_examples: data.worked_examples
-                ? data.worked_examples.map((we: any, idx: number) => ({
-                    id: `we-ai-${activeLesson.id}-${idx + 1}`,
-                    type_id: `type-ai-${activeLesson.id}-1`,
-                    type_code: we.type_code || `Dạng ${idx + 1}`,
-                    title_vi: we.title_vi || `Ví dụ ${idx + 1}`,
-                    title_en: we.title_en || `Example ${idx + 1}`,
-                    problem_vi: we.problem_vi || '',
-                    problem_en: we.problem_en || '',
-                    solution_vi: we.solution_vi || '',
-                    solution_en: we.solution_en || '',
-                  }))
+                ? data.worked_examples
+                    .filter(
+                      (we: any) =>
+                        (activeLesson.types || []).some((t) => t.id === we.type_id) &&
+                        isQuestionCompatibleWithTopic(
+                          activeLesson.topic_id,
+                          `${we?.problem_vi || ''} ${we?.problem_en || ''} ${we?.solution_vi || ''}`
+                        )
+                    )
+                    .map((we: any, idx: number) => ({
+                      id: `we-ai-${activeLesson.id}-${idx + 1}`,
+                      type_id: we.type_id,
+                      type_code: we.type_code || activeLesson.types?.find((t) => t.id === we.type_id)?.code || `Dạng ${idx + 1}`,
+                      title_vi: we.title_vi || `Ví dụ ${idx + 1}`,
+                      title_en: we.title_en || `Example ${idx + 1}`,
+                      problem_vi: we.problem_vi || '',
+                      problem_en: we.problem_en || '',
+                      solution_vi: we.solution_vi || '',
+                      solution_en: we.solution_en || '',
+                    }))
                 : activeLesson.worked_examples,
             };
 
@@ -207,38 +225,102 @@ export const BilingualLessonModule: React.FC = () => {
               body: JSON.stringify(updatedLesson),
             });
 
+            let acceptedAiQuestions: Question[] = [];
+            let rejectedAiQuestions = 0;
             if (data.questions && Array.isArray(data.questions)) {
-              for (let i = 0; i < data.questions.length; i++) {
-                const q = data.questions[i];
-                const newQ = {
+              const typeMap = new Map<string, MathType>((activeLesson.types || []).map((t): [string, MathType] => [t.id, t]));
+              const seenStructures = new Set<string>();
+              const variantUseCount = new Map<string, number>();
+              const now = new Date().toISOString();
+
+              data.questions.forEach((q: any, i: number) => {
+                const mathType = q?.type_id ? typeMap.get(q.type_id) : undefined;
+                const questionText = `${q?.question_vi || ''} ${q?.question_en || ''}`.trim();
+                const formatType = (q?.format_type || 'TN') as 'TN' | 'DS' | 'TLN' | 'TL';
+                const options = Array.isArray(q?.options) ? q.options : [];
+
+                const hasValidType = Boolean(mathType);
+                const allowedVariantTags = q?.type_id ? getAllowedVariantTags(q.type_id) : [];
+                const hasValidVariant = allowedVariantTags.length === 0 || allowedVariantTags.includes(q?.variant_tag);
+                const variantKey = `${q?.type_id}|${q?.variant_tag || ''}`;
+                const variantCount = variantUseCount.get(variantKey) || 0;
+                const variantOverused = Boolean(q?.variant_tag) && variantCount >= 2;
+                const hasContent = questionText.length >= 8;
+                const inLessonScope = isQuestionCompatibleWithTopic(activeLesson.topic_id, `${questionText} ${q?.solution_vi || ''}`);
+                const validMcq = formatType !== 'TN' || (options.length === 4 && options.filter((o: any) => o?.is_correct).length === 1);
+                const validTrueFalse = formatType !== 'DS' || options.length === 4;
+                const structureKey = `${q?.type_id}|${formatType}|${getQuestionStructureSignature(q?.question_vi || q?.question_en)}`;
+                const isNumberOnlyClone = seenStructures.has(structureKey);
+
+                if (!hasValidType || !hasValidVariant || variantOverused || !hasContent || !inLessonScope || !validMcq || !validTrueFalse || isNumberOnlyClone) {
+                  rejectedAiQuestions += 1;
+                  return;
+                }
+                seenStructures.add(structureKey);
+                if (q?.variant_tag) variantUseCount.set(variantKey, variantCount + 1);
+
+                const inferredCorrectAnswer = formatType === 'TN'
+                  ? (options.find((o: any) => o?.is_correct)?.option_key || q.correct_answer || '')
+                  : formatType === 'DS'
+                    ? (q.correct_answer || options.map((o: any) => `${o.option_key}-${o.is_correct ? 'Đ' : 'S'}`).join(', '))
+                    : (q.correct_answer || '');
+
+                const normalizedQuestion: Question = {
+                  id: `q-ai-${activeLesson.id}-${q.type_id}-${formatType}-${Date.now()}-${i}`,
                   topic_id: activeLesson.topic_id || `top-${activeLesson.id}`,
-                  type_id: updatedLesson.types?.[0]?.id,
-                  question_type: q.question_type || 'MCQ',
-                  format_type: q.format_type || 'TN',
-                  difficulty: 'MEDIUM',
+                  type_id: q.type_id,
+                  variant_tag: q.variant_tag || 'mixed',
+                  question_type: q.question_type || (formatType === 'DS' ? 'TRUE_FALSE' : formatType === 'TLN' ? 'SHORT' : formatType === 'TL' ? 'ESSAY' : 'MCQ'),
+                  format_type: formatType,
+                  difficulty: q.difficulty || 'MEDIUM',
                   language_level: 2,
                   question_vi: q.question_vi || '',
                   question_en: q.question_en || '',
-                  options: q.options || [],
+                  options,
                   solution_vi: q.solution_vi || 'Lời giải chi tiết',
                   solution_en: q.solution_en || 'Detailed solution',
-                  correct_answer: q.correct_answer || 'A',
-                  math_skill: activeLesson.title_vi,
-                  english_skill: activeLesson.title_en,
+                  correct_answer: inferredCorrectAnswer,
+                  math_skill: mathType?.title_vi || activeLesson.title_vi,
+                  english_skill: mathType?.title_en || activeLesson.title_en,
                   status: 'PUBLISHED',
                   created_by: 'usr-teacher-1',
+                  created_at: now,
                 };
-                await apiFetch('/api/questions', {
+                acceptedAiQuestions.push(normalizedQuestion);
+              });
+
+              // Replace only previously AI/user-generated questions for these exact types.
+              // Canonical built-in questions are preserved by the API migration layer.
+              if (acceptedAiQuestions.length > 0) {
+                await apiFetch('/api/questions/replace-types', {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify(newQ),
+                  body: JSON.stringify({
+                    type_ids: Array.from(typeMap.keys()),
+                    questions: acceptedAiQuestions,
+                  }),
                 });
               }
             }
 
+            const weakVariantTypes = (activeLesson.types || [])
+              .map((t) => ({
+                type: t,
+                variantCount: new Set(
+                  acceptedAiQuestions
+                    .filter((q) => q.type_id === t.id && q.variant_tag)
+                    .map((q) => q.variant_tag as string)
+                ).size,
+              }))
+              .filter((item) => item.variantCount > 0 && item.variantCount < 5);
+
             await loadCurriculumData();
             setActiveLesson(updatedLesson);
-            showNotification(`✨ AI Gemini đã biên soạn thành công toàn bộ phiếu học tập cho: ${activeLesson.title_vi}!`);
+            showNotification(
+              `✨ Đã cập nhật ${acceptedAiQuestions.length} câu đúng type cho "${activeLesson.title_vi}"` +
+              `${rejectedAiQuestions > 0 ? `; loại ${rejectedAiQuestions} câu trùng/sai phạm vi/sai blueprint` : ''}` +
+              `${weakVariantTypes.length > 0 ? `; cảnh báo ${weakVariantTypes.length} dạng chưa phủ đủ 5 cấu trúc` : ''}.`
+            );
             setIsAiGeneratingWorksheet(false);
             return;
           }
@@ -248,9 +330,12 @@ export const BilingualLessonModule: React.FC = () => {
       }
     }
 
-    // Fallback: Populate built-in high quality questions & worked examples
+    // Fallback: only use banks generated for the exact math types of this lesson.
+    // Never pass lessonId as a typeId; that previously triggered the generic extrema fallback.
     const defaultWe = getWorkedExamplesForLesson(activeLesson.id);
-    const defaultQs = getQuestionsForLesson(activeLesson.id, activeLesson.topic_id);
+    const defaultQs = (activeLesson.types || []).flatMap((t) =>
+      getQuestionsForMathTypeStructured(t.id, activeLesson.topic_id).all
+    );
 
     const fallbackLesson: Lesson = {
       ...activeLesson,
@@ -270,7 +355,7 @@ export const BilingualLessonModule: React.FC = () => {
 
     await loadCurriculumData();
     setActiveLesson(fallbackLesson);
-    showNotification(`✨ Đã nạp đầy đủ bài tập mẫu & 4 dạng câu hỏi GDPT 2018 cho "${activeLesson.title_vi}"!`);
+    showNotification(defaultQs.length > 0 ? `✅ Đã nạp ${defaultQs.length} câu có sẵn đúng dạng cho "${activeLesson.title_vi}".` : `⚠️ Bài này chưa có ngân hàng tĩnh đúng dạng. Hãy dùng AI soạn phiếu để tạo câu mới; hệ thống sẽ không lấy bài Cực trị làm thay thế.`);
     setIsAiGeneratingWorksheet(false);
   };
 
@@ -356,20 +441,66 @@ export const BilingualLessonModule: React.FC = () => {
     window.print();
   };
 
-  // Filter questions for the active lesson and selected math types with high precision
+  // Filter questions for the active lesson and selected math types with high precision.
+  // Priority: AI/teacher questions stored in DB for the exact type, then built-in exact-type
+  // questions to fill any remaining requested slots. Sibling types are never mixed.
   const getDisplayedQuestions = (): Question[] => {
     if (!activeLesson || selectedTypeIds.length === 0) return [];
 
-    let combined: Question[] = [];
+    const bucket = (q: Question): 'tn' | 'ds' | 'tln' | 'tl' => {
+      if (q.format_type === 'DS' || q.question_type === 'TRUE_FALSE') return 'ds';
+      if (q.format_type === 'TLN' || q.question_type === 'SHORT' || q.question_type === 'NUMERIC') return 'tln';
+      if (q.format_type === 'TL' || q.question_type === 'ESSAY') return 'tl';
+      return 'tn';
+    };
+
+    const result: Question[] = [];
     selectedTypeIds.forEach((tId) => {
-      const isTypeOfLesson = activeLesson.types?.some((t) => t.id === tId);
-      if (isTypeOfLesson) {
-        const struct = getQuestionsForMathTypeStructured(tId, activeLesson.topic_id);
-        combined = [...combined, ...struct.all];
-      }
+      if (!activeLesson.types?.some((t) => t.id === tId)) return;
+
+      const requested = typeQuestionCounts[tId] || { tn: 2, ds: 1, tln: 1, tl: 1 };
+      const builtIn = getQuestionsForMathTypeStructured(tId, activeLesson.topic_id).all;
+      const builtInIds = new Set(builtIn.map((q) => q.id));
+      const dbExact = allQuestions.filter(
+        (q) => q.type_id === tId && isQuestionCompatibleWithTopic(activeLesson.topic_id, `${q.question_vi} ${q.solution_vi || ''}`)
+      );
+      const customExact = dbExact.filter((q) => !builtInIds.has(q.id));
+
+      // Prefer AI/teacher-authored exact-type questions, then canonical exact-type questions.
+      // Structural signatures remove numbers, so number-only clones are automatically rejected.
+      const seen = new Set<string>();
+      const candidates = [...customExact, ...builtIn].filter((q) => {
+        const key = `${q.format_type || q.question_type}|${getQuestionStructureSignature(q.question_vi || q.question_en)}`;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
+
+      const diversifyByVariant = (items: Question[]): Question[] => {
+        const firstOfVariant: Question[] = [];
+        const repeatedVariant: Question[] = [];
+        const usedVariants = new Set<string>();
+        items.forEach((q) => {
+          const tag = q.variant_tag?.trim();
+          if (!tag) {
+            repeatedVariant.push(q);
+          } else if (!usedVariants.has(tag)) {
+            usedVariants.add(tag);
+            firstOfVariant.push(q);
+          } else {
+            repeatedVariant.push(q);
+          }
+        });
+        return [...firstOfVariant, ...repeatedVariant];
+      };
+
+      (['tn', 'ds', 'tln', 'tl'] as const).forEach((kind) => {
+        const sameFormat = candidates.filter((q) => bucket(q) === kind);
+        result.push(...diversifyByVariant(sameFormat).slice(0, requested[kind]));
+      });
     });
 
-    return combined;
+    return result;
   };
 
   const displayedQuestions = getDisplayedQuestions();

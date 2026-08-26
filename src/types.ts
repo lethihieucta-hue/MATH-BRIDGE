@@ -197,7 +197,9 @@ export interface Question {
   english_skill: string;
   status: ContentStatus;
   created_by: string;
-  created_at: string;
+  created_at?: string;
+  /** Distinct exercise pattern label used to prevent number-only clones. */
+  variant_tag?: string;
   // Math Reading fields
   given_info?: string;
   required_info?: string;

@@ -1,6 +1,8 @@
 // Gemini AI Multi-Model Service with Auto-Fallback and Granular Step Retry
 // Compliant with AI_INSTRUCTIONS.md
 
+import { buildQuestionBlueprintPrompt } from './questionBlueprintData';
+
 export type GeminiModelId = 
   | 'gemini-3-flash-preview'
   | 'gemini-3-pro-preview'
@@ -101,7 +103,8 @@ async function callGeminiApi(
   model: GeminiModelId,
   apiKey: string,
   prompt: string,
-  systemInstruction?: string
+  systemInstruction?: string,
+  generationOptions?: { maxOutputTokens?: number; temperature?: number }
 ): Promise<string> {
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
@@ -115,9 +118,9 @@ async function callGeminiApi(
   const body: any = {
     contents,
     generationConfig: {
-      temperature: 0.3,
+      temperature: generationOptions?.temperature ?? 0.3,
       topP: 0.95,
-      maxOutputTokens: 8192,
+      maxOutputTokens: generationOptions?.maxOutputTokens ?? 8192,
     },
   };
 
@@ -202,6 +205,8 @@ export async function executeWithFallback(
     systemInstruction?: string;
     preferredModel?: GeminiModelId;
     onModelAttempt?: (model: GeminiModelId, attemptIndex: number) => void;
+    maxOutputTokens?: number;
+    temperature?: number;
   }
 ): Promise<StepExecutionResult> {
   const apiKey = getStoredApiKey();
@@ -235,7 +240,11 @@ export async function executeWithFallback(
         currentModel,
         apiKey,
         prompt,
-        options?.systemInstruction
+        options?.systemInstruction,
+        {
+          maxOutputTokens: options?.maxOutputTokens,
+          temperature: options?.temperature,
+        }
       );
 
       return {
@@ -461,13 +470,43 @@ Hãy đưa ra nhận xét ngắn gọn gồm:
 export async function generateCompleteLessonWorksheetAi(
   lessonTitle: string,
   chapterName: string,
-  grade: number
+  grade: number,
+  mathTypes: Array<{ id: string; code: string; title_vi: string; title_en: string }> = [],
+  lessonContext?: { key_concepts_vi?: string; formulas?: string[] }
 ): Promise<StepExecutionResult> {
+  const allowedTypes = mathTypes.length > 0
+    ? mathTypes.map((t) => `- ${t.id} | ${t.code} | ${t.title_vi} | ${t.title_en}`).join('\n')
+    : '- Không có danh sách dạng cố định; chỉ sinh đúng nội dung của bài học.';
+  const curriculumContext = [
+    lessonContext?.key_concepts_vi ? `Lý thuyết chuẩn của bài:\n${lessonContext.key_concepts_vi}` : '',
+    lessonContext?.formulas?.length ? `Công thức chuẩn được phép dùng:\n${lessonContext.formulas.map((f) => `- ${f}`).join('\n')}` : '',
+  ].filter(Boolean).join('\n\n');
+  const blueprintContext = buildQuestionBlueprintPrompt(mathTypes);
+
   const prompt = `Bạn là Chuyên gia biên soạn tài liệu Giảng dạy Toán THPT bằng Tiếng Anh (Math in English) theo chuẩn chương trình GDPT 2018 (Bộ sách Kết Nối Tri Thức).
 Hãy soạn thảo đầy đủ nội dung phiếu học tập song ngữ cho bài học sau:
 - Khối lớp: Lớp ${grade}
 - Chương: ${chapterName}
 - Bài học: ${lessonTitle}
+
+DANH SÁCH DẠNG TOÁN ĐƯỢC PHÉP SỬ DỤNG (ID PHẢI GIỮ NGUYÊN):
+${allowedTypes}
+
+NGÂN HÀNG CẤU TRÚC BÀI TẬP RIÊNG CHO TỪNG type_id (variant_tag PHẢI LẤY ĐÚNG TỪ ĐÂY):
+${blueprintContext}
+
+${curriculumContext ? `NGỮ CẢNH CHƯƠNG TRÌNH CHUẨN (BÁM SÁT, KHÔNG MỞ RỘNG SANG BÀI KHÁC):\n${curriculumContext}\n` : ''}
+RÀNG BUỘC SƯ PHẠM BẮT BUỘC:
+1. TUYỆT ĐỐI không sinh kiến thức thuộc bài/chương khác. Ví dụ: bài Nguyên hàm không được xuất hiện câu cực trị, đồng biến/nghịch biến; bài số liệu ghép nhóm không được xuất hiện đạo hàm/khảo sát hàm số; bài hình học không được chèn xác suất hay thống kê.
+2. Mỗi câu hỏi và mỗi ví dụ phải có trường type_id; type_id CHỈ được lấy từ danh sách dạng toán ở trên và nội dung câu phải đúng chính xác mô tả của type_id đó.
+3. CẤM kiểu tạo một mẫu rồi chỉ thay số. Hai câu mà sau khi bỏ các con số/hệ số vẫn gần như cùng một câu được xem là TRÙNG DẠNG và không hợp lệ.
+4. Trong MỖI type_id, phải phân bố các cấu trúc tư duy khác nhau: (a) nhận biết/hiểu bản chất, (b) áp dụng trực tiếp, (c) biến đổi hoặc suy luận ngược, (d) đọc bảng/đồ thị/dữ kiện hoặc tham số nếu phù hợp, (e) ngữ cảnh thực tế nếu phù hợp với đúng bài. Không ép bài thực tế vào dạng không phù hợp.
+5. Mỗi câu phải có variant_tag và GIÁ TRỊ PHẢI KHỚP CHÍNH XÁC một variant_tag được liệt kê trong NGÂN HÀNG CẤU TRÚC của chính type_id đó. Trong cùng type_id, phải dùng ít nhất 5 variant_tag khác nhau trước khi lặp lại một variant_tag.
+6. Câu hỏi phải đúng kiến thức của khối ${grade}, đúng thuật ngữ Toán tiếng Việt và tiếng Anh, số liệu phải cho đáp án xác định; lời giải phải tự kiểm tra lại kết quả.
+7. Nếu danh sách dạng đã được cung cấp thì KHÔNG tự ý đổi tên dạng, thêm dạng, gộp dạng hoặc chuyển câu sang dạng khác.
+8. Với MỖI type_id tạo: 4 câu TN, 2 câu Đúng/Sai, 2 câu trả lời ngắn và 1 câu tự luận. Chín câu phải phủ tối thiểu 5 variant_tag khác nhau của type_id; không được dùng một variant_tag cho quá 2 câu và tuyệt đối không tạo bản sao chỉ thay hệ số.
+9. TN phải có đúng 4 phương án và đúng 1 phương án đúng. Đúng/Sai phải có 4 mệnh đề a,b,c,d và lời giải từng ý. TLN phải có đáp án ngắn xác định. TL phải có lời giải có lập luận.
+10. Sắp xếp mảng questions theo từng type_id để dễ kiểm tra, nhưng tuyệt đối giữ type_id gốc.
 
 Yêu cầu trả về đúng định dạng JSON CHÍNH XÁC (không kèm giải thích hay văn bản ngoài JSON):
 \`\`\`json
@@ -512,6 +551,7 @@ Yêu cầu trả về đúng định dạng JSON CHÍNH XÁC (không kèm giải
   ],
   "worked_examples": [
     {
+      "type_id": "ID dạng toán tương ứng trong danh sách được phép",
       "type_code": "Dạng 1. Tên dạng toán 1",
       "title_vi": "Ví dụ 1: Tên ví dụ",
       "title_en": "Example 1: Title in English",
@@ -521,6 +561,7 @@ Yêu cầu trả về đúng định dạng JSON CHÍNH XÁC (không kèm giải
       "solution_en": "Detailed step-by-step solution in English"
     },
     {
+      "type_id": "ID dạng toán tương ứng trong danh sách được phép",
       "type_code": "Dạng 2. Tên dạng toán 2",
       "title_vi": "Ví dụ 2: Tên ví dụ 2",
       "title_en": "Example 2: Title in English",
@@ -532,6 +573,8 @@ Yêu cầu trả về đúng định dạng JSON CHÍNH XÁC (không kèm giải
   ],
   "questions": [
     {
+      "type_id": "ID dạng toán tương ứng trong danh sách được phép",
+      "variant_tag": "một ID variant_tag hợp lệ đúng theo blueprint của type_id",
       "format_type": "TN",
       "question_type": "MCQ",
       "question_vi": "Nội dung câu hỏi trắc nghiệm nhiều lựa chọn 1 tiếng Việt (dùng $...$)",
@@ -547,6 +590,8 @@ Yêu cầu trả về đúng định dạng JSON CHÍNH XÁC (không kèm giải
       "solution_en": "Detailed solution 1"
     },
     {
+      "type_id": "ID dạng toán tương ứng trong danh sách được phép",
+      "variant_tag": "một ID variant_tag hợp lệ đúng theo blueprint của type_id",
       "format_type": "TN",
       "question_type": "MCQ",
       "question_vi": "Nội dung câu hỏi trắc nghiệm nhiều lựa chọn 2 tiếng Việt",
@@ -562,6 +607,8 @@ Yêu cầu trả về đúng định dạng JSON CHÍNH XÁC (không kèm giải
       "solution_en": "Detailed solution 2"
     },
     {
+      "type_id": "ID dạng toán tương ứng trong danh sách được phép",
+      "variant_tag": "một ID variant_tag hợp lệ đúng theo blueprint của type_id",
       "format_type": "DS",
       "question_type": "TRUE_FALSE",
       "question_vi": "Cho giả thiết... Xét tính đúng/sai của các mệnh đề sau:",
@@ -577,6 +624,8 @@ Yêu cầu trả về đúng định dạng JSON CHÍNH XÁC (không kèm giải
       "solution_en": "Detailed explanation"
     },
     {
+      "type_id": "ID dạng toán tương ứng trong danh sách được phép",
+      "variant_tag": "một ID variant_tag hợp lệ đúng theo blueprint của type_id",
       "format_type": "TLN",
       "question_type": "SHORT",
       "question_vi": "Nội dung câu hỏi trắc nghiệm trả lời ngắn (kết quả là một số):",
@@ -586,6 +635,8 @@ Yêu cầu trả về đúng định dạng JSON CHÍNH XÁC (không kèm giải
       "solution_en": "Detailed solution"
     },
     {
+      "type_id": "ID dạng toán tương ứng trong danh sách được phép",
+      "variant_tag": "một ID variant_tag hợp lệ đúng theo blueprint của type_id",
       "format_type": "TL",
       "question_type": "ESSAY",
       "question_vi": "Nội dung câu hỏi tự luận toán học:",
@@ -600,6 +651,8 @@ Yêu cầu trả về đúng định dạng JSON CHÍNH XÁC (không kèm giải
 
   return executeWithFallback(prompt, {
     systemInstruction: MATH_SYSTEM_INSTRUCTION,
+    maxOutputTokens: 16384,
+    temperature: 0.5,
   });
 }
 

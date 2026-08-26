@@ -11,14 +11,14 @@ import {
   Question,
   Test,
   UserProfile,
-  MeiScore,
+  MEIScore,
   PracticeAttempt,
   TestAttempt,
   MathType,
   WorkedExample,
 } from '../types';
 
-import { FULL_CHAPTERS, FULL_LESSONS } from './curriculumData';
+import { FULL_CHAPTERS, FULL_LESSONS, ALL_CURRENT_TYPE_IDS, LEGACY_TYPE_MIGRATION, migrateQuestionToCurrentCurriculum } from './curriculumData';
 import { FULL_QUESTION_BANK, DEFAULT_WORKED_EXAMPLES } from './questionBankData';
 
 const DB_KEY = 'math_bridge_client_db_v13';
@@ -65,20 +65,14 @@ export const INITIAL_DATA = {
   ],
 
   // =========================================================================
-  // TOÀN BỘ 21 CHƯƠNG TOÁN THPT (LỚP 10, 11, 12) - KẾT NỐI TRI THỨC
+  // TOÀN BỘ 24 CHƯƠNG / 79 BÀI TOÁN THPT (LỚP 10, 11, 12) - KẾT NỐI TRI THỨC
   // =========================================================================
   chapters: FULL_CHAPTERS,
 
   // =========================================================================
   // DANH SÁCH BÀI HỌC VÀ CÁC DẠNG TOÁN ỨNG DỤNG THỰC TẾ CHI TIẾT
   // =========================================================================
-  lessons: FULL_LESSONS.map((l) => {
-    const defaultWe = DEFAULT_WORKED_EXAMPLES[l.id] || [];
-    return {
-      ...l,
-      worked_examples: (l.worked_examples && l.worked_examples.length > 0) ? l.worked_examples : defaultWe,
-    };
-  }),
+  lessons: FULL_LESSONS.map((l) => ({ ...l, worked_examples: DEFAULT_WORKED_EXAMPLES[l.id] || [] })),
 
   // =========================================================================
   // BỘ CÂU HỎI LUYỆN TẬP 4 DẠNG THỨC GDPT 2018 (TN, Đ/S, TLN, TL)
@@ -189,6 +183,42 @@ export const INITIAL_DATA = {
   ],
 };
 
+function isLegacyExtremaFallbackQuestion(q: any): boolean {
+  const text = `${q?.question_vi || ''} ${q?.solution_vi || ''}`.toLowerCase();
+  return (
+    (/\[trắc nghiệm\s*\d+\]/i.test(text) && text.includes('x^3') && text.includes('điểm cực đại')) ||
+    (/\[đúng\/sai\s*\d+\]/i.test(text) && text.includes('-x^3 + 3x + 1')) ||
+    (/\[tln\s*\d+\]/i.test(text) && text.includes('tung độ điểm cực đại'))
+  );
+}
+
+function normalizeLessonIdentity(title?: string): string {
+  return (title || '')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/đ/g, 'd')
+    .replace(/^bai\s+\d+\.\s*/i, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function canReuseStoredLessonContent(stored: any, canonical: any): boolean {
+  if (!stored?.updated_at) return false;
+  // IDs from the old 21-chapter/38-lesson dataset overlap with some new canonical IDs.
+  // Reuse generated theory/examples only when the semantic lesson title is still the same.
+  return normalizeLessonIdentity(stored.title_vi) === normalizeLessonIdentity(canonical.title_vi);
+}
+
+function migrateStoredWorkedExamples(examples: any[], canonical: any): any[] {
+  const allowedTypeIds = new Set((canonical.types || []).map((type: any) => type.id));
+  return (examples || []).map((example: any) => {
+    const oldTypeId = example?.type_id as string | undefined;
+    const mappedTypeId = oldTypeId ? (LEGACY_TYPE_MIGRATION[oldTypeId] || oldTypeId) : undefined;
+    return { ...example, type_id: mappedTypeId };
+  }).filter((example: any) => !example.type_id || allowedTypeIds.has(example.type_id));
+}
+
 function getLocalDb() {
   if (typeof window === 'undefined') return INITIAL_DATA;
   try {
@@ -200,47 +230,37 @@ function getLocalDb() {
     const parsed = JSON.parse(raw);
     let changed = false;
 
-    // Ensure all 21 chapters from INITIAL_DATA are present
-    if (!parsed.chapters || parsed.chapters.length < INITIAL_DATA.chapters.length) {
-      parsed.chapters = INITIAL_DATA.chapters;
-      changed = true;
-    }
+    // Curriculum identity is canonical: chapter, lesson, topic and math-type IDs must not drift.
+    // Preserve only lesson content that was explicitly updated by the app (AI/theory/examples).
+    parsed.chapters = INITIAL_DATA.chapters;
 
-    // Ensure all lessons and math types from INITIAL_DATA are present or updated
-    if (!parsed.lessons || parsed.lessons.length < INITIAL_DATA.lessons.length) {
-      parsed.lessons = INITIAL_DATA.lessons;
-      changed = true;
-    } else {
-      INITIAL_DATA.lessons.forEach((initL) => {
-        const idx = parsed.lessons.findIndex((l: any) => l.id === initL.id);
-        if (idx === -1) {
-          parsed.lessons.push(initL);
-          changed = true;
-        } else {
-          // If worked_examples is empty in stored lesson, backfill from INITIAL_DATA
-          if (!parsed.lessons[idx].worked_examples || parsed.lessons[idx].worked_examples.length === 0) {
-            if (initL.worked_examples && initL.worked_examples.length > 0) {
-              parsed.lessons[idx].worked_examples = initL.worked_examples;
-              changed = true;
-            }
-          }
-          if (!parsed.lessons[idx].types || parsed.lessons[idx].types.length < (initL.types?.length || 0)) {
-            parsed.lessons[idx].types = initL.types;
-            changed = true;
-          }
-        }
-      });
-    }
-
-    // Ensure questions from INITIAL_DATA are present
-    const existingQIds = new Set((parsed.questions || []).map((q: any) => q.id));
-    INITIAL_DATA.questions.forEach((q) => {
-      if (!existingQIds.has(q.id)) {
-        if (!parsed.questions) parsed.questions = [];
-        parsed.questions.push(q);
-        changed = true;
-      }
+    const storedLessons = new Map((parsed.lessons || []).map((l: any) => [l.id, l]));
+    parsed.lessons = INITIAL_DATA.lessons.map((canonical: any) => {
+      const stored: any = storedLessons.get(canonical.id);
+      const reuseStored = canReuseStoredLessonContent(stored, canonical);
+      const merged = reuseStored ? { ...canonical, ...stored } : { ...canonical };
+      return {
+        ...merged,
+        id: canonical.id,
+        chapter_id: canonical.chapter_id,
+        topic_id: canonical.topic_id,
+        title_vi: canonical.title_vi,
+        title_en: canonical.title_en,
+        types: canonical.types,
+        worked_examples: (reuseStored && stored?.worked_examples?.length)
+          ? migrateStoredWorkedExamples(stored.worked_examples, canonical)
+          : canonical.worked_examples,
+      };
     });
+    changed = true;
+
+    // Remove the old generic derivative/extrema fallback questions. These were the source of
+    // "Cực trị / đồng biến" leaking into Integrals, Grouped Statistics and other chapters.
+    const cleanedStoredQuestions = (parsed.questions || []).filter((q: any) => !isLegacyExtremaFallbackQuestion(q));
+    const canonicalQuestionIds = new Set(INITIAL_DATA.questions.map((q: any) => q.id));
+    const customQuestions = cleanedStoredQuestions.filter((q: any) => !canonicalQuestionIds.has(q.id)).map((q: any) => migrateQuestionToCurrentCurriculum(q)).filter((q: any) => !q.type_id || ALL_CURRENT_TYPE_IDS.has(q.type_id));
+    parsed.questions = [...INITIAL_DATA.questions, ...customQuestions];
+    changed = true;
 
     // Update school name in profiles
     if (parsed.profiles) {
@@ -295,10 +315,13 @@ export async function apiFetch<T = any>(endpoint: string, options?: RequestInit)
   if (path === '/api/lessons') {
     if (options?.method === 'POST') {
       const body = JSON.parse(options.body as string);
-      const newL = { id: `les-${Date.now()}`, ...body };
-      db.lessons.push(newL);
+      const requestedId = body.id as string | undefined;
+      const idx = requestedId ? db.lessons.findIndex((l: any) => l.id === requestedId) : -1;
+      const lesson = { ...body, id: requestedId || `les-${Date.now()}`, updated_at: new Date().toISOString() };
+      if (idx >= 0) db.lessons[idx] = { ...db.lessons[idx], ...lesson };
+      else db.lessons.push(lesson);
       saveLocalDb(db);
-      return { success: true, lesson: newL } as any;
+      return { success: true, lesson } as any;
     }
     return db.lessons as any;
   }
@@ -318,13 +341,36 @@ export async function apiFetch<T = any>(endpoint: string, options?: RequestInit)
     return db.sentence_patterns as any;
   }
 
+  if (path === '/api/questions/replace-types' && options?.method === 'POST') {
+    const body = JSON.parse(options.body as string);
+    const typeIds = new Set<string>((body.type_ids || []).filter(Boolean));
+    const incoming = Array.isArray(body.questions) ? body.questions : [];
+    const canonicalIds = new Set(INITIAL_DATA.questions.map((q: any) => q.id));
+    db.questions = (db.questions || []).filter(
+      (q: any) => canonicalIds.has(q.id) || !q.type_id || !typeIds.has(q.type_id)
+    );
+    const now = new Date().toISOString();
+    const saved = incoming.map((q: any, idx: number) => ({
+      ...q,
+      id: q.id || `q-ai-${Date.now()}-${idx}-${Math.random().toString(36).slice(2, 7)}`,
+      created_at: q.created_at || now,
+      updated_at: now,
+    }));
+    db.questions.push(...saved);
+    saveLocalDb(db);
+    return { success: true, count: saved.length, questions: saved } as any;
+  }
+
   if (path === '/api/questions') {
     if (options?.method === 'POST') {
       const body = JSON.parse(options.body as string);
-      const newQ = { id: `q-${Date.now()}`, ...body };
-      db.questions.push(newQ);
+      const requestedId = body.id as string | undefined;
+      const idx = requestedId ? db.questions.findIndex((q: any) => q.id === requestedId) : -1;
+      const question = { ...body, id: requestedId || `q-${Date.now()}-${Math.random().toString(36).slice(2, 8)}` };
+      if (idx >= 0) db.questions[idx] = { ...db.questions[idx], ...question };
+      else db.questions.push(question);
       saveLocalDb(db);
-      return { success: true, question: newQ } as any;
+      return { success: true, question } as any;
     }
     return db.questions as any;
   }

@@ -1,9 +1,10 @@
 import { Question, WorkedExample } from '../types';
+import { ALL_CURRENT_TYPE_IDS, LEGACY_TYPE_MIGRATION, TYPE_LESSON_BY_ID, migrateQuestionToCurrentCurriculum } from './curriculumData';
 
 // =========================================================================
 // BỘ BÀI TẬP MẪU CÓ LỜI GIẢI CHI TIẾT THEO TỪNG BÀI HỌC (WORKED EXAMPLES)
 // =========================================================================
-export const DEFAULT_WORKED_EXAMPLES: Record<string, WorkedExample[]> = {
+const LEGACY_DEFAULT_WORKED_EXAMPLES: Record<string, WorkedExample[]> = {
   // -------------------------------------------------------------------------
   // LỚP 12: CHƯƠNG I - ỨNG DỤNG ĐẠO HÀM
   // -------------------------------------------------------------------------
@@ -297,11 +298,28 @@ export const DEFAULT_WORKED_EXAMPLES: Record<string, WorkedExample[]> = {
   ],
 };
 
+// Migrate legacy worked examples by their semantic type_id, then regroup under the canonical lesson.
+// This prevents an old lesson_id from injecting an example into a different textbook lesson after the KNTT migration.
+export const DEFAULT_WORKED_EXAMPLES: Record<string, WorkedExample[]> = Object.values(LEGACY_DEFAULT_WORKED_EXAMPLES)
+  .flat()
+  .map((example) => {
+    const oldTypeId = example.type_id;
+    const typeId = oldTypeId ? (LEGACY_TYPE_MIGRATION[oldTypeId] || oldTypeId) : undefined;
+    return { ...example, type_id: typeId };
+  })
+  .filter((example) => !example.type_id || ALL_CURRENT_TYPE_IDS.has(example.type_id))
+  .reduce<Record<string, WorkedExample[]>>((acc, example) => {
+    const lessonId = example.type_id ? TYPE_LESSON_BY_ID[example.type_id] : undefined;
+    if (!lessonId) return acc;
+    (acc[lessonId] ||= []).push(example);
+    return acc;
+  }, {});
+
 // =========================================================================
 // NGÂN HÀNG CÂU HỎI TOÀN DIỆN PHONG PHÚ 4 DẠNG THỨC GDPT 2018
 // ĐẢM BẢO MỖI CHỦ ĐỀ CÓ ĐỦ 10 - 20 CÂU HỎI CHUẨN
 // =========================================================================
-export const FULL_QUESTION_BANK: Question[] = [
+const LEGACY_QUESTION_BANK: Question[] = [
   // =========================================================================
   // 1. LỚP 12 - CHỦ ĐỀ GTLN VÀ GTNN & BÀI TOÁN TỐI ƯU (top-12-1-2)
   // =========================================================================
@@ -1120,7 +1138,7 @@ export const FULL_QUESTION_BANK: Question[] = [
   {
     id: 'q-11-1-3-tn1',
     topic_id: 'top-11-1-3',
-    type_id: 'type-11-1-1',
+    type_id: 'type-11-3-1',
     question_type: 'MCQ',
     format_type: 'TN',
     difficulty: 'EASY',
@@ -1144,7 +1162,7 @@ export const FULL_QUESTION_BANK: Question[] = [
   {
     id: 'q-11-1-3-tn2',
     topic_id: 'top-11-1-3',
-    type_id: 'type-11-1-1',
+    type_id: 'type-11-3-1',
     question_type: 'MCQ',
     format_type: 'TN',
     difficulty: 'EASY',
@@ -1168,7 +1186,7 @@ export const FULL_QUESTION_BANK: Question[] = [
   {
     id: 'q-11-1-3-tn3',
     topic_id: 'top-11-1-3',
-    type_id: 'type-11-1-1',
+    type_id: 'type-11-3-1',
     question_type: 'MCQ',
     format_type: 'TN',
     difficulty: 'MEDIUM',
@@ -1192,7 +1210,7 @@ export const FULL_QUESTION_BANK: Question[] = [
   {
     id: 'q-11-1-3-tn4',
     topic_id: 'top-11-1-3',
-    type_id: 'type-11-1-2',
+    type_id: 'type-11-3-2',
     question_type: 'MCQ',
     format_type: 'TN',
     difficulty: 'MEDIUM',
@@ -1216,7 +1234,7 @@ export const FULL_QUESTION_BANK: Question[] = [
   {
     id: 'q-11-1-3-ds1',
     topic_id: 'top-11-1-3',
-    type_id: 'type-11-1-1',
+    type_id: 'type-11-3-1',
     question_type: 'TRUE_FALSE',
     format_type: 'DS',
     difficulty: 'MEDIUM',
@@ -1240,7 +1258,7 @@ export const FULL_QUESTION_BANK: Question[] = [
   {
     id: 'q-11-1-3-tln1',
     topic_id: 'top-11-1-3',
-    type_id: 'type-11-1-1',
+    type_id: 'type-11-3-1',
     question_type: 'SHORT',
     format_type: 'TLN',
     difficulty: 'EASY',
@@ -1258,7 +1276,7 @@ export const FULL_QUESTION_BANK: Question[] = [
   {
     id: 'q-11-1-3-tln2',
     topic_id: 'top-11-1-3',
-    type_id: 'type-11-1-2',
+    type_id: 'type-11-3-2',
     question_type: 'SHORT',
     format_type: 'TLN',
     difficulty: 'MEDIUM',
@@ -1273,74 +1291,59 @@ export const FULL_QUESTION_BANK: Question[] = [
     status: 'PUBLISHED',
     created_by: 'usr-teacher-1',
   },
-];
+ ];
+
+// Canonicalized bank exposed to every UI consumer (worksheet, test builder, practice module, server).
+// Legacy IDs are migrated once here so direct imports can no longer bypass curriculum migration.
+export const FULL_QUESTION_BANK: Question[] = LEGACY_QUESTION_BANK
+  .map((q) => migrateQuestionToCurrentCurriculum(q))
+  .filter((q) => !q.type_id || ALL_CURRENT_TYPE_IDS.has(q.type_id));
 
 // =========================================================================
-// DOMAIN-AWARE MATH QUESTION GENERATION ENGINE (GDPT 2018 KẾT NỐI TRI THỨC)
+// EXACT-TYPE QUESTION ROUTING & QUALITY GUARDRAILS (GDPT 2018)
 // =========================================================================
 
-export type MathDomain =
-  | 'TRIGONOMETRY_11'
-  | 'SEQUENCES_11'
-  | 'STATISTICS_GROUPED_11'
-  | 'PARALLEL_SPATIAL_11'
-  | 'LIMITS_CONTINUITY_11'
-  | 'EXP_LOG_11'
-  | 'DERIVATIVE_11'
-  | 'ORTHOGONAL_SPATIAL_11'
-  | 'MONOTONICITY_12'
-  | 'MAX_MIN_12'
-  | 'ASYMPTOTE_12'
-  | 'VECTORS_OXYZ_12'
-  | 'STATISTICS_GROUPED_12'
-  | 'INTEGRALS_12'
-  | 'PLANE_LINE_SPHERE_OXYZ_12'
-  | 'PROBABILITY_CONDITIONAL_12'
-  | 'SETS_PROPOSITIONS_10'
-  | 'INEQUALITIES_2VAR_10'
-  | 'TRIANGLE_TRIG_10'
-  | 'VECTORS_OXY_10'
-  | 'STATISTICS_10'
-  | 'PARABOLA_10'
-  | 'OXY_GEOMETRY_10'
-  | 'GENERAL_MATH';
+/**
+ * Structural signature used to reject the classic "same exercise, only numbers changed"
+ * pattern. Numeric constants, item numbering and whitespace are removed while preserving
+ * the mathematical wording/structure.
+ */
+export function getQuestionStructureSignature(questionText?: string): string {
+  return (questionText || '')
+    .toLowerCase()
+    .normalize('NFC')
+    .replace(/\[(?:trắc nghiệm|đúng\/sai|tln|mcq|t\/f|short)\s*\d+\]/gi, ' ')
+    .replace(/-?\d+(?:[.,]\d+)?/g, '#')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
 
-export function detectMathDomain(typeId?: string, topicId?: string, lessonId?: string): MathDomain {
-  const top = (topicId || '').toLowerCase();
-  const les = (lessonId || '').toLowerCase();
-  const typ = (typeId || '').toLowerCase();
-  const full = `${typ} ${top} ${les}`;
+/**
+ * Guardrail against obvious cross-chapter contamination. It is intentionally conservative:
+ * it only blocks strong signatures from unrelated chapters, not generic terms such as
+ * "đạo hàm" which may legitimately occur when explaining an antiderivative.
+ */
+export function isQuestionCompatibleWithTopic(topicId?: string, questionText?: string): boolean {
+  const topic = (topicId || '').toLowerCase();
+  const text = (questionText || '').toLowerCase().normalize('NFC');
+  if (!topic || !text) return true;
 
-  // LỚP 12
-  if (top.includes('12-6') || les.includes('12-6') || full.includes('xác suất') || full.includes('bayes') || full.includes('điều kiện')) return 'PROBABILITY_CONDITIONAL_12';
-  if (top.includes('12-5') || les.includes('12-5') || full.includes('mặt phẳng') || full.includes('đường thẳng') || full.includes('mặt cầu')) return 'PLANE_LINE_SPHERE_OXYZ_12';
-  if (top.includes('12-4') || les.includes('12-4') || full.includes('nguyên hàm') || full.includes('tích phân')) return 'INTEGRALS_12';
-  if (top.includes('12-3') || les.includes('12-3') || (full.includes('phân tán') && full.includes('12'))) return 'STATISTICS_GROUPED_12';
-  if (top.includes('12-2') || les.includes('12-2') || full.includes('oxyz') || full.includes('vectơ')) return 'VECTORS_OXYZ_12';
-  if (top.includes('12-1-3') || les.includes('12-1-3') || full.includes('tiệm cận')) return 'ASYMPTOTE_12';
-  if (top.includes('12-1-2') || les.includes('12-1-2') || full.includes('gtln') || full.includes('gtnn')) return 'MAX_MIN_12';
-  if (top.includes('12-1-1') || top.includes('12-1') || les.includes('12-1') || full.includes('đồng biến') || full.includes('cực trị')) return 'MONOTONICITY_12';
+  const has = (patterns: RegExp[]) => patterns.some((re) => re.test(text));
+  const derivativeSurvey = [ /cực trị/i, /đồng biến/i, /nghịch biến/i, /tiệm cận/i, /bảng biến thiên/i ];
+  const integration = [ /nguyên hàm/i, /tích phân/i, /diện tích hình phẳng/i, /khối tròn xoay/i ];
+  const groupedStats = [ /mẫu số liệu ghép nhóm/i, /khoảng tứ phân vị/i, /phương sai/i, /độ lệch chuẩn/i ];
+  const probability = [ /xác suất có điều kiện/i, /bayes/i, /xác suất toàn phần/i ];
+  const spatialOxyz = [ /mặt phẳng/i, /mặt cầu/i, /đường thẳng.*oxyz/i, /tọa độ.*oxyz/i, /toạ độ.*oxyz/i ];
 
-  // LỚP 11
-  if (top.includes('11-8') || les.includes('11-8') || full.includes('vuông góc')) return 'ORTHOGONAL_SPATIAL_11';
-  if (top.includes('11-7') || les.includes('11-7') || full.includes('đạo hàm')) return 'DERIVATIVE_11';
-  if (top.includes('11-6') || les.includes('11-6') || full.includes('mũ') || full.includes('log')) return 'EXP_LOG_11';
-  if (top.includes('11-5') || les.includes('11-5') || full.includes('giới hạn') || full.includes('liên tục')) return 'LIMITS_CONTINUITY_11';
-  if (top.includes('11-4') || les.includes('11-4') || full.includes('song song')) return 'PARALLEL_SPATIAL_11';
-  if (top.includes('11-3') || les.includes('11-3') || (full.includes('trung tâm') && full.includes('11'))) return 'STATISTICS_GROUPED_11';
-  if (top.includes('11-2') || les.includes('11-2') || full.includes('dãy số') || full.includes('cấp số')) return 'SEQUENCES_11';
-  if (top.includes('11-1') || les.includes('11-1') || full.includes('lượng giác') || full.includes('sin') || full.includes('cos') || full.includes('tan')) return 'TRIGONOMETRY_11';
+  if (topic.startsWith('top-12-4')) return !has([...derivativeSurvey, ...groupedStats, ...probability, ...spatialOxyz]);
+  if (topic.startsWith('top-12-3')) return !has([...derivativeSurvey, ...integration, ...probability, ...spatialOxyz]);
+  if (topic.startsWith('top-12-6')) return !has([...derivativeSurvey, ...integration, ...groupedStats, ...spatialOxyz]);
+  if (topic.startsWith('top-12-2') || topic.startsWith('top-12-5')) return !has([...derivativeSurvey, ...integration, ...groupedStats, ...probability]);
+  if (topic.startsWith('top-11-3')) return !has([...derivativeSurvey, ...integration, ...probability, ...spatialOxyz]);
+  if (topic.startsWith('top-11-4') || topic.startsWith('top-11-8')) return !has([...derivativeSurvey, ...integration, ...groupedStats, ...probability]);
+  if (topic.startsWith('top-10-5')) return !has([...derivativeSurvey, ...integration, ...probability, ...spatialOxyz]);
 
-  // LỚP 10
-  if (top.includes('10-7') || les.includes('10-7') || full.includes('conic') || full.includes('đường tròn')) return 'OXY_GEOMETRY_10';
-  if (top.includes('10-6') || les.includes('10-6') || full.includes('parabol') || full.includes('bậc hai')) return 'PARABOLA_10';
-  if (top.includes('10-5') || les.includes('10-5') || (full.includes('số liệu') && full.includes('10'))) return 'STATISTICS_10';
-  if (top.includes('10-4') || les.includes('10-4') || (full.includes('vectơ') && full.includes('phẳng'))) return 'VECTORS_OXY_10';
-  if (top.includes('10-3') || les.includes('10-3') || full.includes('tam giác') || full.includes('heron')) return 'TRIANGLE_TRIG_10';
-  if (top.includes('10-2') || les.includes('10-2') || full.includes('bất phương trình') || full.includes('miền nghiệm')) return 'INEQUALITIES_2VAR_10';
-  if (top.includes('10-1') || les.includes('10-1') || full.includes('mệnh đề') || full.includes('tập hợp')) return 'SETS_PROPOSITIONS_10';
-
-  return 'GENERAL_MATH';
+  return true;
 }
 
 export function getQuestionsForLesson(lessonId: string, topicId?: string): Question[] {
@@ -1349,1052 +1352,45 @@ export function getQuestionsForLesson(lessonId: string, topicId?: string): Quest
 }
 
 /**
- * ĐẢM BẢO TỐI THIỂU 10 CÂU TN - 4 CÂU Đ/S - 4 CÂU TLN DÚNG CHỦ ĐỀ & KHỐI LỚP (GDPT 2018)
+ * Lấy câu hỏi đã được gán CHÍNH XÁC cho một dạng toán.
+ * Nếu ngân hàng chưa có đủ câu, trả về đúng số câu hiện có thay vì bịa câu từ dạng khác.
  */
 export function getQuestionsForMathTypeStructured(typeId: string, topicId?: string): {
   tn: Question[];
   ds: Question[];
   tln: Question[];
+  tl: Question[];
   all: Question[];
 } {
-  const existing = FULL_QUESTION_BANK.filter(
-    (q) => (q.type_id && q.type_id === typeId) || (q.topic_id && topicId && q.topic_id === topicId)
-  );
+  // A math type is an isolated exercise family. Only questions explicitly authored for the
+  // selected type are eligible. Topic-level fallbacks are forbidden because one lesson often
+  // contains several different exercise types.
+  const exact = FULL_QUESTION_BANK.filter((q) => {
+    if (q.type_id !== typeId) return false;
+    return isQuestionCompatibleWithTopic(topicId || q.topic_id, `${q.question_vi} ${q.solution_vi || ''}`);
+  });
 
-  let tnList = existing.filter((q) => q.format_type === 'TN' || q.question_type === 'MCQ');
-  let dsList = existing.filter((q) => q.format_type === 'DS' || q.question_type === 'TRUE_FALSE');
-  let tlnList = existing.filter((q) => q.format_type === 'TLN' || q.question_type === 'SHORT');
-
-  const domain = detectMathDomain(typeId, topicId);
-  const tId = topicId || typeId || 'top-11-1-3';
-
-  // Thư viện câu hỏi tự sinh CHUẨN XÁC NỘI DUNG THEO TỪNG CHỦ ĐỀ MÔN TOÁN
-  const domainQuestions = generateDomainSpecificQuestions(domain, typeId, tId);
-
-  // Ghép câu hỏi có sẵn với câu hỏi tự sinh chuẩn chủ đề
-  if (tnList.length < 10) {
-    tnList = [...tnList, ...domainQuestions.tn.slice(0, 10 - tnList.length)];
-  }
-  if (dsList.length < 4) {
-    dsList = [...dsList, ...domainQuestions.ds.slice(0, 4 - dsList.length)];
-  }
-  if (tlnList.length < 4) {
-    tlnList = [...tlnList, ...domainQuestions.tln.slice(0, 4 - tlnList.length)];
-  }
-
-  const finalTn = tnList.slice(0, 10);
-  const finalDs = dsList.slice(0, 4);
-  const finalTln = tlnList.slice(0, 4);
-
-  return {
-    tn: finalTn,
-    ds: finalDs,
-    tln: finalTln,
-    all: [...finalTn, ...finalDs, ...finalTln],
+  const dedupe = (items: Question[]) => {
+    const seen = new Set<string>();
+    return items.filter((q) => {
+      const signature = `${q.format_type || q.question_type}|${getQuestionStructureSignature(q.question_vi || q.question_en)}`;
+      if (seen.has(signature)) return false;
+      seen.add(signature);
+      return true;
+    });
   };
-}
 
-/**
- * SINH CÂU HỎI CHÍNH XÁC NỘI DUNG THEO TỪNG CHỦ ĐỀ BÀI HỌC VÀ KHỐI LỚP (GDPT 2018 KNTT)
- */
-function generateDomainSpecificQuestions(domain: MathDomain, typeId: string, topicId: string): {
-  tn: Question[];
-  ds: Question[];
-  tln: Question[];
-} {
-  if (domain === 'TRIGONOMETRY_11') {
-    return {
-      tn: [
-        {
-          id: `trig-tn-1`,
-          topic_id: topicId,
-          type_id: typeId,
-          question_type: 'MCQ',
-          format_type: 'TN',
-          difficulty: 'EASY',
-          language_level: 2,
-          question_vi: 'Tập xác định của hàm số $y = \\tan\\left(x - \\frac{\\pi}{4}\\right)$ là:',
-          question_en: 'The domain of function $y = \\tan\\left(x - \\frac{\\pi}{4}\\right)$ is:',
-          options: [
-            { option_key: 'A', content_vi: '$D = \\mathbb{R} \\setminus \\left\\{\\frac{3\\pi}{4} + k\\pi, k \\in \\mathbb{Z}\\right\\}$', content_en: '$D = \\mathbb{R} \\setminus \\left\\{\\frac{3\\pi}{4} + k\\pi, k \\in \\mathbb{Z}\\right\\}$', is_correct: true },
-            { option_key: 'B', content_vi: '$D = \\mathbb{R} \\setminus \\left\\{\\frac{\\pi}{4} + k\\pi, k \\in \\mathbb{Z}\\right\\}$', content_en: '$D = \\mathbb{R} \\setminus \\left\\{\\frac{\\pi}{4} + k\\pi, k \\in \\mathbb{Z}\\right\\}$', is_correct: false },
-            { option_key: 'C', content_vi: '$D = \\mathbb{R} \\setminus \\left\\{\\frac{\\pi}{2} + k\\pi, k \\in \\mathbb{Z}\\right\\}$', content_en: '$D = \\mathbb{R} \\setminus \\left\\{\\frac{\\pi}{2} + k\\pi, k \\in \\mathbb{Z}\\right\\}$', is_correct: false },
-            { option_key: 'D', content_vi: '$D = \\mathbb{R}$', content_en: '$D = \\mathbb{R}$', is_correct: false },
-          ],
-          solution_vi: 'ĐK: $x - \\frac{\\pi}{4} \\ne \\frac{\\pi}{2} + k\\pi \\iff x \\ne \\frac{3\\pi}{4} + k\\pi$.',
-          solution_en: '$x - \\frac{\\pi}{4} \\ne \\frac{\\pi}{2} + k\\pi \\iff x \\ne \\frac{3\\pi}{4} + k\\pi$.',
-          correct_answer: 'A',
-          math_skill: 'Tập xác định hàm số lượng giác',
-          english_skill: 'Domain of trigonometric function',
-          status: 'PUBLISHED',
-          created_by: 'usr-teacher-1',
-        },
-        {
-          id: `trig-tn-2`,
-          topic_id: topicId,
-          type_id: typeId,
-          question_type: 'MCQ',
-          format_type: 'TN',
-          difficulty: 'EASY',
-          language_level: 2,
-          question_vi: 'Chu kỳ tuần hoàn của hàm số $y = \\sin(2x)$ là bao nhiêu?',
-          question_en: 'What is the period of the function $y = \\sin(2x)$?',
-          options: [
-            { option_key: 'A', content_vi: '$\\pi$', content_en: '$\\pi$', is_correct: true },
-            { option_key: 'B', content_vi: '$2\\pi$', content_en: '$2\\pi$', is_correct: false },
-            { option_key: 'C', content_vi: '$\\frac{\\pi}{2}$', content_en: '$\\frac{\\pi}{2}$', is_correct: false },
-            { option_key: 'D', content_vi: '$4\\pi$', content_en: '$4\\pi$', is_correct: false },
-          ],
-          solution_vi: 'Chu kỳ $T = \\frac{2\\pi}{|a|} = \\frac{2\\pi}{2} = \\pi$.',
-          solution_en: 'Period $T = \\frac{2\\pi}{2} = \\pi$.',
-          correct_answer: 'A',
-          math_skill: 'Chu kỳ hàm số lượng giác',
-          english_skill: 'Period of trig function',
-          status: 'PUBLISHED',
-          created_by: 'usr-teacher-1',
-        },
-        {
-          id: `trig-tn-3`,
-          topic_id: topicId,
-          type_id: typeId,
-          question_type: 'MCQ',
-          format_type: 'TN',
-          difficulty: 'MEDIUM',
-          language_level: 2,
-          question_vi: 'Giá trị lớn nhất của hàm số $y = 3\\cos\\left(x - \\frac{\\pi}{6}\\right) + 2$ bằng bao nhiêu?',
-          question_en: 'What is the maximum value of $y = 3\\cos\\left(x - \\frac{\\pi}{6}\\right) + 2$?',
-          options: [
-            { option_key: 'A', content_vi: '$5$', content_en: '$5$', is_correct: true },
-            { option_key: 'B', content_vi: '$3$', content_en: '$3$', is_correct: false },
-            { option_key: 'C', content_vi: '$1$', content_en: '$1$', is_correct: false },
-            { option_key: 'D', content_vi: '$2$', content_en: '$2$', is_correct: false },
-          ],
-          solution_vi: 'Vì $-1 \\le \\cos\\left(x - \\frac{\\pi}{6}\\right) \\le 1 \\implies 3(-1)+2 \\le y \\le 3(1)+2 \\implies \\max y = 5$.',
-          solution_en: 'Since $-1 \\le \\cos(...) \\le 1 \\implies \\max = 3(1) + 2 = 5$.',
-          correct_answer: 'A',
-          math_skill: 'GTLN của hàm số lượng giác',
-          english_skill: 'Maximum of trig function',
-          status: 'PUBLISHED',
-          created_by: 'usr-teacher-1',
-        },
-        {
-          id: `trig-tn-4`,
-          topic_id: topicId,
-          type_id: typeId,
-          question_type: 'MCQ',
-          format_type: 'TN',
-          difficulty: 'MEDIUM',
-          language_level: 2,
-          question_vi: 'Mực nước biển tại một cảng biển được mô hình hoá bởi $h(t) = 4\\cos\\left(\\frac{\\pi t}{6}\\right) + 10$ (mét), với $t$ là số giờ tính từ lúc 0h. Mực nước biển cao nhất trong ngày bằng bao nhiêu?',
-          question_en: 'The sea tide level is modeled by $h(t) = 4\\cos\\left(\\frac{\\pi t}{6}\\right) + 10$ (meters), where $t$ is hours from midnight. What is the maximum tide level?',
-          options: [
-            { option_key: 'A', content_vi: '$14\\text{ m}$', content_en: '$14\\text{ m}$', is_correct: true },
-            { option_key: 'B', content_vi: '$10\\text{ m}$', content_en: '$10\\text{ m}$', is_correct: false },
-            { option_key: 'C', content_vi: '$6\\text{ m}$', content_en: '$6\\text{ m}$', is_correct: false },
-            { option_key: 'D', content_vi: '$8\\text{ m}$', content_en: '$8\\text{ m}$', is_correct: false },
-          ],
-          solution_vi: 'Mực nước cao nhất khi $\\cos\\left(\\frac{\\pi t}{6}\\right) = 1 \\implies h = 4(1) + 10 = 14\\text{ m}$.',
-          solution_en: 'Max height occurs when $\\cos = 1 \\implies h = 4(1) + 10 = 14\\text{ m}$.',
-          correct_answer: 'A',
-          math_skill: 'Ứng dụng thực tế thuỷ triều',
-          english_skill: 'Tide level optimization',
-          status: 'PUBLISHED',
-          created_by: 'usr-teacher-1',
-        },
-        {
-          id: `trig-tn-5`,
-          topic_id: topicId,
-          type_id: typeId,
-          question_type: 'MCQ',
-          format_type: 'TN',
-          difficulty: 'EASY',
-          language_level: 2,
-          question_vi: 'Trong các hàm số sau đây, hàm số nào là hàm số lẻ?',
-          question_en: 'Which of the following functions is an odd function?',
-          options: [
-            { option_key: 'A', content_vi: '$y = \\sin x$', content_en: '$y = \\sin x$', is_correct: true },
-            { option_key: 'B', content_vi: '$y = \\cos x$', content_en: '$y = \\cos x$', is_correct: false },
-            { option_key: 'C', content_vi: '$y = \\cos(2x)$', content_en: '$y = \\cos(2x)$', is_correct: false },
-            { option_key: 'D', content_vi: '$y = \\sin^2 x$', content_en: '$y = \\sin^2 x$', is_correct: false },
-          ],
-          solution_vi: 'Hàm số $y = \\sin x$ thoả mãn $\\sin(-x) = -\\sin x$ nên là hàm số lẻ.',
-          solution_en: '$y = \\sin x$ satisfies $\\sin(-x) = -\\sin x$, so it is an odd function.',
-          correct_answer: 'A',
-          math_skill: 'Tính chẵn lẻ hàm số lượng giác',
-          english_skill: 'Even and odd trig functions',
-          status: 'PUBLISHED',
-          created_by: 'usr-teacher-1',
-        },
-        {
-          id: `trig-tn-6`,
-          topic_id: topicId,
-          type_id: typeId,
-          question_type: 'MCQ',
-          format_type: 'TN',
-          difficulty: 'MEDIUM',
-          language_level: 2,
-          question_vi: 'Dao động của một con lắc đơn được mô hình hoá bởi $s(t) = 5\\cos\\left(2\\pi t + \\frac{\\pi}{3}\\right)\\text{ (cm)}$. Li độ ban đầu $s(0)$ tại thời điểm $t = 0$ bằng:',
-          question_en: 'A pendulum displacement is $s(t) = 5\\cos\\left(2\\pi t + \\frac{\\pi}{3}\\right)\\text{ (cm)}$. The initial position $s(0)$ is:',
-          options: [
-            { option_key: 'A', content_vi: '$2.5\\text{ cm}$', content_en: '$2.5\\text{ cm}$', is_correct: true },
-            { option_key: 'B', content_vi: '$5\\text{ cm}$', content_en: '$5\\text{ cm}$', is_correct: false },
-            { option_key: 'C', content_vi: '$0\\text{ cm}$', content_en: '$0\\text{ cm}$', is_correct: false },
-            { option_key: 'D', content_vi: '$2.5\\sqrt{3}\\text{ cm}$', content_en: '$2.5\\sqrt{3}\\text{ cm}$', is_correct: false },
-          ],
-          solution_vi: '$s(0) = 5\\cos\\left(\\frac{\\pi}{3}\\right) = 5 \\cdot \\frac{1}{2} = 2.5\\text{ cm}$.',
-          solution_en: '$s(0) = 5\\cos(\\pi/3) = 2.5\\text{ cm}$.',
-          correct_answer: 'A',
-          math_skill: 'Ứng dụng dao động điều hoà',
-          english_skill: 'Harmonic oscillation initial state',
-          status: 'PUBLISHED',
-          created_by: 'usr-teacher-1',
-        },
-        {
-          id: `trig-tn-7`,
-          topic_id: topicId,
-          type_id: typeId,
-          question_type: 'MCQ',
-          format_type: 'TN',
-          difficulty: 'MEDIUM',
-          language_level: 2,
-          question_vi: 'Giá trị nhỏ nhất của hàm số $y = 2\\sin^2 x - 1$ là:',
-          question_en: 'The minimum value of $y = 2\\sin^2 x - 1$ is:',
-          options: [
-            { option_key: 'A', content_vi: '$-1$', content_en: '$-1$', is_correct: true },
-            { option_key: 'B', content_vi: '$1$', content_en: '$1$', is_correct: false },
-            { option_key: 'C', content_vi: '$0$', content_en: '$0$', is_correct: false },
-            { option_key: 'D', content_vi: '$-2$', content_en: '$-2$', is_correct: false },
-          ],
-          solution_vi: 'Vì $0 \\le \\sin^2 x \\le 1 \\implies 2(0)-1 \\le y \\le 2(1)-1 \\implies \\min y = -1$.',
-          solution_en: 'Since $0 \\le \\sin^2 x \\le 1 \\implies \\min = -1$.',
-          correct_answer: 'A',
-          math_skill: 'GTNN của hàm lượng giác bậc hai',
-          english_skill: 'Minimum of squared trig function',
-          status: 'PUBLISHED',
-          created_by: 'usr-teacher-1',
-        },
-        {
-          id: `trig-tn-8`,
-          topic_id: topicId,
-          type_id: typeId,
-          question_type: 'MCQ',
-          format_type: 'TN',
-          difficulty: 'HARD',
-          language_level: 2,
-          question_vi: 'Tập giá trị của hàm số $y = 5\\sin x - 12\\cos x + 3$ là đoạn $[a; b]$. Tổng $a + b$ bằng bao nhiêu?',
-          question_en: 'The range of $y = 5\\sin x - 12\\cos x + 3$ is $[a, b]$. What is $a + b$?',
-          options: [
-            { option_key: 'A', content_vi: '$6$', content_en: '$6$', is_correct: true },
-            { option_key: 'B', content_vi: '$16$', content_en: '$16$', is_correct: false },
-            { option_key: 'C', content_vi: '$-10$', content_en: '$-10$', is_correct: false },
-            { option_key: 'D', content_vi: '$26$', content_en: '$26$', is_correct: false },
-          ],
-          solution_vi: 'Biến đổi: $-\\sqrt{5^2+12^2} \\le 5\\sin x - 12\\cos x \\le \\sqrt{5^2+12^2} \\implies -13 \\le 5\\sin x - 12\\cos x \\le 13$. Tập giá trị $[-10; 16] \\implies a+b = -10+16 = 6$.',
-          solution_en: 'Range $[-10, 16] \\implies a + b = 6$.',
-          correct_answer: 'A',
-          math_skill: 'Tập giá trị dạng a sin x + b cos x',
-          english_skill: 'Range of linear trig combination',
-          status: 'PUBLISHED',
-          created_by: 'usr-teacher-1',
-        },
-        {
-          id: `trig-tn-9`,
-          topic_id: topicId,
-          type_id: typeId,
-          question_type: 'MCQ',
-          format_type: 'TN',
-          difficulty: 'EASY',
-          language_level: 2,
-          question_vi: 'Nghiệm của phương trình lượng giác cơ bản $\\sin x = \\frac{1}{2}$ là:',
-          question_en: 'The solution to basic trigonometric equation $\\sin x = \\frac{1}{2}$ is:',
-          options: [
-            { option_key: 'A', content_vi: '$x = \\frac{\\pi}{6} + k2\\pi, x = \\frac{5\\pi}{6} + k2\\pi\\, (k \\in \\mathbb{Z})$', content_en: '$x = \\frac{\\pi}{6} + k2\\pi, x = \\frac{5\\pi}{6} + k2\\pi\\, (k \\in \\mathbb{Z})$', is_correct: true },
-            { option_key: 'B', content_vi: '$x = \\pm \\frac{\\pi}{6} + k2\\pi\\, (k \\in \\mathbb{Z})$', content_en: '$x = \\pm \\frac{\\pi}{6} + k2\\pi\\, (k \\in \\mathbb{Z})$', is_correct: false },
-            { option_key: 'C', content_vi: '$x = \\frac{\\pi}{3} + k2\\pi, x = \\frac{2\\pi}{3} + k2\\pi\\, (k \\in \\mathbb{Z})$', content_en: '$x = \\frac{\\pi}{3} + k2\\pi, x = \\frac{2\\pi}{3} + k2\\pi\\, (k \\in \\mathbb{Z})$', is_correct: false },
-            { option_key: 'D', content_vi: '$x = \\frac{\\pi}{6} + k\\pi\\, (k \\in \\mathbb{Z})$', content_en: '$x = \\frac{\\pi}{6} + k\\pi\\, (k \\in \\mathbb{Z})$', is_correct: false },
-          ],
-          solution_vi: '$\\sin x = \\sin\\left(\\frac{\\pi}{6}\\right) \\iff x = \\frac{\\pi}{6} + k2\\pi$ hoặc $x = \\pi - \\frac{\\pi}{6} + k2\\pi = \\frac{5\\pi}{6} + k2\\pi$.',
-          solution_en: '$\sin x = \sin(\pi/6) \implies x = \pi/6 + k2\pi, x = 5\pi/6 + k2\pi$.',
-          correct_answer: 'A',
-          math_skill: 'Giải phương trình sin x = a',
-          english_skill: 'Solve sine equation',
-          status: 'PUBLISHED',
-          created_by: 'usr-teacher-1',
-        },
-        {
-          id: `trig-tn-10`,
-          topic_id: topicId,
-          type_id: typeId,
-          question_type: 'MCQ',
-          format_type: 'TN',
-          difficulty: 'MEDIUM',
-          language_level: 2,
-          question_vi: 'Chu kỳ tuần hoàn của hàm số $y = \\tan(3x)$ bằng bao nhiêu?',
-          question_en: 'What is the period of function $y = \\tan(3x)$?',
-          options: [
-            { option_key: 'A', content_vi: '$\\frac{\\pi}{3}$', content_en: '$\\frac{\\pi}{3}$', is_correct: true },
-            { option_key: 'B', content_vi: '$\\pi$', content_en: '$\\pi$', is_correct: false },
-            { option_key: 'C', content_vi: '$\\frac{2\\pi}{3}$', content_en: '$\\frac{2\\pi}{3}$', is_correct: false },
-            { option_key: 'D', content_vi: '$3\\pi$', content_en: '$3\\pi$', is_correct: false },
-          ],
-          solution_vi: 'Hàm số $y = \\tan(ax)$ có chu kỳ $T = \\frac{\\pi}{|a|} = \\frac{\\pi}{3}$.',
-          solution_en: 'Period of $\\tan(ax)$ is $T = \\frac{\\pi}{|a|} = \\frac{\\pi}{3}$.',
-          correct_answer: 'A',
-          math_skill: 'Chu kỳ hàm tan',
-          english_skill: 'Period of tangent function',
-          status: 'PUBLISHED',
-          created_by: 'usr-teacher-1',
-        },
-      ],
-      ds: [
-        {
-          id: `trig-ds-1`,
-          topic_id: topicId,
-          type_id: typeId,
-          question_type: 'TRUE_FALSE',
-          format_type: 'DS',
-          difficulty: 'MEDIUM',
-          language_level: 2,
-          question_vi: 'Cho hàm số $y = 2\\cos\\left(2x - \\frac{\\pi}{3}\\right) + 1$. Xét tính đúng/sai của các mệnh đề sau:',
-          question_en: 'Given $y = 2\\cos\\left(2x - \\frac{\\pi}{3}\\right) + 1$. Determine whether each statement is True (Đ) or False (S):',
-          options: [
-            { option_key: 'a', content_vi: 'Tập xác định của hàm số là $D = \\mathbb{R}$.', content_en: 'The domain is $D = \\mathbb{R}$.', is_correct: true },
-            { option_key: 'b', content_vi: 'Tập giá trị của hàm số là $[-1; 3]$.', content_en: 'The range of the function is $[-1, 3]$.', is_correct: true },
-            { option_key: 'c', content_vi: 'Chu kỳ tuần hoàn của hàm số là $T = \\pi$.', content_en: 'The period of the function is $T = \\pi$.', is_correct: true },
-            { option_key: 'd', content_vi: 'Hàm số đã cho là một hàm số chẵn.', content_en: 'The function is an even function.', is_correct: false },
-          ],
-          solution_vi: 'a-Đ; b-Đ ($-2+1 \\le y \\le 2+1$); c-Đ ($T = 2\\pi/2 = \\pi$); d-S (chứa pha ban đầu nên không chẵn).',
-          solution_en: 'a-True, b-True, c-True, d-False.',
-          correct_answer: 'a-Đ, b-Đ, c-Đ, d-S',
-          math_skill: 'Khảo sát hàm lượng giác',
-          english_skill: 'Trig function properties',
-          status: 'PUBLISHED',
-          created_by: 'usr-teacher-1',
-        },
-        {
-          id: `trig-ds-2`,
-          topic_id: topicId,
-          type_id: typeId,
-          question_type: 'TRUE_FALSE',
-          format_type: 'DS',
-          difficulty: 'MEDIUM',
-          language_level: 2,
-          question_vi: 'Cho hàm số $y = \\tan x$. Xét tính đúng/sai của các khẳng định sau:',
-          question_en: 'Given function $y = \\tan x$. Evaluate the truth value of the statements:',
-          options: [
-            { option_key: 'a', content_vi: 'Tập xác định $D = \\mathbb{R} \\setminus \\left\\{\\frac{\\pi}{2} + k\\pi, k \\in \\mathbb{Z}\\right\\}$.', content_en: 'Domain $D = \\mathbb{R} \\setminus \\left\\{\\frac{\\pi}{2} + k\\pi, k \\in \\mathbb{Z}\\right\\}$.', is_correct: true },
-            { option_key: 'b', content_vi: 'Hàm số $y = \\tan x$ là một hàm số lẻ.', content_en: '$y = \\tan x$ is an odd function.', is_correct: true },
-            { option_key: 'c', content_vi: 'Hàm số đồng biến trên từng khoảng xác định của nó.', content_en: 'The function is increasing on each domain interval.', is_correct: true },
-            { option_key: 'd', content_vi: 'Chu kỳ tuần hoàn của hàm số bằng $2\\pi$.', content_en: 'The period of the function is $2\\pi$.', is_correct: false },
-          ],
-          solution_vi: 'a-Đ, b-Đ, c-Đ, d-S (chu kỳ của tan x là $\\pi$).',
-          solution_en: 'a-True, b-True, c-True, d-False (period is $\\pi$).',
-          correct_answer: 'a-Đ, b-Đ, c-Đ, d-S',
-          math_skill: 'Đặc tính hàm tan',
-          english_skill: 'Tangent function properties',
-          status: 'PUBLISHED',
-          created_by: 'usr-teacher-1',
-        },
-        {
-          id: `trig-ds-3`,
-          topic_id: topicId,
-          type_id: typeId,
-          question_type: 'TRUE_FALSE',
-          format_type: 'DS',
-          difficulty: 'HARD',
-          language_level: 2,
-          question_vi: 'Mực nước thuỷ triều tại một cảng biển được mô hình hoá bởi $h(t) = 3\\sin\\left(\\frac{\\pi t}{6}\\right) + 8$ (mét) ($0 \\le t \\le 24$). Xét tính đúng/sai của các nhận định:',
-          question_en: 'Tide water height is $h(t) = 3\\sin\\left(\\frac{\\pi t}{6}\\right) + 8$ (m) ($0 \\le t \\le 24$). Evaluate the statements:',
-          options: [
-            { option_key: 'a', content_vi: 'Mực nước cao nhất đạt được là $11\\text{ m}$.', content_en: 'The maximum water height is $11\\text{ m}$.', is_correct: true },
-            { option_key: 'b', content_vi: 'Mực nước thấp nhất là $5\\text{ m}$.', content_en: 'The minimum water height is $5\\text{ m}$.', is_correct: true },
-            { option_key: 'c', content_vi: 'Tại $t = 3$ giờ, mực nước đạt giá trị lớn nhất trong ngày.', content_en: 'At $t = 3$ hours, tide reaches maximum.', is_correct: true },
-            { option_key: 'd', content_vi: 'Tại $t = 6$ giờ, mực nước đạt giá trị thấp nhất.', content_en: 'At $t = 6$ hours, tide reaches minimum.', is_correct: false },
-          ],
-          solution_vi: 'a-Đ; b-Đ; c-Đ ($h(3)=11$); d-S (tại $t=6 \implies h(6)=8$, thấp nhất tại $t=9 \implies h(9)=5$).',
-          solution_en: 'a-True, b-True, c-True, d-False (min tide occurs at $t = 9$).',
-          correct_answer: 'a-Đ, b-Đ, c-Đ, d-S',
-          math_skill: 'Ứng dụng thực tế thuỷ triều',
-          english_skill: 'Tide model analysis',
-          status: 'PUBLISHED',
-          created_by: 'usr-teacher-1',
-        },
-        {
-          id: `trig-ds-4`,
-          topic_id: topicId,
-          type_id: typeId,
-          question_type: 'TRUE_FALSE',
-          format_type: 'DS',
-          difficulty: 'MEDIUM',
-          language_level: 2,
-          question_vi: 'Cho hàm số $y = \\cos x$. Xét tính đúng/sai của các phát biểu sau:',
-          question_en: 'Given function $y = \\cos x$. Evaluate the statements:',
-          options: [
-            { option_key: 'a', content_vi: 'Hàm số $y = \\cos x$ là hàm số chẵn.', content_en: '$y = \\cos x$ is an even function.', is_correct: true },
-            { option_key: 'b', content_vi: 'Hàm số đồng biến trên khoảng $(0; \\pi)$.', content_en: 'The function is increasing on $(0, \\pi)$.', is_correct: false },
-            { option_key: 'c', content_vi: 'Chu kỳ tuần hoàn của hàm số là $T = 2\\pi$.', content_en: 'The period of the function is $T = 2\\pi$.', is_correct: true },
-            { option_key: 'd', content_vi: 'Tập giá trị của hàm số là $[-1; 1]$.', content_en: 'The range of the function is $[-1, 1]$.', is_correct: true },
-          ],
-          solution_vi: 'a-Đ; b-S (nghịch biến trên $(0; \\pi)$); c-Đ; d-Đ.',
-          solution_en: 'a-True, b-False (decreasing on $(0, \\pi)$), c-True, d-True.',
-          correct_answer: 'a-Đ, b-S, c-Đ, d-Đ',
-          math_skill: 'Khảo sát hàm cosin',
-          english_skill: 'Cosine function properties',
-          status: 'PUBLISHED',
-          created_by: 'usr-teacher-1',
-        },
-      ],
-      tln: [
-        {
-          id: `trig-tln-1`,
-          topic_id: topicId,
-          type_id: typeId,
-          question_type: 'SHORT',
-          format_type: 'TLN',
-          difficulty: 'EASY',
-          language_level: 2,
-          question_vi: 'Tìm giá trị lớn nhất của hàm số $y = 4\\sin x + 3$.',
-          question_en: 'Find the maximum value of $y = 4\\sin x + 3$.',
-          correct_answer: '7',
-          solution_vi: 'Vì $-1 \\le \\sin x \\le 1 \\implies \\max y = 4(1) + 3 = 7$.',
-          solution_en: '$\max y = 4(1) + 3 = 7$.',
-          math_skill: 'GTLN hàm lượng giác',
-          english_skill: 'Maximum of trig function',
-          status: 'PUBLISHED',
-          created_by: 'usr-teacher-1',
-        },
-        {
-          id: `trig-tln-2`,
-          topic_id: topicId,
-          type_id: typeId,
-          question_type: 'SHORT',
-          format_type: 'TLN',
-          difficulty: 'MEDIUM',
-          language_level: 2,
-          question_vi: 'Cho hàm số $y = \\cos(4\\pi x)$. Tính chu kỳ $T$ của hàm số (nhập giá trị dạng số thập phân).',
-          question_en: 'For $y = \\cos(4\\pi x)$, calculate period $T$ (enter decimal value).',
-          correct_answer: '0.5',
-          solution_vi: 'Chu kỳ $T = \\frac{2\\pi}{4\\pi} = 0.5$.',
-          solution_en: 'Period $T = \\frac{2\\pi}{4\\pi} = 0.5$.',
-          math_skill: 'Tính chu kỳ hàm cosin',
-          english_skill: 'Period of cosine function',
-          status: 'PUBLISHED',
-          created_by: 'usr-teacher-1',
-        },
-        {
-          id: `trig-tln-3`,
-          topic_id: topicId,
-          type_id: typeId,
-          question_type: 'SHORT',
-          format_type: 'TLN',
-          difficulty: 'MEDIUM',
-          language_level: 2,
-          question_vi: 'Biên độ dao động (tính theo cm) của con lắc $s(t) = 6\\sin\\left(2\\pi t - \\frac{\\pi}{4}\\right) + 2$ bằng bao nhiêu?',
-          question_en: 'What is the amplitude (in cm) of oscillation $s(t) = 6\\sin\\left(2\\pi t - \\frac{\\pi}{4}\\right) + 2$?',
-          correct_answer: '6',
-          solution_vi: 'Biên độ dao động $A = 6\\text{ cm}$.',
-          solution_en: 'Amplitude $A = 6\\text{ cm}$.',
-          math_skill: 'Biên độ dao động',
-          english_skill: 'Oscillation amplitude',
-          status: 'PUBLISHED',
-          created_by: 'usr-teacher-1',
-        },
-        {
-          id: `trig-tln-4`,
-          topic_id: topicId,
-          type_id: typeId,
-          question_type: 'SHORT',
-          format_type: 'TLN',
-          difficulty: 'HARD',
-          language_level: 2,
-          question_vi: 'Tìm giá trị nhỏ nhất của hàm số $y = 3\\sin^2 x + 4\\cos^2 x$.',
-          question_en: 'Find the minimum value of $y = 3\\sin^2 x + 4\\cos^2 x$.',
-          correct_answer: '3',
-          solution_vi: '$y = 3(\\sin^2 x + \\cos^2 x) + \\cos^2 x = 3 + \\cos^2 x \\ge 3 \\implies \\min = 3$.',
-          solution_en: '$y = 3 + \\cos^2 x \\ge 3 \\implies \\min = 3$.',
-          math_skill: 'GTNN biến đổi lượng giác',
-          english_skill: 'Minimum of trig identity',
-          status: 'PUBLISHED',
-          created_by: 'usr-teacher-1',
-        },
-      ],
-    };
-  }
+  const tn = dedupe(exact.filter((q) => q.format_type === 'TN' || q.question_type === 'MCQ'));
+  const ds = dedupe(exact.filter((q) => q.format_type === 'DS' || q.question_type === 'TRUE_FALSE'));
+  const tln = dedupe(exact.filter((q) => q.format_type === 'TLN' || q.question_type === 'SHORT' || q.question_type === 'NUMERIC'));
+  const tl = dedupe(exact.filter((q) => q.format_type === 'TL' || q.question_type === 'ESSAY'));
 
-  if (domain === 'EXP_LOG_11') {
-    return {
-      tn: Array.from({ length: 10 }).map((_, i) => {
-        const base = 2 + (i % 3);
-        const exp = i + 2;
-        const ans = Math.pow(base, exp);
-        return {
-          id: `exp-tn-${i + 1}`,
-          topic_id: topicId,
-          type_id: typeId,
-          question_type: 'MCQ',
-          format_type: 'TN',
-          difficulty: 'EASY',
-          language_level: 2,
-          question_vi: `[Mũ - Logarit ${i + 1}] Nghiệm của phương trình $\\log_{${base}}(x - 1) = ${exp}$ là:`,
-          question_en: `[Exp-Log ${i + 1}] Solution to $\\log_{${base}}(x - 1) = ${exp}$ is:`,
-          options: [
-            { option_key: 'A', content_vi: `$${ans + 1}$`, content_en: `$${ans + 1}$`, is_correct: true },
-            { option_key: 'B', content_vi: `$${ans}$`, content_en: `$${ans}$`, is_correct: false },
-            { option_key: 'C', content_vi: `$${ans - 1}$`, content_en: `$${ans - 1}$`, is_correct: false },
-            { option_key: 'D', content_vi: `$${ans + 3}$`, content_en: `$${ans + 3}$`, is_correct: false },
-          ],
-          solution_vi: `$\\log_{${base}}(x-1) = ${exp} \\iff x - 1 = ${base}^{${exp}} = ${ans} \\iff x = ${ans + 1}$.`,
-          solution_en: `$x - 1 = ${base}^{${exp}} = ${ans} \\implies x = ${ans + 1}$.`,
-          correct_answer: 'A',
-          math_skill: 'Giải phương trình logarit',
-          english_skill: 'Solve log equation',
-          status: 'PUBLISHED',
-          created_by: 'usr-teacher-1',
-        };
-      }),
-      ds: Array.from({ length: 4 }).map((_, i) => {
-        const b = i + 2;
-        return {
-          id: `exp-ds-${i + 1}`,
-          topic_id: topicId,
-          type_id: typeId,
-          question_type: 'TRUE_FALSE',
-          format_type: 'DS',
-          difficulty: 'MEDIUM',
-          language_level: 2,
-          question_vi: `[Đúng/Sai Logarit ${i + 1}] Cho hàm số $y = \\log_{${b}}(x - ${i + 1})$. Xét các nhận định:`,
-          question_en: `[T/F Logarithm ${i + 1}] For $y = \\log_{${b}}(x - ${i + 1})$. Evaluate:`,
-          options: [
-            { option_key: 'a', content_vi: `Tập xác định $D = (${i + 1}; +\\infty)$.`, content_en: `Domain $D = (${i + 1}, +\\infty)$.`, is_correct: true },
-            { option_key: 'b', content_vi: `Hàm số đồng biến trên tập xác định.`, content_en: `Function is strictly increasing.`, is_correct: true },
-            { option_key: 'c', content_vi: `Đồ thị cắt trục hoành tại điểm có hoành độ $x = ${i + 2}$.`, content_en: `Graph intersects x-axis at $x = ${i + 2}$.`, is_correct: true },
-            { option_key: 'd', content_vi: `Tập xác định của hàm số là $D = \\mathbb{R}$.`, content_en: `Domain is $D = \\mathbb{R}$.`, is_correct: false },
-          ],
-          solution_vi: 'a-Đ; b-Đ (vì cơ số > 1); c-Đ ($y=0 \implies x = i+2$); d-S.',
-          solution_en: 'a-True, b-True, c-True, d-False.',
-          correct_answer: 'a-Đ, b-Đ, c-Đ, d-S',
-          math_skill: 'Khảo sát hàm logarit',
-          english_skill: 'Logarithm function properties',
-          status: 'PUBLISHED',
-          created_by: 'usr-teacher-1',
-        };
-      }),
-      tln: Array.from({ length: 4 }).map((_, i) => {
-        const val = i + 3;
-        const ans = val + 2;
-        return {
-          id: `exp-tln-${i + 1}`,
-          topic_id: topicId,
-          type_id: typeId,
-          question_type: 'SHORT',
-          format_type: 'TLN',
-          difficulty: 'MEDIUM',
-          language_level: 2,
-          question_vi: `[TLN Mũ ${i + 1}] Giải phương trình $2^{x - 2} = ${Math.pow(2, val)}$. Tìm $x$.`,
-          question_en: `[Short Exp ${i + 1}] Solve $2^{x - 2} = ${Math.pow(2, val)}$. Find $x$.`,
-          correct_answer: `${ans}`,
-          solution_vi: `$x - 2 = ${val} \\iff x = ${ans}$.`,
-          solution_en: `$x - 2 = ${val} \\implies x = ${ans}$.`,
-          math_skill: 'Phương trình mũ cơ bản',
-          english_skill: 'Basic exponential equation',
-          status: 'PUBLISHED',
-          created_by: 'usr-teacher-1',
-        };
-      }),
-    };
-  }
-
-  if (domain === 'DERIVATIVE_11') {
-    return {
-      tn: Array.from({ length: 10 }).map((_, i) => {
-        const x0 = i + 1;
-        const slope = 3 * x0 * x0 - 3;
-        const y0 = x0 * x0 * x0 - 3 * x0 + 2;
-        return {
-          id: `der-tn-${i + 1}`,
-          topic_id: topicId,
-          type_id: typeId,
-          question_type: 'MCQ',
-          format_type: 'TN',
-          difficulty: 'MEDIUM',
-          language_level: 2,
-          question_vi: `[Đạo hàm ${i + 1}] Cho hàm số $y = x^3 - 3x + 2$. Hệ số góc của tiếp tuyến của đồ thị hàm số tại điểm có hoành độ $x_0 = ${x0}$ là:`,
-          question_en: `[Derivative ${i + 1}] For $y = x^3 - 3x + 2$, the slope of the tangent line at $x_0 = ${x0}$ is:`,
-          options: [
-            { option_key: 'A', content_vi: `$${slope}$`, content_en: `$${slope}$`, is_correct: true },
-            { option_key: 'B', content_vi: `$${slope + 3}$`, content_en: `$${slope + 3}$`, is_correct: false },
-            { option_key: 'C', content_vi: `$${slope - 2}$`, content_en: `$${slope - 2}$`, is_correct: false },
-            { option_key: 'D', content_vi: `$${slope + 6}$`, content_en: `$${slope + 6}$`, is_correct: false },
-          ],
-          solution_vi: `$y' = 3x^2 - 3 \\implies k = y'(${x0}) = 3(${x0})^2 - 3 = ${slope}$.`,
-          solution_en: `$k = y'(${x0}) = ${slope}$.`,
-          correct_answer: 'A',
-          math_skill: 'Hệ số góc tiếp tuyến',
-          english_skill: 'Tangent line slope',
-          status: 'PUBLISHED',
-          created_by: 'usr-teacher-1',
-        };
-      }),
-      ds: Array.from({ length: 4 }).map((_, i) => {
-        const t0 = i + 2;
-        const v = 6 * t0 + 2;
-        const a = 6;
-        return {
-          id: `der-ds-${i + 1}`,
-          topic_id: topicId,
-          type_id: typeId,
-          question_type: 'TRUE_FALSE',
-          format_type: 'DS',
-          difficulty: 'MEDIUM',
-          language_level: 2,
-          question_vi: `[Đúng/Sai Ý nghĩa Đạo hàm ${i + 1}] Một vật chuyển động thẳng có phương trình $s(t) = 3t^2 + 2t + 1$ ($s$ bằng m, $t$ bằng s). Xét các khẳng định:`,
-          question_en: `[T/F Derivative Meaning ${i + 1}] Position equation is $s(t) = 3t^2 + 2t + 1$. Evaluate:`,
-          options: [
-            { option_key: 'a', content_vi: `Vận tốc tức thời là $v(t) = s'(t) = 6t + 2$.`, content_en: `Instantaneous velocity $v(t) = 6t + 2$.`, is_correct: true },
-            { option_key: 'b', content_vi: `Vận tốc tức thời tại $t = ${t0}\\text{ s}$ bằng $v(${t0}) = ${v}\\text{ m/s}$.`, content_en: `Velocity at $t = ${t0}$ is $v(${t0}) = ${v}\\text{ m/s}$.`, is_correct: true },
-            { option_key: 'c', content_vi: `Gia tốc tức thời của chuyển động bằng $a = ${a}\\text{ m/s}^2$.`, content_en: `Acceleration is $a = ${a}\\text{ m/s}^2$.`, is_correct: true },
-            { option_key: 'd', content_vi: `Vật chuyển động chậm dần đều.`, content_en: `Movement is decelerating.`, is_correct: false },
-          ],
-          solution_vi: 'a-Đ; b-Đ; c-Đ ($a = v\'(t) = 6$); d-S (gia tốc dương nên tăng tốc).',
-          solution_en: 'a-True, b-True, c-True, d-False.',
-          correct_answer: 'a-Đ, b-Đ, c-Đ, d-S',
-          math_skill: 'Ý nghĩa vật lý của đạo hàm',
-          english_skill: 'Physical meaning of derivative',
-          status: 'PUBLISHED',
-          created_by: 'usr-teacher-1',
-        };
-      }),
-      tln: Array.from({ length: 4 }).map((_, i) => {
-        const t = i + 3;
-        const v = 6 * t + 4;
-        return {
-          id: `der-tln-${i + 1}`,
-          topic_id: topicId,
-          type_id: typeId,
-          question_type: 'SHORT',
-          format_type: 'TLN',
-          difficulty: 'MEDIUM',
-          language_level: 2,
-          question_vi: `[TLN Đạo hàm ${i + 1}] Một chất điểm chuyển động theo quy luật $s(t) = 3t^2 + 4t$. Tính vận tốc tức thời (m/s) của chất điểm tại thời điểm $t = ${t}\\text{ s}$.`,
-          question_en: `[Short Derivative ${i + 1}] Position $s(t) = 3t^2 + 4t$. Find velocity (m/s) at $t = ${t}\\text{ s}$.`,
-          correct_answer: `${v}`,
-          solution_vi: `$v(t) = s'(t) = 6t + 4 \\implies v(${t}) = 6(${t}) + 4 = ${v}\\text{ m/s}$.`,
-          solution_en: `$v(${t}) = 6(${t}) + 4 = ${v}\\text{ m/s}$.`,
-          math_skill: 'Vận tốc tức thời',
-          english_skill: 'Instantaneous velocity',
-          status: 'PUBLISHED',
-          created_by: 'usr-teacher-1',
-        };
-      }),
-    };
-  }
-
-  if (domain === 'VECTORS_OXYZ_12') {
-    return {
-      tn: Array.from({ length: 10 }).map((_, i) => {
-        const x = i + 1;
-        const y = i + 2;
-        const z = i + 3;
-        const lenSq = x * x + y * y + z * z;
-        return {
-          id: `vec-tn-${i + 1}`,
-          topic_id: topicId,
-          type_id: typeId,
-          question_type: 'MCQ',
-          format_type: 'TN',
-          difficulty: 'EASY',
-          language_level: 2,
-          question_vi: `[Vectơ Oxyz ${i + 1}] Trong không gian $Oxyz$, độ dài của vectơ $\\vec{u} = (${x}; ${y}; ${z})$ bằng bao nhiêu?`,
-          question_en: `[Vector 3D ${i + 1}] In space $Oxyz$, what is the magnitude of vector $\\vec{u} = (${x}, ${y}, ${z})$?`,
-          options: [
-            { option_key: 'A', content_vi: `$\\sqrt{${lenSq}}$`, content_en: `$\\sqrt{${lenSq}}$`, is_correct: true },
-            { option_key: 'B', content_vi: `$${lenSq}$`, content_en: `$${lenSq}$`, is_correct: false },
-            { option_key: 'C', content_vi: `$${x + y + z}$`, content_en: `$${x + y + z}$`, is_correct: false },
-            { option_key: 'D', content_vi: `$\\sqrt{${lenSq + 5}}$`, content_en: `$\\sqrt{${lenSq + 5}}$`, is_correct: false },
-          ],
-          solution_vi: `$|\\vec{u}| = \\sqrt{${x}^2 + ${y}^2 + ${z}^2} = \\sqrt{${lenSq}}$.`,
-          solution_en: `$|\\vec{u}| = \\sqrt{${lenSq}}$.`,
-          correct_answer: 'A',
-          math_skill: 'Độ dài vectơ Oxyz',
-          english_skill: '3D vector magnitude',
-          status: 'PUBLISHED',
-          created_by: 'usr-teacher-1',
-        };
-      }),
-      ds: Array.from({ length: 4 }).map((_, i) => {
-        const xA = i + 1;
-        const xB = i + 3;
-        const xM = (xA + xB) / 2;
-        return {
-          id: `vec-ds-${i + 1}`,
-          topic_id: topicId,
-          type_id: typeId,
-          question_type: 'TRUE_FALSE',
-          format_type: 'DS',
-          difficulty: 'MEDIUM',
-          language_level: 2,
-          question_vi: `[Đúng/Sai Oxyz ${i + 1}] Trong không gian $Oxyz$, cho điểm $A(${xA}; 2; -1)$ và $B(${xB}; 4; 3)$. Xét các mệnh đề:`,
-          question_en: `[T/F Oxyz ${i + 1}] In $Oxyz$, given $A(${xA}, 2, -1)$ and $B(${xB}, 4, 3)$. Evaluate:`,
-          options: [
-            { option_key: 'a', content_vi: `Vectơ $\\vec{AB} = (2; 2; 4)$.`, content_en: `Vector $\\vec{AB} = (2, 2, 4)$.`, is_correct: true },
-            { option_key: 'b', content_vi: `Toạ độ trung điểm $M$ của $AB$ là $M(${xM}; 3; 1)$.`, content_en: `Midpoint $M$ of $AB$ is $M(${xM}, 3, 1)$.`, is_correct: true },
-            { option_key: 'c', content_vi: `Độ dài đoạn thẳng $AB = \\sqrt{24} = 2\\sqrt{6}$.`, content_en: `Length $AB = \\sqrt{24} = 2\\sqrt{6}$.`, is_correct: true },
-            { option_key: 'd', content_vi: `Điểm $A$ thuộc mặt phẳng toạ độ $(Oxy)$.`, content_en: `Point $A$ lies on $(Oxy)$ plane.`, is_correct: false },
-          ],
-          solution_vi: 'a-Đ; b-Đ; c-Đ ($AB = \\sqrt{2^2+2^2+4^2} = \\sqrt{24}$); d-S (vì $z_A = -1 \\ne 0$).',
-          solution_en: 'a-True, b-True, c-True, d-False.',
-          correct_answer: 'a-Đ, b-Đ, c-Đ, d-S',
-          math_skill: 'Toạ độ điểm và vectơ Oxyz',
-          english_skill: '3D point and vector properties',
-          status: 'PUBLISHED',
-          created_by: 'usr-teacher-1',
-        };
-      }),
-      tln: Array.from({ length: 4 }).map((_, i) => {
-        const x = i + 2;
-        const dot = x * 1 + 2 * 3 + 3 * (-1);
-        return {
-          id: `vec-tln-${i + 1}`,
-          topic_id: topicId,
-          type_id: typeId,
-          question_type: 'SHORT',
-          format_type: 'TLN',
-          difficulty: 'MEDIUM',
-          language_level: 2,
-          question_vi: `[TLN Vectơ Oxyz ${i + 1}] Trong không gian $Oxyz$, cho hai vectơ $\\vec{u} = (${x}; 2; 3)$ và $\\vec{v} = (1; 3; -1)$. Tính tích vô hướng $\\vec{u} \\cdot \\vec{v}$.`,
-          question_en: `[Short Vector 3D ${i + 1}] Given $\\vec{u} = (${x}, 2, 3)$ and $\\vec{v} = (1, 3, -1)$. Calculate $\\vec{u} \\cdot \\vec{v}$.`,
-          correct_answer: `${dot}`,
-          solution_vi: `$\\vec{u} \\cdot \\vec{v} = (${x})(1) + 2(3) + 3(-1) = ${x} + 6 - 3 = ${dot}$.`,
-          solution_en: `$\\vec{u} \\cdot \\vec{v} = ${dot}$.`,
-          math_skill: 'Tích vô hướng hai vectơ Oxyz',
-          english_skill: 'Dot product of 3D vectors',
-          status: 'PUBLISHED',
-          created_by: 'usr-teacher-1',
-        };
-      }),
-    };
-  }
-
-  if (domain === 'ASYMPTOTE_12') {
-    return {
-      tn: Array.from({ length: 10 }).map((_, i) => {
-        const a = i + 1;
-        const b = i + 2;
-        return {
-          id: `asymp-tn-${i + 1}`,
-          topic_id: topicId,
-          type_id: typeId,
-          question_type: 'MCQ',
-          format_type: 'TN',
-          difficulty: 'EASY',
-          language_level: 2,
-          question_vi: `[Tiệm cận ${i + 1}] Đường tiệm cận đứng của đồ thị hàm số $y = \\frac{${a}x - 3}{x - ${b}}$ là:`,
-          question_en: `[Asymptote ${i + 1}] Vertical asymptote of $y = \\frac{${a}x - 3}{x - ${b}}$ is:`,
-          options: [
-            { option_key: 'A', content_vi: `$x = ${b}$`, content_en: `$x = ${b}$`, is_correct: true },
-            { option_key: 'B', content_vi: `$y = ${a}$`, content_en: `$y = ${a}$`, is_correct: false },
-            { option_key: 'C', content_vi: `$x = -${b}$`, content_en: `$x = -${b}$`, is_correct: false },
-            { option_key: 'D', content_vi: `$y = 3$`, content_en: `$y = 3$`, is_correct: false },
-          ],
-          solution_vi: 'Mẫu số bằng 0 tại $x = ' + b + ' \\implies$ Tiệm cận đứng $x = ' + b + '$.',
-          solution_en: 'Denominator is 0 at $x = ' + b + ' \\implies x = ' + b + '$.',
-          correct_answer: 'A',
-          math_skill: 'Tìm tiệm cận đứng',
-          english_skill: 'Vertical asymptote calculation',
-          status: 'PUBLISHED',
-          created_by: 'usr-teacher-1',
-        };
-      }),
-      ds: Array.from({ length: 4 }).map((_, i) => {
-        const a = i + 2;
-        return {
-          id: `asymp-ds-${i + 1}`,
-          topic_id: topicId,
-          type_id: typeId,
-          question_type: 'TRUE_FALSE',
-          format_type: 'DS',
-          difficulty: 'MEDIUM',
-          language_level: 2,
-          question_vi: `[Đúng/Sai Tiệm cận ${i + 1}] Cho hàm số $y = \\frac{${a}x + 1}{x - 2}$. Xét các khẳng định sau:`,
-          question_en: `[T/F Asymptote ${i + 1}] Given $y = \\frac{${a}x + 1}{x - 2}$. Evaluate:`,
-          options: [
-            { option_key: 'a', content_vi: 'Đồ thị có tiệm cận đứng $x = 2$.', content_en: 'Vertical asymptote is $x = 2$.', is_correct: true },
-            { option_key: 'b', content_vi: `Đồ thị có tiệm cận ngang $y = ${a}$.`, content_en: `Horizontal asymptote is $y = ${a}$.`, is_correct: true },
-            { option_key: 'c', content_vi: 'Giao điểm hai đường tiệm cận có toạ độ $I(2; ' + a + ')$.', content_en: 'Intersection of asymptotes is $I(2, ' + a + ')$.', is_correct: true },
-            { option_key: 'd', content_vi: 'Đồ thị có tiệm cận đứng $x = -2$.', content_en: 'Vertical asymptote is $x = -2$.', is_correct: false },
-          ],
-          solution_vi: 'a-Đ; b-Đ; c-Đ; d-S.',
-          solution_en: 'a-True, b-True, c-True, d-False.',
-          correct_answer: 'a-Đ, b-Đ, c-Đ, d-S',
-          math_skill: 'Khảo sát tiệm cận hàm phân thức',
-          english_skill: 'Rational function asymptotes',
-          status: 'PUBLISHED',
-          created_by: 'usr-teacher-1',
-        };
-      }),
-      tln: Array.from({ length: 4 }).map((_, i) => {
-        const a = i + 3;
-        return {
-          id: `asymp-tln-${i + 1}`,
-          topic_id: topicId,
-          type_id: typeId,
-          question_type: 'SHORT',
-          format_type: 'TLN',
-          difficulty: 'EASY',
-          language_level: 2,
-          question_vi: `[TLN Tiệm cận ${i + 1}] Tìm tung độ giao điểm của đường tiệm cận ngang của $y = \\frac{${a}x - 5}{x + 1}$ với trục tung $Oy$.`,
-          question_en: `[Short Asymptote ${i + 1}] Find the y-value of the horizontal asymptote of $y = \\frac{${a}x - 5}{x + 1}$.`,
-          correct_answer: `${a}`,
-          solution_vi: `Tiệm cận ngang $y = ${a}$.`,
-          solution_en: `Horizontal asymptote $y = ${a}$.`,
-          math_skill: 'Tiệm cận ngang',
-          english_skill: 'Horizontal asymptote value',
-          status: 'PUBLISHED',
-          created_by: 'usr-teacher-1',
-        };
-      }),
-    };
-  }
-
-  if (domain === 'SETS_PROPOSITIONS_10') {
-    return {
-      tn: Array.from({ length: 10 }).map((_, i) => {
-        const k = i + 1;
-        return {
-          id: `set-tn-${i + 1}`,
-          topic_id: topicId,
-          type_id: typeId,
-          question_type: 'MCQ',
-          format_type: 'TN',
-          difficulty: 'EASY',
-          language_level: 2,
-          question_vi: `[Mệnh đề - Tập hợp ${i + 1}] Cho hai tập hợp $A = [1; ${k + 3}]$ và $B = (${k}; ${k + 5})$. Tập hợp $A \\cap B$ là:`,
-          question_en: `[Set ${i + 1}] Given $A = [1, ${k + 3}]$ and $B = (${k}, ${k + 5})$. The intersection $A \\cap B$ is:`,
-          options: [
-            { option_key: 'A', content_vi: `$(${k}; ${k + 3}]$`, content_en: `$(${k}, ${k + 3}]$`, is_correct: true },
-            { option_key: 'B', content_vi: `$[1; ${k + 5})$`, content_en: `$[1, ${k + 5})$`, is_correct: false },
-            { option_key: 'C', content_vi: `$(${k}; ${k + 3})$`, content_en: `$(${k}, ${k + 3})$`, is_correct: false },
-            { option_key: 'D', content_vi: `$[1; ${k}]$`, content_en: `$[1, ${k}]$`, is_correct: false },
-          ],
-          solution_vi: `$A \\cap B = (${k}; ${k + 3}]$.`,
-          solution_en: `$A \\cap B = (${k}, ${k + 3}]$.`,
-          correct_answer: 'A',
-          math_skill: 'Giao của hai tập hợp',
-          english_skill: 'Intersection of sets',
-          status: 'PUBLISHED',
-          created_by: 'usr-teacher-1',
-        };
-      }),
-      ds: Array.from({ length: 4 }).map((_, i) => {
-        return {
-          id: `set-ds-${i + 1}`,
-          topic_id: topicId,
-          type_id: typeId,
-          question_type: 'TRUE_FALSE',
-          format_type: 'DS',
-          difficulty: 'MEDIUM',
-          language_level: 2,
-          question_vi: `[Đúng/Sai Tập hợp ${i + 1}] Cho tập hợp $A = \\{x \\in \\mathbb{R} \\mid x^2 - 5x + 6 = 0\\}$. Xét các khẳng định:`,
-          question_en: `[T/F Set ${i + 1}] For $A = \\{x \\in \\mathbb{R} \\mid x^2 - 5x + 6 = 0\\}$. Evaluate:`,
-          options: [
-            { option_key: 'a', content_vi: 'Tập hợp $A$ liệt kê phần tử là $A = \\{2; 3\\}$.', content_en: 'Elements are $A = \\{2, 3\\}$.', is_correct: true },
-            { option_key: 'b', content_vi: 'Số phần tử của tập hợp $A$ bằng $2$.', content_en: 'Number of elements is 2.', is_correct: true },
-            { option_key: 'c', content_vi: 'Tập hợp $A$ có tổng cộng 4 tập hợp con.', content_en: 'Set $A$ has 4 subsets.', is_correct: true },
-            { option_key: 'd', content_vi: 'Số $0 \\in A$.', content_en: 'Element $0 \\in A$.', is_correct: false },
-          ],
-          solution_vi: 'a-Đ; b-Đ; c-Đ ($2^2 = 4$ tập con); d-S.',
-          solution_en: 'a-True, b-True, c-True, d-False.',
-          correct_answer: 'a-Đ, b-Đ, c-Đ, d-S',
-          math_skill: 'Phần tử và tập hợp con',
-          english_skill: 'Set elements and subsets',
-          status: 'PUBLISHED',
-          created_by: 'usr-teacher-1',
-        };
-      }),
-      tln: Array.from({ length: 4 }).map((_, i) => {
-        const num = i + 2;
-        const count = Math.pow(2, num);
-        return {
-          id: `set-tln-${i + 1}`,
-          topic_id: topicId,
-          type_id: typeId,
-          question_type: 'SHORT',
-          format_type: 'TLN',
-          difficulty: 'MEDIUM',
-          language_level: 2,
-          question_vi: `[TLN Tập hợp ${i + 1}] Cho tập hợp $X$ có $n = ${num}$ phần tử. Hỏi tập hợp $X$ có bao nhiêu tập hợp con?`,
-          question_en: `[Short Set ${i + 1}] Set $X$ has $n = ${num}$ elements. How many subsets does $X$ have?`,
-          correct_answer: `${count}`,
-          solution_vi: `Số tập con $2^n = 2^{${num}} = ${count}$.`,
-          solution_en: `Subsets $= 2^{${num}} = ${count}$.`,
-          math_skill: 'Tính số tập hợp con',
-          english_skill: 'Number of subsets',
-          status: 'PUBLISHED',
-          created_by: 'usr-teacher-1',
-        };
-      }),
-    };
-  }
-
-  if (domain === 'PARABOLA_10') {
-    return {
-      tn: Array.from({ length: 10 }).map((_, i) => {
-        const b = 2 * (i + 1);
-        const xI = b / 2;
-        const yI = xI * xI - b * xI + 3;
-        return {
-          id: `par-tn-${i + 1}`,
-          topic_id: topicId,
-          type_id: typeId,
-          question_type: 'MCQ',
-          format_type: 'TN',
-          difficulty: 'EASY',
-          language_level: 2,
-          question_vi: `[Parabol ${i + 1}] Toạ độ đỉnh $I$ của Parabol $y = x^2 - ${b}x + 3$ là:`,
-          question_en: `[Parabola ${i + 1}] Vertex $I$ of parabola $y = x^2 - ${b}x + 3$ is:`,
-          options: [
-            { option_key: 'A', content_vi: `$I(${xI}; ${yI})$`, content_en: `$I(${xI}, ${yI})$`, is_correct: true },
-            { option_key: 'B', content_vi: `$I(-${xI}; ${yI + 5})$`, content_en: `$I(-${xI}, ${yI + 5})$`, is_correct: false },
-            { option_key: 'C', content_vi: `$I(${b}; 3)$`, content_en: `$I(${b}, 3)$`, is_correct: false },
-            { option_key: 'D', content_vi: `$I(0; 3)$`, content_en: `$I(0, 3)$`, is_correct: false },
-          ],
-          solution_vi: `$x_I = -\\frac{-${b}}{2(1)} = ${xI} \\implies y_I = (${xI})^2 - ${b}(${xI}) + 3 = ${yI}$.`,
-          solution_en: `Vertex $I(${xI}, ${yI})$.`,
-          correct_answer: 'A',
-          math_skill: 'Toạ độ đỉnh Parabol',
-          english_skill: 'Parabola vertex',
-          status: 'PUBLISHED',
-          created_by: 'usr-teacher-1',
-        };
-      }),
-      ds: Array.from({ length: 4 }).map((_, i) => {
-        const a = i + 1;
-        return {
-          id: `par-ds-${i + 1}`,
-          topic_id: topicId,
-          type_id: typeId,
-          question_type: 'TRUE_FALSE',
-          format_type: 'DS',
-          difficulty: 'MEDIUM',
-          language_level: 2,
-          question_vi: `[Đúng/Sai Parabol ${i + 1}] Cho hàm số $y = ${a}x^2 - 4x + 1$. Xét các mệnh đề:`,
-          question_en: `[T/F Parabola ${i + 1}] Given $y = ${a}x^2 - 4x + 1$. Evaluate:`,
-          options: [
-            { option_key: 'a', content_vi: 'Đồ thị hàm số là một đường Parabol có bề lõm quay lên trên.', content_en: 'Graph is a parabola opening upwards.', is_correct: true },
-            { option_key: 'b', content_vi: `Trục đối xứng là đường thẳng $x = \\frac{2}{${a}}$.`, content_en: `Axis of symmetry is $x = \\frac{2}{${a}}$.`, is_correct: true },
-            { option_key: 'c', content_vi: 'Đồ thị cắt trục tung tại điểm $M(0; 1)$.', content_en: 'Graph cuts y-axis at $M(0, 1)$.', is_correct: true },
-            { option_key: 'd', content_vi: 'Bề lõm Parabol quay xuống dưới.', content_en: 'Parabola opens downwards.', is_correct: false },
-          ],
-          solution_vi: 'a-Đ (vì $a > 0$); b-Đ; c-Đ; d-S.',
-          solution_en: 'a-True, b-True, c-True, d-False.',
-          correct_answer: 'a-Đ, b-Đ, c-Đ, d-S',
-          math_skill: 'Khảo sát hàm bậc hai',
-          english_skill: 'Quadratic function analysis',
-          status: 'PUBLISHED',
-          created_by: 'usr-teacher-1',
-        };
-      }),
-      tln: Array.from({ length: 4 }).map((_, i) => {
-        const k = i + 2;
-        const xI = k;
-        return {
-          id: `par-tln-${i + 1}`,
-          topic_id: topicId,
-          type_id: typeId,
-          question_type: 'SHORT',
-          format_type: 'TLN',
-          difficulty: 'EASY',
-          language_level: 2,
-          question_vi: `[TLN Parabol ${i + 1}] Tìm hoành độ đỉnh $x_I$ của đồ thị hàm số $y = x^2 - ${2 * k}x + 5$.`,
-          question_en: `[Short Parabola ${i + 1}] Find x-coordinate of vertex $x_I$ for $y = x^2 - ${2 * k}x + 5$.`,
-          correct_answer: `${xI}`,
-          solution_vi: `$x_I = -\\frac{b}{2a} = \\frac{${2 * k}}{2} = ${xI}$.`,
-          solution_en: `$x_I = ${xI}$.`,
-          math_skill: 'Hoành độ đỉnh Parabol',
-          english_skill: 'Parabola vertex x-coordinate',
-          status: 'PUBLISHED',
-          created_by: 'usr-teacher-1',
-        };
-      }),
-    };
-  }
-
-  // Mặc định fallback câu hỏi chuẩn hóa lớp 12 (Ứng dụng đạo hàm & Cực trị)
   return {
-    tn: Array.from({ length: 10 }).map((_, i) => {
-      const a = i + 1;
-      return {
-        id: `gen-tn-${typeId}-${i + 1}`,
-        topic_id: topicId,
-        type_id: typeId,
-        question_type: 'MCQ',
-        format_type: 'TN',
-        difficulty: 'MEDIUM',
-        language_level: 2,
-        question_vi: `[Trắc nghiệm ${i + 1}] Cho hàm số $y = x^3 - ${3 * a}x + 2$. Điểm cực đại của đồ thị hàm số là:`,
-        question_en: `[MCQ ${i + 1}] For $y = x^3 - ${3 * a}x + 2$, the local maximum point is:`,
-        options: [
-          { option_key: 'A', content_vi: `$A(-\\sqrt{${a}}; ${2 + 2 * a * Math.sqrt(a)})$`, content_en: `$A(-\\sqrt{${a}}, ${2 + 2 * a * Math.sqrt(a)})$`, is_correct: true },
-          { option_key: 'B', content_vi: `$B(\\sqrt{${a}}; 0)$`, content_en: `$B(\\sqrt{${a}}, 0)$`, is_correct: false },
-          { option_key: 'C', content_vi: `$C(0; 2)$`, content_en: `$C(0, 2)$`, is_correct: false },
-          { option_key: 'D', content_vi: `$D(1; 0)$`, content_en: `$D(1, 0)$`, is_correct: false },
-        ],
-        solution_vi: `$y' = 3x^2 - ${3 * a} = 0 \\iff x = \\pm \\sqrt{${a}}$. Đổi dấu (+ sang -) tại $x = -\\sqrt{${a}}$.`,
-        solution_en: `Local max at $x = -\\sqrt{${a}}$.`,
-        correct_answer: 'A',
-        math_skill: 'Tìm toạ độ điểm cực đại',
-        english_skill: 'Local maximum coordinates',
-        status: 'PUBLISHED',
-        created_by: 'usr-teacher-1',
-      };
-    }),
-    ds: Array.from({ length: 4 }).map((_, i) => {
-      return {
-        id: `gen-ds-${typeId}-${i + 1}`,
-        topic_id: topicId,
-        type_id: typeId,
-        question_type: 'TRUE_FALSE',
-        format_type: 'DS',
-        difficulty: 'MEDIUM',
-        language_level: 2,
-        question_vi: `[Đúng/Sai ${i + 1}] Cho hàm số $f(x) = -x^3 + 3x + 1$. Xét tính đúng/sai của các khẳng định:`,
-        question_en: `[T/F ${i + 1}] Given $f(x) = -x^3 + 3x + 1$. Evaluate statements:`,
-        options: [
-          { option_key: 'a', content_vi: 'Tập xác định $D = \\mathbb{R}$.', content_en: 'Domain $D = \\mathbb{R}$.', is_correct: true },
-          { option_key: 'b', content_vi: 'Đạo hàm $f\'(x) = -3x^2 + 3$.', content_en: 'Derivative $f\'(x) = -3x^2 + 3$.', is_correct: true },
-          { option_key: 'c', content_vi: 'Hàm số đồng biến trên khoảng $(-1; 1)$.', content_en: 'Increasing on $(-1, 1)$.', is_correct: true },
-          { option_key: 'd', content_vi: 'Giá trị nhỏ nhất trên $\\mathbb{R}$ bằng $-1$.', content_en: 'Minimum on $\\mathbb{R}$ is $-1$.', is_correct: false },
-        ],
-        solution_vi: 'a-Đ; b-Đ; c-Đ; d-S (hàm đa thức bậc 3 không có GTLN-GTNN trên $\\mathbb{R}$).',
-        solution_en: 'a-True, b-True, c-True, d-False.',
-        correct_answer: 'a-Đ, b-Đ, c-Đ, d-S',
-        math_skill: 'Khảo sát hàm bậc ba',
-        english_skill: 'Cubic function properties',
-        status: 'PUBLISHED',
-        created_by: 'usr-teacher-1',
-      };
-    }),
-    tln: Array.from({ length: 4 }).map((_, i) => {
-      const ans = (i + 1) * 2;
-      return {
-        id: `gen-tln-${typeId}-${i + 1}`,
-        topic_id: topicId,
-        type_id: typeId,
-        question_type: 'SHORT',
-        format_type: 'TLN',
-        difficulty: 'MEDIUM',
-        language_level: 2,
-        question_vi: `[TLN ${i + 1}] Tìm tung độ điểm cực đại của hàm số $y = -x^3 + 3x + ${ans + 1}$.`,
-        question_en: `[Short ${i + 1}] Find y-coordinate of local max of $y = -x^3 + 3x + ${ans + 1}$.`,
-        correct_answer: `${ans + 3}`,
-        solution_vi: `$y' = -3x^2 + 3 = 0 \\iff x = 1 \\implies y(1) = -1 + 3 + ${ans + 1} = ${ans + 3}$.`,
-        solution_en: `Local max y-coordinate $= ${ans + 3}$.`,
-        math_skill: 'Tung độ cực đại',
-        english_skill: 'Local max y-value',
-        status: 'PUBLISHED',
-        created_by: 'usr-teacher-1',
-      };
-    }),
+    tn,
+    ds,
+    tln,
+    tl,
+    all: [...tn, ...ds, ...tln, ...tl],
   };
 }
 
@@ -2402,24 +1398,7 @@ function generateDomainSpecificQuestions(domain: MathDomain, typeId: string, top
 // HELPER: LẤY BÀI TẬP MẪU THEO BÀI HỌC
 // =========================================================================
 export function getWorkedExamplesForLesson(lessonId: string): WorkedExample[] {
-  if (DEFAULT_WORKED_EXAMPLES[lessonId] && DEFAULT_WORKED_EXAMPLES[lessonId].length > 0) {
-    return DEFAULT_WORKED_EXAMPLES[lessonId];
-  }
-
-  if (lessonId.includes('11-7')) return DEFAULT_WORKED_EXAMPLES['les-11-7-1'] || [];
-  if (lessonId.includes('11-6')) return DEFAULT_WORKED_EXAMPLES['les-11-6-1'] || [];
-  if (lessonId.includes('11-2-1')) return DEFAULT_WORKED_EXAMPLES['les-11-2-1'] || [];
-  if (lessonId.includes('11-2-2')) return DEFAULT_WORKED_EXAMPLES['les-11-2-2'] || [];
-  if (lessonId.includes('11-2-3')) return DEFAULT_WORKED_EXAMPLES['les-11-2-3'] || [];
-  if (lessonId.includes('12-2-1')) return DEFAULT_WORKED_EXAMPLES['les-12-2-1'] || [];
-  if (lessonId.includes('12-2-2')) return DEFAULT_WORKED_EXAMPLES['les-12-2-2'] || [];
-  if (lessonId.includes('12-2-3')) return DEFAULT_WORKED_EXAMPLES['les-12-2-3'] || [];
-  if (lessonId.includes('12-1-1')) return DEFAULT_WORKED_EXAMPLES['les-12-1-1'] || [];
-  if (lessonId.includes('12-1-2')) return DEFAULT_WORKED_EXAMPLES['les-12-1-2'] || [];
-  if (lessonId.includes('12-1-3')) return DEFAULT_WORKED_EXAMPLES['les-12-1-3'] || [];
-  if (lessonId.includes('10-1')) return DEFAULT_WORKED_EXAMPLES['les-10-1-1'] || [];
-  if (lessonId.includes('10-6')) return DEFAULT_WORKED_EXAMPLES['les-10-6-1'] || [];
-
-  return DEFAULT_WORKED_EXAMPLES['les-12-1-1'] || [];
+  // Worked examples must also be lesson-exact. Returning examples from a different lesson
+  // recreates the same contamination problem as a question fallback.
+  return DEFAULT_WORKED_EXAMPLES[lessonId] || [];
 }
-

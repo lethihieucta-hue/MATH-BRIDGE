@@ -1,0 +1,95 @@
+old_id	new_id	new_title
+type-10-1-1	type-kntt-10-01-01	Nhận biết mệnh đề, mệnh đề chứa biến và xét tính đúng sai
+type-10-1-2	type-kntt-10-02-02	Giao, hợp, hiệu và phần bù của hai tập hợp
+type-10-1-3	type-kntt-10-02-02	Giao, hợp, hiệu và phần bù của hai tập hợp
+type-10-2-1	type-kntt-10-04-01	Biểu diễn miền nghiệm của hệ bất phương trình bậc nhất hai ẩn
+type-10-2-2	type-kntt-10-04-03	Giải bài toán quy hoạch tuyến tính đơn giản bằng miền nghiệm
+type-10-3-1	type-kntt-10-06-04	Giải tam giác và bài toán đo đạc thực tế
+type-10-3-2	type-kntt-10-06-04	Giải tam giác và bài toán đo đạc thực tế
+type-10-4-1	type-kntt-10-08-02	Tính hiệu hai vectơ và biến đổi đẳng thức vectơ
+type-10-4-2	type-kntt-10-11-04	Ứng dụng tích vô hướng trong công cơ học và bài toán thực tế
+type-10-5-1	type-kntt-10-13-01	Tính số trung bình của mẫu số liệu
+type-10-5-2	type-kntt-10-14-03	So sánh mức độ phân tán của hai mẫu số liệu và phân tích ngoại lệ
+type-10-6-1	type-kntt-10-16-01	Tìm đỉnh, trục đối xứng và chiều biến thiên của parabol
+type-10-6-2	type-kntt-10-17-02	Giải bất phương trình bậc hai một ẩn
+type-10-6-3	type-kntt-10-16-04	Giải bài toán cực trị thực tế bằng hàm số bậc hai
+type-10-7-1	type-kntt-10-20-03	Tính khoảng cách từ một điểm đến một đường thẳng
+type-10-7-2	type-kntt-10-21-01	Nhận dạng tâm và bán kính từ phương trình đường tròn
+type-10-7-3	type-kntt-10-22-05	Mô hình hóa ứng dụng thực tế bằng elip, hypebol hoặc parabol
+type-11-1-1	type-kntt-11-01-02	Tính giá trị lượng giác của góc lượng giác và xác định dấu
+type-11-1-2	type-kntt-11-03-04	Mô hình hóa hiện tượng tuần hoàn bằng hàm số lượng giác
+type-11-10-1	type-kntt-11-16-02	Khử dạng vô định khi tính giới hạn hàm số
+type-11-10-2	type-kntt-11-31-03	Giải thích ý nghĩa tốc độ biến thiên tức thời và vận tốc tức thời
+type-11-11-1	type-kntt-11-21-02	Giải phương trình lôgarit và kiểm tra điều kiện xác định
+type-11-11-2	type-kntt-11-20-04	Ứng dụng hàm mũ và lôgarit trong tăng trưởng, phân rã và thang đo
+type-11-12-1	type-kntt-11-32-04	Viết phương trình tiếp tuyến và giải bài toán liên quan đạo hàm
+type-11-12-2	type-kntt-11-31-03	Giải thích ý nghĩa tốc độ biến thiên tức thời và vận tốc tức thời
+type-11-13-1	type-kntt-11-23-01	Vận dụng dấu hiệu để chứng minh đường thẳng vuông góc với mặt phẳng
+type-11-13-2	type-kntt-11-24-03	Bài toán thực tế về góc dốc, độ nghiêng và hình chiếu
+type-11-2-1	type-kntt-11-02-01	Vận dụng công thức cộng và công thức hiệu
+type-11-3-1	type-kntt-11-03-01	Tìm tập xác định, tập giá trị, tính chẵn lẻ và chu kì của hàm số lượng giác
+type-11-3-2	type-kntt-11-03-04	Mô hình hóa hiện tượng tuần hoàn bằng hàm số lượng giác
+type-11-4-1	type-kntt-11-04-04	Giải phương trình đưa về phương trình lượng giác cơ bản và bài toán thực tế
+type-11-4-2	type-kntt-11-12-03	Vận dụng quan hệ song song để tính tỉ số và giải bài toán hình học không gian
+type-11-5-1	type-kntt-11-05-02	Xét tính tăng, giảm của dãy số
+type-11-6-1	type-kntt-11-06-01	Xác định số hạng đầu, công sai và số hạng tổng quát của cấp số cộng
+type-11-6-2	type-kntt-11-06-04	Ứng dụng cấp số cộng trong bài toán thực tế
+type-11-7-1	type-kntt-11-07-01	Xác định số hạng đầu, công bội và số hạng tổng quát của cấp số nhân
+type-11-7-2	type-kntt-11-07-04	Ứng dụng cấp số nhân trong lãi kép, tăng trưởng và phân rã
+type-11-8-1	type-kntt-11-09-01	Tính số trung bình của mẫu số liệu ghép nhóm
+type-11-8-2	type-kntt-11-09-04	So sánh và diễn giải các số đặc trưng xu thế trung tâm
+type-11-9-1	type-kntt-11-12-01	Chứng minh đường thẳng song song với mặt phẳng
+type-12-1-1	type-kntt-12-01-01	Tìm khoảng đồng biến và nghịch biến từ công thức hàm số
+type-12-1-2	type-kntt-12-01-02	Tìm cực trị của hàm số bằng dấu đạo hàm
+type-12-1-3	type-kntt-12-01-04	Tìm tham số để hàm số đơn điệu hoặc có cực trị thỏa điều kiện
+type-12-1-4	type-kntt-12-05-04	Mô hình hóa và kiểm tra điều kiện thực tế của bài toán tối ưu
+type-12-10-1	type-kntt-12-10-02	Tính độ lệch chuẩn của mẫu số liệu ghép nhóm
+type-12-10-2	type-kntt-12-10-03	So sánh và diễn giải mức độ phân tán, rủi ro bằng phương sai và độ lệch chuẩn
+type-12-11-1	type-kntt-12-11-01	Tìm nguyên hàm bằng bảng nguyên hàm cơ bản và biến đổi đại số
+type-12-11-2	type-kntt-12-11-03	Tìm nguyên hàm bằng đổi biến số
+type-12-11-3	type-kntt-12-11-04	Tìm nguyên hàm bằng từng phần
+type-12-12-1	type-kntt-12-12-02	Tính tích phân bằng đổi biến số
+type-12-12-2	type-kntt-12-12-05	Ứng dụng tích phân để tính đại lượng tích lũy trong thực tế
+type-12-13-1	type-kntt-12-13-02	Tính diện tích hình phẳng giới hạn bởi hai đồ thị
+type-12-13-2	type-kntt-12-13-03	Tính thể tích khối tròn xoay quanh trục tọa độ
+type-12-13-3	type-kntt-12-13-04	Giải bài toán diện tích, thể tích thực tế bằng tích phân
+type-12-14-1	type-kntt-12-14-02	Viết phương trình mặt phẳng qua ba điểm hoặc thỏa điều kiện song song, vuông góc
+type-12-14-2	type-kntt-12-14-03	Xét vị trí tương đối và tính khoảng cách từ điểm đến mặt phẳng
+type-12-14-3	type-kntt-12-14-04	Tìm tham số trong bài toán mặt phẳng
+type-12-15-1	type-kntt-12-15-01	Viết phương trình tham số và chính tắc của đường thẳng
+type-12-15-2	type-kntt-12-15-02	Xét vị trí tương đối của hai đường thẳng trong không gian
+type-12-15-3	type-kntt-12-15-04	Tìm giao điểm, hình chiếu và khoảng cách liên quan đường thẳng
+type-12-16-1	type-kntt-12-17-01	Nhận dạng tâm, bán kính từ phương trình mặt cầu
+type-12-16-2	type-kntt-12-17-03	Xét giao của mặt cầu với mặt phẳng và đường thẳng
+type-12-16-3	type-kntt-12-17-04	Tìm tham số và giải bài toán thực tế liên quan mặt cầu
+type-12-17-1	type-kntt-12-18-01	Tính xác suất có điều kiện từ định nghĩa
+type-12-17-2	type-kntt-12-18-03	Áp dụng công thức nhân xác suất và sơ đồ cây
+type-12-17-3	type-kntt-12-18-04	Giải bài toán thực tế bằng xác suất có điều kiện
+type-12-18-1	type-kntt-12-19-01	Tính xác suất bằng công thức xác suất toàn phần
+type-12-18-2	type-kntt-12-19-02	Tính xác suất hậu nghiệm bằng công thức Bayes
+type-12-18-3	type-kntt-12-19-04	Ứng dụng Bayes trong kiểm định, y tế và phân loại
+type-12-2-1	type-kntt-12-02-01	Tìm giá trị lớn nhất, nhỏ nhất của hàm số trên đoạn
+type-12-2-2	type-kntt-12-02-02	Tìm giá trị lớn nhất, nhỏ nhất trên khoảng hoặc miền xác định
+type-12-2-3	type-kntt-12-02-04	Giải bài toán tối ưu thực tế bằng giá trị lớn nhất, nhỏ nhất
+type-12-3-1	type-kntt-12-03-01	Tìm tiệm cận đứng của đồ thị hàm số
+type-12-3-2	type-kntt-12-03-03	Tìm tiệm cận xiên của đồ thị hàm số
+type-12-3-3	type-kntt-12-03-04	Tìm tham số để đồ thị có số hoặc vị trí tiệm cận cho trước
+type-12-3-4	type-kntt-12-03-04	Tìm tham số để đồ thị có số hoặc vị trí tiệm cận cho trước
+type-12-4-1	type-kntt-12-04-01	Khảo sát và vẽ đồ thị hàm số bậc ba
+type-12-4-2	type-kntt-12-04-02	Khảo sát và vẽ đồ thị hàm phân thức bậc nhất trên bậc nhất
+type-12-4-3	type-kntt-12-04-03	Khảo sát và vẽ đồ thị hàm phân thức bậc hai trên bậc nhất
+type-12-4-4	type-kntt-12-04-04	Biện luận số nghiệm của phương trình bằng đồ thị
+type-12-5-1	type-kntt-12-05-01	Tối ưu hình học bằng đạo hàm
+type-12-5-2	type-kntt-12-05-02	Tối ưu chi phí, doanh thu hoặc lợi nhuận bằng đạo hàm
+type-12-5-3	type-kntt-12-05-03	Tối ưu chuyển động, thời gian hoặc tốc độ bằng đạo hàm
+type-12-6-1	type-kntt-12-06-02	Chứng minh đẳng thức vectơ và quan hệ hình học trong không gian
+type-12-6-2	type-kntt-12-06-03	Phân tích một vectơ theo ba vectơ không đồng phẳng
+type-12-6-3	type-kntt-12-06-04	Ứng dụng vectơ trong bài toán lực và chuyển động không gian
+type-12-7-1	type-kntt-12-07-01	Tìm tọa độ điểm và vectơ trong không gian Oxyz
+type-12-7-2	type-kntt-12-07-02	Tìm tọa độ trung điểm, trọng tâm và điểm thỏa điều kiện hình học
+type-12-7-3	type-kntt-12-07-04	Mô hình hóa định vị 3D bằng hệ tọa độ Oxyz
+type-12-8-1	type-kntt-12-08-01	Tính tích vô hướng và góc giữa hai vectơ trong Oxyz
+type-12-8-2	type-kntt-12-08-02	Tính tích có hướng của hai vectơ
+type-12-8-3	type-kntt-12-08-04	Vận dụng tọa độ vectơ trong bài toán thực tế không gian
+type-12-9-1	type-kntt-12-09-02	Ước lượng các tứ phân vị và tính khoảng tứ phân vị
+type-12-9-2	type-kntt-12-09-03	So sánh độ phân tán của các mẫu bằng khoảng biến thiên và khoảng tứ phân vị
