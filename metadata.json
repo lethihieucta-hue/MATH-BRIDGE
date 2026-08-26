@@ -1,5 +1,5 @@
 {
-  "name": "MATH-BRIDGE",
+  "name": "AI MATH BRIDGE TEACHER",
   "description": "Learn Mathematics Through English - Nền tảng học Toán bằng tiếng Anh dành cho học sinh THPT Việt Nam",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]

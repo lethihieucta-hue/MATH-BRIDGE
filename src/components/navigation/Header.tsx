@@ -51,8 +51,8 @@ export const Header: React.FC = () => {
               </div>
               <div className="hidden sm:block">
                 <div className="flex items-center gap-2">
-                  <span className="font-black text-base lg:text-lg tracking-tight text-white group-hover:text-teal-300 transition-colors">
-                    Chuyên đề Toán THPT
+                  <span className="font-black text-base lg:text-lg tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-teal-300 via-indigo-200 to-violet-300 group-hover:text-teal-300 transition-colors">
+                    AI MATH BRIDGE TEACHER
                   </span>
                   <span className="text-[10px] font-mono font-bold bg-violet-950/80 text-violet-300 border border-violet-700/60 px-2 py-0.5 rounded-full shadow-2xs">
                     KẾT NỐI TRI THỨC · GDPT 2018

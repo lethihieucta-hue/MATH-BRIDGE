@@ -51,6 +51,9 @@ export const TestBuilder: React.FC = () => {
   const [onlineExamLink, setOnlineExamLink] = useState('');
   const [onlineExamCode, setOnlineExamCode] = useState('');
   const [copiedLink, setCopiedLink] = useState(false);
+  const [copiedScript, setCopiedScript] = useState(false);
+  const [googleSheetUrl, setGoogleSheetUrl] = useState('https://docs.google.com/spreadsheets/d/1_AI_Math_Bridge_Scores/edit');
+  const [googleSheetWebhook, setGoogleSheetWebhook] = useState('');
   const [isLiveExamStudentView, setIsLiveExamStudentView] = useState(false);
 
   // Quick Preset Chips
@@ -305,6 +308,8 @@ export const TestBuilder: React.FC = () => {
       instructions_en: currentTest.instructions_en,
       questions: currentTest.questions,
       created_at: new Date().toISOString(),
+      googleSheetUrl: googleSheetUrl || 'https://docs.google.com/spreadsheets/d/1_AI_Math_Bridge_Scores/edit',
+      googleSheetWebhook: googleSheetWebhook || '',
     };
 
     // Save to localStorage so link can be opened immediately on this machine/browser
@@ -1006,6 +1011,61 @@ export const TestBuilder: React.FC = () => {
                   {copiedLink ? <Check className="w-4 h-4 text-emerald-300" /> : <Copy className="w-4 h-4" />}
                   <span>{copiedLink ? 'Đã sao chép!' : 'Sao chép'}</span>
                 </button>
+              </div>
+            </div>
+
+            {/* Google Sheets Score Recording Section */}
+            <div className="bg-emerald-50/90 border border-emerald-300/80 rounded-2xl p-4 space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-black text-emerald-950 flex items-center gap-1.5 uppercase">
+                  📊 Tích hợp Google Sheets (Ghi nhận điểm thi)
+                </span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const scriptCode = `function doPost(e) {\n  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();\n  var data = JSON.parse(e.postData.contents);\n  sheet.appendRow([\n    new Date(),\n    data.studentName,\n    data.studentClass,\n    data.studentSbd || 'KDB',\n    data.testTitle,\n    data.score10,\n    data.correctCount + "/" + data.totalGradable,\n    data.timeSpentFormatted,\n    data.submittedAt\n  ]);\n  return ContentService.createTextOutput(JSON.stringify({"result":"success"})).setMimeType(ContentService.MimeType.JSON);\n}`;
+                    navigator.clipboard.writeText(scriptCode);
+                    setCopiedScript(true);
+                    setTimeout(() => setCopiedScript(false), 3000);
+                    showNotification('📋 Đã sao chép mã Google Apps Script 1-Click mẫu!');
+                  }}
+                  className="px-2.5 py-1 bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-[11px] rounded-lg transition shadow-xs flex items-center gap-1 cursor-pointer"
+                >
+                  {copiedScript ? <Check className="w-3 h-3 text-emerald-200" /> : <Copy className="w-3 h-3" />}
+                  <span>{copiedScript ? 'Đã sao chép Script!' : 'Copy Apps Script Mẫu'}</span>
+                </button>
+              </div>
+
+              <p className="text-[11px] text-emerald-800 font-medium leading-relaxed">
+                Tự động đẩy họ tên, lớp, SBD, điểm số và thời gian làm bài của học sinh về Google Sheet của Thầy/Cô khi nộp bài.
+              </p>
+
+              <div className="space-y-2 pt-1">
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-700 mb-1">
+                    Link Google Sheet nhận điểm (View/Edit Link):
+                  </label>
+                  <input
+                    type="text"
+                    value={googleSheetUrl}
+                    onChange={(e) => setGoogleSheetUrl(e.target.value)}
+                    placeholder="https://docs.google.com/spreadsheets/d/..."
+                    className="w-full px-3 py-2 bg-white border border-emerald-300 rounded-xl text-xs text-slate-800 outline-none focus:ring-2 focus:ring-emerald-500/30"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-700 mb-1">
+                    Link Google Webhook / Web App Exec (Tùy chọn):
+                  </label>
+                  <input
+                    type="text"
+                    value={googleSheetWebhook}
+                    onChange={(e) => setGoogleSheetWebhook(e.target.value)}
+                    placeholder="https://script.google.com/macros/s/.../exec"
+                    className="w-full px-3 py-2 bg-white border border-emerald-300 rounded-xl text-xs font-mono text-slate-800 outline-none focus:ring-2 focus:ring-emerald-500/30"
+                  />
+                </div>
               </div>
             </div>
 

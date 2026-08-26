@@ -967,66 +967,156 @@ export const FULL_QUESTION_BANK: Question[] = [
 ];
 
 // =========================================================================
+// =========================================================================
 // HELPER: LẤY CÂU HỎI THEO BÀI HỌC VỚI ĐỘ CHÍNH XÁC CAO NHẤT
 // =========================================================================
 export function getQuestionsForLesson(lessonId: string, topicId?: string): Question[] {
-  if (topicId) {
-    const topicMatches = FULL_QUESTION_BANK.filter((q) => q.topic_id === topicId);
-    if (topicMatches.length > 0) return topicMatches;
+  const structured = getQuestionsForMathTypeStructured(lessonId, topicId);
+  return structured.all;
+}
+
+/**
+ * ĐẢM BẢO TỐI THIỂU 10 CÂU TN - 4 CÂU Đ/S - 4 CÂU TLN CHO MỌI DẠNG TOÁN
+ */
+export function getQuestionsForMathTypeStructured(typeId: string, topicId?: string): {
+  tn: Question[];
+  ds: Question[];
+  tln: Question[];
+  all: Question[];
+} {
+  const existing = FULL_QUESTION_BANK.filter(
+    (q) => (q.type_id && q.type_id === typeId) || (q.topic_id && topicId && q.topic_id === topicId)
+  );
+
+  let tnList = existing.filter((q) => q.format_type === 'TN' || q.question_type === 'MCQ');
+  let dsList = existing.filter((q) => q.format_type === 'DS' || q.question_type === 'TRUE_FALSE');
+  let tlnList = existing.filter((q) => q.format_type === 'TLN' || q.question_type === 'SHORT');
+
+  // Nếu câu hỏi có sẵn chưa đủ quota 10 TN, 4 Đ/S, 4 TLN, bổ sung thêm từ các bài liên quan cùng chương
+  if (tnList.length < 10 || dsList.length < 4 || tlnList.length < 4) {
+    const topicPrefix = (topicId || typeId || '').slice(0, 8);
+    const related = FULL_QUESTION_BANK.filter(
+      (q) => q.topic_id && q.topic_id.startsWith(topicPrefix)
+    );
+
+    if (tnList.length < 10) {
+      const extraTn = related.filter((q) => q.format_type === 'TN' || q.question_type === 'MCQ');
+      tnList = Array.from(new Set([...tnList, ...extraTn]));
+    }
+    if (dsList.length < 4) {
+      const extraDs = related.filter((q) => q.format_type === 'DS' || q.question_type === 'TRUE_FALSE');
+      dsList = Array.from(new Set([...dsList, ...extraDs]));
+    }
+    if (tlnList.length < 4) {
+      const extraTln = related.filter((q) => q.format_type === 'TLN' || q.question_type === 'SHORT');
+      tlnList = Array.from(new Set([...tlnList, ...extraTln]));
+    }
   }
 
-  if (lessonId) {
-    const lessonMatches = FULL_QUESTION_BANK.filter((q) => q.id && q.id.includes(lessonId.replace('les-', 'q-')));
-    if (lessonMatches.length > 0) return lessonMatches;
+  const targetTn = 10;
+  const targetDs = 4;
+  const targetTln = 4;
+
+  const tId = topicId || typeId || 'top-12-1-1';
+
+  // Bổ sung các câu Trắc nghiệm (TN) chuẩn hóa bilingual cho đủ 10 câu
+  while (tnList.length < targetTn) {
+    const idx = tnList.length + 1;
+    const valA = (idx * 3) % 5 + 1;
+    const valB = (idx * 2) % 4 + 2;
+
+    tnList.push({
+      id: `gen-tn-${typeId}-${idx}`,
+      topic_id: tId,
+      type_id: typeId,
+      question_type: 'MCQ',
+      format_type: 'TN',
+      difficulty: idx % 3 === 0 ? 'HARD' : idx % 2 === 0 ? 'MEDIUM' : 'EASY',
+      language_level: 2,
+      question_vi: `[Trắc nghiệm ${idx}] Tìm giá trị của biểu thức $P = x^2 - ${2*valA}x + ${valA*valA + valB}$ tại điểm cực trị của hàm số $f(x) = \\frac{1}{3}x^3 - ${valA}x^2 + (${valA*valA})x + 1$.`,
+      question_en: `[MCQ ${idx}] Evaluate expression $P = x^2 - ${2*valA}x + ${valA*valA + valB}$ at the critical point of $f(x) = \\frac{1}{3}x^3 - ${valA}x^2 + (${valA*valA})x + 1$.`,
+      options: [
+        { option_key: 'A', content_vi: `$${valB}$`, content_en: `$${valB}$`, is_correct: true },
+        { option_key: 'B', content_vi: `$${valB + 2}$`, content_en: `$${valB + 2}$`, is_correct: false },
+        { option_key: 'C', content_vi: `$${valA}$`, content_en: `$${valA}$`, is_correct: false },
+        { option_key: 'D', content_vi: `$0$`, content_en: `$0$`, is_correct: false },
+      ],
+      solution_vi: `$f'(x) = x^2 - ${2*valA}x + ${valA*valA} = (x - ${valA})^2 = 0 \\iff x = ${valA}$. Thay $x = ${valA}$ vào $P$: $P = ${valA*valA} - ${2*valA*valA} + ${valA*valA + valB} = ${valB}$.`,
+      solution_en: `Critical point $x = ${valA}$. Substitute into $P \\implies P = ${valB}$.`,
+      correct_answer: 'A',
+      math_skill: 'Tìm giá trị cực trị',
+      english_skill: 'Critical point value evaluation',
+      status: 'PUBLISHED',
+      created_by: 'usr-teacher-1',
+    });
   }
 
-  const key = topicId || lessonId;
-  if (key.includes('11-7') || key.includes('11-12')) {
-    const matches = FULL_QUESTION_BANK.filter((q) => q.topic_id === 'top-11-7-1');
-    if (matches.length > 0) return matches;
-  }
-  if (key.includes('11-6') || key.includes('11-11')) {
-    const matches = FULL_QUESTION_BANK.filter((q) => q.topic_id === 'top-11-6-1');
-    if (matches.length > 0) return matches;
-  }
-  if (key.includes('11-2-2') || key.includes('11-6')) {
-    const matches = FULL_QUESTION_BANK.filter((q) => q.topic_id === 'top-11-2-2');
-    if (matches.length > 0) return matches;
-  }
-  if (key.includes('11-2-3') || key.includes('11-7')) {
-    const matches = FULL_QUESTION_BANK.filter((q) => q.topic_id === 'top-11-2-3');
-    if (matches.length > 0) return matches;
-  }
-  if (key.includes('11-2-1') || key.includes('11-5')) {
-    const matches = FULL_QUESTION_BANK.filter((q) => q.topic_id === 'top-11-2-1');
-    if (matches.length > 0) return matches;
-  }
-  if (key.includes('12-2') || key.includes('12-6') || key.includes('12-7') || key.includes('12-8')) {
-    const matches = FULL_QUESTION_BANK.filter((q) => q.topic_id?.startsWith('top-12-2'));
-    if (matches.length > 0) return matches;
-  }
-  if (key.includes('12-1-3')) {
-    const matches = FULL_QUESTION_BANK.filter((q) => q.topic_id === 'top-12-1-3');
-    if (matches.length > 0) return matches;
-  }
-  if (key.includes('12-1-2')) {
-    const matches = FULL_QUESTION_BANK.filter((q) => q.topic_id === 'top-12-1-2');
-    if (matches.length > 0) return matches;
-  }
-  if (key.includes('12-1-1')) {
-    const matches = FULL_QUESTION_BANK.filter((q) => q.topic_id === 'top-12-1-1');
-    if (matches.length > 0) return matches;
-  }
-  if (key.includes('10-1')) {
-    const matches = FULL_QUESTION_BANK.filter((q) => q.topic_id === 'top-10-1-1');
-    if (matches.length > 0) return matches;
-  }
-  if (key.includes('10-6')) {
-    const matches = FULL_QUESTION_BANK.filter((q) => q.topic_id === 'top-10-6-1');
-    if (matches.length > 0) return matches;
+  // Bổ sung các câu Đúng / Sai (DS) chuẩn hóa GDPT 2018 cho đủ 4 câu
+  while (dsList.length < targetDs) {
+    const idx = dsList.length + 1;
+    const m = idx + 2;
+    dsList.push({
+      id: `gen-ds-${typeId}-${idx}`,
+      topic_id: tId,
+      type_id: typeId,
+      question_type: 'TRUE_FALSE',
+      format_type: 'DS',
+      difficulty: 'MEDIUM',
+      language_level: 2,
+      question_vi: `[Đúng/Sai ${idx}] Cho hàm số $f(x) = x^3 - ${3*m}x + 2$. Xét tính đúng/sai của các phát biểu sau:`,
+      question_en: `[True/False ${idx}] Given function $f(x) = x^3 - ${3*m}x + 2$. Evaluate the statements:`,
+      options: [
+        { option_key: 'a', content_vi: `Tập xác định của hàm số $f(x)$ là $D = \\mathbb{R}$.`, content_en: `The domain of $f(x)$ is $D = \\mathbb{R}$.`, is_correct: true },
+        { option_key: 'b', content_vi: `Đạo hàm $f'(x) = 3x^2 - ${3*m}$.`, content_en: `The derivative is $f'(x) = 3x^2 - ${3*m}$.`, is_correct: true },
+        { option_key: 'c', content_vi: `Hàm số nghịch biến trên khoảng $(-\\sqrt{${m}}; \\sqrt{${m}})$.`, content_en: `The function is decreasing on $(-\\sqrt{${m}}, \\sqrt{${m}})$.`, is_correct: true },
+        { option_key: 'd', content_vi: `Hàm số đạt giá trị cực đại tại $x = \\sqrt{${m}}$.`, content_en: `The local maximum point is at $x = \\sqrt{${m}}$.`, is_correct: false },
+      ],
+      solution_vi: `a-Đ, b-Đ, c-Đ, d-S (Vì $f'(x)$ đổi dấu từ dương sang âm tại $x = -\\sqrt{${m}}$ nên $x = -\\sqrt{${m}}$ mới là điểm cực đại).`,
+      solution_en: `a-True, b-True, c-True, d-False ($x = -\\sqrt{${m}}$ is the local max point).`,
+      correct_answer: 'a-Đ, b-Đ, c-Đ, d-S',
+      math_skill: 'Xét tính đúng sai cực trị và đơn điệu',
+      english_skill: 'True/False evaluation of extrema',
+      status: 'PUBLISHED',
+      created_by: 'usr-teacher-1',
+    });
   }
 
-  return FULL_QUESTION_BANK.slice(0, 10);
+  // Bổ sung các câu Trả lời ngắn (TLN) điền số cho đủ 4 câu
+  while (tlnList.length < targetTln) {
+    const idx = tlnList.length + 1;
+    const p = idx * 4;
+    const ansNum = p / 2;
+
+    tlnList.push({
+      id: `gen-tln-${typeId}-${idx}`,
+      topic_id: tId,
+      type_id: typeId,
+      question_type: 'SHORT',
+      format_type: 'TLN',
+      difficulty: 'MEDIUM',
+      language_level: 2,
+      question_vi: `[Trả lời ngắn ${idx}] Tìm hoành độ điểm cực đại của đồ thị hàm số $y = -x^3 + ${3*ansNum}x^2 - 5$.`,
+      question_en: `[Short answer ${idx}] Find the x-coordinate of the local maximum point of $y = -x^3 + ${3*ansNum}x^2 - 5$.`,
+      correct_answer: `${2 * ansNum}`,
+      solution_vi: `$y' = -3x^2 + ${6*ansNum}x = -3x(x - ${2*ansNum}) = 0 \\iff x = 0$ (cực tiểu) hoặc $x = ${2*ansNum}$ (cực đại).`,
+      solution_en: `$y' = 0 \\iff x = 0$ or $x = ${2*ansNum}$. Local max point is $x = ${2*ansNum}$.`,
+      math_skill: 'Hoành độ điểm cực đại',
+      english_skill: 'Local maximum x-coordinate',
+      status: 'PUBLISHED',
+      created_by: 'usr-teacher-1',
+    });
+  }
+
+  const finalTn = tnList.slice(0, 10);
+  const finalDs = dsList.slice(0, 4);
+  const finalTln = tlnList.slice(0, 4);
+
+  return {
+    tn: finalTn,
+    ds: finalDs,
+    tln: finalTln,
+    all: [...finalTn, ...finalDs, ...finalTln],
+  };
 }
 
 // =========================================================================
@@ -1053,3 +1143,4 @@ export function getWorkedExamplesForLesson(lessonId: string): WorkedExample[] {
 
   return DEFAULT_WORKED_EXAMPLES['les-12-1-1'] || [];
 }
+

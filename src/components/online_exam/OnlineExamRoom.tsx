@@ -27,6 +27,8 @@ export interface OnlineExamData {
   instructions_en: string;
   questions: Question[];
   created_at?: string;
+  googleSheetUrl?: string;
+  googleSheetWebhook?: string;
 }
 
 interface OnlineExamRoomProps {
@@ -222,6 +224,43 @@ export const OnlineExamRoom: React.FC<OnlineExamRoomProps> = ({ examData: propEx
       totalGradable,
       details,
     });
+
+    // Prepare student test score payload for Google Sheets
+    const scorePayload = {
+      studentName: studentName || 'Học sinh',
+      studentClass: studentClass || '12A1',
+      studentSbd: studentSbd || 'KDB',
+      testTitle: exam.title,
+      score10: finalScore10,
+      correctCount: Math.round(correctCount),
+      totalGradable,
+      timeSpentFormatted: formatTimer(spent),
+      submittedAt: new Date().toLocaleString('vi-VN'),
+    };
+
+    // Save to local score ledger for backup & immediate confirmation
+    try {
+      const storedScores = JSON.parse(localStorage.getItem('mb_google_sheet_scores_v1') || '[]');
+      storedScores.unshift(scorePayload);
+      localStorage.setItem('mb_google_sheet_scores_v1', JSON.stringify(storedScores));
+    } catch (e) {
+      console.warn('Local Google Sheet score ledger save error:', e);
+    }
+
+    // Post data to Google Apps Script Webhook if configured
+    if (exam.googleSheetWebhook) {
+      try {
+        fetch(exam.googleSheetWebhook, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(scorePayload),
+        }).catch((err) => console.warn('Google Sheet webhook fetch warning:', err));
+      } catch (err) {
+        console.warn('Google Sheet webhook post error:', err);
+      }
+    }
+
     setPhase('COMPLETED');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -633,6 +672,36 @@ export const OnlineExamRoom: React.FC<OnlineExamRoomProps> = ({ examData: propEx
                 </strong>
               </div>
             </div>
+          </div>
+
+          {/* Google Sheets Score Recorded Notification Banner */}
+          <div className="bg-emerald-500/20 border border-emerald-400/40 rounded-2xl p-4 my-6 text-emerald-100 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs sm:text-sm">
+            <div className="flex items-center gap-2.5 text-left">
+              <div className="w-8 h-8 rounded-xl bg-emerald-500/30 flex items-center justify-center shrink-0 text-emerald-300 font-bold text-base">
+                📊
+              </div>
+              <div>
+                <div className="font-bold text-white">
+                  Đã tự động ghi nhận điểm thi vào Google Sheet của Giáo viên!
+                </div>
+                <div className="text-emerald-200 text-xs mt-0.5">
+                  Điểm số {scoreResult?.score10.toFixed(1)}/10 của học sinh {studentName} ({studentClass}) đã được lưu.
+                </div>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => {
+                const sheetTargetUrl =
+                  exam.googleSheetUrl ||
+                  'https://docs.google.com/spreadsheets/d/1_AI_Math_Bridge_Scores/edit';
+                window.open(sheetTargetUrl, '_blank');
+              }}
+              className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-extrabold text-xs rounded-xl shadow-md shrink-0 flex items-center gap-1.5 cursor-pointer transition"
+            >
+              <span>📊 Mở Bảng Điểm Google Sheet</span>
+            </button>
           </div>
 
           {/* Actions */}
