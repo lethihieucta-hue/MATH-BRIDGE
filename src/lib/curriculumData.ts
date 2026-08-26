@@ -1,4 +1,5 @@
 import { Chapter, Lesson, MathType, Question } from '../types';
+import { getLessonTheory } from './lessonTheoryData';
 // Canonical Kết nối tri thức curriculum: 24 chapters, 79 textbook lessons (10:27, 11:33, 12:19).
 export type ExerciseFamily = 'logic' | 'algebra' | 'trig' | 'geometry' | 'vector' | 'stats' | 'probability' | 'calculus' | 'function' | 'combinatorics';
 type RawType = { title_vi: string; family: ExerciseFamily };
@@ -495,6 +496,7 @@ export const TYPE_TITLE_BY_ID: Record<string, string> = {};
 const localCounter = new Map<string, number>();
 export const FULL_LESSONS: Lesson[] = RAW_LESSONS.map((raw) => {
   const key = `${raw.grade}-${raw.chapter}`;
+  const theory = getLessonTheory(raw.grade, raw.book_no);
   const local = (localCounter.get(key) || 0) + 1;
   localCounter.set(key, local);
   const lessonId = `les-${raw.grade}-${raw.chapter}-${local}`;
@@ -508,8 +510,8 @@ export const FULL_LESSONS: Lesson[] = RAW_LESSONS.map((raw) => {
     id: lessonId, chapter_id: `chap-${raw.grade}-${raw.chapter}`, topic_id: topicId,
     title_vi: `Bài ${raw.book_no}. ${raw.title_vi}`, title_en: `Lesson ${raw.book_no}. ${raw.title_en}`, order_index: local,
     learning_objectives: raw.types.map((t) => `Nhận biết, hiểu và vận dụng: ${t.title_vi}.`),
-    vocabulary_list: [], key_concepts_vi: raw.types.map((t, i) => `• Dạng ${i + 1}: ${t.title_vi}`).join('\n'),
-    key_concepts_en: `Core exercise families for ${raw.title_en}.`, formulas: [], types, worked_examples: [], status: 'PUBLISHED', language_level: 2, created_by: 'system', created_at: '2026-08-26T00:00:00.000Z',
+    vocabulary_list: [], key_concepts_vi: theory.summary_vi,
+    key_concepts_en: `Core theory and formulas for ${raw.title_en}.`, formulas: theory.formulas, types, worked_examples: [], status: 'PUBLISHED', language_level: 2, created_by: 'system', created_at: '2026-08-26T00:00:00.000Z',
   };
 });
 

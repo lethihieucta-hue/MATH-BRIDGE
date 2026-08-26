@@ -464,6 +464,113 @@ Hãy đưa ra nhận xét ngắn gọn gồm:
   });
 }
 
+export interface WorksheetTypeQuestionPlan {
+  id: string;
+  code: string;
+  title_vi: string;
+  title_en: string;
+  tn: number;
+  ds: number;
+  tln: number;
+  tl: number;
+}
+
+/**
+ * Sinh riêng ngân hàng câu hỏi cho các type_id đang được giáo viên chọn.
+ * Hàm này tôn trọng CHÍNH XÁC số lượng 4 dạng thức của từng type_id và không sửa lý thuyết/bài mẫu.
+ */
+export async function generateWorksheetQuestionsByPlanAi(
+  lessonTitle: string,
+  chapterName: string,
+  grade: number,
+  plans: WorksheetTypeQuestionPlan[],
+  lessonContext?: { key_concepts_vi?: string; formulas?: string[] }
+): Promise<StepExecutionResult> {
+  const cleanPlans = plans
+    .map((p) => ({
+      ...p,
+      tn: Math.max(0, Math.min(10, Math.trunc(p.tn || 0))),
+      ds: Math.max(0, Math.min(10, Math.trunc(p.ds || 0))),
+      tln: Math.max(0, Math.min(10, Math.trunc(p.tln || 0))),
+      tl: Math.max(0, Math.min(10, Math.trunc(p.tl || 0))),
+    }))
+    .filter((p) => p.tn + p.ds + p.tln + p.tl > 0);
+
+  if (cleanPlans.length === 0) {
+    return { success: true, content: '{"questions":[]}', fallbackCount: 0 };
+  }
+
+  const allowedTypes = cleanPlans
+    .map((p) => `- ${p.id} | ${p.code} | ${p.title_vi} | ${p.title_en}`)
+    .join('\n');
+  const exactCounts = cleanPlans
+    .map((p) => `- ${p.id}: TN=${p.tn}, DS=${p.ds}, TLN=${p.tln}, TL=${p.tl}; TỔNG=${p.tn + p.ds + p.tln + p.tl}`)
+    .join('\n');
+  const blueprintContext = buildQuestionBlueprintPrompt(cleanPlans);
+  const curriculumContext = [
+    lessonContext?.key_concepts_vi ? `Lý thuyết chuẩn của bài:\n${lessonContext.key_concepts_vi}` : '',
+    lessonContext?.formulas?.length ? `Công thức chuẩn được phép dùng:\n${lessonContext.formulas.map((f) => `- ${f}`).join('\n')}` : '',
+  ].filter(Boolean).join('\n\n');
+  const grandTotal = cleanPlans.reduce((sum, p) => sum + p.tn + p.ds + p.tln + p.tl, 0);
+
+  const prompt = `Bạn là giáo viên Toán THPT Việt Nam chuyên biên soạn câu hỏi theo GDPT 2018 - bộ Kết Nối Tri Thức.
+
+NHIỆM VỤ: Chỉ sinh câu hỏi tự luyện cho đúng các dạng toán được liệt kê. Không sinh lý thuyết, không sinh dạng khác.
+- Khối: Lớp ${grade}
+- Chương: ${chapterName}
+- Bài: ${lessonTitle}
+
+TYPE_ID ĐƯỢC PHÉP:
+${allowedTypes}
+
+SỐ LƯỢNG BẮT BUỘC - PHẢI KHỚP CHÍNH XÁC:
+${exactCounts}
+Tổng toàn bộ mảng questions phải đúng ${grandTotal} câu.
+
+BLUEPRINT RIÊNG THEO TYPE_ID:
+${blueprintContext}
+
+${curriculumContext ? `LÝ THUYẾT/CÔNG THỨC CHUẨN CỦA BÀI:\n${curriculumContext}\n` : ''}
+RÀNG BUỘC BẮT BUỘC:
+1. Mỗi câu phải có type_id đúng y hệt một ID cho phép và nội dung phải đúng chính xác tên dạng đó. Không được mượn bài từ type_id khác, kể cả cùng bài/chương.
+2. format_type chỉ nhận TN, DS, TLN, TL và số câu của TỪNG format trong TỪNG type_id phải đúng bảng số lượng ở trên.
+3. TN: đúng 4 lựa chọn A,B,C,D và đúng 1 đáp án. DS: đúng 4 mệnh đề a,b,c,d có is_correct. TLN: đáp án ngắn xác định. TL: có lời giải lập luận rõ.
+4. Mỗi câu phải có variant_tag hợp lệ thuộc blueprint của chính type_id. Ưu tiên các variant_tag khác nhau; không tạo các câu chỉ đổi số/hệ số nhưng cùng cấu trúc.
+5. Câu hỏi phải tự giải được, dữ kiện đủ, đáp án và lời giải phải nhất quán. Công thức LaTeX đặt trong $...$.
+6. Không sinh kiến thức ngoài bài. Ví dụ Nguyên hàm/Tích phân không được chèn cực trị; mẫu số liệu ghép nhóm không được chèn đạo hàm; xác suất không được chèn hình học nếu đề không yêu cầu.
+7. Chỉ trả về JSON thuần, không markdown fence, không lời dẫn.
+
+SCHEMA:
+{
+  "questions": [
+    {
+      "type_id": "type-id-bắt-buộc",
+      "variant_tag": "variant-tag-hợp-lệ",
+      "format_type": "TN",
+      "question_type": "MCQ",
+      "difficulty": "MEDIUM",
+      "question_vi": "...",
+      "question_en": "...",
+      "options": [
+        {"option_key":"A","content_vi":"...","content_en":"...","is_correct":false},
+        {"option_key":"B","content_vi":"...","content_en":"...","is_correct":true},
+        {"option_key":"C","content_vi":"...","content_en":"...","is_correct":false},
+        {"option_key":"D","content_vi":"...","content_en":"...","is_correct":false}
+      ],
+      "correct_answer": "B",
+      "solution_vi": "...",
+      "solution_en": "..."
+    }
+  ]
+}`;
+
+  return executeWithFallback(prompt, {
+    systemInstruction: MATH_SYSTEM_INSTRUCTION,
+    maxOutputTokens: Math.min(32768, Math.max(8192, grandTotal * 900)),
+    temperature: 0.45,
+  });
+}
+
 /**
  * Tự động soạn toàn bộ phiếu học tập song ngữ (Lý thuyết, Thuật ngữ, Bài tập mẫu, 4 Dạng câu hỏi GDPT 2018) bằng Gemini AI
  */

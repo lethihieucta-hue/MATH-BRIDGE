@@ -4,7 +4,7 @@ import { Chapter, Lesson, MathType, WorkedExample, Question, LanguageMode } from
 import { MathRenderer } from '../math/MathRenderer';
 import { speakEnglishWord } from '../../lib/audio';
 import { apiFetch } from '../../lib/dataService';
-import { generateCompleteLessonWorksheetAi, hasApiKey } from '../../lib/geminiService';
+import { generateCompleteLessonWorksheetAi, generateWorksheetQuestionsByPlanAi, hasApiKey } from '../../lib/geminiService';
 import {
   getQuestionsForMathTypeStructured,
   getWorkedExamplesForLesson,
@@ -42,6 +42,15 @@ import {
   Bot,
   Wand2,
 } from 'lucide-react';
+
+type QuestionCounts = { tn: number; ds: number; tln: number; tl: number };
+const DEFAULT_COUNTS: QuestionCounts = { tn: 4, ds: 2, tln: 2, tl: 1 };
+const getDefaultCountsForType = (type?: MathType): QuestionCounts => ({
+  tn: type?.sample_count_tn ?? DEFAULT_COUNTS.tn,
+  ds: type?.sample_count_ds ?? DEFAULT_COUNTS.ds,
+  tln: type?.sample_count_tln ?? DEFAULT_COUNTS.tln,
+  tl: type?.sample_count_tl ?? DEFAULT_COUNTS.tl,
+});
 
 export const BilingualLessonModule: React.FC = () => {
   const {
@@ -82,14 +91,16 @@ export const BilingualLessonModule: React.FC = () => {
   const [includeAnswerKey, setIncludeAnswerKey] = useState<boolean>(true);
   const [includeDetailedSolutions, setIncludeDetailedSolutions] = useState<boolean>(true);
 
-  // Per-type question counts: { [typeId]: { tn: 2, ds: 1, tln: 1, tl: 1 } }
-  const [typeQuestionCounts, setTypeQuestionCounts] = useState<Record<string, { tn: number; ds: number; tln: number; tl: number }>>({});
+  // Per-type question counts. Curriculum defaults are 4 TN + 2 Đ/S + 2 TLN + 1 TL, but the teacher can override each cell.
+  const [typeQuestionCounts, setTypeQuestionCounts] = useState<Record<string, QuestionCounts>>({});
+  const [isAutoGeneratingQuestions, setIsAutoGeneratingQuestions] = useState(false);
 
   // Online practice interactive state
   const [onlinePracticeAnswers, setOnlinePracticeAnswers] = useState<Record<string, string>>({});
   const [onlinePracticeSubmitted, setOnlinePracticeSubmitted] = useState(false);
 
   const printAreaRef = useRef<HTMLDivElement>(null);
+  const autoGenerationRunRef = useRef<string>('');
 
   // Fetch chapters and lessons on grade change
   useEffect(() => {
@@ -133,9 +144,9 @@ export const BilingualLessonModule: React.FC = () => {
       if (targetLesson) {
         setSelectedLessonId(targetLesson.id);
         const typeIds = targetLesson.types?.map((t) => t.id) || [];
-        const initCounts: Record<string, { tn: number; ds: number; tln: number; tl: number }> = {};
+        const initCounts: Record<string, QuestionCounts> = {};
         typeIds.forEach((tId) => {
-          initCounts[tId] = { tn: 2, ds: 1, tln: 1, tl: 1 };
+          initCounts[tId] = getDefaultCountsForType(targetLesson.types?.find((t) => t.id === tId));
         });
         setTypeQuestionCounts(initCounts);
       } else {
@@ -156,6 +167,7 @@ export const BilingualLessonModule: React.FC = () => {
 
     const activeChap = chapters.find((c) => c.id === activeLesson.chapter_id);
     const chapterName = activeChap ? activeChap.name_vi : `Toán Lớp ${selectedGrade}`;
+    const requestedTypesForAi = (activeLesson.types || []).filter((t) => selectedTypeIds.length === 0 || selectedTypeIds.includes(t.id));
 
     setIsAiGeneratingWorksheet(true);
 
@@ -166,7 +178,7 @@ export const BilingualLessonModule: React.FC = () => {
           activeLesson.title_vi,
           chapterName,
           selectedGrade,
-          (activeLesson.types || []).map((t) => ({
+          requestedTypesForAi.map((t) => ({
             id: t.id,
             code: t.code,
             title_vi: t.title_vi,
@@ -186,9 +198,10 @@ export const BilingualLessonModule: React.FC = () => {
             // Update active lesson with AI data
             const updatedLesson: Lesson = {
               ...activeLesson,
-              key_concepts_vi: data.key_concepts_vi || activeLesson.key_concepts_vi,
-              key_concepts_en: data.key_concepts_en || activeLesson.key_concepts_en,
-              formulas: data.formulas || activeLesson.formulas || [],
+              // Lý thuyết/công thức chuẩn là dữ liệu curriculum đã biên soạn; AI không được ghi đè thành danh sách dạng toán.
+              key_concepts_vi: activeLesson.key_concepts_vi,
+              key_concepts_en: activeLesson.key_concepts_en,
+              formulas: activeLesson.formulas || [],
               vocabulary_list: data.vocabulary_terms
                 ? data.vocabulary_terms.map((v: any) => `${v.word} (${v.meaning || ''})`)
                 : activeLesson.vocabulary_list,
@@ -228,7 +241,7 @@ export const BilingualLessonModule: React.FC = () => {
             let acceptedAiQuestions: Question[] = [];
             let rejectedAiQuestions = 0;
             if (data.questions && Array.isArray(data.questions)) {
-              const typeMap = new Map<string, MathType>((activeLesson.types || []).map((t): [string, MathType] => [t.id, t]));
+              const typeMap = new Map<string, MathType>(requestedTypesForAi.map((t): [string, MathType] => [t.id, t]));
               const seenStructures = new Set<string>();
               const variantUseCount = new Map<string, number>();
               const now = new Date().toISOString();
@@ -303,7 +316,7 @@ export const BilingualLessonModule: React.FC = () => {
               }
             }
 
-            const weakVariantTypes = (activeLesson.types || [])
+            const weakVariantTypes = requestedTypesForAi
               .map((t) => ({
                 type: t,
                 variantCount: new Set(
@@ -314,7 +327,8 @@ export const BilingualLessonModule: React.FC = () => {
               }))
               .filter((item) => item.variantCount > 0 && item.variantCount < 5);
 
-            await loadCurriculumData();
+            const refreshedQuestions = await apiFetch<Question[]>('/api/questions');
+            setAllQuestions(refreshedQuestions || []);
             setActiveLesson(updatedLesson);
             showNotification(
               `✨ Đã cập nhật ${acceptedAiQuestions.length} câu đúng type cho "${activeLesson.title_vi}"` +
@@ -353,7 +367,8 @@ export const BilingualLessonModule: React.FC = () => {
       });
     }
 
-    await loadCurriculumData();
+    const refreshedQuestions = await apiFetch<Question[]>('/api/questions');
+    setAllQuestions(refreshedQuestions || []);
     setActiveLesson(fallbackLesson);
     showNotification(defaultQs.length > 0 ? `✅ Đã nạp ${defaultQs.length} câu có sẵn đúng dạng cho "${activeLesson.title_vi}".` : `⚠️ Bài này chưa có ngân hàng tĩnh đúng dạng. Hãy dùng AI soạn phiếu để tạo câu mới; hệ thống sẽ không lấy bài Cực trị làm thay thế.`);
     setIsAiGeneratingWorksheet(false);
@@ -379,6 +394,7 @@ export const BilingualLessonModule: React.FC = () => {
   // Tree Action: Select All Types of Current Lesson
   const handleSelectCurrentLessonAllTypes = () => {
     if (!activeLesson) return;
+    autoGenerationRunRef.current = '';
     const lessonTypeIds = activeLesson.types?.map((t) => t.id) || [];
     const newSelected = Array.from(new Set([...selectedTypeIds, ...lessonTypeIds]));
     setSelectedTypeIds(newSelected);
@@ -386,7 +402,7 @@ export const BilingualLessonModule: React.FC = () => {
     const updatedCounts = { ...typeQuestionCounts };
     lessonTypeIds.forEach((tId) => {
       if (!updatedCounts[tId]) {
-        updatedCounts[tId] = { tn: 2, ds: 1, tln: 1, tl: 1 };
+        updatedCounts[tId] = getDefaultCountsForType(activeLesson.types?.find((t) => t.id === tId));
       }
     });
     setTypeQuestionCounts(updatedCounts);
@@ -395,6 +411,7 @@ export const BilingualLessonModule: React.FC = () => {
 
   // Tree Action: Deselect All
   const handleDeselectAllTypes = () => {
+    autoGenerationRunRef.current = '';
     setSelectedTypeIds([]);
     setTypeQuestionCounts({});
     showNotification('Đã bỏ chọn tất cả các dạng toán');
@@ -403,6 +420,7 @@ export const BilingualLessonModule: React.FC = () => {
   // Toggle single type checkbox
   const toggleTypeSelection = (type: MathType, e: React.MouseEvent) => {
     e.stopPropagation();
+    autoGenerationRunRef.current = '';
     const isSelected = selectedTypeIds.includes(type.id);
     if (isSelected) {
       setSelectedTypeIds(selectedTypeIds.filter((id) => id !== type.id));
@@ -413,27 +431,32 @@ export const BilingualLessonModule: React.FC = () => {
       setSelectedTypeIds([...selectedTypeIds, type.id]);
       setTypeQuestionCounts({
         ...typeQuestionCounts,
-        [type.id]: {
-          tn: type.sample_count_tn || 2,
-          ds: type.sample_count_ds || 1,
-          tln: type.sample_count_tln || 1,
-          tl: type.sample_count_tl || 1,
-        },
+        [type.id]: getDefaultCountsForType(type),
       });
     }
   };
 
   // Switch Active Lesson
   const handleSelectLesson = (lesson: Lesson) => {
+    autoGenerationRunRef.current = '';
     setActiveLesson(lesson);
     setSelectedLessonId(lesson.id);
     setSelectedTypeIds([]);
     const lessonTypeIds = lesson.types?.map((t) => t.id) || [];
-    const nextCounts = { ...typeQuestionCounts };
+    const nextCounts: Record<string, QuestionCounts> = {};
     lessonTypeIds.forEach((tId) => {
-      nextCounts[tId] = { tn: 2, ds: 1, tln: 1, tl: 1 };
+      nextCounts[tId] = getDefaultCountsForType(lesson.types?.find((t) => t.id === tId));
     });
     setTypeQuestionCounts(nextCounts);
+  };
+
+  const updateTypeQuestionCount = (typeId: string, kind: keyof QuestionCounts, rawValue: string) => {
+    const value = Math.max(0, Math.min(10, Number.parseInt(rawValue, 10) || 0));
+    autoGenerationRunRef.current = '';
+    setTypeQuestionCounts((prev) => ({
+      ...prev,
+      [typeId]: { ...(prev[typeId] || DEFAULT_COUNTS), [kind]: value },
+    }));
   };
 
   // Export Action: Print PDF
@@ -441,69 +464,306 @@ export const BilingualLessonModule: React.FC = () => {
     window.print();
   };
 
-  // Filter questions for the active lesson and selected math types with high precision.
-  // Priority: AI/teacher questions stored in DB for the exact type, then built-in exact-type
-  // questions to fill any remaining requested slots. Sibling types are never mixed.
+  // Question routing helpers. Every question is isolated by exact type_id and then by format.
+  // The 4 numbers in the right sidebar are the single source of truth for how many questions appear.
+  const bucketQuestion = (q: Question): keyof QuestionCounts => {
+    if (q.format_type === 'DS' || q.question_type === 'TRUE_FALSE') return 'ds';
+    if (q.format_type === 'TLN' || q.question_type === 'SHORT' || q.question_type === 'NUMERIC') return 'tln';
+    if (q.format_type === 'TL' || q.question_type === 'ESSAY') return 'tl';
+    return 'tn';
+  };
+
+  const diversifyByVariant = (items: Question[]): Question[] => {
+    const firstOfVariant: Question[] = [];
+    const repeatedVariant: Question[] = [];
+    const usedVariants = new Set<string>();
+    items.forEach((q) => {
+      const tag = q.variant_tag?.trim();
+      if (!tag) repeatedVariant.push(q);
+      else if (!usedVariants.has(tag)) {
+        usedVariants.add(tag);
+        firstOfVariant.push(q);
+      } else repeatedVariant.push(q);
+    });
+    return [...firstOfVariant, ...repeatedVariant];
+  };
+
+  const getQuestionCandidatesForType = (typeId: string): Question[] => {
+    if (!activeLesson) return [];
+    const builtIn = getQuestionsForMathTypeStructured(typeId, activeLesson.topic_id).all;
+    const builtInIds = new Set(builtIn.map((q) => q.id));
+    const dbExact = allQuestions.filter(
+      (q) => q.type_id === typeId && isQuestionCompatibleWithTopic(activeLesson.topic_id, `${q.question_vi} ${q.solution_vi || ''}`)
+    );
+    const customExact = dbExact.filter((q) => !builtInIds.has(q.id));
+
+    // Prefer AI/teacher-authored exact-type questions, then canonical exact-type questions.
+    // Structural signatures remove numeric constants so a number-only clone cannot crowd out diversity.
+    const seen = new Set<string>();
+    return [...customExact, ...builtIn].filter((q) => {
+      const key = `${bucketQuestion(q)}|${getQuestionStructureSignature(q.question_vi || q.question_en)}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  };
+
+  const takeQuestionsForType = (typeId: string, requested: QuestionCounts): Question[] => {
+    const candidates = getQuestionCandidatesForType(typeId);
+    const selected: Question[] = [];
+    (['tn', 'ds', 'tln', 'tl'] as const).forEach((kind) => {
+      selected.push(...diversifyByVariant(candidates.filter((q) => bucketQuestion(q) === kind)).slice(0, requested[kind]));
+    });
+    return selected;
+  };
+
+  const countQuestionsByFormat = (items: Question[]): QuestionCounts => {
+    const counts: QuestionCounts = { tn: 0, ds: 0, tln: 0, tl: 0 };
+    items.forEach((q) => { counts[bucketQuestion(q)] += 1; });
+    return counts;
+  };
+
   const getDisplayedQuestions = (): Question[] => {
     if (!activeLesson || selectedTypeIds.length === 0) return [];
+    return selectedTypeIds.flatMap((typeId) => {
+      const mathType = activeLesson.types?.find((t) => t.id === typeId);
+      if (!mathType) return [];
+      const requested = typeQuestionCounts[typeId] || getDefaultCountsForType(mathType);
+      return takeQuestionsForType(typeId, requested);
+    });
+  };
 
-    const bucket = (q: Question): 'tn' | 'ds' | 'tln' | 'tl' => {
-      if (q.format_type === 'DS' || q.question_type === 'TRUE_FALSE') return 'ds';
-      if (q.format_type === 'TLN' || q.question_type === 'SHORT' || q.question_type === 'NUMERIC') return 'tln';
-      if (q.format_type === 'TL' || q.question_type === 'ESSAY') return 'tl';
-      return 'tn';
-    };
-
-    const result: Question[] = [];
-    selectedTypeIds.forEach((tId) => {
-      if (!activeLesson.types?.some((t) => t.id === tId)) return;
-
-      const requested = typeQuestionCounts[tId] || { tn: 2, ds: 1, tln: 1, tl: 1 };
-      const builtIn = getQuestionsForMathTypeStructured(tId, activeLesson.topic_id).all;
-      const builtInIds = new Set(builtIn.map((q) => q.id));
-      const dbExact = allQuestions.filter(
-        (q) => q.type_id === tId && isQuestionCompatibleWithTopic(activeLesson.topic_id, `${q.question_vi} ${q.solution_vi || ''}`)
-      );
-      const customExact = dbExact.filter((q) => !builtInIds.has(q.id));
-
-      // Prefer AI/teacher-authored exact-type questions, then canonical exact-type questions.
-      // Structural signatures remove numbers, so number-only clones are automatically rejected.
-      const seen = new Set<string>();
-      const candidates = [...customExact, ...builtIn].filter((q) => {
-        const key = `${q.format_type || q.question_type}|${getQuestionStructureSignature(q.question_vi || q.question_en)}`;
-        if (seen.has(key)) return false;
-        seen.add(key);
-        return true;
-      });
-
-      const diversifyByVariant = (items: Question[]): Question[] => {
-        const firstOfVariant: Question[] = [];
-        const repeatedVariant: Question[] = [];
-        const usedVariants = new Set<string>();
-        items.forEach((q) => {
-          const tag = q.variant_tag?.trim();
-          if (!tag) {
-            repeatedVariant.push(q);
-          } else if (!usedVariants.has(tag)) {
-            usedVariants.add(tag);
-            firstOfVariant.push(q);
-          } else {
-            repeatedVariant.push(q);
-          }
-        });
-        return [...firstOfVariant, ...repeatedVariant];
+  const getShortagePlans = () => {
+    if (!activeLesson) return [];
+    return selectedTypeIds.flatMap((typeId) => {
+      const mathType = activeLesson.types?.find((t) => t.id === typeId);
+      if (!mathType) return [];
+      const requested = typeQuestionCounts[typeId] || getDefaultCountsForType(mathType);
+      const current = countQuestionsByFormat(takeQuestionsForType(typeId, requested));
+      const missing = {
+        tn: Math.max(0, requested.tn - current.tn),
+        ds: Math.max(0, requested.ds - current.ds),
+        tln: Math.max(0, requested.tln - current.tln),
+        tl: Math.max(0, requested.tl - current.tl),
       };
+      if (missing.tn + missing.ds + missing.tln + missing.tl === 0) return [];
+      return [{ mathType, requested, current, missing }];
+    });
+  };
 
-      (['tn', 'ds', 'tln', 'tl'] as const).forEach((kind) => {
-        const sameFormat = candidates.filter((q) => bucket(q) === kind);
-        result.push(...diversifyByVariant(sameFormat).slice(0, requested[kind]));
+  const normalizeAiQuestionsForPlans = (
+    rawQuestions: any[],
+    plans: Array<{ mathType: MathType; requested: QuestionCounts }>
+  ): { accepted: Question[]; rejected: number } => {
+    if (!activeLesson) return { accepted: [], rejected: rawQuestions.length };
+    const planMap = new Map(plans.map((p) => [p.mathType.id, p]));
+    const acceptedCounts = new Map<string, QuestionCounts>();
+    const seenStructures = new Set<string>();
+    const variantUseCount = new Map<string, number>();
+    // Seed dedupe/diversity guards with questions already available for each exact type.
+    // New AI output therefore has to add genuinely new structures instead of restating old ones with new numbers.
+    plans.forEach((plan) => {
+      getQuestionCandidatesForType(plan.mathType.id).forEach((existing) => {
+        const kind = bucketQuestion(existing);
+        seenStructures.add(`${plan.mathType.id}|${kind}|${getQuestionStructureSignature(existing.question_vi || existing.question_en)}`);
+        if (existing.variant_tag) {
+          const key = `${plan.mathType.id}|${existing.variant_tag}`;
+          variantUseCount.set(key, (variantUseCount.get(key) || 0) + 1);
+        }
+      });
+    });
+    const accepted: Question[] = [];
+    let rejected = 0;
+    const now = new Date().toISOString();
+
+    rawQuestions.forEach((q: any, index: number) => {
+      const plan = q?.type_id ? planMap.get(q.type_id) : undefined;
+      if (!plan) { rejected += 1; return; }
+      const formatType = (q?.format_type || 'TN') as 'TN' | 'DS' | 'TLN' | 'TL';
+      if (!['TN', 'DS', 'TLN', 'TL'].includes(formatType)) { rejected += 1; return; }
+      const kind: keyof QuestionCounts = formatType === 'DS' ? 'ds' : formatType === 'TLN' ? 'tln' : formatType === 'TL' ? 'tl' : 'tn';
+      const quota = plan.requested[kind];
+      const counts = acceptedCounts.get(plan.mathType.id) || { tn: 0, ds: 0, tln: 0, tl: 0 };
+      if (quota <= counts[kind]) { rejected += 1; return; }
+
+      const questionText = `${q?.question_vi || ''} ${q?.question_en || ''}`.trim();
+      const options = Array.isArray(q?.options) ? q.options : [];
+      const allowedVariantTags = getAllowedVariantTags(plan.mathType.id);
+      const validVariant = allowedVariantTags.length === 0 || allowedVariantTags.includes(q?.variant_tag);
+      const variantKey = `${plan.mathType.id}|${q?.variant_tag || ''}`;
+      const variantCount = variantUseCount.get(variantKey) || 0;
+      const totalRequestedForType = plan.requested.tn + plan.requested.ds + plan.requested.tln + plan.requested.tl;
+      const maxVariantUse = Math.max(2, Math.ceil(totalRequestedForType / Math.max(1, allowedVariantTags.length))); 
+      const validMcq = kind !== 'tn' || (options.length === 4 && options.filter((o: any) => o?.is_correct).length === 1);
+      const validTrueFalse = kind !== 'ds' || (options.length === 4 && options.every((o: any) => typeof o?.is_correct === 'boolean'));
+      const inLessonScope = isQuestionCompatibleWithTopic(activeLesson.topic_id, `${questionText} ${q?.solution_vi || ''}`);
+      const structureKey = `${plan.mathType.id}|${kind}|${getQuestionStructureSignature(q?.question_vi || q?.question_en)}`;
+
+      if (
+        questionText.length < 8 || !validVariant || variantCount >= maxVariantUse || !validMcq || !validTrueFalse ||
+        !inLessonScope || seenStructures.has(structureKey)
+      ) {
+        rejected += 1;
+        return;
+      }
+
+      seenStructures.add(structureKey);
+      if (q?.variant_tag) variantUseCount.set(variantKey, variantCount + 1);
+      counts[kind] += 1;
+      acceptedCounts.set(plan.mathType.id, counts);
+
+      const correctAnswer = kind === 'tn'
+        ? (options.find((o: any) => o?.is_correct)?.option_key || q?.correct_answer || '')
+        : kind === 'ds'
+          ? (q?.correct_answer || options.map((o: any) => `${o.option_key}-${o.is_correct ? 'Đ' : 'S'}`).join(', '))
+          : (q?.correct_answer || '');
+
+      accepted.push({
+        id: `q-ai-auto-${activeLesson.id}-${plan.mathType.id}-${formatType}-${Date.now()}-${index}`,
+        topic_id: activeLesson.topic_id,
+        type_id: plan.mathType.id,
+        variant_tag: q?.variant_tag,
+        question_type: kind === 'ds' ? 'TRUE_FALSE' : kind === 'tln' ? 'SHORT' : kind === 'tl' ? 'ESSAY' : 'MCQ',
+        format_type: formatType,
+        difficulty: q?.difficulty || 'MEDIUM',
+        language_level: 2,
+        question_vi: q?.question_vi || '',
+        question_en: q?.question_en || '',
+        options,
+        solution_vi: q?.solution_vi || 'Lời giải chi tiết',
+        solution_en: q?.solution_en || 'Detailed solution',
+        correct_answer: correctAnswer,
+        math_skill: plan.mathType.title_vi,
+        english_skill: plan.mathType.title_en,
+        status: 'PUBLISHED',
+        created_by: 'usr-teacher-1',
+        created_at: now,
       });
     });
 
-    return result;
+    return { accepted, rejected };
+  };
+
+  const generateQuestionsForPlans = async (
+    shortagePlans: Array<{ mathType: MathType; requested: QuestionCounts; current: QuestionCounts; missing: QuestionCounts }>,
+    source: 'auto' | 'manual' = 'auto'
+  ) => {
+    if (!activeLesson || shortagePlans.length === 0) return;
+    if (!hasApiKey()) {
+      if (source === 'manual') showNotification('⚠️ Chưa có Gemini API key. Hãy cấu hình API key để tự sinh câu cho các dạng chưa có ngân hàng.');
+      return;
+    }
+
+    const activeChap = chapters.find((c) => c.id === activeLesson.chapter_id);
+    const chapterName = activeChap?.name_vi || `Toán ${selectedGrade}`;
+    setIsAutoGeneratingQuestions(true);
+    if (source === 'manual') showNotification('🤖 AI đang sinh đúng số câu theo từng dạng thức đã chọn...');
+
+    try {
+      const questionsToSave: Question[] = [];
+      const typeIdsToReplace: string[] = [];
+      let generatedAcceptedTotal = 0;
+      let totalRejected = 0;
+
+      // Generate one math type at a time. A default type needs only 9 questions, which is much
+      // more reliable than asking Gemini for 40-50 questions when the teacher selects 5 types at once.
+      for (const shortage of shortagePlans) {
+        const plan = { mathType: shortage.mathType, requested: shortage.missing };
+        const combinedRawQuestions: any[] = [];
+        let bestAccepted: Question[] = [];
+        let typeRejected = 0;
+
+        for (let attempt = 0; attempt < 2; attempt += 1) {
+          const aiResult = await generateWorksheetQuestionsByPlanAi(
+            activeLesson.title_vi,
+            chapterName,
+            selectedGrade,
+            [{
+              id: plan.mathType.id,
+              code: plan.mathType.code,
+              title_vi: plan.mathType.title_vi,
+              title_en: plan.mathType.title_en,
+              ...plan.requested,
+            }],
+            { key_concepts_vi: activeLesson.key_concepts_vi, formulas: activeLesson.formulas || [] }
+          );
+          if (!aiResult.success || !aiResult.content) continue;
+          const jsonMatch = aiResult.content.match(/\{[\s\S]*\}/);
+          if (!jsonMatch) continue;
+          const parsed = JSON.parse(jsonMatch[0]);
+          combinedRawQuestions.push(...(Array.isArray(parsed?.questions) ? parsed.questions : []));
+          const normalized = normalizeAiQuestionsForPlans(combinedRawQuestions, [plan]);
+          typeRejected = normalized.rejected;
+          bestAccepted = normalized.accepted;
+
+          const got = countQuestionsByFormat(bestAccepted);
+          const exact = (['tn', 'ds', 'tln', 'tl'] as const).every((kind) => got[kind] >= plan.requested[kind]);
+          if (exact) break;
+        }
+
+        totalRejected += typeRejected;
+
+        if (bestAccepted.length > 0) {
+          // Preserve previous exact-type custom questions as a safety net; the API keeps canonical
+          // built-ins automatically. Display-time dedupe/quotas still guarantee exact output counts.
+          const canonicalIds = new Set(getQuestionsForMathTypeStructured(plan.mathType.id, activeLesson.topic_id).all.map((q) => q.id));
+          const previousCustom = allQuestions.filter(
+            (q) => q.type_id === plan.mathType.id && !canonicalIds.has(q.id) &&
+              isQuestionCompatibleWithTopic(activeLesson.topic_id, `${q.question_vi} ${q.solution_vi || ''}`)
+          );
+          questionsToSave.push(...previousCustom, ...bestAccepted);
+          typeIdsToReplace.push(plan.mathType.id);
+          generatedAcceptedTotal += bestAccepted.length;
+        }
+      }
+
+      if (questionsToSave.length > 0) {
+        await apiFetch('/api/questions/replace-types', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ type_ids: typeIdsToReplace, questions: questionsToSave }),
+        });
+        const refreshed = await apiFetch<Question[]>('/api/questions');
+        setAllQuestions(refreshed || []);
+
+        const requestedTotal = shortagePlans.reduce((sum, p) => sum + p.missing.tn + p.missing.ds + p.missing.tln + p.missing.tl, 0);
+        showNotification(
+          generatedAcceptedTotal >= requestedTotal
+            ? `✅ Đã sinh đủ ${requestedTotal} câu còn thiếu theo đúng TN / Đ-S / TLN / TL.`
+            : `✅ Đã bổ sung ${generatedAcceptedTotal} câu đúng type${totalRejected ? `; loại các câu AI sai cấu trúc` : ''}. Hệ thống sẽ tiếp tục kiểm tra số lượng hiển thị.`
+        );
+      } else if (source === 'manual') {
+        showNotification('⚠️ AI chưa trả về câu hỏi hợp lệ. Hệ thống không lấy câu từ dạng khác để bù.');
+      }
+    } catch (error) {
+      console.error('Auto question generation failed:', error);
+      if (source === 'manual') showNotification('⚠️ Không thể sinh câu hỏi lúc này. Vui lòng kiểm tra API key/kết nối Gemini.');
+    } finally {
+      setIsAutoGeneratingQuestions(false);
+    }
   };
 
   const displayedQuestions = getDisplayedQuestions();
+  const shortagePlans = getShortagePlans();
+
+  // Selecting a math type (or increasing its requested counts) automatically fills the exact-type bank.
+  // Debounce avoids firing while the teacher is still editing the four count inputs.
+  useEffect(() => {
+    if (!activeLesson || selectedTypeIds.length === 0 || shortagePlans.length === 0) return;
+    if (!hasApiKey() || isAiGeneratingWorksheet || isAutoGeneratingQuestions) return;
+
+    const generationKey = JSON.stringify({
+      lesson: activeLesson.id,
+      shortage: shortagePlans.map((p) => ({ id: p.mathType.id, requested: p.requested, missing: p.missing })),
+    });
+    if (autoGenerationRunRef.current === generationKey) return;
+
+    const timer = window.setTimeout(() => {
+      autoGenerationRunRef.current = generationKey;
+      void generateQuestionsForPlans(shortagePlans, 'auto');
+    }, 650);
+    return () => window.clearTimeout(timer);
+  }, [activeLesson?.id, selectedTypeIds, typeQuestionCounts, allQuestions, isAiGeneratingWorksheet, isAutoGeneratingQuestions]);
 
   // Export Action: Copy Word Text
   const handleCopyWord = () => {
@@ -519,7 +779,11 @@ export const BilingualLessonModule: React.FC = () => {
 
     if (includeTheory && activeLesson) {
       content += `A. TÓM TẮT LÝ THUYẾT:\n`;
-      content += `${activeLesson.key_concepts_vi}\n\n`;
+      content += `${activeLesson.key_concepts_vi}\n`;
+      if (activeLesson.formulas?.length) {
+        content += `Công thức trọng tâm:\n${activeLesson.formulas.map((f) => `• ${f}`).join('\n')}\n`;
+      }
+      content += `\n`;
     }
 
     if (includeWorkedExamples && activeLesson?.worked_examples) {
@@ -562,6 +826,9 @@ export const BilingualLessonModule: React.FC = () => {
 
     if (includeTheory && activeLesson) {
       docContent += `<h3>A. TÓM TẮT LÝ THUYẾT</h3><p>${activeLesson.key_concepts_vi.replace(/\n/g, '<br/>')}</p>`;
+      if (activeLesson.formulas?.length) {
+        docContent += `<p><strong>Công thức trọng tâm:</strong><br/>${activeLesson.formulas.map((f) => `• ${f}`).join('<br/>')}</p>`;
+      }
     }
 
     if (includeWorkedExamples && activeLesson?.worked_examples) {
@@ -950,9 +1217,11 @@ export const BilingualLessonModule: React.FC = () => {
                       {/* Key Concepts */}
                       {activeLesson.key_concepts_vi && (
                         <div className="space-y-1.5 leading-relaxed">
-                          {activeLesson.key_concepts_vi.split('\n').map((line, idx) => (
+                          {(languageMode === 'ENGLISH' && activeLesson.key_concepts_en
+                            ? activeLesson.key_concepts_en.split('\n')
+                            : activeLesson.key_concepts_vi.split('\n')).map((line, idx) => (
                             <div key={idx} className="flex items-start gap-1">
-                              <MathRenderer content={languageMode === 'ENGLISH' && activeLesson.key_concepts_en ? activeLesson.key_concepts_en.split('\n')[idx] || line : line} />
+                              <MathRenderer content={line} />
                             </div>
                           ))}
                         </div>
@@ -1091,27 +1360,54 @@ export const BilingualLessonModule: React.FC = () => {
                       {displayedQuestions.length === 0 ? (
                         <div className="p-6 bg-white rounded-2xl border border-slate-200 text-center space-y-3 font-sans shadow-xs my-4">
                           <div className="w-10 h-10 mx-auto bg-violet-100 text-violet-700 rounded-full flex items-center justify-center font-bold text-base">
-                            💡
+                            {isAutoGeneratingQuestions ? <Loader2 className="w-5 h-5 animate-spin" /> : '💡'}
                           </div>
                           <p className="text-sm font-bold text-slate-800">
-                            Chưa chọn Dạng toán nào để hiển thị bài tập.
+                            {selectedTypeIds.length === 0
+                              ? 'Chưa chọn Dạng toán nào để hiển thị bài tập.'
+                              : isAutoGeneratingQuestions
+                                ? 'AI đang sinh câu hỏi đúng theo các dạng đã chọn...'
+                                : 'Các dạng đã chọn chưa có đủ câu hỏi trong ngân hàng.'}
                           </p>
                           <p className="text-xs text-slate-500 max-w-lg mx-auto leading-relaxed">
-                            Thầy/Cô vui lòng tích chọn (đánh dấu check) ít nhất một Dạng toán ở danh sách bên trái để tải và chọn các câu hỏi bài tập tương ứng vào phiếu học tập.
+                            {selectedTypeIds.length === 0
+                              ? 'Thầy/Cô tích chọn ít nhất một Dạng toán ở cây chương trình. Khi chọn, hệ thống sẽ kiểm tra và tự sinh câu đúng type_id.'
+                              : 'Hệ thống không lấy câu của dạng/chương khác để bù. Số lượng sẽ bám đúng 4 ô TN / Đ-S / TLN / TL ở cột bên phải.'}
                           </p>
-                          <div className="pt-2">
-                            <button
-                              onClick={handleAiGenerateWorksheet}
-                              disabled={isAiGeneratingWorksheet}
-                              className="px-4 py-2 bg-violet-600 hover:bg-violet-700 text-white text-xs font-extrabold rounded-xl shadow-xs transition inline-flex items-center gap-1.5"
-                            >
-                              <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-                              {isAiGeneratingWorksheet ? 'AI đang soạn bài tập...' : '✨ AI Soạn câu hỏi theo bài này'}
-                            </button>
-                          </div>
+                          {selectedTypeIds.length > 0 && (
+                            <div className="pt-2">
+                              <button
+                                onClick={() => void generateQuestionsForPlans(shortagePlans, 'manual')}
+                                disabled={isAutoGeneratingQuestions || shortagePlans.length === 0}
+                                className="px-4 py-2 bg-violet-600 hover:bg-violet-700 disabled:opacity-50 text-white text-xs font-extrabold rounded-xl shadow-xs transition inline-flex items-center gap-1.5"
+                              >
+                                <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+                                {isAutoGeneratingQuestions ? 'AI đang sinh câu...' : '✨ Sinh đủ câu theo số lượng đã chọn'}
+                              </button>
+                            </div>
+                          )}
                         </div>
                       ) : (
                         <>
+                          {shortagePlans.length > 0 && (
+                            <div className="flex items-center justify-between gap-3 p-3 rounded-xl border border-amber-200 bg-amber-50 font-sans text-xs">
+                              <div>
+                                <p className="font-bold text-amber-900">
+                                  {isAutoGeneratingQuestions ? 'AI đang bổ sung số câu còn thiếu...' : 'Ngân hàng hiện chưa đủ đúng số lượng đã chọn.'}
+                                </p>
+                                <p className="text-amber-800 mt-0.5">
+                                  Thiếu {shortagePlans.reduce((sum, p) => sum + p.missing.tn + p.missing.ds + p.missing.tln + p.missing.tl, 0)} câu; hệ thống không dùng câu của dạng khác để bù.
+                                </p>
+                              </div>
+                              <button
+                                onClick={() => void generateQuestionsForPlans(shortagePlans, 'manual')}
+                                disabled={isAutoGeneratingQuestions}
+                                className="shrink-0 px-3 py-1.5 bg-violet-600 text-white font-bold rounded-lg disabled:opacity-50"
+                              >
+                                {isAutoGeneratingQuestions ? 'Đang sinh...' : 'Sinh đủ câu'}
+                              </button>
+                            </div>
+                          )}
                           {/* PHẦN I: TRẮC NGHIỆM NHIỀU LỰA CHỌN (TN) */}
                           {tnQuestions.length > 0 && (
                             <div className="space-y-3">
@@ -1306,7 +1602,7 @@ export const BilingualLessonModule: React.FC = () => {
                   </p>
                 ) : (
                   selectedTypesList.map((type) => {
-                    const counts = typeQuestionCounts[type.id] || { tn: 2, ds: 1, tln: 1, tl: 1 };
+                    const counts = typeQuestionCounts[type.id] || getDefaultCountsForType(type);
                     return (
                       <div
                         key={type.id}
@@ -1323,6 +1619,7 @@ export const BilingualLessonModule: React.FC = () => {
                           </div>
                           <button
                             onClick={() => {
+                              autoGenerationRunRef.current = '';
                               setSelectedTypeIds(selectedTypeIds.filter((id) => id !== type.id));
                               const nextCounts = { ...typeQuestionCounts };
                               delete nextCounts[type.id];
@@ -1344,12 +1641,7 @@ export const BilingualLessonModule: React.FC = () => {
                               min={0}
                               max={10}
                               value={counts.tn}
-                              onChange={(e) =>
-                                setTypeQuestionCounts({
-                                  ...typeQuestionCounts,
-                                  [type.id]: { ...counts, tn: parseInt(e.target.value, 10) || 0 },
-                                })
-                              }
+                              onChange={(e) => updateTypeQuestionCount(type.id, 'tn', e.target.value)}
                               className="w-full text-center bg-white border border-slate-200 rounded py-0.5 text-xs font-bold text-violet-900"
                             />
                           </div>
@@ -1361,12 +1653,7 @@ export const BilingualLessonModule: React.FC = () => {
                               min={0}
                               max={10}
                               value={counts.ds}
-                              onChange={(e) =>
-                                setTypeQuestionCounts({
-                                  ...typeQuestionCounts,
-                                  [type.id]: { ...counts, ds: parseInt(e.target.value, 10) || 0 },
-                                })
-                              }
+                              onChange={(e) => updateTypeQuestionCount(type.id, 'ds', e.target.value)}
                               className="w-full text-center bg-white border border-slate-200 rounded py-0.5 text-xs font-bold text-violet-900"
                             />
                           </div>
@@ -1378,12 +1665,7 @@ export const BilingualLessonModule: React.FC = () => {
                               min={0}
                               max={10}
                               value={counts.tln}
-                              onChange={(e) =>
-                                setTypeQuestionCounts({
-                                  ...typeQuestionCounts,
-                                  [type.id]: { ...counts, tln: parseInt(e.target.value, 10) || 0 },
-                                })
-                              }
+                              onChange={(e) => updateTypeQuestionCount(type.id, 'tln', e.target.value)}
                               className="w-full text-center bg-white border border-slate-200 rounded py-0.5 text-xs font-bold text-violet-900"
                             />
                           </div>
@@ -1395,12 +1677,7 @@ export const BilingualLessonModule: React.FC = () => {
                               min={0}
                               max={10}
                               value={counts.tl}
-                              onChange={(e) =>
-                                setTypeQuestionCounts({
-                                  ...typeQuestionCounts,
-                                  [type.id]: { ...counts, tl: parseInt(e.target.value, 10) || 0 },
-                                })
-                              }
+                              onChange={(e) => updateTypeQuestionCount(type.id, 'tl', e.target.value)}
                               className="w-full text-center bg-white border border-slate-200 rounded py-0.5 text-xs font-bold text-violet-900"
                             />
                           </div>

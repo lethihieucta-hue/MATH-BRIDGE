@@ -1,0 +1,33 @@
+✅ Đủ 24 chương KNTT
+✅ Lớp 10: 9 chương
+✅ Lớp 11: 9 chương
+✅ Lớp 12: 6 chương
+✅ Lớp 10: đủ 27 bài SGK
+✅ Lớp 11: đủ 33 bài SGK
+✅ Lớp 12: đủ 19 bài SGK
+✅ Đủ 79 bài SGK KNTT
+✅ Các mốc chương/bài dễ lệch số đã khớp đúng
+✅ Không trùng type_id (289 dạng toán)
+✅ 289 dạng × 6 cấu trúc = 1734 blueprint sinh bài
+✅ Blueprint được khóa theo type_id + họ kiến thức
+✅ Có migration cho đủ 94 type_id cũ
+✅ Toàn bộ migration trỏ tới type_id mới hợp lệ
+✅ Toàn bộ 25 type legacy đang dùng trong bank đều được migration
+✅ Không còn fallback cực trị generic
+✅ Không còn generator kiểu một mẫu chỉ thay số
+✅ TestBuilder fail-closed: không lấy câu khác bài để bù số lượng
+✅ TestBuilder route prompt theo lesson/type canonical
+✅ Có guard chống lesson cũ cùng ID làm nhiễm curriculum mới
+✅ Worked example cũ được migrate/filter theo type mới
+
+🎯 FULL KNTT AUDIT PASSED — 24 chương, 79 bài, 289 dạng, 1734 blueprint.
+✅ 79/79 bài có tóm tắt lý thuyết thật, không còn dùng danh sách Dạng làm lý thuyết
+✅ 79/79 bài có công thức trọng tâm
+✅ Mặc định thống nhất 4 TN + 2 Đ/S + 2 TLN + 1 TL
+✅ Số câu hiển thị lấy trực tiếp từ 4 ô cấu hình của từng type_id
+✅ Thiếu câu sẽ tự sinh theo đúng type_id + đúng format, không lấy dạng khác bù
+✅ AI chỉ sinh phần còn thiếu và có nút Sinh đủ câu để thử lại thủ công
+🎯 WORKSHEET AUDIT PASSED
+
+Syntax check (TypeScript transpileModule): PASS for modified core files.
+Full npm build: NOT RUN because npm install timed out in this environment before dependencies were installed.

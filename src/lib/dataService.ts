@@ -246,6 +246,9 @@ function getLocalDb() {
         topic_id: canonical.topic_id,
         title_vi: canonical.title_vi,
         title_en: canonical.title_en,
+        key_concepts_vi: canonical.key_concepts_vi,
+        key_concepts_en: canonical.key_concepts_en,
+        formulas: canonical.formulas,
         types: canonical.types,
         worked_examples: (reuseStored && stored?.worked_examples?.length)
           ? migrateStoredWorkedExamples(stored.worked_examples, canonical)
