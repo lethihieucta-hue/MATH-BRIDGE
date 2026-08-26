@@ -94,6 +94,7 @@ export const BilingualLessonModule: React.FC = () => {
   // Per-type question counts. Curriculum defaults are 4 TN + 2 Đ/S + 2 TLN + 1 TL, but the teacher can override each cell.
   const [typeQuestionCounts, setTypeQuestionCounts] = useState<Record<string, QuestionCounts>>({});
   const [isAutoGeneratingQuestions, setIsAutoGeneratingQuestions] = useState(false);
+  const [questionGenerationMessage, setQuestionGenerationMessage] = useState<string>('');
 
   // Online practice interactive state
   const [onlinePracticeAnswers, setOnlinePracticeAnswers] = useState<Record<string, string>>({});
@@ -395,6 +396,7 @@ export const BilingualLessonModule: React.FC = () => {
   const handleSelectCurrentLessonAllTypes = () => {
     if (!activeLesson) return;
     autoGenerationRunRef.current = '';
+    setQuestionGenerationMessage('');
     const lessonTypeIds = activeLesson.types?.map((t) => t.id) || [];
     const newSelected = Array.from(new Set([...selectedTypeIds, ...lessonTypeIds]));
     setSelectedTypeIds(newSelected);
@@ -412,6 +414,7 @@ export const BilingualLessonModule: React.FC = () => {
   // Tree Action: Deselect All
   const handleDeselectAllTypes = () => {
     autoGenerationRunRef.current = '';
+    setQuestionGenerationMessage('');
     setSelectedTypeIds([]);
     setTypeQuestionCounts({});
     showNotification('Đã bỏ chọn tất cả các dạng toán');
@@ -421,6 +424,7 @@ export const BilingualLessonModule: React.FC = () => {
   const toggleTypeSelection = (type: MathType, e: React.MouseEvent) => {
     e.stopPropagation();
     autoGenerationRunRef.current = '';
+    setQuestionGenerationMessage('');
     const isSelected = selectedTypeIds.includes(type.id);
     if (isSelected) {
       setSelectedTypeIds(selectedTypeIds.filter((id) => id !== type.id));
@@ -439,6 +443,7 @@ export const BilingualLessonModule: React.FC = () => {
   // Switch Active Lesson
   const handleSelectLesson = (lesson: Lesson) => {
     autoGenerationRunRef.current = '';
+    setQuestionGenerationMessage('');
     setActiveLesson(lesson);
     setSelectedLessonId(lesson.id);
     setSelectedTypeIds([]);
@@ -453,6 +458,7 @@ export const BilingualLessonModule: React.FC = () => {
   const updateTypeQuestionCount = (typeId: string, kind: keyof QuestionCounts, rawValue: string) => {
     const value = Math.max(0, Math.min(10, Number.parseInt(rawValue, 10) || 0));
     autoGenerationRunRef.current = '';
+    setQuestionGenerationMessage('');
     setTypeQuestionCounts((prev) => ({
       ...prev,
       [typeId]: { ...(prev[typeId] || DEFAULT_COUNTS), [kind]: value },
@@ -551,17 +557,57 @@ export const BilingualLessonModule: React.FC = () => {
     });
   };
 
+  const parseAiJsonObject = (content?: string): any | null => {
+    if (!content) return null;
+    const trimmed = content.trim();
+    const candidates = [
+      trimmed,
+      trimmed.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '').trim(),
+    ];
+    const firstBrace = trimmed.indexOf('{');
+    const lastBrace = trimmed.lastIndexOf('}');
+    if (firstBrace >= 0 && lastBrace > firstBrace) candidates.push(trimmed.slice(firstBrace, lastBrace + 1));
+    const firstBracket = trimmed.indexOf('[');
+    const lastBracket = trimmed.lastIndexOf(']');
+    if (firstBracket >= 0 && lastBracket > firstBracket) candidates.push(`{"questions":${trimmed.slice(firstBracket, lastBracket + 1)}}`);
+
+    for (const candidate of candidates) {
+      try {
+        const parsed = JSON.parse(candidate);
+        if (Array.isArray(parsed)) return { questions: parsed };
+        if (parsed && typeof parsed === 'object') return parsed;
+      } catch {
+        // Try the next representation. Gemini occasionally wraps JSON in markdown fences.
+      }
+    }
+    return null;
+  };
+
   const normalizeAiQuestionsForPlans = (
     rawQuestions: any[],
     plans: Array<{ mathType: MathType; requested: QuestionCounts }>
   ): { accepted: Question[]; rejected: number } => {
     if (!activeLesson) return { accepted: [], rejected: rawQuestions.length };
     const planMap = new Map(plans.map((p) => [p.mathType.id, p]));
+    const singlePlan = plans.length === 1 ? plans[0] : undefined;
+    const onlyRequestedKind = singlePlan
+      ? (['tn', 'ds', 'tln', 'tl'] as const).filter((kind) => singlePlan.requested[kind] > 0)
+      : [];
+    const forcedKind = onlyRequestedKind.length === 1 ? onlyRequestedKind[0] : undefined;
+    const forcedFormat: 'TN' | 'DS' | 'TLN' | 'TL' | undefined = forcedKind === 'ds'
+      ? 'DS'
+      : forcedKind === 'tln'
+        ? 'TLN'
+        : forcedKind === 'tl'
+          ? 'TL'
+          : forcedKind === 'tn'
+            ? 'TN'
+            : undefined;
+
     const acceptedCounts = new Map<string, QuestionCounts>();
     const seenStructures = new Set<string>();
     const variantUseCount = new Map<string, number>();
-    // Seed dedupe/diversity guards with questions already available for each exact type.
-    // New AI output therefore has to add genuinely new structures instead of restating old ones with new numbers.
+
     plans.forEach((plan) => {
       getQuestionCandidatesForType(plan.mathType.id).forEach((existing) => {
         const kind = bucketQuestion(existing);
@@ -572,66 +618,114 @@ export const BilingualLessonModule: React.FC = () => {
         }
       });
     });
+
     const accepted: Question[] = [];
     let rejected = 0;
     const now = new Date().toISOString();
 
     rawQuestions.forEach((q: any, index: number) => {
-      const plan = q?.type_id ? planMap.get(q.type_id) : undefined;
+      // When Gemini is asked for exactly one math type, the UI is the authority. Do not throw
+      // away an otherwise valid question merely because the model omitted/misspelled type_id.
+      const plan = (q?.type_id ? planMap.get(String(q.type_id).trim()) : undefined) || singlePlan;
       if (!plan) { rejected += 1; return; }
-      const formatType = (q?.format_type || 'TN') as 'TN' | 'DS' | 'TLN' | 'TL';
-      if (!['TN', 'DS', 'TLN', 'TL'].includes(formatType)) { rejected += 1; return; }
+
+      const rawFormat = String(q?.format_type || q?.question_type || '').trim().toUpperCase();
+      let formatType: 'TN' | 'DS' | 'TLN' | 'TL' = forcedFormat || (
+        rawFormat === 'DS' || rawFormat === 'TRUE_FALSE' || rawFormat === 'TRUE/FALSE' ? 'DS'
+          : rawFormat === 'TLN' || rawFormat === 'SHORT' || rawFormat === 'NUMERIC' || rawFormat === 'SHORT_ANSWER' ? 'TLN'
+            : rawFormat === 'TL' || rawFormat === 'ESSAY' || rawFormat === 'TỰ LUẬN' ? 'TL'
+              : 'TN'
+      );
       const kind: keyof QuestionCounts = formatType === 'DS' ? 'ds' : formatType === 'TLN' ? 'tln' : formatType === 'TL' ? 'tl' : 'tn';
       const quota = plan.requested[kind];
       const counts = acceptedCounts.get(plan.mathType.id) || { tn: 0, ds: 0, tln: 0, tl: 0 };
       if (quota <= counts[kind]) { rejected += 1; return; }
 
-      const questionText = `${q?.question_vi || ''} ${q?.question_en || ''}`.trim();
-      const options = Array.isArray(q?.options) ? q.options : [];
+      const questionVi = String(q?.question_vi || q?.question || q?.prompt_vi || '').trim();
+      const questionEn = String(q?.question_en || q?.prompt_en || '').trim();
+      const questionText = `${questionVi} ${questionEn}`.trim();
+      if (questionText.length < 8) { rejected += 1; return; }
+
       const allowedVariantTags = getAllowedVariantTags(plan.mathType.id);
-      const validVariant = allowedVariantTags.length === 0 || allowedVariantTags.includes(q?.variant_tag);
-      const variantKey = `${plan.mathType.id}|${q?.variant_tag || ''}`;
+      let variantTag = String(q?.variant_tag || '').trim();
+      if (!variantTag || (allowedVariantTags.length > 0 && !allowedVariantTags.includes(variantTag))) {
+        // variant_tag is metadata, not mathematical content. Repair it instead of discarding
+        // a valid exercise. The prompt still contains the exact blueprint instructions.
+        variantTag = allowedVariantTags.length > 0 ? allowedVariantTags[index % allowedVariantTags.length] : '';
+      }
+      const variantKey = `${plan.mathType.id}|${variantTag}`;
       const variantCount = variantUseCount.get(variantKey) || 0;
       const totalRequestedForType = plan.requested.tn + plan.requested.ds + plan.requested.tln + plan.requested.tl;
-      const maxVariantUse = Math.max(2, Math.ceil(totalRequestedForType / Math.max(1, allowedVariantTags.length))); 
-      const validMcq = kind !== 'tn' || (options.length === 4 && options.filter((o: any) => o?.is_correct).length === 1);
-      const validTrueFalse = kind !== 'ds' || (options.length === 4 && options.every((o: any) => typeof o?.is_correct === 'boolean'));
-      const inLessonScope = isQuestionCompatibleWithTopic(activeLesson.topic_id, `${questionText} ${q?.solution_vi || ''}`);
-      const structureKey = `${plan.mathType.id}|${kind}|${getQuestionStructureSignature(q?.question_vi || q?.question_en)}`;
+      const maxVariantUse = Math.max(2, Math.ceil(totalRequestedForType / Math.max(1, allowedVariantTags.length)));
 
-      if (
-        questionText.length < 8 || !validVariant || variantCount >= maxVariantUse || !validMcq || !validTrueFalse ||
-        !inLessonScope || seenStructures.has(structureKey)
-      ) {
+      const rawOptions = Array.isArray(q?.options)
+        ? q.options
+        : Array.isArray(q?.statements)
+          ? q.statements
+          : [];
+      const declaredCorrect = String(q?.correct_answer ?? q?.answer ?? '').trim();
+      const declaredUpper = declaredCorrect.toUpperCase();
+      const optionKeys = ['A', 'B', 'C', 'D'];
+      const options = rawOptions.slice(0, 4).map((o: any, optionIndex: number) => {
+        const optionKey = String(o?.option_key || o?.key || o?.label || optionKeys[optionIndex] || '').trim().toUpperCase();
+        const rawCorrect = o?.is_correct ?? o?.correct ?? o?.isCorrect;
+        let isCorrect = typeof rawCorrect === 'boolean' ? rawCorrect : false;
+        if (kind === 'tn' && typeof rawCorrect !== 'boolean' && declaredUpper) isCorrect = optionKey === declaredUpper;
+        if (kind === 'ds' && typeof rawCorrect !== 'boolean') {
+          const marker = String(rawCorrect ?? o?.answer ?? '').trim().toLowerCase();
+          if (['đ', 'd', 'true', 't', 'đúng', 'dung'].includes(marker)) isCorrect = true;
+          if (['s', 'false', 'f', 'sai'].includes(marker)) isCorrect = false;
+        }
+        return {
+          option_key: optionKey || optionKeys[optionIndex],
+          content_vi: String(o?.content_vi || o?.content || o?.text_vi || o?.text || '').trim(),
+          content_en: String(o?.content_en || o?.text_en || '').trim(),
+          is_correct: isCorrect,
+        };
+      });
+
+      if (kind === 'tn' && options.length === 4) {
+        const correctCount = options.filter((o) => o.is_correct).length;
+        if (correctCount !== 1 && optionKeys.includes(declaredUpper)) {
+          options.forEach((o) => { o.is_correct = o.option_key === declaredUpper; });
+        }
+      }
+
+      const validMcq = kind !== 'tn' || (options.length === 4 && options.filter((o) => o.is_correct).length === 1 && options.every((o) => o.content_vi || o.content_en));
+      const validTrueFalse = kind !== 'ds' || (options.length === 4 && options.every((o) => o.content_vi || o.content_en));
+      const inLessonScope = isQuestionCompatibleWithTopic(activeLesson.topic_id, `${questionText} ${q?.solution_vi || q?.solution || ''}`);
+      const structureKey = `${plan.mathType.id}|${kind}|${getQuestionStructureSignature(questionVi || questionEn)}`;
+
+      if (!validMcq || !validTrueFalse || !inLessonScope || seenStructures.has(structureKey) || variantCount >= maxVariantUse) {
         rejected += 1;
         return;
       }
 
       seenStructures.add(structureKey);
-      if (q?.variant_tag) variantUseCount.set(variantKey, variantCount + 1);
+      if (variantTag) variantUseCount.set(variantKey, variantCount + 1);
       counts[kind] += 1;
       acceptedCounts.set(plan.mathType.id, counts);
 
       const correctAnswer = kind === 'tn'
-        ? (options.find((o: any) => o?.is_correct)?.option_key || q?.correct_answer || '')
+        ? (options.find((o) => o.is_correct)?.option_key || declaredCorrect)
         : kind === 'ds'
-          ? (q?.correct_answer || options.map((o: any) => `${o.option_key}-${o.is_correct ? 'Đ' : 'S'}`).join(', '))
-          : (q?.correct_answer || '');
+          ? (declaredCorrect || options.map((o) => `${o.option_key}-${o.is_correct ? 'Đ' : 'S'}`).join(', '))
+          : declaredCorrect;
 
       accepted.push({
-        id: `q-ai-auto-${activeLesson.id}-${plan.mathType.id}-${formatType}-${Date.now()}-${index}`,
+        id: `q-ai-auto-${activeLesson.id}-${plan.mathType.id}-${formatType}-${Date.now()}-${index}-${Math.random().toString(36).slice(2, 6)}`,
         topic_id: activeLesson.topic_id,
         type_id: plan.mathType.id,
-        variant_tag: q?.variant_tag,
+        variant_tag: variantTag || undefined,
         question_type: kind === 'ds' ? 'TRUE_FALSE' : kind === 'tln' ? 'SHORT' : kind === 'tl' ? 'ESSAY' : 'MCQ',
         format_type: formatType,
         difficulty: q?.difficulty || 'MEDIUM',
         language_level: 2,
-        question_vi: q?.question_vi || '',
-        question_en: q?.question_en || '',
-        options,
-        solution_vi: q?.solution_vi || 'Lời giải chi tiết',
-        solution_en: q?.solution_en || 'Detailed solution',
+        question_vi: questionVi || questionEn,
+        question_en: questionEn,
+        options: kind === 'tn' || kind === 'ds' ? options : undefined,
+        solution_vi: String(q?.solution_vi || q?.solution || 'Lời giải chi tiết').trim(),
+        solution_en: String(q?.solution_en || 'Detailed solution').trim(),
         correct_answer: correctAnswer,
         math_skill: plan.mathType.title_vi,
         english_skill: plan.mathType.title_en,
@@ -645,99 +739,140 @@ export const BilingualLessonModule: React.FC = () => {
   };
 
   const generateQuestionsForPlans = async (
-    shortagePlans: Array<{ mathType: MathType; requested: QuestionCounts; current: QuestionCounts; missing: QuestionCounts }>,
+    plansWithShortage: Array<{ mathType: MathType; requested: QuestionCounts; current: QuestionCounts; missing: QuestionCounts }>,
     source: 'auto' | 'manual' = 'auto'
   ) => {
-    if (!activeLesson || shortagePlans.length === 0) return;
+    if (!activeLesson || plansWithShortage.length === 0) return;
     if (!hasApiKey()) {
-      if (source === 'manual') showNotification('⚠️ Chưa có Gemini API key. Hãy cấu hình API key để tự sinh câu cho các dạng chưa có ngân hàng.');
+      const msg = '⚠️ Chưa có Gemini API key. Hãy cấu hình API key rồi thử lại.';
+      setQuestionGenerationMessage(msg);
+      if (source === 'manual') showNotification(msg);
       return;
     }
 
     const activeChap = chapters.find((c) => c.id === activeLesson.chapter_id);
     const chapterName = activeChap?.name_vi || `Toán ${selectedGrade}`;
     setIsAutoGeneratingQuestions(true);
-    if (source === 'manual') showNotification('🤖 AI đang sinh đúng số câu theo từng dạng thức đã chọn...');
+    setQuestionGenerationMessage('🤖 Đang gọi Gemini và sinh từng dạng thức TN / Đ-S / TLN / TL...');
+    if (source === 'manual') showNotification('🤖 AI đang sinh từng nhóm câu còn thiếu...');
 
     try {
       const questionsToSave: Question[] = [];
       const typeIdsToReplace: string[] = [];
       let generatedAcceptedTotal = 0;
       let totalRejected = 0;
+      let totalRaw = 0;
+      let lastAiError = '';
 
-      // Generate one math type at a time. A default type needs only 9 questions, which is much
-      // more reliable than asking Gemini for 40-50 questions when the teacher selects 5 types at once.
-      for (const shortage of shortagePlans) {
-        const plan = { mathType: shortage.mathType, requested: shortage.missing };
-        const combinedRawQuestions: any[] = [];
-        let bestAccepted: Question[] = [];
-        let typeRejected = 0;
+      // Generate each type AND each assessment format separately. This dramatically reduces
+      // truncated JSON and gives the model one unambiguous output contract at a time.
+      for (const shortage of plansWithShortage) {
+        const generatedForType: Question[] = [];
+        const formatJobs: Array<{ kind: keyof QuestionCounts; label: string }> = [
+          { kind: 'tn', label: 'TN' },
+          { kind: 'ds', label: 'Đ/S' },
+          { kind: 'tln', label: 'TLN' },
+          { kind: 'tl', label: 'TL' },
+        ];
 
-        for (let attempt = 0; attempt < 2; attempt += 1) {
-          const aiResult = await generateWorksheetQuestionsByPlanAi(
-            activeLesson.title_vi,
-            chapterName,
-            selectedGrade,
-            [{
-              id: plan.mathType.id,
-              code: plan.mathType.code,
-              title_vi: plan.mathType.title_vi,
-              title_en: plan.mathType.title_en,
-              ...plan.requested,
-            }],
-            { key_concepts_vi: activeLesson.key_concepts_vi, formulas: activeLesson.formulas || [] }
-          );
-          if (!aiResult.success || !aiResult.content) continue;
-          const jsonMatch = aiResult.content.match(/\{[\s\S]*\}/);
-          if (!jsonMatch) continue;
-          const parsed = JSON.parse(jsonMatch[0]);
-          combinedRawQuestions.push(...(Array.isArray(parsed?.questions) ? parsed.questions : []));
-          const normalized = normalizeAiQuestionsForPlans(combinedRawQuestions, [plan]);
-          typeRejected = normalized.rejected;
-          bestAccepted = normalized.accepted;
+        for (const job of formatJobs) {
+          const required = shortage.missing[job.kind];
+          if (required <= 0) continue;
 
-          const got = countQuestionsByFormat(bestAccepted);
-          const exact = (['tn', 'ds', 'tln', 'tl'] as const).every((kind) => got[kind] >= plan.requested[kind]);
-          if (exact) break;
+          const fullQuota: QuestionCounts = { tn: 0, ds: 0, tln: 0, tl: 0 };
+          fullQuota[job.kind] = required;
+          const rawPool: any[] = [];
+          let acceptedForKind: Question[] = [];
+
+          for (let attempt = 0; attempt < 3 && acceptedForKind.length < required; attempt += 1) {
+            const remaining = required - acceptedForKind.length;
+            const requestNow: QuestionCounts = { tn: 0, ds: 0, tln: 0, tl: 0 };
+            requestNow[job.kind] = remaining;
+
+            const aiResult = await generateWorksheetQuestionsByPlanAi(
+              activeLesson.title_vi,
+              chapterName,
+              selectedGrade,
+              [{
+                id: shortage.mathType.id,
+                code: shortage.mathType.code,
+                title_vi: shortage.mathType.title_vi,
+                title_en: shortage.mathType.title_en,
+                ...requestNow,
+              }],
+              { key_concepts_vi: activeLesson.key_concepts_vi, formulas: activeLesson.formulas || [] }
+            );
+
+            if (!aiResult.success || !aiResult.content) {
+              lastAiError = aiResult.rawError || aiResult.error || 'Gemini không trả dữ liệu.';
+              continue;
+            }
+
+            const parsed = parseAiJsonObject(aiResult.content);
+            if (!parsed || !Array.isArray(parsed.questions)) {
+              lastAiError = `Gemini trả dữ liệu ${job.label} nhưng JSON không đọc được.`;
+              continue;
+            }
+
+            totalRaw += parsed.questions.length;
+            rawPool.push(...parsed.questions);
+            const normalized = normalizeAiQuestionsForPlans(rawPool, [{ mathType: shortage.mathType, requested: fullQuota }]);
+            totalRejected += normalized.rejected;
+            acceptedForKind = normalized.accepted.filter((q) => bucketQuestion(q) === job.kind).slice(0, required);
+          }
+
+          generatedForType.push(...acceptedForKind);
         }
 
-        totalRejected += typeRejected;
-
-        if (bestAccepted.length > 0) {
-          // Preserve previous exact-type custom questions as a safety net; the API keeps canonical
-          // built-ins automatically. Display-time dedupe/quotas still guarantee exact output counts.
-          const canonicalIds = new Set(getQuestionsForMathTypeStructured(plan.mathType.id, activeLesson.topic_id).all.map((q) => q.id));
+        if (generatedForType.length > 0) {
+          const canonicalIds = new Set(getQuestionsForMathTypeStructured(shortage.mathType.id, activeLesson.topic_id).all.map((q) => q.id));
           const previousCustom = allQuestions.filter(
-            (q) => q.type_id === plan.mathType.id && !canonicalIds.has(q.id) &&
+            (q) => q.type_id === shortage.mathType.id && !canonicalIds.has(q.id) &&
               isQuestionCompatibleWithTopic(activeLesson.topic_id, `${q.question_vi} ${q.solution_vi || ''}`)
           );
-          questionsToSave.push(...previousCustom, ...bestAccepted);
-          typeIdsToReplace.push(plan.mathType.id);
-          generatedAcceptedTotal += bestAccepted.length;
+          questionsToSave.push(...previousCustom, ...generatedForType);
+          typeIdsToReplace.push(shortage.mathType.id);
+          generatedAcceptedTotal += generatedForType.length;
         }
       }
 
       if (questionsToSave.length > 0) {
-        await apiFetch('/api/questions/replace-types', {
+        const saveResult = await apiFetch<{ success?: boolean; count?: number; questions?: Question[] }>('/api/questions/replace-types', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ type_ids: typeIdsToReplace, questions: questionsToSave }),
+          body: JSON.stringify({ type_ids: Array.from(new Set(typeIdsToReplace)), questions: questionsToSave }),
         });
-        const refreshed = await apiFetch<Question[]>('/api/questions');
-        setAllQuestions(refreshed || []);
 
-        const requestedTotal = shortagePlans.reduce((sum, p) => sum + p.missing.tn + p.missing.ds + p.missing.tln + p.missing.tl, 0);
-        showNotification(
-          generatedAcceptedTotal >= requestedTotal
-            ? `✅ Đã sinh đủ ${requestedTotal} câu còn thiếu theo đúng TN / Đ-S / TLN / TL.`
-            : `✅ Đã bổ sung ${generatedAcceptedTotal} câu đúng type${totalRejected ? `; loại các câu AI sai cấu trúc` : ''}. Hệ thống sẽ tiếp tục kiểm tra số lượng hiển thị.`
-        );
-      } else if (source === 'manual') {
-        showNotification('⚠️ AI chưa trả về câu hỏi hợp lệ. Hệ thống không lấy câu từ dạng khác để bù.');
+        // Refresh from the actual persistence layer. If a deployment returns an unexpected
+        // payload, immediately merge the saved response so the worksheet still updates now.
+        const refreshed = await apiFetch<Question[]>('/api/questions');
+        if (Array.isArray(refreshed)) {
+          setAllQuestions(refreshed);
+        } else if (Array.isArray(saveResult?.questions)) {
+          const replaceIds = new Set(typeIdsToReplace);
+          setAllQuestions((prev) => [
+            ...prev.filter((q) => !q.type_id || !replaceIds.has(q.type_id)),
+            ...(saveResult.questions || []),
+          ]);
+        }
+
+        const requestedTotal = plansWithShortage.reduce((sum, p) => sum + p.missing.tn + p.missing.ds + p.missing.tln + p.missing.tl, 0);
+        const msg = generatedAcceptedTotal >= requestedTotal
+          ? `✅ Đã sinh đủ ${requestedTotal}/${requestedTotal} câu còn thiếu và đưa vào phiếu.`
+          : `🟡 Gemini trả ${totalRaw} câu, hệ thống nhận ${generatedAcceptedTotal}/${requestedTotal} câu hợp lệ. Bấm “Sinh đủ câu” lần nữa để bù phần còn thiếu.`;
+        setQuestionGenerationMessage(msg);
+        showNotification(msg);
+      } else {
+        const detail = lastAiError ? ` Chi tiết: ${lastAiError}` : '';
+        const msg = `⚠️ Gemini chưa tạo được câu hợp lệ.${detail}`;
+        setQuestionGenerationMessage(msg);
+        if (source === 'manual') showNotification(msg);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Auto question generation failed:', error);
-      if (source === 'manual') showNotification('⚠️ Không thể sinh câu hỏi lúc này. Vui lòng kiểm tra API key/kết nối Gemini.');
+      const msg = `⚠️ Sinh câu thất bại: ${error?.message || 'Lỗi không xác định'}`;
+      setQuestionGenerationMessage(msg);
+      if (source === 'manual') showNotification(msg);
     } finally {
       setIsAutoGeneratingQuestions(false);
     }
@@ -1374,6 +1509,11 @@ export const BilingualLessonModule: React.FC = () => {
                               ? 'Thầy/Cô tích chọn ít nhất một Dạng toán ở cây chương trình. Khi chọn, hệ thống sẽ kiểm tra và tự sinh câu đúng type_id.'
                               : 'Hệ thống không lấy câu của dạng/chương khác để bù. Số lượng sẽ bám đúng 4 ô TN / Đ-S / TLN / TL ở cột bên phải.'}
                           </p>
+                          {questionGenerationMessage && selectedTypeIds.length > 0 && (
+                            <p className="text-[11px] text-violet-700 max-w-xl mx-auto leading-relaxed font-semibold">
+                              {questionGenerationMessage}
+                            </p>
+                          )}
                           {selectedTypeIds.length > 0 && (
                             <div className="pt-2">
                               <button
@@ -1398,6 +1538,9 @@ export const BilingualLessonModule: React.FC = () => {
                                 <p className="text-amber-800 mt-0.5">
                                   Thiếu {shortagePlans.reduce((sum, p) => sum + p.missing.tn + p.missing.ds + p.missing.tln + p.missing.tl, 0)} câu; hệ thống không dùng câu của dạng khác để bù.
                                 </p>
+                                {questionGenerationMessage && (
+                                  <p className="text-violet-700 mt-1 font-semibold">{questionGenerationMessage}</p>
+                                )}
                               </div>
                               <button
                                 onClick={() => void generateQuestionsForPlans(shortagePlans, 'manual')}

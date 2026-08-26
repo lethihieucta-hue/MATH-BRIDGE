@@ -104,7 +104,7 @@ async function callGeminiApi(
   apiKey: string,
   prompt: string,
   systemInstruction?: string,
-  generationOptions?: { maxOutputTokens?: number; temperature?: number }
+  generationOptions?: { maxOutputTokens?: number; temperature?: number; responseMimeType?: string }
 ): Promise<string> {
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
@@ -121,6 +121,7 @@ async function callGeminiApi(
       temperature: generationOptions?.temperature ?? 0.3,
       topP: 0.95,
       maxOutputTokens: generationOptions?.maxOutputTokens ?? 8192,
+      ...(generationOptions?.responseMimeType ? { responseMimeType: generationOptions.responseMimeType } : {}),
     },
   };
 
@@ -207,6 +208,7 @@ export async function executeWithFallback(
     onModelAttempt?: (model: GeminiModelId, attemptIndex: number) => void;
     maxOutputTokens?: number;
     temperature?: number;
+    responseMimeType?: string;
   }
 ): Promise<StepExecutionResult> {
   const apiKey = getStoredApiKey();
@@ -244,6 +246,7 @@ export async function executeWithFallback(
         {
           maxOutputTokens: options?.maxOutputTokens,
           temperature: options?.temperature,
+          responseMimeType: options?.responseMimeType,
         }
       );
 
@@ -567,7 +570,8 @@ SCHEMA:
   return executeWithFallback(prompt, {
     systemInstruction: MATH_SYSTEM_INSTRUCTION,
     maxOutputTokens: Math.min(32768, Math.max(8192, grandTotal * 900)),
-    temperature: 0.45,
+    temperature: 0.35,
+    responseMimeType: 'application/json',
   });
 }
 

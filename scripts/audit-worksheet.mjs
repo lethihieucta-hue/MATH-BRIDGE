@@ -20,7 +20,11 @@ const requiredSnippets = [
   'const shortagePlans = getShortagePlans()',
   "void generateQuestionsForPlans(shortagePlans, 'auto')",
   'return takeQuestionsForType(typeId, requested)',
-  'requested: shortage.missing',
+  "const formatJobs: Array<{ kind: keyof QuestionCounts; label: string }>",
+  "fullQuota[job.kind] = required",
+  "requestNow[job.kind] = remaining",
+  "parseAiJsonObject(aiResult.content)",
+  "setQuestionGenerationMessage",
   'Sinh đủ câu theo số lượng đã chọn',
 ];
 for (const snippet of requiredSnippets) {
@@ -29,6 +33,7 @@ for (const snippet of requiredSnippets) {
 if (componentSrc.includes('{ tn: 2, ds: 1, tln: 1, tl: 1 }')) issues.push('Legacy 2/1/1/1 default still present');
 if (!geminiSrc.includes('SỐ LƯỢNG BẮT BUỘC - PHẢI KHỚP CHÍNH XÁC')) issues.push('Gemini exact-count instruction missing');
 if (!geminiSrc.includes('generateWorksheetQuestionsByPlanAi')) issues.push('Targeted question generator missing');
+if (!geminiSrc.includes("responseMimeType: 'application/json'")) issues.push('Gemini JSON response mode missing');
 
 if (issues.length) {
   console.error('❌ WORKSHEET AUDIT FAILED');
@@ -40,5 +45,7 @@ console.log('✅ 79/79 bài có công thức trọng tâm');
 console.log('✅ Mặc định thống nhất 4 TN + 2 Đ/S + 2 TLN + 1 TL');
 console.log('✅ Số câu hiển thị lấy trực tiếp từ 4 ô cấu hình của từng type_id');
 console.log('✅ Thiếu câu sẽ tự sinh theo đúng type_id + đúng format, không lấy dạng khác bù');
-console.log('✅ AI chỉ sinh phần còn thiếu và có nút Sinh đủ câu để thử lại thủ công');
+console.log('✅ AI sinh tách riêng từng type_id × TN/Đ-S/TLN/TL, retry tối đa 3 lần mỗi nhóm');
+console.log('✅ Kết quả AI được chuẩn hoá type_id / format_type / variant_tag thay vì loại oan');
+console.log('✅ Có chẩn đoán số câu Gemini trả về, số câu được nhận và lỗi API cụ thể');
 console.log('🎯 WORKSHEET AUDIT PASSED');
