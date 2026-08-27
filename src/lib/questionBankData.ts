@@ -1,6 +1,8 @@
 import { Question, WorkedExample } from '../types';
 import { ALL_CURRENT_TYPE_IDS, LEGACY_TYPE_MIGRATION, TYPE_LESSON_BY_ID, migrateQuestionToCurrentCurriculum } from './curriculumData';
 import { STATIC_QUESTION_BANK } from './staticQuestionBank';
+import { REAL_SOURCE_QUESTION_BANK } from './realSourceQuestionBank';
+import { SOURCE_SUPPLEMENT_QUESTION_BANK } from './sourceSupplementQuestionBank';
 
 // =========================================================================
 // BỘ BÀI TẬP MẪU CÓ LỜI GIẢI CHI TIẾT THEO TỪNG BÀI HỌC (WORKED EXAMPLES)
@@ -1300,9 +1302,143 @@ const MIGRATED_LEGACY_QUESTION_BANK: Question[] = LEGACY_QUESTION_BANK
   .map((q) => migrateQuestionToCurrentCurriculum(q))
   .filter((q) => !q.type_id || ALL_CURRENT_TYPE_IDS.has(q.type_id));
 
+// Loại các câu thuần ghi nhớ định nghĩa/phương pháp. Người dùng muốn ngân hàng thiên về
+// tính toán, suy luận, vận dụng và tình huống thực tế theo định hướng đánh giá hiện hành.
+export function isPureTheoryRecallQuestion(q: Question): boolean {
+  const text = (q.question_vi || q.question_en || '')
+    .toLowerCase()
+    .normalize('NFC')
+    .replace(/\s+/g, ' ')
+    .trim();
+  if (!text) return true;
+  const patterns = [
+    /theo\s+định\s+nghĩa/i,
+    /định\s+nghĩa(?:\s+.*?)?\s+là/i,
+    /khái\s+niệm(?:\s+.*?)?\s+là/i,
+    /được\s+gọi\s+là.*khi/i,
+    /phát\s+biểu\s+nào.*(?:đúng|sai|định\s+nghĩa)/i,
+    /công\s+thức\s+nào\s+sau\s+đây/i,
+    /tính\s+chất\s+nào\s+sau\s+đây/i,
+    /phương\s+pháp\s+nào\s+(?:phù\s+hợp|đúng|nên\s+dùng)/i,
+    /bước\s+nào\s+(?:cần|nên).*trước/i,
+    /lựa\s+chọn\s+(?:nào\s+)?thuận\s+lợi/i,
+    /nhận\s+định\s+nào\s+mô\s+tả\s+đúng\s+cách/i,
+    /một\s+mặt\s+phẳng\s+hoàn\s+toàn\s+được\s+xác\s+định\s+nếu\s+biết/i,
+    /(?:lăng\s+trụ|hình\s+chóp|tứ\s+diện)[^.]{0,50}có\s+bao\s+nhiêu\s+(?:mặt|đỉnh|cạnh)/i,
+    /qua\s+phép\s+chiếu\s+song\s+song[^.]{0,60}tính\s+chất\s+nào/i,
+    /^trong\s+các\s+(?:mệnh\s+đề|khẳng\s+định|tính\s+chất)\s+sau[^?]{0,80}(?:đúng|sai)\??$/i,
+  ];
+  return patterns.some((re) => re.test(text));
+}
+
+/**
+ * Câu nhập từ PDF/DOCX chỉ được ưu tiên khi phần đề còn đủ dữ kiện sau trích xuất.
+ * Một số tài liệu dùng MathType/WMF hoặc bảng/hình; khi chuyển text công thức có thể biến mất.
+ * Các dấu hiệu dưới đây là fail-closed: thà dùng câu nền đúng type_id còn hơn đưa ra câu nguồn bị khuyết.
+ */
+export function isSourceQuestionStructurallyComplete(q: Question): boolean {
+  const isImported = q.created_by?.startsWith('source-') || !!q.source_name;
+  if (!isImported) return true;
+
+  const stem = (q.question_vi || '').replace(/\s+/g, ' ').trim();
+  const optionText = (q.options || []).map((o) => o.content_vi || '').join(' ');
+  const combined = `${stem} ${optionText}`.replace(/\s+/g, ' ').trim();
+  if (!stem || stem.length < 12) return false;
+
+  // Công thức/đối tượng toán đã rơi khỏi câu khi trích PDF.
+  const missingMathPatterns = [
+    /(?:phương trình|bất phương trình|hàm số|biểu thức)[^.]{0,70}[:：]\s*[.](?:\s|$)/i,
+    /(?:cho|xét)\s+(?:phương trình|bất phương trình|hàm số)[^.]{0,70}\s*[.](?:\s|$)/i,
+    /cho\s+(?:các?\s+|hai\s+)?tập\s+hợp[^.]{0,90}\s[.,](?:\s|$)/i,
+    /sao\s+cho\s+(?:là|không\s+là)\s+nghiệm/i,
+    /(?:cặp\s+số|điểm|vectơ)\s+(?:không\s+)?(?:là|thuộc)\s+(?:nghiệm|miền)/i,
+    /hai\s+tập\s+hợp[^.]{0,80}\bvà\s*,/i,
+    /(?:có|thỏa\s+mãn|thoả\s+mãn)\s*[.](?:\s|$)/i,
+    /:\s*=\s*=/i,
+    /(?:đường\s+thẳng|duong\s+thang|\bd\b|Δ)[^:]{0,30}:\s*=\s*=/i,
+  ];
+  if (missingMathPatterns.some((re) => re.test(stem))) return false;
+
+  // Question model hiện chưa lưu ảnh/bảng nguồn; câu phụ thuộc hình/bảng bị mất phải loại.
+  const visualPatterns = [
+    /(?:hình|đồ\s*thị|bảng\s*biến\s*thiên|bảng\s*số\s*liệu)\s+(?:bên|dưới|sau|trên)/i,
+    /(?:quan\s*sát|dựa\s+vào)\s+(?:hình|đồ\s*thị|bảng)/i,
+    /kết\s+quả\s+(?:thu\s+được\s+)?như\s+sau\s*[:：]?/i,
+  ];
+  const numericTokens = combined.match(/[-+]?\d+(?:[.,]\d+)?/g) || [];
+  // Trả lời ngắn trong bộ nguồn phải còn ít nhất một dữ kiện số hoặc biểu thức rõ ràng;
+  // nếu không, MathType/bảng nguồn rất có thể đã rơi khỏi câu khi trích PDF.
+  if ((q.format_type === 'TLN' || q.question_type === 'SHORT' || q.question_type === 'NUMERIC')
+      && numericTokens.length < 1 && !/[=<>≤≥]/.test(stem)) return false;
+  if (visualPatterns.some((re) => re.test(stem)) && numericTokens.length < 4) return false;
+  if (/(?:mẫu|dãy)\s+số\s+liệu[^.]{0,80}(?:trên|sau)/i.test(stem) && numericTokens.length < 4) return false;
+
+  // Các mảnh câu kiểu “là nghiệm ...” nhưng đối tượng đứng trước đã mất hoàn toàn.
+  if (/^\s*(?:là|không\s+là)\s+nghiệm/i.test(optionText) && numericTokens.length < 2) return false;
+
+  return true;
+}
+
+function normalizeImportedGlyphs(value?: string): string {
+  if (!value) return '';
+  const replacements: Array<[string, string]> = [
+    ['', '′'], ['', '∈'], ['', '∉'], ['', '<'], ['', '>'], ['', '≤'], ['', '≥'],
+    ['', '≠'], ['', '⇒'], ['', '⇔'], ['', '∩'], ['', '∪'], ['', '⊂'],
+    ['', 'α'], ['', 'β'], ['', 'Δ'], ['', 'π'], ['', '∞'], ['', '±'],
+    ['', ''], ['', ''], ['', ''], ['', ''], ['', '{'], ['', '}'],
+  ];
+  let out = value;
+  for (const [from, to] of replacements) out = out.split(from).join(to);
+  return out.replace(/[ \t]+/g, ' ').replace(/\n[ \t]+/g, '\n').trim();
+}
+
+function sanitizeImportedQuestion(q: Question): Question {
+  const imported = q.created_by?.startsWith('source-') || !!q.source_name;
+  if (!imported) return q;
+  return {
+    ...q,
+    question_vi: normalizeImportedGlyphs(q.question_vi),
+    solution_vi: normalizeImportedGlyphs(q.solution_vi),
+    correct_answer: normalizeImportedGlyphs(q.correct_answer),
+    options: q.options?.map((o) => ({
+      ...o,
+      content_vi: normalizeImportedGlyphs(o.content_vi),
+      content_en: normalizeImportedGlyphs(o.content_en),
+    })),
+  };
+}
+
 // Static bank is the baseline for every worksheet: 4 TN + 2 Đ/S + 2 TLN + 1 TL per type_id.
-// Legacy authored questions are kept as additional examples, but the worksheet never depends on Gemini.
-export const FULL_QUESTION_BANK: Question[] = [...STATIC_QUESTION_BANK, ...MIGRATED_LEGACY_QUESTION_BANK];
+// Nguồn GV sạch được xếp trước; nếu câu nguồn hỏng dữ kiện hoặc nặng lý thuyết thì tự loại.
+const RAW_FULL_QUESTION_BANK: Question[] = [...SOURCE_SUPPLEMENT_QUESTION_BANK, ...REAL_SOURCE_QUESTION_BANK, ...STATIC_QUESTION_BANK, ...MIGRATED_LEGACY_QUESTION_BANK].map(sanitizeImportedQuestion);
+export const FULL_QUESTION_BANK: Question[] = RAW_FULL_QUESTION_BANK.filter(
+  (q) => isSourceQuestionStructurallyComplete(q) && !isPureTheoryRecallQuestion(q)
+);
+
+/** Return true only when a question can be graded safely by OnlineExamRoom. */
+export function isQuestionAutoGradable(q: Question): boolean {
+  if (q.grading_safe === false) return false;
+  if (q.format_type === 'TN' || q.question_type === 'MCQ') {
+    const answer = (q.correct_answer || '').trim().toUpperCase();
+    if (!['A','B','C','D'].includes(answer) || !q.options || q.options.length !== 4) return false;
+    const correct = q.options.filter((o) => o.is_correct);
+    return correct.length === 1 && correct[0].option_key.toUpperCase() === answer;
+  }
+  if (q.format_type === 'DS' || q.question_type === 'TRUE_FALSE') {
+    if (!q.options || q.options.length !== 4) return false;
+    // Imported questions marked unsafe are rejected above. Static/authored DS items carry
+    // a boolean key on each statement and are safe even if correct_answer is formatted differently.
+    return q.options.every((o) => typeof o.is_correct === 'boolean');
+  }
+  if (q.format_type === 'TLN' || q.question_type === 'SHORT' || q.question_type === 'NUMERIC') {
+    const ans=(q.correct_answer || '').trim();
+    if (!ans || /xem\s+lời\s+giải|xem\s+loi\s+giai/i.test(ans)) return false;
+    return ans.length <= 80;
+  }
+  return false;
+}
+
+export const ONLINE_SAFE_QUESTION_BANK: Question[] = FULL_QUESTION_BANK.filter(isQuestionAutoGradable);
 
 // =========================================================================
 // EXACT-TYPE QUESTION ROUTING & QUALITY GUARDRAILS (GDPT 2018)

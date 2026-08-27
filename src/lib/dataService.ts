@@ -379,6 +379,22 @@ export async function apiFetch<T = any>(endpoint: string, options?: RequestInit)
     return db.questions as any;
   }
 
+  if (path === '/api/online-exams') {
+    const localDb = db as any;
+    localDb.online_exams = localDb.online_exams || [];
+    if (options?.method === 'POST') {
+      const body = JSON.parse(options.body as string);
+      const id = body.id || `exam-${Date.now()}`;
+      const exam = { ...body, id, created_at: body.created_at || new Date().toISOString() };
+      const idx = localDb.online_exams.findIndex((item: any) => item.id === id);
+      if (idx >= 0) localDb.online_exams[idx] = exam;
+      else localDb.online_exams.push(exam);
+      saveLocalDb(db);
+      return { success: true, exam } as any;
+    }
+    return localDb.online_exams as any;
+  }
+
   if (path === '/api/tests') {
     if (options?.method === 'POST') {
       const body = JSON.parse(options.body as string);

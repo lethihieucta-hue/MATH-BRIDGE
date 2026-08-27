@@ -2,8 +2,8 @@ import React, { useState, useRef } from 'react';
 import { useAppStore } from '../../lib/store';
 import { Question } from '../../types';
 import { MathRenderer } from '../math/MathRenderer';
-import { hasApiKey, generateExamTestFromDescriptionAi } from '../../lib/geminiService';
-import { FULL_QUESTION_BANK } from '../../lib/questionBankData';
+import { ONLINE_SAFE_QUESTION_BANK } from '../../lib/questionBankData';
+import { apiFetch } from '../../lib/dataService';
 import { FULL_LESSONS } from '../../lib/curriculumData';
 import { OnlineExamRoom, OnlineExamData } from '../online_exam/OnlineExamRoom';
 import {
@@ -163,17 +163,73 @@ export const TestBuilder: React.FC = () => {
           .filter((item) => item.score >= threshold)
           .flatMap((item) => (item.lesson.types || []).map((type) => type.id))
       );
-      return FULL_QUESTION_BANK.filter((q) => !!q.type_id && allowedTypeIds.has(q.type_id));
+      return ONLINE_SAFE_QUESTION_BANK.filter((q) => !!q.type_id && allowedTypeIds.has(q.type_id));
     }
 
     // A truly generic request such as "đề Toán lớp 11" may use any question from that grade.
     // It is the only case where grade-wide fallback is allowed.
-    return FULL_QUESTION_BANK.filter((q) => q.topic_id?.startsWith(`top-${grade}-`));
+    return ONLINE_SAFE_QUESTION_BANK.filter((q) => q.topic_id?.startsWith(`top-${grade}-`));
+  };
+
+  const parseFormatCounts = (prompt: string, total: number) => {
+    const p = normalizeSearchText(prompt)
+      .replace(/d\s*\/\s*s/g, ' ds ')
+      .replace(/\bd\s+s\b/g, ' ds ')
+      .replace(/dung\s*sai/g, ' ds ')
+      .replace(/tra\s*loi\s*ngan/g, ' tln ')
+      .replace(/trac\s*nghiem/g, ' tn ');
+    const read = (keys: string[]) => {
+      for (const key of keys) {
+        const m = p.match(new RegExp(`(\\d+)\\s*(?:cau\\s*)?${key}\\b`, 'i')) || p.match(new RegExp(`${key}\\s*(\\d+)\\b`, 'i'));
+        if (m) return Math.max(0, Number(m[1]));
+      }
+      return 0;
+    };
+    let tn = read(['tn']);
+    let ds = read(['ds']);
+    let tln = read(['tln']);
+    const explicit = tn + ds + tln > 0;
+    if (!explicit) {
+      tn = Math.max(1, Math.round(total * 0.6));
+      ds = Math.max(0, Math.round(total * 0.2));
+      tln = Math.max(0, total - tn - ds);
+    } else {
+      const used = tn + ds + tln;
+      if (used < total) tn += total - used;
+    }
+    return { tn, ds, tln, total: tn + ds + tln };
+  };
+
+  const pickDiverse = (items: Question[], format: 'TN' | 'DS' | 'TLN', count: number): Question[] => {
+    if (count <= 0) return [];
+    const matches = items.filter((q) => {
+      if (format === 'TN') return q.format_type === 'TN' || q.question_type === 'MCQ';
+      if (format === 'DS') return q.format_type === 'DS' || q.question_type === 'TRUE_FALSE';
+      return q.format_type === 'TLN' || q.question_type === 'SHORT' || q.question_type === 'NUMERIC';
+    });
+    const byType = new Map<string, Question[]>();
+    matches.forEach((q) => {
+      const key = q.type_id || q.topic_id || 'other';
+      const arr = byType.get(key) || [];
+      arr.push(q);
+      byType.set(key, arr);
+    });
+    const groups = Array.from(byType.values());
+    const selected: Question[] = [];
+    let round = 0;
+    while (selected.length < count && groups.some((g) => round < g.length)) {
+      for (const group of groups) {
+        if (selected.length >= count) break;
+        if (group[round]) selected.push(group[round]);
+      }
+      round++;
+    }
+    return selected.slice(0, count);
   };
 
   // Initial generated test default state (10 questions on GTLN & GTNN)
   const [currentTest, setCurrentTest] = useState<GeneratedTestState>(() => {
-    const initialList = FULL_QUESTION_BANK.filter((q) => q.topic_id === 'top-12-1-2');
+    const initialList = ONLINE_SAFE_QUESTION_BANK.filter((q) => q.topic_id === 'top-12-1-2');
     return {
       title: `ĐỀ KIỂM TRA 15 PHÚT: GIÁ TRỊ LỚN NHẤT VÀ NHỎ NHẤT CỦA HÀM SỐ`,
       title_en: `15-MINUTE TEST: MAXIMUM AND MINIMUM VALUES OF FUNCTIONS`,
@@ -185,7 +241,7 @@ export const TestBuilder: React.FC = () => {
     };
   });
 
-  // Generate Test via AI or Question Bank Fallback
+  // Generate Test directly from the verified question bank (no Gemini by default)
   const handleGenerateTest = async () => {
     if (!promptDescription.trim()) {
       showNotification('⚠️ Vui lòng nhập mô tả yêu cầu tạo bài test');
@@ -223,62 +279,16 @@ export const TestBuilder: React.FC = () => {
       detectedRatio = 100;
     }
 
-    // Try Gemini API if key is set
-    if (hasApiKey()) {
-      showNotification('🤖 Gemini AI đang phân tích yêu cầu và soạn bài test chuẩn GDPT 2018...');
-      try {
-        const result = await generateExamTestFromDescriptionAi(promptDescription, detectedGrade);
-        if (result && result.success && result.content) {
-          const jsonMatch = result.content.match(/\{[\s\S]*\}/);
-          if (jsonMatch) {
-            const data = JSON.parse(jsonMatch[0]);
-            if (data.questions && data.questions.length > 0) {
-              const formattedQuestions: Question[] = data.questions.map((q: any, idx: number) => ({
-                id: `ai-test-q-${Date.now()}-${idx + 1}`,
-                topic_id: `top-custom-${detectedGrade}`,
-                question_type: q.question_type || 'MCQ',
-                format_type: q.format_type || 'TN',
-                difficulty: 'MEDIUM',
-                language_level: 2,
-                question_vi: q.question_vi || '',
-                question_en: q.question_en || '',
-                options: q.options || [],
-                solution_vi: q.solution_vi || 'Lời giải chi tiết',
-                solution_en: q.solution_en || 'Detailed solution',
-                correct_answer: q.correct_answer || 'A',
-                math_skill: data.test_title || 'Toán học',
-                english_skill: data.test_title_en || 'Mathematics',
-                status: 'PUBLISHED',
-                created_by: 'usr-teacher-1',
-              }));
-
-              setCurrentTest({
-                title: data.test_title || `ĐỀ KIỂM TRA ${detectedDuration} PHÚT: TOÁN LỚP ${detectedGrade}`,
-                title_en: data.test_title_en || `${detectedDuration}-MINUTE TEST: MATHEMATICS GRADE ${detectedGrade}`,
-                duration: data.duration_minutes || detectedDuration,
-                englishRatio: data.english_ratio || detectedRatio,
-                instructions_vi: data.instructions_vi || `Thời gian làm bài: ${detectedDuration} phút. Học sinh làm bài trực tiếp vào đề.`,
-                instructions_en: data.instructions_en || `Time allowed: ${detectedDuration} minutes. Write your answers directly on this paper.`,
-                questions: formattedQuestions,
-              });
-
-              showNotification(`✨ AI Gemini đã tạo thành công đề thi "${data.test_title || 'Mới'}" gồm ${formattedQuestions.length} câu!`);
-              setIsGenerating(false);
-              return;
-            }
-          }
-        }
-      } catch (err) {
-        console.warn('Gemini API failed in TestBuilder, falling back to Question Bank:', err);
-      }
-    }
-
-    // Fallback: Pick accurately filtered questions by topic from Question Bank
+    // Ngân hàng đề là nguồn chính; không gọi Gemini mặc định.
+    // Lọc đúng lớp/bài/dạng từ ngân hàng có khóa đáp án an toàn cho thi online.
     const candidateQuestions = filterQuestionsFromPrompt(promptDescription, detectedGrade);
-    
-    // Never fill a specific topic with questions from another lesson/grade just to hit a count.
-    // If the static bank is short, returning fewer correct questions is safer than a full but wrong test.
-    const selected: Question[] = candidateQuestions.slice(0, targetCount);
+    const formatCounts = parseFormatCounts(promptDescription, targetCount);
+    targetCount = formatCounts.total;
+    const selected: Question[] = [
+      ...pickDiverse(candidateQuestions, 'TN', formatCounts.tn),
+      ...pickDiverse(candidateQuestions, 'DS', formatCounts.ds),
+      ...pickDiverse(candidateQuestions, 'TLN', formatCounts.tln),
+    ];
 
     // Extract title from prompt
     let titleVi = `ĐỀ KIỂM TRA ${detectedDuration} PHÚT: TOÁN LỚP ${detectedGrade}`;
@@ -314,8 +324,8 @@ export const TestBuilder: React.FC = () => {
     });
 
     showNotification(selected.length < targetCount
-      ? `⚠️ Ngân hàng tĩnh hiện có ${selected.length}/${targetCount} câu đúng chuyên đề. Hệ thống không chèn câu sai bài để bù số lượng.`
-      : `✨ Đã biên soạn bài test đúng chuyên đề (${selected.length} câu, ${detectedRatio}% Tiếng Anh)!`);
+      ? `⚠️ Ngân hàng đề hiện có ${selected.length}/${targetCount} câu đúng chuyên đề. Hệ thống không chèn câu sai bài để bù số lượng.`
+      : `✅ Đã tạo đề từ ngân hàng đúng chuyên đề (${selected.length} câu, ${detectedRatio}% Tiếng Anh)!`);
     setIsGenerating(false);
   };
 
@@ -325,7 +335,7 @@ export const TestBuilder: React.FC = () => {
   };
 
   // Export: Online Exam Share Link
-  const handleExportOnlineExam = () => {
+  const handleExportOnlineExam = async () => {
     const examId = `exam-${Date.now()}`;
     const examCode = `MB-${Math.floor(1000 + Math.random() * 9000)}`;
 
@@ -343,11 +353,17 @@ export const TestBuilder: React.FC = () => {
       googleSheetWebhook: googleSheetWebhook || '',
     };
 
-    // Save to localStorage so link can be opened immediately on this machine/browser
+    // Save locally for instant preview and persist through /api/tests so the shared link
+    // also works on another device/browser. The payload itself contains the canonical bank questions.
     try {
       localStorage.setItem(`mb_online_exam_${examId}`, JSON.stringify(examPayload));
     } catch (e) {
       console.warn('Failed to save online exam to localStorage:', e);
+    }
+    try {
+      await apiFetch('/api/online-exams', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(examPayload) });
+    } catch (e) {
+      console.warn('Failed to persist online exam to server; local copy is still available:', e);
     }
 
     const fullUrl = `${window.location.origin}${window.location.pathname}?onlineExamId=${examId}`;
@@ -532,7 +548,7 @@ export const TestBuilder: React.FC = () => {
       <div className="max-w-[1600px] mx-auto px-3 sm:px-6 py-6 space-y-6">
         
         {/* ========================================================================= */}
-        {/* KHUNG MÔ TẢ ĐỀ DUY NHẤT VỚI AI (Single Prompt Generator Box) */}
+        {/* KHUNG TẠO ĐỀ TỪ NGÂN HÀNG (Question Bank Generator) */}
         {/* ========================================================================= */}
         <div className="bg-white rounded-3xl p-5 sm:p-7 border border-slate-200/90 shadow-sm space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
@@ -542,7 +558,7 @@ export const TestBuilder: React.FC = () => {
               </div>
               <div>
                 <h1 className="text-lg sm:text-xl font-extrabold text-slate-900">
-                  Tạo Bài Test Tự Động Bằng AI
+                  Tạo Bài Test Từ Ngân Hàng Đề
                 </h1>
                 <p className="text-xs text-slate-500 font-medium">
                   Chỉ cần 1 khung mô tả đề bài: Nội dung kiến thức, Số lượng câu, Thời gian làm bài & Tỷ lệ % Tiếng Anh
@@ -609,12 +625,12 @@ export const TestBuilder: React.FC = () => {
                 {isGenerating ? (
                   <>
                     <Loader2 className="w-4 h-4 animate-spin text-amber-300" />
-                    <span>AI Đang Soạn Đề...</span>
+                    <span>Đang Lọc Ngân Hàng...</span>
                   </>
                 ) : (
                   <>
                     <Sparkles className="w-4 h-4 text-amber-300" />
-                    <span>AI Tạo Bài Test Ngay</span>
+                    <span>Tạo Bài Test Ngay</span>
                   </>
                 )}
               </button>

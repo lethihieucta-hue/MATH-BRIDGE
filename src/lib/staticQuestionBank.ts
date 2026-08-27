@@ -30,20 +30,6 @@ const opt = (items: Array<[string, string, boolean]>): QuestionOption[] =>
 const normalize = (s: string) => s.toLowerCase().normalize('NFC');
 const hasAny = (s: string, words: string[]) => words.some((w) => s.includes(w));
 
-const METHOD_NAMES: Record<ExerciseFamily, [string, string]> = {
-  logic: ['suy luận logic và biểu diễn tập hợp', 'logical reasoning and set representation'],
-  algebra: ['biến đổi đại số và kiểm tra điều kiện', 'algebraic transformation with condition checking'],
-  trig: ['hệ thức và công thức lượng giác', 'trigonometric identities and formulas'],
-  geometry: ['định lí hình học kết hợp tính toán', 'geometric theorems combined with computation'],
-  vector: ['quy tắc vectơ và tọa độ', 'vector rules and coordinates'],
-  stats: ['công thức thống kê và diễn giải dữ liệu', 'statistical formulas and data interpretation'],
-  probability: ['mô hình không gian mẫu và quy tắc xác suất', 'sample-space modelling and probability rules'],
-  calculus: ['công cụ giải tích phù hợp với yêu cầu', 'the appropriate calculus technique'],
-  function: ['phân tích công thức, bảng và đồ thị hàm số', 'analysis of formulas, tables and function graphs'],
-  combinatorics: ['quy tắc đếm, hoán vị, chỉnh hợp hoặc tổ hợp', 'counting rules, permutations, arrangements or combinations'],
-};
-const methodName = (family: ExerciseFamily): [string, string] => METHOD_NAMES[family];
-
 function directSample(type: MathType, family: ExerciseFamily, variant: number): Sample {
   const t = normalize(type.title_vi);
 
@@ -151,8 +137,8 @@ function directSample(type: MathType, family: ExerciseFamily, variant: number): 
         solutionVi: '$du=2x\\,dx$, nên tích phân bằng $\\int u^3du$.', solutionEn: '$du=2x\\,dx$, so the integral becomes $\\int u^3du$.', options: [['$\\int u^3du$','$\\int u^3du$',true],['$\\int 2u^3du$','$\\int 2u^3du$',false],['$\\int u^2du$','$\\int u^2du$',false],['$\\int x^3du$','$\\int x^3du$',false]],
       };
       if (hasAny(t,['từng phần'])) return {
-        vi: 'Khi tính $\\int xe^x dx$ bằng từng phần, lựa chọn thuận lợi là', en: 'For $\\int xe^x dx$ by integration by parts, a convenient choice is', answer: '$u=x,\\;dv=e^xdx$',
-        solutionVi: 'Chọn $u=x$ để đạo hàm đơn giản và $dv=e^xdx$ dễ lấy nguyên hàm.', solutionEn: 'Choose $u=x$ and $dv=e^xdx$.', options: [['$u=x,\\;dv=e^xdx$','$u=x,\\;dv=e^xdx$',true],['$u=e^x,\\;dv=x dx$','$u=e^x,\\;dv=x dx$',false],['$u=1,\\;dv=xe^xdx$','$u=1,\\;dv=xe^xdx$',false],['$u=x^2,\\;dv=e^xdx$','$u=x^2,\\;dv=e^xdx$',false]],
+        vi: 'Giá trị của $\\int_0^1 xe^x\\,dx$ bằng', en: 'The value of $\\int_0^1 xe^x\\,dx$ is', answer: '1',
+        solutionVi: 'Dùng tích phân từng phần: $\\int xe^x dx=xe^x-e^x$, thay cận $0$ và $1$ được $1$.', solutionEn: 'By integration by parts, $\\int xe^x dx=xe^x-e^x$; evaluating from $0$ to $1$ gives $1$.', options: [['1','1',true],['$e-1$','$e-1$',false],['$e$','$e$',false],['0','0',false]],
       };
       const rows = [
         ['$f(x)=3x^2-4x+2$','$x^3-2x^2+2x$'],
@@ -207,11 +193,12 @@ function directSample(type: MathType, family: ExerciseFamily, variant: number): 
         solutionVi: 'Giới hạn trái và phải đều bằng $2$, nên cần $f(1)=a=2$.', solutionEn: 'Both one-sided limits are $2$, so $a=2$.', options: [['$a=2$','$a=2$',true],['$a=1$','$a=1$',false],['$a=0$','$a=0$',false],['Mọi $a$','Any $a$',false]],
       };
     }
-    // Generic calculus fallback
+    // Generic calculus fallback: vẫn là một bài tính, không hỏi thuộc phương pháp/định nghĩa.
+    const a = [1,2,3,4][variant % 4];
     return {
-      vi: `Trong dạng “${type.title_vi}”, công cụ trọng tâm nào phù hợp nhất?`, en: `For “${type.title_en}”, which core tool is most appropriate?`, answer: 'Đạo hàm/giới hạn/tích phân phù hợp với yêu cầu',
-      solutionVi: 'Chọn đúng công cụ giải tích theo dữ kiện và đại lượng cần tìm.', solutionEn: 'Choose the calculus tool matching the data and target quantity.',
-      options: [['Công cụ giải tích phù hợp với yêu cầu','The appropriate calculus tool',true],['Chỉ dùng định lí Pythagore','Only Pythagorean theorem',false],['Chỉ dùng quy tắc cộng','Only counting addition rule',false],['Không cần điều kiện xác định','No domain conditions are needed',false]],
+      vi: `Cho $f(x)=x^3-${3*a}x$. Tính $f'(${a})$.`, en: `Given $f(x)=x^3-${3*a}x$, compute $f'(${a})$.`, answer: String(3*a*a-3*a),
+      solutionVi: `$f'(x)=3x^2-${3*a}$, nên $f'(${a})=${3*a*a-3*a}$.`, solutionEn: `Differentiate and substitute $x=${a}$.`,
+      options: [[String(3*a*a-3*a),String(3*a*a-3*a),true],[String(3*a*a),String(3*a*a),false],[String(a),String(a),false],[String(-3*a),String(-3*a),false]],
     };
   }
 
@@ -311,8 +298,8 @@ function directSample(type: MathType, family: ExerciseFamily, variant: number): 
       solutionVi: '$\\Delta=|100-98|=2$.', solutionEn: 'Absolute error is 2.', options: [['2','2',true],['98','98',false],['100','100',false],['0.02','0.02',false]],
     };
     return {
-      vi: `Trong dạng “${type.title_vi}”, thao tác nào đúng?`, en: `For “${type.title_en}”, which procedure is correct?`, answer: 'Xác định đúng đại lượng, dùng công thức thống kê tương ứng và diễn giải kết quả',
-      solutionVi: 'Cần xác định loại số đặc trưng/độ phân tán và áp dụng đúng công thức.', solutionEn: 'Identify the requested statistic and apply the matching formula.', options: [['Xác định đại lượng, tính đúng công thức và diễn giải','Identify, compute and interpret',true],['Luôn lấy giá trị lớn nhất','Always use the maximum',false],['Bỏ qua tần số','Ignore frequencies',false],['Không cần sắp xếp khi tìm trung vị','No ordering is needed for median',false]],
+      vi: 'Cho mẫu số liệu $2,3,5,6,9$. Khoảng biến thiên của mẫu bằng', en: 'For the sample $2,3,5,6,9$, find its range.', answer: '7',
+      solutionVi: '$R=9-2=7$.', solutionEn: '$R=9-2=7$.', options: [['7','7',true],['9','9',false],['5','5',false],['4','4',false]],
     };
   }
 
@@ -366,13 +353,13 @@ function directSample(type: MathType, family: ExerciseFamily, variant: number): 
       vi: 'Đỉnh của parabol $y=x^2-4x+3$ là', en: 'The vertex of $y=x^2-4x+3$ is', answer: '$(2,-1)$', solutionVi: '$x_I=-b/(2a)=2$, $y_I=-1$.', solutionEn: 'Vertex is $(2,-1)$.', options: [['$(2,-1)$','$(2,-1)$',true],['$(-2,-1)$','$(-2,-1)$',false],['$(2,1)$','$(2,1)$',false],['$(4,3)$','$(4,3)$',false]],
     };
     if (hasAny(t,['hàm số mũ'])) return {
-      vi: 'Hàm số $y=2^x$ có tính chất nào?', en: 'Which property does $y=2^x$ have?', answer: 'Đồng biến trên R', solutionVi: 'Vì cơ số $2>1$, hàm số mũ đồng biến trên $\\mathbb R$.', solutionEn: 'Because base 2 is greater than 1, the function is increasing.', options: [['Đồng biến trên $\\mathbb R$','Increasing on $\\mathbb R$',true],['Nghịch biến trên $\\mathbb R$','Decreasing on $\\mathbb R$',false],['Tập giá trị là $\\mathbb R$','Range is $\\mathbb R$',false],['Không xác định tại 0','Undefined at 0',false]],
+      vi: 'Điểm nào sau đây thuộc đồ thị hàm số $y=2^x$?', en: 'Which point lies on the graph $y=2^x$?', answer: '$(3,8)$', solutionVi: 'Với $x=3$ ta có $y=2^3=8$.', solutionEn: 'At $x=3$, $y=2^3=8$.', options: [['$(3,8)$','$(3,8)$',true],['$(2,8)$','$(2,8)$',false],['$(3,6)$','$(3,6)$',false],['$(0,0)$','$(0,0)$',false]],
     };
     if (hasAny(t,['lôgarit'])) return {
       vi: 'Tập xác định của $y=\\log_2(x-1)$ là', en: 'The domain of $y=\\log_2(x-1)$ is', answer: '$(1,+\\infty)$', solutionVi: '$x-1>0\\Leftrightarrow x>1$.', solutionEn: '$x>1$.', options: [['$(1,+\\infty)$','$(1,+\\infty)$',true],['$[1,+\\infty)$','$[1,+\\infty)$',false],['$\\mathbb R$','$\\mathbb R$',false],['$(-\\infty,1)$','$(-\\infty,1)$',false]],
     };
     return {
-      vi: `Với dạng “${type.title_vi}”, thông tin nào cần kiểm tra trước tiên?`, en: `For “${type.title_en}”, what should be checked first?`, answer: 'Tập xác định và dữ kiện của hàm số', solutionVi: 'Phân tích hàm số luôn bắt đầu từ tập xác định và dữ kiện đã cho.', solutionEn: 'Start with the domain and given function data.', options: [['Tập xác định và dữ kiện hàm số','Domain and function data',true],['Chỉ màu của đồ thị','Only graph color',false],['Bỏ qua điều kiện','Ignore conditions',false],['Luôn đặt x=0','Always set x=0',false]],
+      vi: 'Cho $f(x)=\dfrac{x+1}{x-2}$. Giá trị $f(3)$ bằng', en: 'Given $f(x)=\dfrac{x+1}{x-2}$, find $f(3)$.', answer: '4', solutionVi: '$f(3)=\dfrac{3+1}{3-2}=4$.', solutionEn: '$f(3)=4$.', options: [['4','4',true],['2','2',false],['3','3',false],['1','1',false]],
     };
   }
 
@@ -462,72 +449,39 @@ function directSample(type: MathType, family: ExerciseFamily, variant: number): 
       vi: 'Hai vectơ $\\vec a=(1,0,0)$ và $\\vec b=(0,1,0)$ tạo với nhau góc bằng', en: 'The angle between $\\vec a=(1,0,0)$ and $\\vec b=(0,1,0)$ is', answer: '$90^\\circ$', solutionVi: '$\\vec a\\cdot\\vec b=0$ nên hai vectơ vuông góc.', solutionEn: 'Dot product is zero, so the angle is 90 degrees.', options: [['$90^\\circ$','$90^\\circ$',true],['$0^\\circ$','$0^\\circ$',false],['$45^\\circ$','$45^\\circ$',false],['$180^\\circ$','$180^\\circ$',false]],
     };
     return {
-      vi: `Trong dạng “${type.title_vi}”, phương pháp phù hợp nhất là`, en: `For “${type.title_en}”, the most suitable method is`, answer: 'Dùng quan hệ hình học đúng với giả thiết, kết hợp tính toán khi cần',
-      solutionVi: 'Xác định cấu hình, quan hệ hình học chủ chốt rồi áp dụng định lí/công thức phù hợp.', solutionEn: 'Identify the configuration and apply the relevant theorem/formula.', options: [['Xác định quan hệ hình học rồi áp dụng định lí phù hợp','Identify geometry and apply the relevant theorem',true],['Luôn dùng đạo hàm','Always use derivatives',false],['Luôn dùng tổ hợp','Always use combinations',false],['Bỏ qua hình vẽ và giả thiết','Ignore the diagram and assumptions',false]],
+      vi: 'Tam giác vuông có hai cạnh góc vuông dài $6$ và $8$. Độ dài cạnh huyền bằng', en: 'A right triangle has legs 6 and 8. Find the hypotenuse.', answer: '10',
+      solutionVi: '$c=\sqrt{6^2+8^2}=10$.', solutionEn: 'By Pythagoras, $c=10$.', options: [['10','10',true],['14','14',false],['7','7',false],['$2\sqrt7$','$2\sqrt7$',false]],
     };
   }
 
-  const [mVi, mEn] = methodName(family);
   return {
-    vi: `Với dạng “${type.title_vi}”, phương pháp nào phù hợp nhất?`, en: `For “${type.title_en}”, which method is most appropriate?`, answer: mVi,
-    solutionVi: `Trọng tâm của dạng là ${mVi}.`, solutionEn: `The core method is ${mEn}.`,
-    options: [[mVi,mEn,true],['Dùng một công thức không liên quan','Use an unrelated formula',false],['Bỏ qua điều kiện bài toán','Ignore conditions',false],['Chỉ đoán kết quả','Guess the result',false]],
+    vi: 'Giải phương trình $2x+3=11$. Nghiệm là', en: 'Solve $2x+3=11$.', answer: '$x=4$',
+    solutionVi: '$2x=8\Rightarrow x=4$.', solutionEn: '$2x=8$, so $x=4$.', options: [['$x=4$','$x=4$',true],['$x=7$','$x=7$',false],['$x=3$','$x=3$',false],['$x=5$','$x=5$',false]],
   };
 }
 
-
-function verificationSample(type: MathType, family: ExerciseFamily, variant: number): Sample {
-  const base = directSample(type, family, variant);
-  return {
-    vi: `Kiểm tra lời giải – dạng “${type.title_vi}”: Một học sinh xử lí bài “${base.vi}” và kết luận ${base.answer}. Nhận xét nào đúng?`,
-    en: `Solution check – “${type.title_en}”: A student solves “${base.en}” and concludes ${base.answer}. Which assessment is correct?`,
-    answer: 'Kết luận đúng',
-    solutionVi: `Kết luận đúng. ${base.solutionVi}`,
-    solutionEn: `The conclusion is correct. ${base.solutionEn}`,
-    options: [
-      ['Kết luận đúng; cách kiểm tra phù hợp với dữ kiện', 'The conclusion is correct and consistent with the data', true],
-      ['Kết luận sai vì phải đổi sang một dạng toán khác', 'The conclusion is wrong because another exercise family must be used', false],
-      ['Kết luận sai vì mọi điều kiện của bài đều phải bỏ qua', 'The conclusion is wrong because all conditions should be ignored', false],
-      ['Không thể kiểm tra bằng kiến thức của bài này', 'It cannot be checked using this lesson', false],
-    ],
-  };
-}
-
-function conceptualSample(type: MathType, family: ExerciseFamily, variant: number): Sample {
-  const [mVi, mEn] = methodName(family);
-  const prompts = [
-    [`Khi giải dạng “${type.title_vi}”, bước nào cần làm trước?`, `When solving “${type.title_en}”, what should be done first?`],
-    [`Nhận định nào mô tả đúng nhất cách xử lí dạng “${type.title_vi}”?`, `Which statement best describes how to handle “${type.title_en}”?`],
-    [`Một học sinh đang giải dạng “${type.title_vi}”. Cách làm nào hợp lí nhất?`, `A student is solving “${type.title_en}”. Which approach is most reasonable?`],
-    [`Trong bài toán thuộc dạng “${type.title_vi}”, tiêu chí nào giúp kiểm tra kết quả?`, `In “${type.title_en}”, which criterion helps verify the result?`],
-  ];
-  const p = prompts[variant % prompts.length];
-  return {
-    vi: p[0], en: p[1], answer: mVi,
-    solutionVi: `Cần bám đúng yêu cầu của dạng và sử dụng ${mVi}; đồng thời kiểm tra điều kiện/kết quả.`,
-    solutionEn: `Use ${mEn} and verify the conditions/result.`,
-    options: [[mVi,mEn,true],['Bỏ qua dữ kiện và chọn đáp án theo cảm tính','Ignore the data and guess',false],['Chuyển sang một dạng toán khác','Switch to a different exercise type',false],['Chỉ thay số vào công thức bất kỳ','Substitute into any formula',false]],
-  };
-}
 
 function trueFalseSample(type: MathType, family: ExerciseFamily, index: number): Sample {
-  const [mVi, mEn] = methodName(family);
-  const base = directSample(type, family, index);
-  const statements: Array<[string,string,boolean]> = [
-    [`a) Dạng đang xét là “${type.title_vi}”, vì vậy phải bám đúng dữ kiện và yêu cầu của dạng.`, `a) The target type is “${type.title_en}”, so the solution must stay within that exercise family.`, true],
-    [`b) Có thể bỏ qua mọi điều kiện xác định/điều kiện hình học mà vẫn luôn nhận được nghiệm đúng.`, `b) Domain/geometric conditions can always be ignored without affecting correctness.`, false],
-    [`c) Một cách kiểm tra hợp lí là đối chiếu kết quả với ${mVi}.`, `c) A reasonable check is to compare the result with ${mEn}.`, true],
-    [`d) Nếu hai bài chỉ khác các con số thì chắc chắn được xem là hai cấu trúc bài hoàn toàn khác nhau.`, `d) If two exercises differ only by numbers, they necessarily represent different structures.`, false],
-  ];
-  if (index % 2 === 1) {
-    statements[2] = [`c) Với dữ kiện mẫu “${base.vi.replace(/\.$/,'')}”, đáp án tham khảo là ${base.answer}.`, `c) For the sample data, the reference answer is ${base.answer}.`, true];
-  }
+  const base = directSample(type, family, index + 1);
+  const choices = (base.options && base.options.length >= 4)
+    ? base.options.slice(0, 4)
+    : [
+        [base.answer, base.answer, true] as [string,string,boolean],
+        ['0','0',false] as [string,string,boolean],
+        ['1','1',false] as [string,string,boolean],
+        ['Không xác định','Undetermined',false] as [string,string,boolean],
+      ];
+  const statements: Array<[string,string,boolean]> = choices.map((choice, i) => [
+    `${String.fromCharCode(97+i)}) Kết quả có thể là ${choice[0]}.`,
+    `${String.fromCharCode(97+i)}) A possible result is ${choice[1]}.`,
+    choice[2],
+  ]);
   return {
-    vi: `Xét tính đúng/sai của các nhận định sau về dạng “${type.title_vi}”:`,
-    en: `Determine whether the following statements about “${type.title_en}” are true or false:`,
-    answer: statements.map((s, i) => `${String.fromCharCode(97+i)}-${s[2] ? 'Đ' : 'S'}`).join(', '),
-    solutionVi: `Đáp án: ${statements.map((s, i) => `${String.fromCharCode(97+i)}) ${s[2] ? 'Đúng' : 'Sai'}`).join('; ')}.`,
-    solutionEn: `Answers: ${statements.map((s, i) => `${String.fromCharCode(97+i)}) ${s[2] ? 'True' : 'False'}`).join('; ')}.`,
+    vi: `Cho bài toán: ${base.vi.replace(/\s+là\s*$/,'')}. Xét tính đúng/sai của các kết quả sau:`,
+    en: `For the problem: ${base.en.replace(/\s+is\s*$/,'')}. Determine whether the following proposed results are true or false:`,
+    answer: statements.map((st, i) => `${String.fromCharCode(97+i)}-${st[2] ? 'Đ' : 'S'}`).join(', '),
+    solutionVi: `${base.solutionVi} Do đó đối chiếu từng kết quả với đáp án ${base.answer}.`,
+    solutionEn: `${base.solutionEn} Compare each proposed result with ${base.answer}.`,
     options: statements,
   };
 }
@@ -536,8 +490,8 @@ function shortSample(type: MathType, family: ExerciseFamily, index: number): Sam
   const direct = directSample(type, family, index + 1);
   // Convert the direct exercise into a short-answer prompt without showing choices.
   return {
-    vi: `Trả lời ngắn – ${index === 0 ? 'vận dụng trực tiếp' : 'kiểm tra kết quả'}: ${direct.vi.replace(/\s+là\s*$/,'')}`,
-    en: `Short answer – ${index === 0 ? 'direct application' : 'result check'}: ${direct.en.replace(/\s+is\s*$/,'')}`,
+    vi: `${direct.vi.replace(/\s+là\s*$/,'')}. Hãy ghi kết quả cuối cùng.`,
+    en: `${direct.en.replace(/\s+is\s*$/,'')}. Give the final answer.`,
     answer: direct.answer,
     solutionVi: direct.solutionVi,
     solutionEn: direct.solutionEn,
@@ -547,8 +501,8 @@ function shortSample(type: MathType, family: ExerciseFamily, index: number): Sam
 function essaySample(type: MathType, family: ExerciseFamily): Sample {
   const direct = directSample(type, family, 2);
   return {
-    vi: `Tự luận – dạng “${type.title_vi}”. Giải chi tiết bài toán sau và nêu rõ điều kiện/phương pháp sử dụng: ${direct.vi}`,
-    en: `Essay – “${type.title_en}”. Solve the following problem in detail and state the conditions/method used: ${direct.en}`,
+    vi: `Giải chi tiết bài toán sau: ${direct.vi}`,
+    en: `Solve the following problem in detail: ${direct.en}`,
     answer: direct.answer,
     solutionVi: `Gợi ý lời giải: ${direct.solutionVi} Sau khi tính toán, cần kết luận đúng theo yêu cầu của dạng “${type.title_vi}”.`,
     solutionEn: `Suggested solution: ${direct.solutionEn} Conclude explicitly according to “${type.title_en}”.`,
@@ -575,7 +529,9 @@ function makeQuestion(lesson: Lesson, type: MathType, family: ExerciseFamily, ki
     options: sample.options ? opt(sample.options) : undefined,
     solution_vi: sample.solutionVi,
     solution_en: sample.solutionEn,
-    correct_answer: sample.answer,
+    correct_answer: kind === 'TN' && sample.options
+      ? (['A','B','C','D'][Math.max(0, sample.options.findIndex((item) => item[2]))] || 'A')
+      : sample.answer,
     vocabulary_support: [],
     formula_support: lesson.formulas?.slice(0, 3) || [],
     math_skill: type.title_vi,
@@ -590,11 +546,11 @@ function makeQuestion(lesson: Lesson, type: MathType, family: ExerciseFamily, ki
 function buildStaticForType(lesson: Lesson, type: MathType): Question[] {
   const family = TYPE_FAMILY_BY_ID[type.id];
   const out: Question[] = [];
-  // 4 TN: 2 bài toán trực tiếp với dữ kiện khác nhau + 2 câu cấu trúc phương pháp/kiểm tra.
+  // 4 TN đều là bài tính/áp dụng. Không dùng câu hỏi thuộc phương pháp hay định nghĩa.
   out.push(makeQuestion(lesson, type, family, 'TN', 0, directSample(type, family, 0)));
-  out.push(makeQuestion(lesson, type, family, 'TN', 1, verificationSample(type, family, 1)));
-  out.push(makeQuestion(lesson, type, family, 'TN', 2, conceptualSample(type, family, 1)));
-  out.push(makeQuestion(lesson, type, family, 'TN', 3, conceptualSample(type, family, 3)));
+  out.push(makeQuestion(lesson, type, family, 'TN', 1, directSample(type, family, 1)));
+  out.push(makeQuestion(lesson, type, family, 'TN', 2, directSample(type, family, 2)));
+  out.push(makeQuestion(lesson, type, family, 'TN', 3, directSample(type, family, 3)));
   // 2 Đ/S
   out.push(makeQuestion(lesson, type, family, 'DS', 0, trueFalseSample(type, family, 0)));
   out.push(makeQuestion(lesson, type, family, 'DS', 1, trueFalseSample(type, family, 1)));

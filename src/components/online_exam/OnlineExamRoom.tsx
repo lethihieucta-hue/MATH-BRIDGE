@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Question } from '../../types';
 import { MathRenderer } from '../math/MathRenderer';
+import { apiFetch } from '../../lib/dataService';
 import {
   Clock,
   CheckCircle2,
@@ -84,6 +85,17 @@ export const OnlineExamRoom: React.FC<OnlineExamRoomProps> = ({ examData: propEx
       } catch (e) {
         console.error('Failed to load online exam from localStorage:', e);
       }
+
+      // Shared links must also work on a different device. Load the persisted full exam payload.
+      apiFetch<any[]>('/api/online-exams')
+        .then((tests) => {
+          const remote = (tests || []).find((item: any) => item.id === examId);
+          if (remote?.questions?.length) {
+            setExam(remote as OnlineExamData);
+            setTimeLeft((remote.duration || 15) * 60);
+          }
+        })
+        .catch((e) => console.error('Failed to load shared online exam from server:', e));
     }
 
     // Fallback default demo test if none found

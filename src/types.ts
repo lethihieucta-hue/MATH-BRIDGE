@@ -200,6 +200,10 @@ export interface Question {
   created_at?: string;
   /** Distinct exercise pattern label used to prevent number-only clones. */
   variant_tag?: string;
+  /** True only when the answer key is reliable enough for automatic online grading. */
+  grading_safe?: boolean;
+  /** Human-readable source label for imported question banks. */
+  source_name?: string;
   // Math Reading fields
   given_info?: string;
   required_info?: string;

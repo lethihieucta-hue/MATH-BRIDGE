@@ -1,0 +1,62 @@
+AI MATH BRIDGE — SOURCE QUESTION BANK VALIDATION 2026-08-27
+============================================================
+
+Curriculum
+- 24 chapters / 79 KNTT lessons / 289 math types
+- No type_id duplicate (curriculum audit PASS)
+
+Question bank after quality filters
+- Total usable questions: 3,981
+  * TN: 1,841
+  * D/S: 700
+  * TLN: 934
+  * TL: 506
+- Teacher-source questions surviving quality/theory filters: 1,338
+  * TN: 663
+  * D/S: 114
+  * TLN: 346
+  * TL: 215
+  * Source coverage: 78 type_id
+- Online auto-gradable safe pool: 2,620
+  * TN: 1,307
+  * D/S: 690
+  * TLN: 623
+
+New sources integrated in this upgrade
+- Toán 11 Chương IV: Quan hệ song song trong không gian (GV)
+- Toán 11 Bài 33: Đạo hàm cấp hai (TN + tự luận + lời giải)
+- Toán 12 Chương V: Phương pháp tọa độ trong không gian (GV)
+- Toán 12 Chương VI: Xác suất có điều kiện / xác suất toàn phần / Bayes (GV)
+- Existing Phan Nhật Linh / TĐC / source banks retained and prioritized before static fallback.
+
+Quality gates
+- Pure definition / concept recall questions rejected.
+- Generic "which method / which formula / first step" questions rejected.
+- Imported questions with visibly missing formulas / equations rejected.
+- Imported short-answer questions with no remaining numeric/expression data rejected.
+- Questions depending on missing external images/tables fail closed.
+- Common legacy MathType symbol-font glyphs normalized before display.
+- Imported MCQ/TLN from PDF are NOT auto-graded unless answer reliability is certain.
+- TRUE/FALSE is online-safe only when all four source statements have explicit Đúng/Sai keys.
+
+Worksheet quota
+- 289/289 type_id have at least 4 TN + 2 D/S + 2 TLN + 1 TL after source + static fallback.
+- Missing quota types: 0
+- Source questions are selected before static questions for the same type_id.
+
+Bài 33 — Đạo hàm cấp hai
+- type-kntt-11-33-01: 8 TN / 4 D-S / 4 TLN / 2 TL available
+- type-kntt-11-33-02: 8 TN / 4 D-S / 4 TLN / 2 TL available
+- type-kntt-11-33-03: 8 TN / 4 D-S / 4 TLN / 2 TL available
+- Includes computation of f'', acceleration applications, and sign/variation applications.
+
+Online exam
+- TestBuilder uses ONLINE_SAFE_QUESTION_BANK as the primary source.
+- No Gemini call is required for normal test creation.
+- Fail-closed: if a requested topic does not have enough safe questions, the system reports the shortage instead of borrowing questions from unrelated topics.
+
+Validation result
+- WORKSHEET AUDIT: PASS
+- CURRICULUM AUDIT: PASS
+- DATA MODULE TYPESCRIPT CHECK: PASS
+- FULL VITE BUILD: not executed in this container because project dependencies are not installed.

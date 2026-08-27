@@ -1028,6 +1028,26 @@ app.post('/api/hint-log', (req, res) => {
   res.json({ success: true, log });
 });
 
+// Online exams: persist the full bank-backed payload so shared links work across devices.
+app.get('/api/online-exams', (req, res) => {
+  const db = getDb() as any;
+  db.online_exams = db.online_exams || [];
+  res.json(db.online_exams);
+});
+
+app.post('/api/online-exams', (req, res) => {
+  const db = getDb() as any;
+  db.online_exams = db.online_exams || [];
+  const incoming = req.body || {};
+  const id = incoming.id || `exam-${Date.now()}`;
+  const exam = { ...incoming, id, created_at: incoming.created_at || new Date().toISOString() };
+  const idx = db.online_exams.findIndex((item: any) => item.id === id);
+  if (idx >= 0) db.online_exams[idx] = exam;
+  else db.online_exams.push(exam);
+  saveDb(db);
+  res.json({ success: true, exam });
+});
+
 // Tests
 app.get('/api/tests', (req, res) => {
   const db = getDb();
