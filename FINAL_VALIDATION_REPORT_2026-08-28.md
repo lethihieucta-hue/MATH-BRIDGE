@@ -1,98 +1,125 @@
-# AI Math Bridge - Final Validation Report
+# AI Math Bridge — Final Validation Report
 
-Date: 2026-08-28
+Date: 2026-08-28  
+Status: **FINAL DATA/CODE VALIDATION PASSED; FULL VITE BUILD ENVIRONMENT-BLOCKED**
 
-## Final source-bank result
+This report supersedes earlier validation/checkpoint reports in the project.
 
-- English fallback decisions restored and verified: **1,185 / 1,185 IDs**.
-- Final accepted source questions: **1,010**.
-- Rejected/fail-closed source questions: **175**.
-- Accepted source formats: **505 TN + 66 DS + 247 TLN + 192 TL**.
-- Accepted source questions cover **71 canonical type_id** values; the static bank guarantees all remaining types.
-- Runtime full bank: **3,653 questions = 1,010 source + 2,601 static + 42 legacy**.
-- Online auto-gradable runtime bank after the final grading-safety correction: **2,551 questions**.
+## 1. Final question-bank composition
 
-## Curriculum and routing gates - PASS
+- Active question bank: **3,653** questions
+- Clean teacher/source questions: **1,010**
+- Static curriculum fallback: **2,601**
+- Legacy/migrated questions: **42**
+- Current curriculum math types: **289/289**
+- KNTT curriculum: **24 chapters / 79 lessons / 289 math types**
+- Static guarantee per type: **4 TN + 2 Đ/S + 2 TLN + 1 TL**
 
-- KNTT curriculum: **24 chapters / 79 lessons / 289 math types**.
-- Blueprint coverage: **1,734 blueprints = 289 types x 6 structures**.
-- Worksheet routing is fail-closed by canonical lesson/type.
-- Accepted teacher/source questions are routed before static fallback when available.
-- Static fallback remains guaranteed for every type: **4 TN + 2 DS + 2 TLN + 1 TL**.
-- Static bank: **289 types / 2,601 questions / 0 routing issues**.
-- Vocabulary bank: **79 lessons, exactly 5 EN-VI terms per lesson**.
+## 2. Vietnamese/English math synchronization
 
-## English, media and glyph gates - PASS
+The Vietnamese source stems were repaired by directly replacing broken OCR math with the mathematically reliable English expression when the English source uniquely supported the repair. Broken math was not merely appended as a note.
 
-Final audit over all **1,010 accepted source questions**:
+Priority repairs include:
+- Grade 11 sequences and arithmetic progressions
+- Limits and powers
+- Grade 11 trigonometry
+- Vectors and Oxyz notation
+- Sphere equations and exponents
+- Integral geometry applications
+- Grouped-data questions/tables
+- Grade 11/12 spatial geometry routing
 
-- Missing English stems/options: **0**.
-- Vietnamese leakage into English fields: **0**.
-- Double-escaped LaTeX issues: **0**.
-- Questions requiring a missing external figure/table/media asset: **0**.
-- Private-use/Symbol-font glyphs in the two final source banks: **0**.
-- Invalid control characters in the two final source banks: **0**.
-- Local project asset references requiring missing files: **0**. The only `assets/` reference is an external README image URL.
+`solution_vi` was normalized conservatively: glyphs, math delimiters, sequence indices, standard operators and renderer-breaking OCR were repaired when safe; missing source mathematics was not invented when it could not be uniquely reconstructed.
 
-The legacy imported source was normalized from Symbol/MathType-style glyphs to ordinary Unicode/math notation before this final audit.
+Runtime text audit across all active display fields:
+- Odd/unbalanced `$` delimiters: **0**
+- Raw LaTeX commands outside math regions: **0**
+- Control characters: **0**
+- Private-use/Symbol-font glyphs: **0**
 
-## LaTeX gate - PASS
+## 3. Formula / renderer validation
 
-- English math expressions compiled: **2,451**.
-- XeLaTeX fatal errors: **0**.
-- Undefined control sequences: **0**.
-- Audit PDF rendered successfully to **44 pages** and was visually sampled after rendering.
-- Currency text was checked separately so USD dollar signs are not accidentally treated as LaTeX delimiters; the Vista Cable item now uses `USD 40` / `USD 0.25`.
+All unique math expressions extracted from the final active bank were compiled with XeLaTeX after the last repair pass.
 
-## Answer-key/grading-safety gate - PASS
+- Unique expressions compiled: **4,702**
+- XeLaTeX result: **4,702 / 4,702 PASS**
+- XeLaTeX return code: **0**
 
-- Source questions currently marked auto-grading-safe: **199**.
-- TN option/key mismatches: **0**.
-- Invalid DS boolean-key structures: **0**.
-- Safe TLN multi-answer structures: **0**.
-- Final answer-key/stem audit corrected 11 source records, including:
-  - Vista Cable: final fee **32.5 USD**, not the intermediate reduction count 30.
-  - Organ geometric progression: **1.059** to the requested thousandth.
-  - Vector norm: **sqrt(30) approx 5.477**, with explicit rounding for TLN grading.
-  - Two parameter/count keys corrected to match their derivations.
-  - Fabric optimization answer normalized to **41000 VND**.
-  - E. coli two-output item marked **not auto-gradable** by a single TLN input.
-  - Four second-derivative items whose stems said `f` while their solutions/options used `f''` were corrected to `f''`.
+This includes stems, English/Vietnamese options, solutions, answers, grouped-data `array` tables and formula-support expressions.
 
-## TypeScript/source-code gates
+## 4. Routing, duplication and grading validation
 
-- TS/TSX files parsed/transpiled with the globally available TypeScript compiler: **46 / 46 PASS**.
-- Syntax errors: **0**.
-- Three internal TypeScript issues discovered during final review were fixed before packaging: the MEI JSX math string, vocabulary service result handling/signature, and Vite ESM path handling.
-- A full `tsc --noEmit` cannot be certified in this sandbox because project dependencies are not installed. The raw command reports **105 dependency/type-resolution errors**, and **0 remaining diagnostics after filtering dependency-resolution cascades**.
+Final runtime audit:
+- Duplicate question IDs: **0**
+- Duplicate 4-TN stem sets within a type: **0**
+- Duplicate 4-TN stem sets across types in the same lesson: **0**
+- Online-safe MCQs with inconsistent answer keys: **0**
+- Types missing static 4-2-2-1 coverage: **0**
+- Source-first / static-fallback curriculum routing: **PASS**
 
-## Full Vite build - ENVIRONMENT-BLOCKED (not reported as PASS)
+Regression checks requested during visual review:
+- Oxyz questions leaking into Grade 11 spatial geometry: **0**
+- 6–8 right-triangle hypotenuse fallback leaking into 3D geometry: **0**
+- 2-coordinate vector fallback in Grade 12 vector-operations lesson: **0**
+- Target grouped-data TN questions missing table representation: **0**
 
-The sandbox cannot resolve/reach `registry.npmjs.org`:
+## 5. Visual assets
 
-- DNS lookup for `registry.npmjs.org`: failed in the sandbox.
-- `npm ping`: timed out.
-- `npm install --ignore-scripts --no-audit --no-fund`: timed out before dependencies could be installed.
-- Therefore `npm run build` could not be executed with the real React/Vite/esbuild dependency tree in this environment.
+A native `Question.assets` diagram mechanism and SVG renderer are integrated into the student bilingual lesson view, online exam view and printable worksheet view.
 
-This is an environment limitation, not a claimed build PASS. After extracting the ZIP in an environment with npm access, run:
+- Active questions with SVG diagram assets: **188**
+- Active SVG diagram assets: **188**
+
+Grouped-data tables are rendered as mathematical/table structures in the question stem rather than being represented by decorative images.
+
+## 6. Curriculum and worksheet audits
+
+`node scripts/audit-curriculum.mjs`: **PASS**
+- 24 chapters
+- 79 lessons
+- 289 math types
+- 1,734 blueprint structures
+- Legacy migration checks pass
+
+`node scripts/audit-worksheet.mjs`: **PASS**
+- 79/79 lessons contain theory/formula support
+- 4 TN + 2 Đ/S + 2 TLN + 1 TL default is preserved
+- Exact type routing / fail-closed behavior passes
+
+Static/vocabulary runtime audit:
+- Static bank: **289 types, 2,601 / 2,601 questions, 0 issues**
+- Vocabulary: **79 lessons, 0 issues**
+
+## 7. TypeScript validation
+
+Core TypeScript library compile (`src/types.ts` + `src/lib/*.ts`): **PASS, RC=0**.
+
+All TypeScript/TSX source/config/script files were syntax-transpiled with the global TypeScript compiler:
+- Files checked: **47**
+- Syntax/transpile errors: **0**
+
+A full `tsc -p tsconfig.json --noEmit` was also attempted. The only diagnostics were dependency/environment diagnostics because `node_modules` could not be installed:
+- TS2307 (missing installed modules/types): 70
+- TS2875 (missing `react/jsx-runtime`): 31
+- TS2580 (missing Node type definitions / `process`): 6
+- Other TypeScript diagnostic codes: **0**
+
+## 8. Full Vite build attempt
+
+`npm install --ignore-scripts --no-audit --no-fund` was attempted but the sandbox could not resolve the npm registry. The npm log records `EAI_AGAIN` while fetching from `https://registry.npmjs.org/`.
+
+`npm run build` was then attempted and returned:
+
+`sh: 1: vite: not found`
+
+Therefore the full Vite/esbuild production build is marked **ENVIRONMENT-BLOCKED**, not PASS. This is caused by unavailable npm dependencies in the sandbox, not by a detected project-source error. On a machine with npm registry access, run:
 
 ```bash
 npm install
 npm run lint
 npm run build
-npm run audit:curriculum
-npm run audit:worksheet
-npm run audit:static-bank
 ```
 
-## Integrity hashes of key final source files
+## 9. Final packaging policy
 
-- `src/lib/realSourceQuestionBank.ts`: `53bdfb7c3b39fec3ec46f0e476d34eee8573c44b3efde41db63cb06e0e27af64`
-- `src/lib/sourceSupplementQuestionBank.ts`: `5e2d6e5240e81b78be968ec48fe41f1d95f491e29bdfa72fe0663d70ed57a978`
-- `src/lib/questionBankData.ts`: `c10f1e849f4b564354efab0df0b78e0050d1f92211354a013725218ed15bb0fc`
-- `vite.config.ts`: `10052235463e219da0b377527235bda161da4288f150840bb78d6babcf31c686`
-
-## Packaging policy
-
-The final package excludes temporary translation maps, restore scripts, LaTeX audit intermediates, npm timeout logs, and `.bak` source files. Only the cleaned project tree and this final validation report are included.
+Temporary `.bak` files, temporary LaTeX audit artifacts, `node_modules` and `dist` are excluded from the final package. The final ZIP is CRC/unzip-tested after creation, and its SHA-256 is reported with the delivered artifact.

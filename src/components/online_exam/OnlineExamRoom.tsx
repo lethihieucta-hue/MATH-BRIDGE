@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Question } from '../../types';
 import { MathRenderer } from '../math/MathRenderer';
+import { QuestionAssetRenderer } from '../math/QuestionAssetRenderer';
 import { apiFetch } from '../../lib/dataService';
 import {
   Clock,
@@ -480,6 +481,7 @@ export const OnlineExamRoom: React.FC<OnlineExamRoomProps> = ({ examData: propEx
               {/* Question Content */}
               <div className="text-slate-900 text-base sm:text-lg font-medium leading-relaxed mb-4">
                 <MathRenderer content={q.question_vi} />
+                <QuestionAssetRenderer assets={q.assets} language="VIETNAMESE" compact />
               </div>
 
               {q.question_en && exam.englishRatio > 0 && (
@@ -787,6 +789,7 @@ export const OnlineExamRoom: React.FC<OnlineExamRoomProps> = ({ examData: propEx
                 {/* Question */}
                 <div className="text-slate-900 text-base font-medium mb-3">
                   <MathRenderer content={q.question_vi} />
+                <QuestionAssetRenderer assets={q.assets} language="VIETNAMESE" compact />
                 </div>
 
                 {/* Answers Compare */}

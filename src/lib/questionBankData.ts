@@ -687,7 +687,7 @@ const LEGACY_QUESTION_BANK: Question[] = [
   // 4. LỚP 12 - CHỦ ĐỀ VECTƠ VÀ HỆ TOẠ ĐỘ TRONG KHÔNG GIAN OXYZ (top-12-2-1, top-12-2-2, top-12-2-3)
   // =========================================================================
   {
-    id: 'q-12-2-tn1',
+    id: 'q-12-6-tn1-legacy',
     topic_id: 'top-12-2-1',
     type_id: 'type-12-6-1',
     question_type: 'MCQ',
@@ -695,7 +695,7 @@ const LEGACY_QUESTION_BANK: Question[] = [
     difficulty: 'EASY',
     language_level: 2,
     question_vi: 'Cho hình hộp chữ nhật $ABCD.A\'B\'C\'D\'$. Khẳng định nào sau đây là ĐÚNG?',
-    question_en: 'For a rectangular box $ABCD.A\'B\'C\'D\', which vector identity is TRUE?',
+    question_en: 'For a rectangular box $ABCD.A\'B\'C\'D\'$, which vector identity is TRUE?',
     options: [
       { option_key: 'A', content_vi: '$\\vec{AC\'} = \\vec{AB} + \\vec{AD} + \\vec{AA\'}$', content_en: '$\\vec{AC\'} = \\vec{AB} + \\vec{AD} + \\vec{AA\'}$', is_correct: true },
       { option_key: 'B', content_vi: '$\\vec{AC\'} = \\vec{AB} + \\vec{AD} - \\vec{AA\'}$', content_en: '$\\vec{AC\'} = \\vec{AB} + \\vec{AD} - \\vec{AA\'}$', is_correct: false },
@@ -711,7 +711,7 @@ const LEGACY_QUESTION_BANK: Question[] = [
     created_by: 'usr-teacher-1',
   },
   {
-    id: 'q-12-2-tn2',
+    id: 'q-12-7-tn2-legacy',
     topic_id: 'top-12-2-2',
     type_id: 'type-12-7-1',
     question_type: 'MCQ',
@@ -735,7 +735,7 @@ const LEGACY_QUESTION_BANK: Question[] = [
     created_by: 'usr-teacher-1',
   },
   {
-    id: 'q-12-2-ds2',
+    id: 'q-12-8-ds2-legacy',
     topic_id: 'top-12-2-3',
     type_id: 'type-12-8-1',
     question_type: 'TRUE_FALSE',
@@ -759,7 +759,7 @@ const LEGACY_QUESTION_BANK: Question[] = [
     created_by: 'usr-teacher-1',
   },
   {
-    id: 'q-12-2-tln2',
+    id: 'q-12-8-tln2-legacy',
     topic_id: 'top-12-2-3',
     type_id: 'type-12-8-1',
     question_type: 'SHORT',
@@ -1348,7 +1348,6 @@ export function isSourceQuestionStructurallyComplete(q: Question): boolean {
   // Công thức/đối tượng toán đã rơi khỏi câu khi trích PDF.
   const missingMathPatterns = [
     /(?:phương trình|bất phương trình|hàm số|biểu thức)[^.]{0,70}[:：]\s*[.](?:\s|$)/i,
-    /(?:cho|xét)\s+(?:phương trình|bất phương trình|hàm số)[^.]{0,70}\s*[.](?:\s|$)/i,
     /cho\s+(?:các?\s+|hai\s+)?tập\s+hợp[^.]{0,90}\s[.,](?:\s|$)/i,
     /sao\s+cho\s+(?:là|không\s+là)\s+nghiệm/i,
     /(?:cặp\s+số|điểm|vectơ)\s+(?:không\s+)?(?:là|thuộc)\s+(?:nghiệm|miền)/i,
@@ -1389,6 +1388,29 @@ function normalizeImportedGlyphs(value?: string): string {
   ];
   let out = value;
   for (const [from, to] of replacements) out = out.split(from).join(to);
+  // Simple MathType/LaTeX commands sometimes survive in prose outside $...$.
+  // Convert only those text-safe commands outside math delimiters; keep real LaTeX inside math untouched.
+  const parts = out.split(/(\$\$[\s\S]*?\$\$|\$[^$]*\$)/g);
+  out = parts.map((part, i) => {
+    if (i % 2 === 1) return part;
+    return part
+      .replace(/\\notin\b/g, '∉')
+      .replace(/\\infty\b/g, '∞')
+      .replace(/\\parallel\b/g, '∥')
+      .replace(/\\perp\b/g, '⊥')
+      .replace(/\\alpha\b/g, 'α')
+      .replace(/\\beta\b/g, 'β')
+      .replace(/\\gamma\b/g, 'γ')
+      .replace(/\\cap\b/g, '∩')
+      .replace(/\\cup\b/g, '∪')
+      .replace(/\\notin\b/g, '∉')
+      .replace(/\\in\b/g, '∈')
+      .replace(/\\geq?\b/g, '≥')
+      .replace(/\\leq?\b/g, '≤')
+      .replace(/\\neq\b/g, '≠')
+      .replace(/\\Leftrightarrow\b/g, '⇔')
+      .replace(/\\Rightarrow\b/g, '⇒');
+  }).join('');
   return out.replace(/[ \t]+/g, ' ').replace(/\n[ \t]+/g, '\n').trim();
 }
 
@@ -1398,7 +1420,9 @@ function sanitizeImportedQuestion(q: Question): Question {
   return {
     ...q,
     question_vi: normalizeImportedGlyphs(q.question_vi),
+    question_en: normalizeImportedGlyphs(q.question_en),
     solution_vi: normalizeImportedGlyphs(q.solution_vi),
+    solution_en: normalizeImportedGlyphs(q.solution_en),
     correct_answer: normalizeImportedGlyphs(q.correct_answer),
     options: q.options?.map((o) => ({
       ...o,

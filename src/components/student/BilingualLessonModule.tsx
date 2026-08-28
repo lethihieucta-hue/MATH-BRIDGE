@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useAppStore } from '../../lib/store';
 import { Chapter, Lesson, MathType, WorkedExample, Question, LanguageMode } from '../../types';
 import { MathRenderer } from '../math/MathRenderer';
+import { QuestionAssetRenderer } from '../math/QuestionAssetRenderer';
 import { speakEnglishWord } from '../../lib/audio';
 import { apiFetch } from '../../lib/dataService';
 import { generateCompleteLessonWorksheetAi, generateWorksheetQuestionsByPlanAi, hasApiKey } from '../../lib/geminiService';
@@ -1570,6 +1571,7 @@ export const BilingualLessonModule: React.FC = () => {
                                     <div>
                                       <span className="font-sans font-bold text-slate-900 mr-1.5">Câu {idx + 1}:</span>
                                       <MathRenderer content={languageMode === 'ENGLISH' ? q.question_en : q.question_vi} inline />
+                                      <QuestionAssetRenderer assets={q.assets} language={languageMode} compact />
                                     </div>
 
                                     {languageMode === 'BILINGUAL' && q.question_en && (
@@ -1605,6 +1607,7 @@ export const BilingualLessonModule: React.FC = () => {
                                   <div>
                                     <span className="font-sans font-bold text-slate-900 mr-1.5">Câu {idx + 1}:</span>
                                     <MathRenderer content={languageMode === 'ENGLISH' && q.question_en ? q.question_en : q.question_vi} inline />
+                                    <QuestionAssetRenderer assets={q.assets} language={languageMode} compact />
                                   </div>
 
                                   {languageMode === 'BILINGUAL' && q.question_en && (
@@ -1652,6 +1655,7 @@ export const BilingualLessonModule: React.FC = () => {
                                   <div>
                                     <span className="font-sans font-bold text-slate-900 mr-1.5">Câu {idx + 1}:</span>
                                     <MathRenderer content={languageMode === 'ENGLISH' && q.question_en ? q.question_en : q.question_vi} inline />
+                                    <QuestionAssetRenderer assets={q.assets} language={languageMode} compact />
                                   </div>
 
                                   {languageMode === 'BILINGUAL' && q.question_en && (
@@ -1679,6 +1683,7 @@ export const BilingualLessonModule: React.FC = () => {
                                   <div>
                                     <span className="font-sans font-bold text-slate-900 mr-1.5">Câu {idx + 1}:</span>
                                     <MathRenderer content={languageMode === 'ENGLISH' && q.question_en ? q.question_en : q.question_vi} inline />
+                                    <QuestionAssetRenderer assets={q.assets} language={languageMode} compact />
                                   </div>
 
                                   {languageMode === 'BILINGUAL' && q.question_en && (

@@ -1,6 +1,7 @@
 import React, { useRef } from 'react';
 import { Question, Test } from '../../types';
 import { MathRenderer } from '../math/MathRenderer';
+import { QuestionAssetRenderer } from '../math/QuestionAssetRenderer';
 import { Printer, Copy, Download, X, CheckCircle2, FileText } from 'lucide-react';
 import { useAppStore } from '../../lib/store';
 
@@ -133,6 +134,7 @@ export const PrintableWorksheetModal: React.FC<PrintableWorksheetModalProps> = (
                   <div className="font-bold text-slate-900">
                     <span className="font-sans font-black text-teal-900 mr-1.5">Câu {idx + 1}:</span>
                     <MathRenderer content={q.question_en} inline />
+                    <QuestionAssetRenderer assets={q.assets} language="ENGLISH" compact />
                   </div>
 
                   {q.question_vi && (

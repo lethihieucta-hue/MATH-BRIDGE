@@ -341,7 +341,7 @@ const LESSON_THEORY: Record<string, LessonTheoryEntry> = {
     "summary_vi": "• Hàm số liên tục tại $x_0$ khi $f(x_0)$ xác định, giới hạn tại $x_0$ tồn tại và bằng $f(x_0)$.\n• Tổng, tích, thương (mẫu khác $0$) của các hàm liên tục vẫn liên tục; đa thức liên tục trên $\\mathbb R$.\n• Định lí giá trị trung gian giúp chứng minh phương trình có nghiệm trên một khoảng.",
     "formulas": [
       "\\lim_{x\\to x_0}f(x)=f(x_0)",
-      "f(a)f(b)<0\\Rightarrow \\exists c\\in(a,b):f(c)=0\\ \\text{(khi $f$ liên tục)}"
+      "f(a)f(b)<0\\Rightarrow \\exists c\\in(a,b):f(c)=0\\ \\text{(khi }f\\text{ liên tục)}"
     ]
   },
   "11-18": {

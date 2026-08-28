@@ -169,6 +169,26 @@ export interface Lesson {
   created_at: string;
 }
 
+
+export type QuestionDiagramKind =
+  | 'triangle'
+  | 'line-2d'
+  | 'circle'
+  | 'conic'
+  | 'trig-graph'
+  | 'vector-3d'
+  | 'plane-3d'
+  | 'sphere-3d'
+  | 'solid-3d'
+  | 'area-graph';
+
+export interface QuestionAsset {
+  kind: 'diagram';
+  diagram: QuestionDiagramKind;
+  title_vi?: string;
+  title_en?: string;
+}
+
 export interface QuestionOption {
   option_key: string; // 'A', 'B', 'C', 'D'
   content_vi: string;
@@ -193,6 +213,8 @@ export interface Question {
   correct_answer: string;
   vocabulary_support?: { word: string; meaning: string }[];
   formula_support?: string[];
+  /** Optional concept diagram attached to a question. */
+  assets?: QuestionAsset[];
   math_skill: string;
   english_skill: string;
   status: ContentStatus;
