@@ -98,7 +98,7 @@ export const StudentProgressView: React.FC = () => {
               Math-English Index (MEI)
             </h1>
             <p className="text-xs sm:text-sm text-teal-100/90 max-w-xl leading-relaxed">
-              Mô hình đánh giá 4 năng lực toán tiếng Anh cốt lõi: $\text{MEI} = 0.25V + 0.25R + 0.30P + 0.20E$.
+              {'Mô hình đánh giá 4 năng lực toán tiếng Anh cốt lõi: $\\text{MEI} = 0.25V + 0.25R + 0.30P + 0.20E$.'}
             </p>
           </div>
 

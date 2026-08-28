@@ -83,9 +83,9 @@ export const VocabularyModule: React.FC = () => {
 
     try {
       const topicName = selectedGrade === 10 ? 'Hàm số bậc hai & Véctơ' : selectedGrade === 11 ? 'Đạo hàm & Cấp số' : 'Khảo sát hàm số & Tích phân';
-      const result = await generateBilingualVocabLessonAi(topicName, selectedGrade, 'VOCABULARY_LIST');
+      const result = await generateBilingualVocabLessonAi(topicName, selectedGrade);
 
-      if (result.success && result.data) {
+      if (result.success && result.content) {
         // Parse words or add new words
         const sampleNewWords: Partial<VocabularyItem>[] = [
           {
