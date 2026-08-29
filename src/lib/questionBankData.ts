@@ -1416,6 +1416,30 @@ function normalizeImportedGlyphs(value?: string): string {
   return out.replace(/[ \t]+/g, ' ').replace(/\n[ \t]+/g, '\n').trim();
 }
 
+function isQuestionGradeCurriculumClean(q: Question): boolean {
+  const typeId = (q.type_id || '').toLowerCase();
+  const optionText = (q.options || []).map((o) => `${o.content_vi || ''} ${o.content_en || ''}`).join(' ');
+  const text = `${q.question_vi || ''} ${q.question_en || ''} ${q.solution_vi || ''} ${q.solution_en || ''} ${optionText}`.normalize('NFC');
+  // KNTT lớp 11 học hình học không gian tổng hợp, chưa dùng hệ tọa độ Oxyz.
+  // Mọi câu Oxyz gán vào type lớp 11 là nhiễm kiến thức lớp 12 và phải loại khỏi bank.
+  if (typeId.startsWith('type-kntt-11-') && /\bOxyz\b/i.test(text)) return false;
+  // Spatial-geometry lessons of grade 11 must stay synthetic. Reject hidden grade-12 coordinate
+  // contamination even when the source omitted the literal word Oxyz.
+  if (/^type-kntt-11-(10|11|12|13|14|22|23|24|25|26|27)-/.test(typeId)) {
+    if (/\b[A-Z]\s*\(\s*-?\d+(?:[.,]\d+)?\s*[;,]\s*-?\d+(?:[.,]\d+)?\s*[;,]\s*-?\d+(?:[.,]\d+)?\s*\)/.test(text)) return false;
+    if (/(?:mặt phẳng|plane)[^\n]{0,120}\b[xyz]\b[^\n]{0,80}=\s*0/i.test(text)) return false;
+  }
+  return true;
+}
+
+function normalizeFormulaOnlyPunctuation(value?: string): string {
+  const normalized = normalizeImportedGlyphs(value);
+  // Source banks often store a period after a formula, e.g. `$M(0,2,1)$.`.
+  // Options should contain only the mathematical choice; stripping this punctuation also
+  // prevents old renderers from passing the trailing dot together with `$...$` to KaTeX.
+  return normalized.replace(/^(\$\$[\s\S]+?\$\$|\$[^$\n]+?\$)[.。]$/, '$1');
+}
+
 function sanitizeImportedQuestion(q: Question): Question {
   const imported = q.created_by?.startsWith('source-') || !!q.source_name;
   if (!imported) return q;
@@ -1428,17 +1452,25 @@ function sanitizeImportedQuestion(q: Question): Question {
     correct_answer: normalizeImportedGlyphs(q.correct_answer),
     options: q.options?.map((o) => ({
       ...o,
-      content_vi: normalizeImportedGlyphs(o.content_vi),
-      content_en: normalizeImportedGlyphs(o.content_en),
+      content_vi: normalizeFormulaOnlyPunctuation(o.content_vi),
+      content_en: normalizeFormulaOnlyPunctuation(o.content_en),
     })),
   };
 }
 
 // Static bank is the baseline for every worksheet: 4 TN + 2 Đ/S + 2 TLN + 1 TL per type_id.
 // Nguồn GV sạch được xếp trước; nếu câu nguồn hỏng dữ kiện hoặc nặng lý thuyết thì tự loại.
-const RAW_FULL_QUESTION_BANK: Question[] = [...ORIGINAL_SOURCE_VISUAL_QUESTION_BANK, ...SOURCE_SUPPLEMENT_QUESTION_BANK, ...REAL_SOURCE_QUESTION_BANK, ...STATIC_QUESTION_BANK, ...MIGRATED_LEGACY_QUESTION_BANK].map(sanitizeImportedQuestion);
-export const FULL_QUESTION_BANK: Question[] = RAW_FULL_QUESTION_BANK.filter(
-  (q) => isSourceQuestionStructurallyComplete(q) && !isPureTheoryRecallQuestion(q)
+const RAW_FULL_QUESTION_BANK: Question[] = [
+  ...ORIGINAL_SOURCE_VISUAL_QUESTION_BANK, // PNL có hình/bảng gốc: ưu tiên cao nhất
+  ...REAL_SOURCE_QUESTION_BANK,            // nguồn PNL/GV đã lọc
+  ...SOURCE_SUPPLEMENT_QUESTION_BANK,      // nguồn bổ sung khác
+  ...STATIC_QUESTION_BANK,                 // fallback tối thiểu 4-2-2-1
+  ...MIGRATED_LEGACY_QUESTION_BANK,
+].map(sanitizeImportedQuestion);
+const CLEAN_UNCAPPED_QUESTION_BANK: Question[] = RAW_FULL_QUESTION_BANK.filter(
+  (q) => isQuestionGradeCurriculumClean(q)
+    && isSourceQuestionStructurallyComplete(q)
+    && (!isPureTheoryRecallQuestion(q) || !!q.assets?.some((asset) => asset.kind === 'image'))
 );
 
 /** Return true only when a question can be graded safely by OnlineExamRoom. */
@@ -1464,6 +1496,70 @@ export function isQuestionAutoGradable(q: Question): boolean {
   return false;
 }
 
+// User-facing bank size policy: every exact math type keeps a professional, diverse pool
+// between the guaranteed baseline 4-2-2-1 and the hard ceiling 12-4-6-2.
+// PNL questions with original figures are kept first, then other clean PNL/source questions,
+// while static questions remain the safety net so no type loses its minimum coverage.
+const QUESTION_BANK_FORMAT_CAP: Record<string, number> = { TN: 12, DS: 4, TLN: 6, TL: 2 };
+
+function isPnlSourceQuestion(q: Question): boolean {
+  const source = `${q.source_name || ''} ${q.created_by || ''}`.toLowerCase();
+  return /phan nhật linh|phan nhat linh|source-pnl|pnl-/.test(source);
+}
+
+function hasOriginalImage(q: Question): boolean {
+  return !!q.assets?.some((asset) => asset.kind === 'image');
+}
+
+function cappedBankPriority(q: Question): number {
+  if (isPnlSourceQuestion(q) && hasOriginalImage(q)) return 0;
+  if (isPnlSourceQuestion(q)) return 1;
+  if (hasOriginalImage(q)) return 2;
+  if (q.source_name || q.created_by?.startsWith('source-')) return 3;
+  if (q.id?.startsWith('q-static-')) return 4;
+  return 5;
+}
+
+function isEligibleForProfessionalBank(q: Question): boolean {
+  if (q.grading_safe === false) return false;
+  // Essay items are teacher-reviewed via their worked solution rather than auto-graded.
+  if (q.format_type === 'TL' || q.question_type === 'ESSAY') return !!(q.solution_vi || q.solution_en);
+  // TN / Đ-S / TLN must carry a complete grading key before they can displace the static baseline.
+  return isQuestionAutoGradable(q);
+}
+
+function capQuestionBankPerType(items: Question[]): Question[] {
+  const groups = new Map<string, Array<{ q: Question; order: number }>>();
+  items.forEach((q, order) => {
+    if (!isEligibleForProfessionalBank(q)) return;
+    const format = q.format_type || (q.question_type === 'MCQ' ? 'TN' : q.question_type === 'TRUE_FALSE' ? 'DS' : q.question_type === 'ESSAY' ? 'TL' : 'TLN');
+    const key = `${q.type_id}|${format}`;
+    const group = groups.get(key) || [];
+    group.push({ q, order });
+    groups.set(key, group);
+  });
+
+  const selected: Question[] = [];
+  groups.forEach((group, key) => {
+    const format = key.split('|').pop() || '';
+    const cap = QUESTION_BANK_FORMAT_CAP[format] || group.length;
+    const seen = new Set<string>();
+    const ordered = [...group].sort((a, b) => {
+      const priority = cappedBankPriority(a.q) - cappedBankPriority(b.q);
+      return priority !== 0 ? priority : a.order - b.order;
+    });
+    for (const item of ordered) {
+      const signature = getQuestionDedupSignature(item.q);
+      if (seen.has(signature)) continue;
+      seen.add(signature);
+      selected.push(item.q);
+      if (seen.size >= cap) break;
+    }
+  });
+  return selected;
+}
+
+export const FULL_QUESTION_BANK: Question[] = capQuestionBankPerType(CLEAN_UNCAPPED_QUESTION_BANK);
 export const ONLINE_SAFE_QUESTION_BANK: Question[] = FULL_QUESTION_BANK.filter(isQuestionAutoGradable);
 
 // =========================================================================
@@ -1503,6 +1599,9 @@ export function isQuestionCompatibleWithTopic(topicId?: string, questionText?: s
   const topic = (topicId || '').toLowerCase();
   const text = (questionText || '').toLowerCase().normalize('NFC');
   if (!topic || !text) return true;
+
+  // Lớp 11 không dùng hệ tọa độ Oxyz; chặn cả câu DB/API cũ bị gán nhầm từ lớp 12.
+  if (topic.startsWith('top-11-') && /\boxyz\b/i.test(text)) return false;
 
   const has = (patterns: RegExp[]) => patterns.some((re) => re.test(text));
   const derivativeSurvey = [ /cực trị/i, /đồng biến/i, /nghịch biến/i, /tiệm cận/i, /bảng biến thiên/i ];

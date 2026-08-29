@@ -62,13 +62,10 @@ function isPureMathFormula(text: string): boolean {
   const tokens = [...trimmed.matchAll(new RegExp(MATH_BLOCK_REGEX.source, 'g'))];
   if (tokens.length === 1 && tokens[0][0] === trimmed) return true;
 
-  // If there is prose outside one or more math blocks, always treat as mixed content.
-  if (tokens.length > 0) {
-    const outside = trimmed.replace(new RegExp(MATH_BLOCK_REGEX.source, 'g'), ' ')
-      .replace(/[\s,;:.!?()[\]{}\-+/*=<>≤≥≠|]+/g, ' ')
-      .trim();
-    return outside.length === 0 || !UNICODE_LETTER_REGEX.test(outside);
-  }
+  // Any extra character outside the math token (including punctuation such as the final dot
+  // in `$M(0,2,1)$.`) means this is mixed content. Rendering the whole string with KaTeX
+  // would pass the dollar signs/punctuation into the parser and produce the red KaTeX error text.
+  if (tokens.length > 0) return false;
 
   // Bare math without delimiters: allow only compact symbolic expressions, not prose like “bằng”, “equals”, “using”.
   const looksLikeMath = /[=^_<>≤≥≠∈∉∞]|\\[a-zA-Z]+/.test(trimmed);
@@ -91,19 +88,18 @@ export const MathRenderer: React.FC<MathRendererProps> = ({
 
   const normalizedContent = normalizeMathText(content);
 
-  if (isPureMathFormula(normalizedContent)) {
+  // IMPORTANT: tokenize delimited math FIRST. Never pass a mixed string such as
+  // `$M(0,2,1)$.`, `$A$ và $B$`, or `${\\alpha}:...$` to KaTeX as one formula.
+  // That was the source of the red literal-LaTeX text seen in worksheets.
+  const hasDelimitedMath = MATH_BLOCK_REGEX.test(normalizedContent);
+  MATH_BLOCK_REGEX.lastIndex = 0;
+
+  if (!hasDelimitedMath && isPureMathFormula(normalizedContent)) {
     const html = renderLatexSafe(stripOuterMathDelimiters(normalizedContent), inline);
-    if (inline) {
-      return (
-        <span
-          className={`math-render inline-block align-middle px-0.5 ${className}`}
-          dangerouslySetInnerHTML={{ __html: html }}
-        />
-      );
-    }
+    const Tag = inline ? 'span' : 'div';
     return (
-      <div
-        className={`math-render my-2 overflow-x-auto text-center ${className}`}
+      <Tag
+        className={`math-render ${inline ? 'inline-block align-middle px-0.5' : 'my-2 overflow-x-auto text-center'} ${className}`}
         dangerouslySetInnerHTML={{ __html: html }}
       />
     );
@@ -112,23 +108,26 @@ export const MathRenderer: React.FC<MathRendererProps> = ({
   const parts = normalizedContent.split(MATH_BLOCK_REGEX);
 
   return (
-    <div className={`math-render leading-relaxed ${inline ? 'inline' : 'block'} ${className}`}>
+    <span className={`math-render leading-relaxed ${inline ? 'inline' : 'block'} ${className}`}>
       {parts.map((part, idx) => {
         if (!part) return null;
 
-        if ((part.startsWith('$$') && part.endsWith('$$')) || (part.startsWith('\\[') && part.endsWith('\\]'))) {
-          const latex = part.startsWith('$$') ? part.slice(2, -2).trim() : part.slice(2, -2).trim();
+        const isBlock = (part.startsWith('$$') && part.endsWith('$$')) || (part.startsWith('\\[') && part.endsWith('\\]'));
+        const isInlineMath = (part.startsWith('$') && part.endsWith('$')) || (part.startsWith('\\(') && part.endsWith('\\)'));
+
+        if (isBlock) {
+          const latex = part.slice(2, -2).trim();
           const html = renderLatexSafe(latex, false);
           return (
-            <div
+            <span
               key={idx}
-              className="my-3 overflow-x-auto text-center font-serif text-teal-800"
+              className="block my-3 overflow-x-auto text-center font-serif text-teal-800"
               dangerouslySetInnerHTML={{ __html: html }}
             />
           );
         }
 
-        if ((part.startsWith('$') && part.endsWith('$')) || (part.startsWith('\\(') && part.endsWith('\\)'))) {
+        if (isInlineMath) {
           const latex = part.startsWith('$') ? part.slice(1, -1).trim() : part.slice(2, -2).trim();
           const html = renderLatexSafe(latex, true);
           return (
@@ -142,32 +141,24 @@ export const MathRenderer: React.FC<MathRendererProps> = ({
 
         const lines = part.split('\n');
         return (
-          <span key={idx} className="whitespace-normal">
+          <React.Fragment key={idx}>
             {lines.map((line, lIdx) => (
               <React.Fragment key={lIdx}>
                 {lIdx > 0 && <br />}
                 {line.split(/(\*\*.*?\*\*|\*.*?\*)/g).map((chunk, cIdx) => {
                   if (chunk.startsWith('**') && chunk.endsWith('**')) {
-                    return (
-                      <strong key={cIdx} className="font-bold text-slate-900">
-                        {chunk.slice(2, -2)}
-                      </strong>
-                    );
+                    return <strong key={cIdx} className="font-bold text-slate-900">{chunk.slice(2, -2)}</strong>;
                   }
                   if (chunk.startsWith('*') && chunk.endsWith('*')) {
-                    return (
-                      <em key={cIdx} className="italic text-slate-700">
-                        {chunk.slice(1, -1)}
-                      </em>
-                    );
+                    return <em key={cIdx} className="italic text-slate-700">{chunk.slice(1, -1)}</em>;
                   }
                   return <span key={cIdx}>{chunk}</span>;
                 })}
               </React.Fragment>
             ))}
-          </span>
+          </React.Fragment>
         );
       })}
-    </div>
+    </span>
   );
 };

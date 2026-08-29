@@ -20,7 +20,8 @@ const requiredSnippets = [
   "const DEFAULT_COUNTS: QuestionCounts = { tn: 4, ds: 2, tln: 2, tl: 1 }",
   'return takeQuestionsForType(typeId, requested)',
   'getQuestionsForMathTypeStructured(typeId, activeLesson.topic_id)',
-  'Ngân hàng tĩnh đã dùng hết',
+  'Kho câu sạch hiện có còn thiếu',
+  'const MAX_COUNTS: QuestionCounts = { tn: 12, ds: 4, tln: 6, tl: 2 }',
   'AI tạo thêm biến thể',
   'REAL_SOURCE_QUESTION_BANK',
   'ONLINE_SAFE_QUESTION_BANK',
@@ -52,6 +53,7 @@ if (issues.length) {
 console.log('✅ 79/79 bài có tóm tắt lý thuyết thật và công thức trọng tâm');
 console.log('✅ Mặc định thống nhất 4 TN + 2 Đ/S + 2 TLN + 1 TL');
 console.log('✅ Câu nguồn GV được ưu tiên trước ngân hàng nền và vẫn khóa đúng type_id');
-console.log('✅ Không tự gọi Gemini khi chọn dạng; AI chỉ là tùy chọn khi yêu cầu vượt ngân hàng');
+console.log('✅ Không tự gọi Gemini khi chọn dạng; AI chỉ là tùy chọn khi số câu sạch hiện có chưa đủ yêu cầu');
+console.log('✅ Trần yêu cầu mỗi dạng: 12 TN + 4 Đ/S + 6 TLN + 2 TL');
 console.log('✅ Static bank không còn generator hỏi thuộc phương pháp/định nghĩa');
 console.log('🎯 WORKSHEET AUDIT PASSED');

@@ -9168,13 +9168,13 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
       {
         "option_key": "B",
         "content_vi": "5 5.",
-        "content_en": "$5\\sqrt5$.",
+        "content_en": "$5\\sqrt5$",
         "is_correct": false
       },
       {
         "option_key": "C",
         "content_vi": "6 5.",
-        "content_en": "$6\\sqrt5$.",
+        "content_en": "$6\\sqrt5$",
         "is_correct": true
       },
       {
@@ -11134,26 +11134,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$AM=1$.",
-        "content_en": "$AM=1$.",
+        "content_vi": "$AM=1$",
+        "content_en": "$AM=1$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$AM=2$.",
-        "content_en": "$AM=2$.",
+        "content_vi": "$AM=2$",
+        "content_en": "$AM=2$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$AM=3$.",
-        "content_en": "$AM=3$.",
+        "content_vi": "$AM=3$",
+        "content_en": "$AM=3$",
         "is_correct": true
       },
       {
         "option_key": "D",
-        "content_vi": "$AM=4$.",
-        "content_en": "$AM=4$.",
+        "content_vi": "$AM=4$",
+        "content_en": "$AM=4$",
         "is_correct": false
       }
     ],
@@ -11183,19 +11183,19 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
       {
         "option_key": "a",
         "content_vi": "A; 0; 0, B 0;; 0, C −; 0; 0, D 0; −; 0, S 0; 0; tanα",
-        "content_en": "$A(\\frac{a\\sqrt2}{2},0,0)$, $B(0,\\frac{a\\sqrt2}{2},0)$, $C(-\\frac{a\\sqrt2}{2},0,0)$, $D(0,-\\frac{a\\sqrt2}{2},0)$, and $S(0,0,\\frac a2\\tan\\alpha)$.",
+        "content_en": "$A(\\frac{a\\sqrt2}{2},0,0)$, $B(0,\\frac{a\\sqrt2}{2},0)$, $C(-\\frac{a\\sqrt2}{2},0,0)$, $D(0,-\\frac{a\\sqrt2}{2},0)$, and $S(0,0,\\frac a2\\tan\\alpha)$",
         "is_correct": true
       },
       {
         "option_key": "b",
         "content_vi": "SA =; 0; − tanα, SB = 0;; − tanα",
-        "content_en": "$\\vec{SA}=(\\frac{a\\sqrt2}{2},0,-\\frac a2\\tan\\alpha)$ and $\\vec{SB}=(0,\\frac{a\\sqrt2}{2},-\\frac a2\\tan\\alpha)$.",
+        "content_en": "$\\vec{SA}=(\\frac{a\\sqrt2}{2},0,-\\frac a2\\tan\\alpha)$ and $\\vec{SB}=(0,\\frac{a\\sqrt2}{2},-\\frac a2\\tan\\alpha)$",
         "is_correct": true
       },
       {
         "option_key": "c",
         "content_vi": "SC = −; 0; − tanα, SD = 0; −; − tanα",
-        "content_en": "$\\vec{SC}=(-\\frac{a\\sqrt2}{2},0,-\\frac a2\\tan\\alpha)$ and $\\vec{SD}=(0,-\\frac{a\\sqrt2}{2},-\\frac a2\\tan\\alpha)$.",
+        "content_en": "$\\vec{SC}=(-\\frac{a\\sqrt2}{2},0,-\\frac a2\\tan\\alpha)$ and $\\vec{SD}=(0,-\\frac{a\\sqrt2}{2},-\\frac a2\\tan\\alpha)$",
         "is_correct": true
       },
       {
@@ -11393,26 +11393,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$45^\\circ$.",
-        "content_en": "$45^\\circ$.",
+        "content_vi": "$45^\\circ$",
+        "content_en": "$45^\\circ$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$60^\\circ$.",
-        "content_en": "$60^\\circ$.",
+        "content_vi": "$60^\\circ$",
+        "content_en": "$60^\\circ$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$90^\\circ$.",
-        "content_en": "$90^\\circ$.",
+        "content_vi": "$90^\\circ$",
+        "content_en": "$90^\\circ$",
         "is_correct": true
       },
       {
         "option_key": "D",
-        "content_vi": "$120^\\circ$.",
-        "content_en": "$120^\\circ$.",
+        "content_vi": "$120^\\circ$",
+        "content_en": "$120^\\circ$",
         "is_correct": false
       }
     ],
@@ -11441,26 +11441,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$45^\\circ$.",
-        "content_en": "$45^\\circ$.",
+        "content_vi": "$45^\\circ$",
+        "content_en": "$45^\\circ$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$30^\\circ$.",
-        "content_en": "$30^\\circ$.",
+        "content_vi": "$30^\\circ$",
+        "content_en": "$30^\\circ$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$90^\\circ$.",
-        "content_en": "$90^\\circ$.",
+        "content_vi": "$90^\\circ$",
+        "content_en": "$90^\\circ$",
         "is_correct": true
       },
       {
         "option_key": "D",
-        "content_vi": "$60^\\circ$.",
-        "content_en": "$60^\\circ$.",
+        "content_vi": "$60^\\circ$",
+        "content_en": "$60^\\circ$",
         "is_correct": false
       }
     ],
@@ -11489,26 +11489,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$0^\\circ$.",
-        "content_en": "$0^\\circ$.",
+        "content_vi": "$0^\\circ$",
+        "content_en": "$0^\\circ$",
         "is_correct": true
       },
       {
         "option_key": "B",
-        "content_vi": "$45^\\circ$.",
-        "content_en": "$45^\\circ$.",
+        "content_vi": "$45^\\circ$",
+        "content_en": "$45^\\circ$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$180^\\circ$.",
-        "content_en": "$180^\\circ$.",
+        "content_vi": "$180^\\circ$",
+        "content_en": "$180^\\circ$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$90^\\circ$.",
-        "content_en": "$90^\\circ$.",
+        "content_vi": "$90^\\circ$",
+        "content_en": "$90^\\circ$",
         "is_correct": false
       }
     ],
@@ -11537,26 +11537,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$30^\\circ$.",
-        "content_en": "$30^\\circ$.",
+        "content_vi": "$30^\\circ$",
+        "content_en": "$30^\\circ$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$45^\\circ$.",
-        "content_en": "$45^\\circ$.",
+        "content_vi": "$45^\\circ$",
+        "content_en": "$45^\\circ$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$60^\\circ$.",
-        "content_en": "$60^\\circ$.",
+        "content_vi": "$60^\\circ$",
+        "content_en": "$60^\\circ$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$90^\\circ$.",
-        "content_en": "$90^\\circ$.",
+        "content_vi": "$90^\\circ$",
+        "content_en": "$90^\\circ$",
         "is_correct": true
       }
     ],
@@ -11585,26 +11585,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$60^\\circ$.",
-        "content_en": "$60^\\circ$.",
+        "content_vi": "$60^\\circ$",
+        "content_en": "$60^\\circ$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$120^\\circ$.",
-        "content_en": "$120^\\circ$.",
+        "content_vi": "$120^\\circ$",
+        "content_en": "$120^\\circ$",
         "is_correct": true
       },
       {
         "option_key": "C",
-        "content_vi": "$90^\\circ$.",
-        "content_en": "$90^\\circ$.",
+        "content_vi": "$90^\\circ$",
+        "content_en": "$90^\\circ$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$45^\\circ$.",
-        "content_en": "$45^\\circ$.",
+        "content_vi": "$45^\\circ$",
+        "content_en": "$45^\\circ$",
         "is_correct": false
       }
     ],
@@ -11633,26 +11633,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$h=3$.",
-        "content_en": "$h=3$.",
+        "content_vi": "$h=3$",
+        "content_en": "$h=3$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$h=6$.",
-        "content_en": "$h=6$.",
+        "content_vi": "$h=6$",
+        "content_en": "$h=6$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$h=9$.",
-        "content_en": "$h=9$.",
+        "content_vi": "$h=9$",
+        "content_en": "$h=9$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$h=1$.",
-        "content_en": "$h=1$.",
+        "content_vi": "$h=1$",
+        "content_en": "$h=1$",
         "is_correct": false
       }
     ],
@@ -11681,26 +11681,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$\\cos\\alpha=\\frac23$.",
-        "content_en": "$\\cos\\alpha=\\frac23$.",
+        "content_vi": "$\\cos\\alpha=\\frac23$",
+        "content_en": "$\\cos\\alpha=\\frac23$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$\\cos\\alpha=\\frac34$.",
-        "content_en": "$\\cos\\alpha=\\frac34$.",
+        "content_vi": "$\\cos\\alpha=\\frac34$",
+        "content_en": "$\\cos\\alpha=\\frac34$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$\\cos\\alpha=\\frac16$.",
-        "content_en": "$\\cos\\alpha=\\frac16$.",
+        "content_vi": "$\\cos\\alpha=\\frac16$",
+        "content_en": "$\\cos\\alpha=\\frac16$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$\\cos\\alpha=\\frac13$.",
-        "content_en": "$\\cos\\alpha=\\frac13$.",
+        "content_vi": "$\\cos\\alpha=\\frac13$",
+        "content_en": "$\\cos\\alpha=\\frac13$",
         "is_correct": false
       }
     ],
@@ -11729,26 +11729,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$60^\\circ$.",
-        "content_en": "$60^\\circ$.",
+        "content_vi": "$60^\\circ$",
+        "content_en": "$60^\\circ$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$135^\\circ$.",
-        "content_en": "$135^\\circ$.",
+        "content_vi": "$135^\\circ$",
+        "content_en": "$135^\\circ$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$45^\\circ$.",
-        "content_en": "$45^\\circ$.",
+        "content_vi": "$45^\\circ$",
+        "content_en": "$45^\\circ$",
         "is_correct": true
       },
       {
         "option_key": "D",
-        "content_vi": "$90^\\circ$.",
-        "content_en": "$90^\\circ$.",
+        "content_vi": "$90^\\circ$",
+        "content_en": "$90^\\circ$",
         "is_correct": false
       }
     ],
@@ -11777,26 +11777,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$4$.",
-        "content_en": "$4$.",
+        "content_vi": "$4$",
+        "content_en": "$4$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$\\sqrt{13}$.",
-        "content_en": "$\\sqrt{13}$.",
+        "content_vi": "$\\sqrt{13}$",
+        "content_en": "$\\sqrt{13}$",
         "is_correct": true
       },
       {
         "option_key": "C",
-        "content_vi": "$\\sqrt{10}$.",
-        "content_en": "$\\sqrt{10}$.",
+        "content_vi": "$\\sqrt{10}$",
+        "content_en": "$\\sqrt{10}$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$5$.",
-        "content_en": "$5$.",
+        "content_vi": "$5$",
+        "content_en": "$5$",
         "is_correct": false
       }
     ],
@@ -11825,26 +11825,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$60^\\circ$.",
-        "content_en": "$60^\\circ$.",
+        "content_vi": "$60^\\circ$",
+        "content_en": "$60^\\circ$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$45^\\circ$.",
-        "content_en": "$45^\\circ$.",
+        "content_vi": "$45^\\circ$",
+        "content_en": "$45^\\circ$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$90^\\circ$.",
-        "content_en": "$90^\\circ$.",
+        "content_vi": "$90^\\circ$",
+        "content_en": "$90^\\circ$",
         "is_correct": true
       },
       {
         "option_key": "D",
-        "content_vi": "$0^\\circ$.",
-        "content_en": "$0^\\circ$.",
+        "content_vi": "$0^\\circ$",
+        "content_en": "$0^\\circ$",
         "is_correct": false
       }
     ],
@@ -11873,26 +11873,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$\\begin{cases}x=3+t\\\\y=t\\\\z=1+t\\end{cases}$.",
-        "content_en": "$\\begin{cases}x=3+t\\\\y=t\\\\z=1+t\\end{cases}$.",
+        "content_vi": "$\\begin{cases}x=3+t\\\\y=t\\\\z=1+t\\end{cases}$",
+        "content_en": "$\\begin{cases}x=3+t\\\\y=t\\\\z=1+t\\end{cases}$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$\\begin{cases}x=3-t\\\\y=t\\\\z=1\\end{cases}$.",
-        "content_en": "$\\begin{cases}x=3-t\\\\y=t\\\\z=1\\end{cases}$.",
+        "content_vi": "$\\begin{cases}x=3-t\\\\y=t\\\\z=1\\end{cases}$",
+        "content_en": "$\\begin{cases}x=3-t\\\\y=t\\\\z=1\\end{cases}$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$\\begin{cases}x=3+t\\\\y=t\\\\z=1\\end{cases}$.",
-        "content_en": "$\\begin{cases}x=3+t\\\\y=t\\\\z=1\\end{cases}$.",
+        "content_vi": "$\\begin{cases}x=3+t\\\\y=t\\\\z=1\\end{cases}$",
+        "content_en": "$\\begin{cases}x=3+t\\\\y=t\\\\z=1\\end{cases}$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$\\begin{cases}x=3+t\\\\y=-t\\\\z=1+t\\end{cases}$.",
-        "content_en": "$\\begin{cases}x=3+t\\\\y=-t\\\\z=1+t\\end{cases}$.",
+        "content_vi": "$\\begin{cases}x=3+t\\\\y=-t\\\\z=1+t\\end{cases}$",
+        "content_en": "$\\begin{cases}x=3+t\\\\y=-t\\\\z=1+t\\end{cases}$",
         "is_correct": true
       }
     ],
@@ -12013,26 +12013,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$\\begin{cases}x=1\\\\y=t\\\\z=t\\end{cases}$.",
-        "content_en": "$\\begin{cases}x=1\\\\y=t\\\\z=t\\end{cases}$.",
+        "content_vi": "$\\begin{cases}x=1\\\\y=t\\\\z=t\\end{cases}$",
+        "content_en": "$\\begin{cases}x=1\\\\y=t\\\\z=t\\end{cases}$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$\\begin{cases}x=1-t\\\\y=2+t\\\\z=0\\end{cases}$.",
-        "content_en": "$\\begin{cases}x=1-t\\\\y=2+t\\\\z=0\\end{cases}$.",
+        "content_vi": "$\\begin{cases}x=1-t\\\\y=2+t\\\\z=0\\end{cases}$",
+        "content_en": "$\\begin{cases}x=1-t\\\\y=2+t\\\\z=0\\end{cases}$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$\\begin{cases}x=1+t\\\\y=2+t\\\\z=0\\end{cases}$.",
-        "content_en": "$\\begin{cases}x=1+t\\\\y=2+t\\\\z=0\\end{cases}$.",
+        "content_vi": "$\\begin{cases}x=1+t\\\\y=2+t\\\\z=0\\end{cases}$",
+        "content_en": "$\\begin{cases}x=1+t\\\\y=2+t\\\\z=0\\end{cases}$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$\\begin{cases}x=1\\\\y=t\\\\z=0\\end{cases}$.",
-        "content_en": "$\\begin{cases}x=1\\\\y=t\\\\z=0\\end{cases}$.",
+        "content_vi": "$\\begin{cases}x=1\\\\y=t\\\\z=0\\end{cases}$",
+        "content_en": "$\\begin{cases}x=1\\\\y=t\\\\z=0\\end{cases}$",
         "is_correct": false
       }
     ],
@@ -12061,26 +12061,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$\\begin{cases}x=-1+2t\\\\y=1-t\\\\z=0\\end{cases}$.",
-        "content_en": "$\\begin{cases}x=-1+2t\\\\y=1-t\\\\z=0\\end{cases}$.",
+        "content_vi": "$\\begin{cases}x=-1+2t\\\\y=1-t\\\\z=0\\end{cases}$",
+        "content_en": "$\\begin{cases}x=-1+2t\\\\y=1-t\\\\z=0\\end{cases}$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$\\begin{cases}x=-1+t\\\\y=1-2t\\\\z=0\\end{cases}$.",
-        "content_en": "$\\begin{cases}x=-1+t\\\\y=1-2t\\\\z=0\\end{cases}$.",
+        "content_vi": "$\\begin{cases}x=-1+t\\\\y=1-2t\\\\z=0\\end{cases}$",
+        "content_en": "$\\begin{cases}x=-1+t\\\\y=1-2t\\\\z=0\\end{cases}$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$\\begin{cases}x=-1+t\\\\y=1-t\\\\z=0\\end{cases}$.",
-        "content_en": "$\\begin{cases}x=-1+t\\\\y=1-t\\\\z=0\\end{cases}$.",
+        "content_vi": "$\\begin{cases}x=-1+t\\\\y=1-t\\\\z=0\\end{cases}$",
+        "content_en": "$\\begin{cases}x=-1+t\\\\y=1-t\\\\z=0\\end{cases}$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$\\begin{cases}x=t\\\\y=1-t\\\\z=0\\end{cases}$.",
-        "content_en": "$\\begin{cases}x=t\\\\y=1-t\\\\z=0\\end{cases}$.",
+        "content_vi": "$\\begin{cases}x=t\\\\y=1-t\\\\z=0\\end{cases}$",
+        "content_en": "$\\begin{cases}x=t\\\\y=1-t\\\\z=0\\end{cases}$",
         "is_correct": false
       }
     ],
@@ -12109,26 +12109,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$\\begin{cases}x=-1-2t\\\\y=0\\\\z=3t\\end{cases}$.",
-        "content_en": "$\\begin{cases}x=-1-2t\\\\y=0\\\\z=3t\\end{cases}$.",
+        "content_vi": "$\\begin{cases}x=-1-2t\\\\y=0\\\\z=3t\\end{cases}$",
+        "content_en": "$\\begin{cases}x=-1-2t\\\\y=0\\\\z=3t\\end{cases}$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$\\begin{cases}x=-1+2t\\\\y=0\\\\z=3t\\end{cases}$.",
-        "content_en": "$\\begin{cases}x=-1+2t\\\\y=0\\\\z=3t\\end{cases}$.",
+        "content_vi": "$\\begin{cases}x=-1+2t\\\\y=0\\\\z=3t\\end{cases}$",
+        "content_en": "$\\begin{cases}x=-1+2t\\\\y=0\\\\z=3t\\end{cases}$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$\\begin{cases}x=1+t\\\\y=0\\\\z=3+3t\\end{cases}$.",
-        "content_en": "$\\begin{cases}x=1+t\\\\y=0\\\\z=3+3t\\end{cases}$.",
+        "content_vi": "$\\begin{cases}x=1+t\\\\y=0\\\\z=3+3t\\end{cases}$",
+        "content_en": "$\\begin{cases}x=1+t\\\\y=0\\\\z=3+3t\\end{cases}$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$\\begin{cases}x=1+2t\\\\y=0\\\\z=3t\\end{cases}$.",
-        "content_en": "$\\begin{cases}x=1+2t\\\\y=0\\\\z=3t\\end{cases}$.",
+        "content_vi": "$\\begin{cases}x=1+2t\\\\y=0\\\\z=3t\\end{cases}$",
+        "content_en": "$\\begin{cases}x=1+2t\\\\y=0\\\\z=3t\\end{cases}$",
         "is_correct": false
       }
     ],
@@ -12157,26 +12157,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$\\begin{cases}x=2+3t\\\\y=1+2t\\\\z=-4+t\\end{cases}$.",
-        "content_en": "$\\begin{cases}x=2+3t\\\\y=1+2t\\\\z=-4+t\\end{cases}$.",
+        "content_vi": "$\\begin{cases}x=2+3t\\\\y=1+2t\\\\z=-4+t\\end{cases}$",
+        "content_en": "$\\begin{cases}x=2+3t\\\\y=1+2t\\\\z=-4+t\\end{cases}$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$\\begin{cases}x=2t\\\\y=-2+3t\\\\z=-4t\\end{cases}$.",
-        "content_en": "$\\begin{cases}x=2t\\\\y=-2+3t\\\\z=-4t\\end{cases}$.",
+        "content_vi": "$\\begin{cases}x=2t\\\\y=-2+3t\\\\z=-4t\\end{cases}$",
+        "content_en": "$\\begin{cases}x=2t\\\\y=-2+3t\\\\z=-4t\\end{cases}$",
         "is_correct": true
       },
       {
         "option_key": "C",
-        "content_vi": "$\\begin{cases}x=2+2t\\\\y=1-5t\\\\z=-4+t\\end{cases}$.",
-        "content_en": "$\\begin{cases}x=2+2t\\\\y=1-5t\\\\z=-4+t\\end{cases}$.",
+        "content_vi": "$\\begin{cases}x=2+2t\\\\y=1-5t\\\\z=-4+t\\end{cases}$",
+        "content_en": "$\\begin{cases}x=2+2t\\\\y=1-5t\\\\z=-4+t\\end{cases}$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$\\begin{cases}x=3-t\\\\y=3-2t\\\\z=1-5t\\end{cases}$.",
-        "content_en": "$\\begin{cases}x=3-t\\\\y=3-2t\\\\z=1-5t\\end{cases}$.",
+        "content_vi": "$\\begin{cases}x=3-t\\\\y=3-2t\\\\z=1-5t\\end{cases}$",
+        "content_en": "$\\begin{cases}x=3-t\\\\y=3-2t\\\\z=1-5t\\end{cases}$",
         "is_correct": false
       }
     ],
@@ -12205,26 +12205,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$\\dfrac{x-1}{2}=\\dfrac y2=\\dfrac{z-2}{1}$.",
-        "content_en": "$\\dfrac{x-1}{2}=\\dfrac y2=\\dfrac{z-2}{1}$.",
+        "content_vi": "$\\dfrac{x-1}{2}=\\dfrac y2=\\dfrac{z-2}{1}$",
+        "content_en": "$\\dfrac{x-1}{2}=\\dfrac y2=\\dfrac{z-2}{1}$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$\\dfrac{x-1}{1}=\\dfrac y{-3}=\\dfrac{z-2}{1}$.",
-        "content_en": "$\\dfrac{x-1}{1}=\\dfrac y{-3}=\\dfrac{z-2}{1}$.",
+        "content_vi": "$\\dfrac{x-1}{1}=\\dfrac y{-3}=\\dfrac{z-2}{1}$",
+        "content_en": "$\\dfrac{x-1}{1}=\\dfrac y{-3}=\\dfrac{z-2}{1}$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$\\dfrac{x-1}{1}=\\dfrac y1=\\dfrac{z-2}{1}$.",
-        "content_en": "$\\dfrac{x-1}{1}=\\dfrac y1=\\dfrac{z-2}{1}$.",
+        "content_vi": "$\\dfrac{x-1}{1}=\\dfrac y1=\\dfrac{z-2}{1}$",
+        "content_en": "$\\dfrac{x-1}{1}=\\dfrac y1=\\dfrac{z-2}{1}$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$\\dfrac{x-1}{1}=\\dfrac y1=\\dfrac{z-2}{-1}$.",
-        "content_en": "$\\dfrac{x-1}{1}=\\dfrac y1=\\dfrac{z-2}{-1}$.",
+        "content_vi": "$\\dfrac{x-1}{1}=\\dfrac y1=\\dfrac{z-2}{-1}$",
+        "content_en": "$\\dfrac{x-1}{1}=\\dfrac y1=\\dfrac{z-2}{-1}$",
         "is_correct": true
       }
     ],
@@ -12253,26 +12253,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$\\dfrac{x}{-1}=\\dfrac y1=\\dfrac{z-1}{2}$.",
-        "content_en": "$\\dfrac{x}{-1}=\\dfrac y1=\\dfrac{z-1}{2}$.",
+        "content_vi": "$\\dfrac{x}{-1}=\\dfrac y1=\\dfrac{z-1}{2}$",
+        "content_en": "$\\dfrac{x}{-1}=\\dfrac y1=\\dfrac{z-1}{2}$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$\\dfrac{x}{-1}=\\dfrac{y-2}{1}=\\dfrac z2$.",
-        "content_en": "$\\dfrac{x}{-1}=\\dfrac{y-2}{1}=\\dfrac z2$.",
+        "content_vi": "$\\dfrac{x}{-1}=\\dfrac{y-2}{1}=\\dfrac z2$",
+        "content_en": "$\\dfrac{x}{-1}=\\dfrac{y-2}{1}=\\dfrac z2$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$\\dfrac{x-1}{1}=\\dfrac y{-1}=\\dfrac z{-2}$.",
-        "content_en": "$\\dfrac{x-1}{1}=\\dfrac y{-1}=\\dfrac z{-2}$.",
+        "content_vi": "$\\dfrac{x-1}{1}=\\dfrac y{-1}=\\dfrac z{-2}$",
+        "content_en": "$\\dfrac{x-1}{1}=\\dfrac y{-1}=\\dfrac z{-2}$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$\\dfrac{x-1}{1}=\\dfrac{y-1}{1}=\\dfrac z2$.",
-        "content_en": "$\\dfrac{x-1}{1}=\\dfrac{y-1}{1}=\\dfrac z2$.",
+        "content_vi": "$\\dfrac{x-1}{1}=\\dfrac{y-1}{1}=\\dfrac z2$",
+        "content_en": "$\\dfrac{x-1}{1}=\\dfrac{y-1}{1}=\\dfrac z2$",
         "is_correct": false
       }
     ],
@@ -12301,26 +12301,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$\\vec u=(1,-2,1)$.",
-        "content_en": "$\\vec u=(1,-2,1)$.",
+        "content_vi": "$\\vec u=(1,-2,1)$",
+        "content_en": "$\\vec u=(1,-2,1)$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$\\vec u=(2,1,-1)$.",
-        "content_en": "$\\vec u=(2,1,-1)$.",
+        "content_vi": "$\\vec u=(2,1,-1)$",
+        "content_en": "$\\vec u=(2,1,-1)$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$\\vec u=(1,3,5)$.",
-        "content_en": "$\\vec u=(1,3,5)$.",
+        "content_vi": "$\\vec u=(1,3,5)$",
+        "content_en": "$\\vec u=(1,3,5)$",
         "is_correct": true
       },
       {
         "option_key": "D",
-        "content_vi": "$\\vec u=(-1,3,-5)$.",
-        "content_en": "$\\vec u=(-1,3,-5)$.",
+        "content_vi": "$\\vec u=(-1,3,-5)$",
+        "content_en": "$\\vec u=(-1,3,-5)$",
         "is_correct": false
       }
     ],
@@ -12349,26 +12349,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$\\vec u=(8,-11,-23)$.",
-        "content_en": "$\\vec u=(8,-11,-23)$.",
+        "content_vi": "$\\vec u=(8,-11,-23)$",
+        "content_en": "$\\vec u=(8,-11,-23)$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$\\vec u=(3,-2,2)$.",
-        "content_en": "$\\vec u=(3,-2,2)$.",
+        "content_vi": "$\\vec u=(3,-2,2)$",
+        "content_en": "$\\vec u=(3,-2,2)$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$\\vec u=(-8,11,-23)$.",
-        "content_en": "$\\vec u=(-8,11,-23)$.",
+        "content_vi": "$\\vec u=(-8,11,-23)$",
+        "content_en": "$\\vec u=(-8,11,-23)$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$\\vec u=(4,5,-1)$.",
-        "content_en": "$\\vec u=(4,5,-1)$.",
+        "content_vi": "$\\vec u=(4,5,-1)$",
+        "content_en": "$\\vec u=(4,5,-1)$",
         "is_correct": false
       }
     ],
@@ -12397,26 +12397,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$C(1,2,1)$.",
-        "content_en": "$C(1,2,1)$.",
+        "content_vi": "$C(1,2,1)$",
+        "content_en": "$C(1,2,1)$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$D(2,1,0)$.",
-        "content_en": "$D(2,1,0)$.",
+        "content_vi": "$D(2,1,0)$",
+        "content_en": "$D(2,1,0)$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$B(0,1,0)$.",
-        "content_en": "$B(0,1,0)$.",
+        "content_vi": "$B(0,1,0)$",
+        "content_en": "$B(0,1,0)$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$A(2,1,1)$.",
-        "content_en": "$A(2,1,1)$.",
+        "content_vi": "$A(2,1,1)$",
+        "content_en": "$A(2,1,1)$",
         "is_correct": true
       }
     ],
@@ -12445,26 +12445,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$\\dfrac{x+4}{-2}=\\dfrac y3=\\dfrac{z-2}{2}$.",
-        "content_en": "$\\dfrac{x+4}{-2}=\\dfrac y3=\\dfrac{z-2}{2}$.",
+        "content_vi": "$\\dfrac{x+4}{-2}=\\dfrac y3=\\dfrac{z-2}{2}$",
+        "content_en": "$\\dfrac{x+4}{-2}=\\dfrac y3=\\dfrac{z-2}{2}$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$\\dfrac{x-4}{-2}=\\dfrac y3=\\dfrac{z+2}{2}$.",
-        "content_en": "$\\dfrac{x-4}{-2}=\\dfrac y3=\\dfrac{z+2}{2}$.",
+        "content_vi": "$\\dfrac{x-4}{-2}=\\dfrac y3=\\dfrac{z+2}{2}$",
+        "content_en": "$\\dfrac{x-4}{-2}=\\dfrac y3=\\dfrac{z+2}{2}$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$\\dfrac{x-4}{-1}=\\dfrac y3=\\dfrac{z+2}{1}$.",
-        "content_en": "$\\dfrac{x-4}{-1}=\\dfrac y3=\\dfrac{z+2}{1}$.",
+        "content_vi": "$\\dfrac{x-4}{-1}=\\dfrac y3=\\dfrac{z+2}{1}$",
+        "content_en": "$\\dfrac{x-4}{-1}=\\dfrac y3=\\dfrac{z+2}{1}$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$\\dfrac{x-4}{2}=\\dfrac y{-3}=\\dfrac{z-2}{-2}$.",
-        "content_en": "$\\dfrac{x-4}{2}=\\dfrac y{-3}=\\dfrac{z-2}{-2}$.",
+        "content_vi": "$\\dfrac{x-4}{2}=\\dfrac y{-3}=\\dfrac{z-2}{-2}$",
+        "content_en": "$\\dfrac{x-4}{2}=\\dfrac y{-3}=\\dfrac{z-2}{-2}$",
         "is_correct": false
       }
     ],
@@ -12493,26 +12493,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$\\begin{cases}x=-2u\\\\y=2+u\\\\z=0\\end{cases}$.",
-        "content_en": "$\\begin{cases}x=-2u\\\\y=2+u\\\\z=0\\end{cases}$.",
+        "content_vi": "$\\begin{cases}x=-2u\\\\y=2+u\\\\z=0\\end{cases}$",
+        "content_en": "$\\begin{cases}x=-2u\\\\y=2+u\\\\z=0\\end{cases}$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$\\begin{cases}x=2u\\\\y=2+u\\\\z=0\\end{cases}$.",
-        "content_en": "$\\begin{cases}x=2u\\\\y=2+u\\\\z=0\\end{cases}$.",
+        "content_vi": "$\\begin{cases}x=2u\\\\y=2+u\\\\z=0\\end{cases}$",
+        "content_en": "$\\begin{cases}x=2u\\\\y=2+u\\\\z=0\\end{cases}$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$\\begin{cases}x=-2u\\\\y=2+u\\\\z=u\\end{cases}$.",
-        "content_en": "$\\begin{cases}x=-2u\\\\y=2+u\\\\z=u\\end{cases}$.",
+        "content_vi": "$\\begin{cases}x=-2u\\\\y=2+u\\\\z=u\\end{cases}$",
+        "content_en": "$\\begin{cases}x=-2u\\\\y=2+u\\\\z=u\\end{cases}$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$\\begin{cases}x=-2u\\\\y=u\\\\z=2\\end{cases}$.",
-        "content_en": "$\\begin{cases}x=-2u\\\\y=u\\\\z=2\\end{cases}$.",
+        "content_vi": "$\\begin{cases}x=-2u\\\\y=u\\\\z=2\\end{cases}$",
+        "content_en": "$\\begin{cases}x=-2u\\\\y=u\\\\z=2\\end{cases}$",
         "is_correct": false
       }
     ],
@@ -12773,26 +12773,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$\\vec a=(3,\\frac32,1)$.",
-        "content_en": "$\\vec a=(3,\\frac32,1)$.",
+        "content_vi": "$\\vec a=(3,\\frac32,1)$",
+        "content_en": "$\\vec a=(3,\\frac32,1)$",
         "is_correct": true
       },
       {
         "option_key": "B",
-        "content_vi": "$\\vec a=(9,2,3)$.",
-        "content_en": "$\\vec a=(9,2,3)$.",
+        "content_vi": "$\\vec a=(9,2,3)$",
+        "content_en": "$\\vec a=(9,2,3)$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$\\vec a=(3,2,1)$.",
-        "content_en": "$\\vec a=(3,2,1)$.",
+        "content_vi": "$\\vec a=(3,2,1)$",
+        "content_en": "$\\vec a=(3,2,1)$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$\\vec a=(3,\\frac23,-1)$.",
-        "content_en": "$\\vec a=(3,\\frac23,-1)$.",
+        "content_vi": "$\\vec a=(3,\\frac23,-1)$",
+        "content_en": "$\\vec a=(3,\\frac23,-1)$",
         "is_correct": false
       }
     ],
@@ -12821,26 +12821,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$\\vec a=(1,0,2)$.",
-        "content_en": "$\\vec a=(1,0,2)$.",
+        "content_vi": "$\\vec a=(1,0,2)$",
+        "content_en": "$\\vec a=(1,0,2)$",
         "is_correct": true
       },
       {
         "option_key": "B",
-        "content_vi": "$\\vec a=(2,-1,0)$.",
-        "content_en": "$\\vec a=(2,-1,0)$.",
+        "content_vi": "$\\vec a=(2,-1,0)$",
+        "content_en": "$\\vec a=(2,-1,0)$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$\\vec a=(1,2,3)$.",
-        "content_en": "$\\vec a=(1,2,3)$.",
+        "content_vi": "$\\vec a=(1,2,3)$",
+        "content_en": "$\\vec a=(1,2,3)$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$\\vec a=(2,0,-1)$.",
-        "content_en": "$\\vec a=(2,0,-1)$.",
+        "content_vi": "$\\vec a=(2,0,-1)$",
+        "content_en": "$\\vec a=(2,0,-1)$",
         "is_correct": false
       }
     ],
@@ -12869,26 +12869,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$\\vec a=(-2,-5,-1)$.",
-        "content_en": "$\\vec a=(-2,-5,-1)$.",
+        "content_vi": "$\\vec a=(-2,-5,-1)$",
+        "content_en": "$\\vec a=(-2,-5,-1)$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$\\vec a=(2,5,-1)$.",
-        "content_en": "$\\vec a=(2,5,-1)$.",
+        "content_vi": "$\\vec a=(2,5,-1)$",
+        "content_en": "$\\vec a=(2,5,-1)$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$\\vec a=(2,5,-9)$.",
-        "content_en": "$\\vec a=(2,5,-9)$.",
+        "content_vi": "$\\vec a=(2,5,-9)$",
+        "content_en": "$\\vec a=(2,5,-9)$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$\\vec a=(2,1,-9)$.",
-        "content_en": "$\\vec a=(2,1,-9)$.",
+        "content_vi": "$\\vec a=(2,1,-9)$",
+        "content_en": "$\\vec a=(2,1,-9)$",
         "is_correct": false
       }
     ],
@@ -12917,26 +12917,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$\\vec a=(-1,2,1)$.",
-        "content_en": "$\\vec a=(-1,2,1)$.",
+        "content_vi": "$\\vec a=(-1,2,1)$",
+        "content_en": "$\\vec a=(-1,2,1)$",
         "is_correct": true
       },
       {
         "option_key": "B",
-        "content_vi": "$\\vec a=(2,1,3)$.",
-        "content_en": "$\\vec a=(2,1,3)$.",
+        "content_vi": "$\\vec a=(2,1,3)$",
+        "content_en": "$\\vec a=(2,1,3)$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$\\vec a=(1,2,3)$.",
-        "content_en": "$\\vec a=(1,2,3)$.",
+        "content_vi": "$\\vec a=(1,2,3)$",
+        "content_en": "$\\vec a=(1,2,3)$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$\\vec a=(2,0,-1)$.",
-        "content_en": "$\\vec a=(2,0,-1)$.",
+        "content_vi": "$\\vec a=(2,0,-1)$",
+        "content_en": "$\\vec a=(2,0,-1)$",
         "is_correct": false
       }
     ],
@@ -12965,26 +12965,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$\\vec a=(\\frac13,\\frac12,\\frac34)$.",
-        "content_en": "$\\vec a=(\\frac13,\\frac12,\\frac34)$.",
+        "content_vi": "$\\vec a=(\\frac13,\\frac12,\\frac34)$",
+        "content_en": "$\\vec a=(\\frac13,\\frac12,\\frac34)$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$\\vec a=(2,1,0)$.",
-        "content_en": "$\\vec a=(2,1,0)$.",
+        "content_vi": "$\\vec a=(2,1,0)$",
+        "content_en": "$\\vec a=(2,1,0)$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$\\vec a=(4,-6,0)$.",
-        "content_en": "$\\vec a=(4,-6,0)$.",
+        "content_vi": "$\\vec a=(4,-6,0)$",
+        "content_en": "$\\vec a=(4,-6,0)$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$\\vec a=(\\frac13,-\\frac12,\\frac34)$.",
-        "content_en": "$\\vec a=(\\frac13,-\\frac12,\\frac34)$.",
+        "content_vi": "$\\vec a=(\\frac13,-\\frac12,\\frac34)$",
+        "content_en": "$\\vec a=(\\frac13,-\\frac12,\\frac34)$",
         "is_correct": true
       }
     ],
@@ -13013,26 +13013,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$Q(-1,1,3)$.",
-        "content_en": "$Q(-1,1,3)$.",
+        "content_vi": "$Q(-1,1,3)$",
+        "content_en": "$Q(-1,1,3)$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$N(1,-1,3)$.",
-        "content_en": "$N(1,-1,3)$.",
+        "content_vi": "$N(1,-1,3)$",
+        "content_en": "$N(1,-1,3)$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$A(-2,5,-2)$.",
-        "content_en": "$A(-2,5,-2)$.",
+        "content_vi": "$A(-2,5,-2)$",
+        "content_en": "$A(-2,5,-2)$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$P(1,5,2)$.",
-        "content_en": "$P(1,5,2)$.",
+        "content_vi": "$P(1,5,2)$",
+        "content_en": "$P(1,5,2)$",
         "is_correct": true
       }
     ],
@@ -13061,26 +13061,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$Q(3,2,0)$.",
-        "content_en": "$Q(3,2,0)$.",
+        "content_vi": "$Q(3,2,0)$",
+        "content_en": "$Q(3,2,0)$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$N(5,1,-1)$.",
-        "content_en": "$N(5,1,-1)$.",
+        "content_vi": "$N(5,1,-1)$",
+        "content_en": "$N(5,1,-1)$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$A(1,3,1)$.",
-        "content_en": "$A(1,3,1)$.",
+        "content_vi": "$A(1,3,1)$",
+        "content_en": "$A(1,3,1)$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$P(0,1,2)$.",
-        "content_en": "$P(0,1,2)$.",
+        "content_vi": "$P(0,1,2)$",
+        "content_en": "$P(0,1,2)$",
         "is_correct": true
       }
     ],
@@ -13109,26 +13109,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$\\vec u=(2,-1,5)$.",
-        "content_en": "$\\vec u=(2,-1,5)$.",
+        "content_vi": "$\\vec u=(2,-1,5)$",
+        "content_en": "$\\vec u=(2,-1,5)$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$(2,-1,-2)$.",
-        "content_en": "$(2,-1,-2)$.",
+        "content_vi": "$(2,-1,-2)$",
+        "content_en": "$(2,-1,-2)$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$\\vec u=(3,1,5)$.",
-        "content_en": "$\\vec u=(3,1,5)$.",
+        "content_vi": "$\\vec u=(3,1,5)$",
+        "content_en": "$\\vec u=(3,1,5)$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$\\vec u=(3,1,-2)$.",
-        "content_en": "$\\vec u=(3,1,-2)$.",
+        "content_vi": "$\\vec u=(3,1,-2)$",
+        "content_en": "$\\vec u=(3,1,-2)$",
         "is_correct": true
       }
     ],
@@ -13251,26 +13251,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$A(1,1,3)$.",
-        "content_en": "$A(1,1,3)$.",
+        "content_vi": "$A(1,1,3)$",
+        "content_en": "$A(1,1,3)$",
         "is_correct": true
       },
       {
         "option_key": "B",
-        "content_vi": "$B(1,1,-3)$.",
-        "content_en": "$B(1,1,-3)$.",
+        "content_vi": "$B(1,1,-3)$",
+        "content_en": "$B(1,1,-3)$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$C(3,1,1)$.",
-        "content_en": "$C(3,1,1)$.",
+        "content_vi": "$C(3,1,1)$",
+        "content_en": "$C(3,1,1)$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$D(-1,-1,3)$.",
-        "content_en": "$D(-1,-1,3)$.",
+        "content_vi": "$D(-1,-1,3)$",
+        "content_en": "$D(-1,-1,3)$",
         "is_correct": false
       }
     ],
@@ -13299,26 +13299,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$A(1,1,0)$.",
-        "content_en": "$A(1,1,0)$.",
+        "content_vi": "$A(1,1,0)$",
+        "content_en": "$A(1,1,0)$",
         "is_correct": true
       },
       {
         "option_key": "B",
-        "content_vi": "$B(1,0,-3)$.",
-        "content_en": "$B(1,0,-3)$.",
+        "content_vi": "$B(1,0,-3)$",
+        "content_en": "$B(1,0,-3)$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$C(0,1,1)$.",
-        "content_en": "$C(0,1,1)$.",
+        "content_vi": "$C(0,1,1)$",
+        "content_en": "$C(0,1,1)$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$D(0,0,3)$.",
-        "content_en": "$D(0,0,3)$.",
+        "content_vi": "$D(0,0,3)$",
+        "content_en": "$D(0,0,3)$",
         "is_correct": false
       }
     ],
@@ -13347,26 +13347,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$y+z-7=0$.",
-        "content_en": "$y+z-7=0$.",
+        "content_vi": "$y+z-7=0$",
+        "content_en": "$y+z-7=0$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$2x-y+z+5=0$.",
-        "content_en": "$2x-y+z+5=0$.",
+        "content_vi": "$2x-y+z+5=0$",
+        "content_en": "$2x-y+z+5=0$",
         "is_correct": true
       },
       {
         "option_key": "C",
-        "content_vi": "$-x+5y+2z+5=0$.",
-        "content_en": "$-x+5y+2z+5=0$.",
+        "content_vi": "$-x+5y+2z+5=0$",
+        "content_en": "$-x+5y+2z+5=0$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$2x+y+z-5=0$.",
-        "content_en": "$2x+y+z-5=0$.",
+        "content_vi": "$2x+y+z-5=0$",
+        "content_en": "$2x+y+z-5=0$",
         "is_correct": false
       }
     ],
@@ -13395,26 +13395,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$2x-3y-4z+2=0$.",
-        "content_en": "$2x-3y-4z+2=0$.",
+        "content_vi": "$2x-3y-4z+2=0$",
+        "content_en": "$2x-3y-4z+2=0$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$4x+6y-8z+2=0$.",
-        "content_en": "$4x+6y-8z+2=0$.",
+        "content_vi": "$4x+6y-8z+2=0$",
+        "content_en": "$4x+6y-8z+2=0$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$2x+3y-4z-2=0$.",
-        "content_en": "$2x+3y-4z-2=0$.",
+        "content_vi": "$2x+3y-4z-2=0$",
+        "content_en": "$2x+3y-4z-2=0$",
         "is_correct": true
       },
       {
         "option_key": "D",
-        "content_vi": "$2x-3y-4z-2=0$.",
-        "content_en": "$2x-3y-4z-2=0$.",
+        "content_vi": "$2x-3y-4z-2=0$",
+        "content_en": "$2x-3y-4z-2=0$",
         "is_correct": false
       }
     ],
@@ -13443,26 +13443,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$z+2=0$.",
-        "content_en": "$z+2=0$.",
+        "content_vi": "$z+2=0$",
+        "content_en": "$z+2=0$",
         "is_correct": true
       },
       {
         "option_key": "B",
-        "content_vi": "$z-2=0$.",
-        "content_en": "$z-2=0$.",
+        "content_vi": "$z-2=0$",
+        "content_en": "$z-2=0$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$2x-3y=0$.",
-        "content_en": "$2x-3y=0$.",
+        "content_vi": "$2x-3y=0$",
+        "content_en": "$2x-3y=0$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$2x-3y-2=0$.",
-        "content_en": "$2x-3y-2=0$.",
+        "content_vi": "$2x-3y-2=0$",
+        "content_en": "$2x-3y-2=0$",
         "is_correct": false
       }
     ],
@@ -13491,26 +13491,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$x+z=0$.",
-        "content_en": "$x+z=0$.",
+        "content_vi": "$x+z=0$",
+        "content_en": "$x+z=0$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$y+3=0$.",
-        "content_en": "$y+3=0$.",
+        "content_vi": "$y+3=0$",
+        "content_en": "$y+3=0$",
         "is_correct": true
       },
       {
         "option_key": "C",
-        "content_vi": "$y-3=0$.",
-        "content_en": "$y-3=0$.",
+        "content_vi": "$y-3=0$",
+        "content_en": "$y-3=0$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$x-z=0$.",
-        "content_en": "$x-z=0$.",
+        "content_vi": "$x-z=0$",
+        "content_en": "$x-z=0$",
         "is_correct": false
       }
     ],
@@ -13539,26 +13539,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$3y-2z=0$.",
-        "content_en": "$3y-2z=0$.",
+        "content_vi": "$3y-2z=0$",
+        "content_en": "$3y-2z=0$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$x+2=0$.",
-        "content_en": "$x+2=0$.",
+        "content_vi": "$x+2=0$",
+        "content_en": "$x+2=0$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$x-2=0$.",
-        "content_en": "$x-2=0$.",
+        "content_vi": "$x-2=0$",
+        "content_en": "$x-2=0$",
         "is_correct": true
       },
       {
         "option_key": "D",
-        "content_vi": "$3y+2z=0$.",
-        "content_en": "$3y+2z=0$.",
+        "content_vi": "$3y+2z=0$",
+        "content_en": "$3y+2z=0$",
         "is_correct": false
       }
     ],
@@ -13587,26 +13587,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$2x-y+3z=0$.",
-        "content_en": "$2x-y+3z=0$.",
+        "content_vi": "$2x-y+3z=0$",
+        "content_en": "$2x-y+3z=0$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$2x-y+3z-1=0$.",
-        "content_en": "$2x-y+3z-1=0$.",
+        "content_vi": "$2x-y+3z-1=0$",
+        "content_en": "$2x-y+3z-1=0$",
         "is_correct": true
       },
       {
         "option_key": "C",
-        "content_vi": "$2x-3y-2z=0$.",
-        "content_en": "$2x-3y-2z=0$.",
+        "content_vi": "$2x-3y-2z=0$",
+        "content_en": "$2x-3y-2z=0$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$2x-3y-2z-1=0$.",
-        "content_en": "$2x-3y-2z-1=0$.",
+        "content_vi": "$2x-3y-2z-1=0$",
+        "content_en": "$2x-3y-2z-1=0$",
         "is_correct": false
       }
     ],
@@ -13635,26 +13635,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$y-2z+2=0$.",
-        "content_en": "$y-2z+2=0$.",
+        "content_vi": "$y-2z+2=0$",
+        "content_en": "$y-2z+2=0$",
         "is_correct": true
       },
       {
         "option_key": "B",
-        "content_vi": "$x-2z+2=0$.",
-        "content_en": "$x-2z+2=0$.",
+        "content_vi": "$x-2z+2=0$",
+        "content_en": "$x-2z+2=0$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$x-y+2z+2=0$.",
-        "content_en": "$x-y+2z+2=0$.",
+        "content_vi": "$x-y+2z+2=0$",
+        "content_en": "$x-y+2z+2=0$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$x-2y+2=0$.",
-        "content_en": "$x-2y+2=0$.",
+        "content_vi": "$x-2y+2=0$",
+        "content_en": "$x-2y+2=0$",
         "is_correct": false
       }
     ],
@@ -13683,26 +13683,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$(Q):2x-y+3=0$.",
-        "content_en": "$(Q):2x-y+3=0$.",
+        "content_vi": "$(Q):2x-y+3=0$",
+        "content_en": "$(Q):2x-y+3=0$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$(Q):x+z=0$.",
-        "content_en": "$(Q):x+z=0$.",
+        "content_vi": "$(Q):x+z=0$",
+        "content_en": "$(Q):x+z=0$",
         "is_correct": true
       },
       {
         "option_key": "C",
-        "content_vi": "$(Q):-x+y+z=0$.",
-        "content_en": "$(Q):-x+y+z=0$.",
+        "content_vi": "$(Q):-x+y+z=0$",
+        "content_en": "$(Q):-x+y+z=0$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$(Q):3x-y+z=0$.",
-        "content_en": "$(Q):3x-y+z=0$.",
+        "content_vi": "$(Q):3x-y+z=0$",
+        "content_en": "$(Q):3x-y+z=0$",
         "is_correct": false
       }
     ],
@@ -13731,26 +13731,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$2x-y-2z=0$.",
-        "content_en": "$2x-y-2z=0$.",
+        "content_vi": "$2x-y-2z=0$",
+        "content_en": "$2x-y-2z=0$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$x+y+z+3=0$.",
-        "content_en": "$x+y+z+3=0$.",
+        "content_vi": "$x+y+z+3=0$",
+        "content_en": "$x+y+z+3=0$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$-2x+z+6=0$.",
-        "content_en": "$-2x+z+6=0$.",
+        "content_vi": "$-2x+z+6=0$",
+        "content_en": "$-2x+z+6=0$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$-2x+z-6=0$.",
-        "content_en": "$-2x+z-6=0$.",
+        "content_vi": "$-2x+z-6=0$",
+        "content_en": "$-2x+z-6=0$",
         "is_correct": false
       }
     ],
@@ -13779,26 +13779,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$(\\alpha):5y+3z=0$.",
-        "content_en": "$(\\alpha):5y+3z=0$.",
+        "content_vi": "$(\\alpha):5y+3z=0$",
+        "content_en": "$(\\alpha):5y+3z=0$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$3y+5z=0$.",
-        "content_en": "$3y+5z=0$.",
+        "content_vi": "$3y+5z=0$",
+        "content_en": "$3y+5z=0$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$3y-5z=0$.",
-        "content_en": "$3y-5z=0$.",
+        "content_vi": "$3y-5z=0$",
+        "content_en": "$3y-5z=0$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$(\\alpha):5y-3z=0$.",
-        "content_en": "$(\\alpha):5y-3z=0$.",
+        "content_vi": "$(\\alpha):5y-3z=0$",
+        "content_en": "$(\\alpha):5y-3z=0$",
         "is_correct": true
       }
     ],
@@ -13827,26 +13827,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$(\\alpha):x-2y=0$.",
-        "content_en": "$(\\alpha):x-2y=0$.",
+        "content_vi": "$(\\alpha):x-2y=0$",
+        "content_en": "$(\\alpha):x-2y=0$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$x+2y=0$.",
-        "content_en": "$x+2y=0$.",
+        "content_vi": "$x+2y=0$",
+        "content_en": "$x+2y=0$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$2x-y=0$.",
-        "content_en": "$2x-y=0$.",
+        "content_vi": "$2x-y=0$",
+        "content_en": "$2x-y=0$",
         "is_correct": true
       },
       {
         "option_key": "D",
-        "content_vi": "$(\\alpha):2x+y=0$.",
-        "content_en": "$(\\alpha):2x+y=0$.",
+        "content_vi": "$(\\alpha):2x+y=0$",
+        "content_en": "$(\\alpha):2x+y=0$",
         "is_correct": false
       }
     ],
@@ -13875,26 +13875,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$x+2y-2z+10=0$; $x+2y-2z-1=0$.",
-        "content_en": "$x+2y-2z+10=0$; $x+2y-2z-1=0$.",
+        "content_vi": "$x+2y-2z+10=0$; $x+2y-2z-1=0$",
+        "content_en": "$x+2y-2z+10=0$; $x+2y-2z-1=0$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$x+2y-2z=0$; $x+2y-2z-14=0$.",
-        "content_en": "$x+2y-2z=0$; $x+2y-2z-14=0$.",
+        "content_vi": "$x+2y-2z=0$; $x+2y-2z-14=0$",
+        "content_en": "$x+2y-2z=0$; $x+2y-2z-14=0$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$x+2y-2z-14=0$; $x+2y-2z-4=0$.",
-        "content_en": "$x+2y-2z-14=0$; $x+2y-2z-4=0$.",
+        "content_vi": "$x+2y-2z-14=0$; $x+2y-2z-4=0$",
+        "content_en": "$x+2y-2z-14=0$; $x+2y-2z-4=0$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$x+2y-2z+4=0$; $x+2y-2z-14=0$.",
-        "content_en": "$x+2y-2z+4=0$; $x+2y-2z-14=0$.",
+        "content_vi": "$x+2y-2z+4=0$; $x+2y-2z-14=0$",
+        "content_en": "$x+2y-2z+4=0$; $x+2y-2z-14=0$",
         "is_correct": false
       }
     ],
@@ -13923,26 +13923,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$x-z-7=0$; $x-z-3=0$.",
-        "content_en": "$x-z-7=0$; $x-z-3=0$.",
+        "content_vi": "$x-z-7=0$; $x-z-3=0$",
+        "content_en": "$x-z-7=0$; $x-z-3=0$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$x-z+7=0$; $x-z-3=0$.",
-        "content_en": "$x-z+7=0$; $x-z-3=0$.",
+        "content_vi": "$x-z+7=0$; $x-z-3=0$",
+        "content_en": "$x-z+7=0$; $x-z-3=0$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$x-z+7=0$; $x-z+3=0$.",
-        "content_en": "$x-z+7=0$; $x-z+3=0$.",
+        "content_vi": "$x-z+7=0$; $x-z+3=0$",
+        "content_en": "$x-z+7=0$; $x-z+3=0$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$x-z-7=0$; $x-z+3=0$.",
-        "content_en": "$x-z-7=0$; $x-z+3=0$.",
+        "content_vi": "$x-z-7=0$; $x-z+3=0$",
+        "content_en": "$x-z-7=0$; $x-z+3=0$",
         "is_correct": false
       }
     ],
@@ -13971,26 +13971,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$13x+18y+15z+134=0$; $5x+10y+9z-7=0$.",
-        "content_en": "$13x+18y+15z+134=0$; $5x+10y+9z-7=0$.",
+        "content_vi": "$13x+18y+15z+134=0$; $5x+10y+9z-7=0$",
+        "content_en": "$13x+18y+15z+134=0$; $5x+10y+9z-7=0$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$13x+18y+15z=0$; $5x+10y+9z-4=0$.",
-        "content_en": "$13x+18y+15z=0$; $5x+10y+9z-4=0$.",
+        "content_vi": "$13x+18y+15z=0$; $5x+10y+9z-4=0$",
+        "content_en": "$13x+18y+15z=0$; $5x+10y+9z-4=0$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$5x+10y+9z-74=0$; $13x+18y+15z-134=0$.",
-        "content_en": "$5x+10y+9z-74=0$; $13x+18y+15z-134=0$.",
+        "content_vi": "$5x+10y+9z-74=0$; $13x+18y+15z-134=0$",
+        "content_en": "$5x+10y+9z-74=0$; $13x+18y+15z-134=0$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$13x+18y+15z-13=0$; $5x+10y+9z+4=0$.",
-        "content_en": "$13x+18y+15z-13=0$; $5x+10y+9z+4=0$.",
+        "content_vi": "$13x+18y+15z-13=0$; $5x+10y+9z+4=0$",
+        "content_en": "$13x+18y+15z-13=0$; $5x+10y+9z+4=0$",
         "is_correct": false
       }
     ],
@@ -14019,26 +14019,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$3x+z+7=0$.",
-        "content_en": "$3x+z+7=0$.",
+        "content_vi": "$3x+z+7=0$",
+        "content_en": "$3x+z+7=0$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$3x-y-7z+1=0$.",
-        "content_en": "$3x-y-7z+1=0$.",
+        "content_vi": "$3x-y-7z+1=0$",
+        "content_en": "$3x-y-7z+1=0$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$3x+y-7=0$.",
-        "content_en": "$3x+y-7=0$.",
+        "content_vi": "$3x+y-7=0$",
+        "content_en": "$3x+y-7=0$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$3x+y-7z-3=0$.",
-        "content_en": "$3x+y-7z-3=0$.",
+        "content_vi": "$3x+y-7z-3=0$",
+        "content_en": "$3x+y-7z-3=0$",
         "is_correct": true
       }
     ],
@@ -14067,26 +14067,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$B(4,2,1)$.",
-        "content_en": "$B(4,2,1)$.",
+        "content_vi": "$B(4,2,1)$",
+        "content_en": "$B(4,2,1)$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$A(1,2,4)$.",
-        "content_en": "$A(1,2,4)$.",
+        "content_vi": "$A(1,2,4)$",
+        "content_en": "$A(1,2,4)$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$D(2,1,4)$.",
-        "content_en": "$D(2,1,4)$.",
+        "content_vi": "$D(2,1,4)$",
+        "content_en": "$D(2,1,4)$",
         "is_correct": true
       },
       {
         "option_key": "D",
-        "content_vi": "$C(2,4,-1)$.",
-        "content_en": "$C(2,4,-1)$.",
+        "content_vi": "$C(2,4,-1)$",
+        "content_en": "$C(2,4,-1)$",
         "is_correct": false
       }
     ],
@@ -14115,26 +14115,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$2x-y=0$.",
-        "content_en": "$2x-y=0$.",
+        "content_vi": "$2x-y=0$",
+        "content_en": "$2x-y=0$",
         "is_correct": true
       },
       {
         "option_key": "B",
-        "content_vi": "$x+y-z=0$.",
-        "content_en": "$x+y-z=0$.",
+        "content_vi": "$x+y-z=0$",
+        "content_en": "$x+y-z=0$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$3y-2z=0$.",
-        "content_en": "$3y-2z=0$.",
+        "content_vi": "$3y-2z=0$",
+        "content_en": "$3y-2z=0$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$3x-z=0$.",
-        "content_en": "$3x-z=0$.",
+        "content_vi": "$3x-z=0$",
+        "content_en": "$3x-z=0$",
         "is_correct": false
       }
     ],
@@ -14163,26 +14163,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$3x+y+z-6=0$.",
-        "content_en": "$3x+y+z-6=0$.",
+        "content_vi": "$3x+y+z-6=0$",
+        "content_en": "$3x+y+z-6=0$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$6x-2y-2z-1=0$.",
-        "content_en": "$6x-2y-2z-1=0$.",
+        "content_vi": "$6x-2y-2z-1=0$",
+        "content_en": "$6x-2y-2z-1=0$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$3x-y-z+1=0$.",
-        "content_en": "$3x-y-z+1=0$.",
+        "content_vi": "$3x-y-z+1=0$",
+        "content_en": "$3x-y-z+1=0$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$3x-y-z=0$.",
-        "content_en": "$3x-y-z=0$.",
+        "content_vi": "$3x-y-z=0$",
+        "content_en": "$3x-y-z=0$",
         "is_correct": true
       }
     ],
@@ -14211,26 +14211,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$3x-y+2z-4=0$.",
-        "content_en": "$3x-y+2z-4=0$.",
+        "content_vi": "$3x-y+2z-4=0$",
+        "content_en": "$3x-y+2z-4=0$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$3x+y-2z-2=0$.",
-        "content_en": "$3x+y-2z-2=0$.",
+        "content_vi": "$3x+y-2z-2=0$",
+        "content_en": "$3x+y-2z-2=0$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$3x-2z=0$.",
-        "content_en": "$3x-2z=0$.",
+        "content_vi": "$3x-2z=0$",
+        "content_en": "$3x-2z=0$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$3x-2z-1=0$.",
-        "content_en": "$3x-2z-1=0$.",
+        "content_vi": "$3x-2z-1=0$",
+        "content_en": "$3x-2z-1=0$",
         "is_correct": true
       }
     ],
@@ -14259,26 +14259,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$3x-y+2z-4=0$.",
-        "content_en": "$3x-y+2z-4=0$.",
+        "content_vi": "$3x-y+2z-4=0$",
+        "content_en": "$3x-y+2z-4=0$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$x+y-5=0$.",
-        "content_en": "$x+y-5=0$.",
+        "content_vi": "$x+y-5=0$",
+        "content_en": "$x+y-5=0$",
         "is_correct": true
       },
       {
         "option_key": "C",
-        "content_vi": "$y-z+2=0$.",
-        "content_en": "$y-z+2=0$.",
+        "content_vi": "$y-z+2=0$",
+        "content_en": "$y-z+2=0$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$2x+y-7=0$.",
-        "content_en": "$2x+y-7=0$.",
+        "content_vi": "$2x+y-7=0$",
+        "content_en": "$2x+y-7=0$",
         "is_correct": false
       }
     ],
@@ -14307,26 +14307,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$m=-2$.",
-        "content_en": "$m=-2$.",
+        "content_vi": "$m=-2$",
+        "content_en": "$m=-2$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$m=2$.",
-        "content_en": "$m=2$.",
+        "content_vi": "$m=2$",
+        "content_en": "$m=2$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$m=1$.",
-        "content_en": "$m=1$.",
+        "content_vi": "$m=1$",
+        "content_en": "$m=1$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$m=-1$.",
-        "content_en": "$m=-1$.",
+        "content_vi": "$m=-1$",
+        "content_en": "$m=-1$",
         "is_correct": false
       }
     ],
@@ -14355,26 +14355,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$\\vec c=(2,6,-1)$.",
-        "content_en": "$\\vec c=(2,6,-1)$.",
+        "content_vi": "$\\vec c=(2,6,-1)$",
+        "content_en": "$\\vec c=(2,6,-1)$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$\\vec c=(4,6,-1)$.",
-        "content_en": "$\\vec c=(4,6,-1)$.",
+        "content_vi": "$\\vec c=(4,6,-1)$",
+        "content_en": "$\\vec c=(4,6,-1)$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$\\vec c=(4,-6,-1)$.",
-        "content_en": "$\\vec c=(4,-6,-1)$.",
+        "content_vi": "$\\vec c=(4,-6,-1)$",
+        "content_en": "$\\vec c=(4,-6,-1)$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$\\vec c=(2,-6,-1)$.",
-        "content_en": "$\\vec c=(2,-6,-1)$.",
+        "content_vi": "$\\vec c=(2,-6,-1)$",
+        "content_en": "$\\vec c=(2,-6,-1)$",
         "is_correct": false
       }
     ],
@@ -14403,26 +14403,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$\\vec n_2=(2,3,1)$.",
-        "content_en": "$\\vec n_2=(2,3,1)$.",
+        "content_vi": "$\\vec n_2=(2,3,1)$",
+        "content_en": "$\\vec n_2=(2,3,1)$",
         "is_correct": true
       },
       {
         "option_key": "B",
-        "content_vi": "$\\vec n_3=(2,3,2)$.",
-        "content_en": "$\\vec n_3=(2,3,2)$.",
+        "content_vi": "$\\vec n_3=(2,3,2)$",
+        "content_en": "$\\vec n_3=(2,3,2)$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$\\vec n_1=(2,3,0)$.",
-        "content_en": "$\\vec n_1=(2,3,0)$.",
+        "content_vi": "$\\vec n_1=(2,3,0)$",
+        "content_en": "$\\vec n_1=(2,3,0)$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$\\vec n_4=(2,0,3)$.",
-        "content_en": "$\\vec n_4=(2,0,3)$.",
+        "content_vi": "$\\vec n_4=(2,0,3)$",
+        "content_en": "$\\vec n_4=(2,0,3)$",
         "is_correct": false
       }
     ],
@@ -14451,26 +14451,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$P(0,0,-5)$.",
-        "content_en": "$P(0,0,-5)$.",
+        "content_vi": "$P(0,0,-5)$",
+        "content_en": "$P(0,0,-5)$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$M(1,1,6)$.",
-        "content_en": "$M(1,1,6)$.",
+        "content_vi": "$M(1,1,6)$",
+        "content_en": "$M(1,1,6)$",
         "is_correct": true
       },
       {
         "option_key": "C",
-        "content_vi": "$Q(2,-1,5)$.",
-        "content_en": "$Q(2,-1,5)$.",
+        "content_vi": "$Q(2,-1,5)$",
+        "content_en": "$Q(2,-1,5)$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$N(-5,0,0)$.",
-        "content_en": "$N(-5,0,0)$.",
+        "content_vi": "$N(-5,0,0)$",
+        "content_en": "$N(-5,0,0)$",
         "is_correct": false
       }
     ],
@@ -14499,26 +14499,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$x+y+z-3=0$.",
-        "content_en": "$x+y+z-3=0$.",
+        "content_vi": "$x+y+z-3=0$",
+        "content_en": "$x+y+z-3=0$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$2x-y+z+2=0$.",
-        "content_en": "$2x-y+z+2=0$.",
+        "content_vi": "$2x-y+z+2=0$",
+        "content_en": "$2x-y+z+2=0$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$2x+y+z-4=0$.",
-        "content_en": "$2x+y+z-4=0$.",
+        "content_vi": "$2x+y+z-4=0$",
+        "content_en": "$2x+y+z-4=0$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$2x-y+z-2=0$.",
-        "content_en": "$2x-y+z-2=0$.",
+        "content_vi": "$2x-y+z-2=0$",
+        "content_en": "$2x-y+z-2=0$",
         "is_correct": true
       }
     ],
@@ -14547,26 +14547,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$x-2y+3z+12=0$.",
-        "content_en": "$x-2y+3z+12=0$.",
+        "content_vi": "$x-2y+3z+12=0$",
+        "content_en": "$x-2y+3z+12=0$",
         "is_correct": true
       },
       {
         "option_key": "B",
-        "content_vi": "$x-2y-3z-6=0$.",
-        "content_en": "$x-2y-3z-6=0$.",
+        "content_vi": "$x-2y-3z-6=0$",
+        "content_en": "$x-2y-3z-6=0$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$x-2y+3z-12=0$.",
-        "content_en": "$x-2y+3z-12=0$.",
+        "content_vi": "$x-2y+3z-12=0$",
+        "content_en": "$x-2y+3z-12=0$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$x-2y-3z+6=0$.",
-        "content_en": "$x-2y-3z+6=0$.",
+        "content_vi": "$x-2y-3z+6=0$",
+        "content_en": "$x-2y-3z+6=0$",
         "is_correct": false
       }
     ],
@@ -14595,26 +14595,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$2x-3y-z-20=0$.",
-        "content_en": "$2x-3y-z-20=0$.",
+        "content_vi": "$2x-3y-z-20=0$",
+        "content_en": "$2x-3y-z-20=0$",
         "is_correct": true
       },
       {
         "option_key": "B",
-        "content_vi": "$3x-y+3z-25=0$.",
-        "content_en": "$3x-y+3z-25=0$.",
+        "content_vi": "$3x-y+3z-25=0$",
+        "content_en": "$3x-y+3z-25=0$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$2x-3y-z+8=0$.",
-        "content_en": "$2x-3y-z+8=0$.",
+        "content_vi": "$2x-3y-z+8=0$",
+        "content_en": "$2x-3y-z+8=0$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$3x-y+3z-13=0$.",
-        "content_en": "$3x-y+3z-13=0$.",
+        "content_vi": "$3x-y+3z-13=0$",
+        "content_en": "$3x-y+3z-13=0$",
         "is_correct": false
       }
     ],
@@ -14643,26 +14643,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$3x+2z+1=0$.",
-        "content_en": "$3x+2z+1=0$.",
+        "content_vi": "$3x+2z+1=0$",
+        "content_en": "$3x+2z+1=0$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$x+2y-2z+1=0$.",
-        "content_en": "$x+2y-2z+1=0$.",
+        "content_vi": "$x+2y-2z+1=0$",
+        "content_en": "$x+2y-2z+1=0$",
         "is_correct": true
       },
       {
         "option_key": "C",
-        "content_vi": "$x+2y-2z-1=0$.",
-        "content_en": "$x+2y-2z-1=0$.",
+        "content_vi": "$x+2y-2z-1=0$",
+        "content_en": "$x+2y-2z-1=0$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$3x+2z-1=0$.",
-        "content_en": "$3x+2z-1=0$.",
+        "content_vi": "$3x+2z-1=0$",
+        "content_en": "$3x+2z-1=0$",
         "is_correct": false
       }
     ],
@@ -14691,26 +14691,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$2x-2y+4z-21=0$.",
-        "content_en": "$2x-2y+4z-21=0$.",
+        "content_vi": "$2x-2y+4z-21=0$",
+        "content_en": "$2x-2y+4z-21=0$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$3x-2y+z-12=0$.",
-        "content_en": "$3x-2y+z-12=0$.",
+        "content_vi": "$3x-2y+z-12=0$",
+        "content_en": "$3x-2y+z-12=0$",
         "is_correct": true
       },
       {
         "option_key": "C",
-        "content_vi": "$2x-2y+4z+21=0$.",
-        "content_en": "$2x-2y+4z+21=0$.",
+        "content_vi": "$2x-2y+4z+21=0$",
+        "content_en": "$2x-2y+4z+21=0$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$3x-2y+z+12=0$.",
-        "content_en": "$3x-2y+z+12=0$.",
+        "content_vi": "$3x-2y+z+12=0$",
+        "content_en": "$3x-2y+z+12=0$",
         "is_correct": false
       }
     ],
@@ -14739,26 +14739,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$3x+6y-2z-6=0$.",
-        "content_en": "$3x+6y-2z-6=0$.",
+        "content_vi": "$3x+6y-2z-6=0$",
+        "content_en": "$3x+6y-2z-6=0$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$2x+y-3z-1=0$.",
-        "content_en": "$2x+y-3z-1=0$.",
+        "content_vi": "$2x+y-3z-1=0$",
+        "content_en": "$2x+y-3z-1=0$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$3x+6y-2z=0$.",
-        "content_en": "$3x+6y-2z=0$.",
+        "content_vi": "$3x+6y-2z=0$",
+        "content_en": "$3x+6y-2z=0$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$3x+6y-2z+6=0$.",
-        "content_en": "$3x+6y-2z+6=0$.",
+        "content_vi": "$3x+6y-2z+6=0$",
+        "content_en": "$3x+6y-2z+6=0$",
         "is_correct": true
       }
     ],
@@ -14787,26 +14787,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$x-z-4=0$.",
-        "content_en": "$x-z-4=0$.",
+        "content_vi": "$x-z-4=0$",
+        "content_en": "$x-z-4=0$",
         "is_correct": true
       },
       {
         "option_key": "B",
-        "content_vi": "$x-z+4=0$.",
-        "content_en": "$x-z+4=0$.",
+        "content_vi": "$x-z+4=0$",
+        "content_en": "$x-z+4=0$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$2x+y-2z-4=0$.",
-        "content_en": "$2x+y-2z-4=0$.",
+        "content_vi": "$2x+y-2z-4=0$",
+        "content_en": "$2x+y-2z-4=0$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$2x+y-2z+4=0$.",
-        "content_en": "$2x+y-2z+4=0$.",
+        "content_vi": "$2x+y-2z+4=0$",
+        "content_en": "$2x+y-2z+4=0$",
         "is_correct": false
       }
     ],
@@ -14835,26 +14835,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$(P):3x+y-z+4=0$.",
-        "content_en": "$(P):3x+y-z+4=0$.",
+        "content_vi": "$(P):3x+y-z+4=0$",
+        "content_en": "$(P):3x+y-z+4=0$",
         "is_correct": true
       },
       {
         "option_key": "B",
-        "content_vi": "$(P):3x+y-z-4=0$.",
-        "content_en": "$(P):3x+y-z-4=0$.",
+        "content_vi": "$(P):3x+y-z-4=0$",
+        "content_en": "$(P):3x+y-z-4=0$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$(P):3x+y-z=0$.",
-        "content_en": "$(P):3x+y-z=0$.",
+        "content_vi": "$(P):3x+y-z=0$",
+        "content_en": "$(P):3x+y-z=0$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$(P):2x+y-z+1=0$.",
-        "content_en": "$(P):2x+y-z+1=0$.",
+        "content_vi": "$(P):2x+y-z+1=0$",
+        "content_en": "$(P):2x+y-z+1=0$",
         "is_correct": false
       }
     ],
@@ -14883,26 +14883,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$(P):2x-3z+9=0$.",
-        "content_en": "$(P):2x-3z+9=0$.",
+        "content_vi": "$(P):2x-3z+9=0$",
+        "content_en": "$(P):2x-3z+9=0$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$(P):2x-3z-9=0$.",
-        "content_en": "$(P):2x-3z-9=0$.",
+        "content_vi": "$(P):2x-3z-9=0$",
+        "content_en": "$(P):2x-3z-9=0$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$(P):2x-3z+3=0$.",
-        "content_en": "$(P):2x-3z+3=0$.",
+        "content_vi": "$(P):2x-3z+3=0$",
+        "content_en": "$(P):2x-3z+3=0$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$(P):2x-3z-3=0$.",
-        "content_en": "$(P):2x-3z-3=0$.",
+        "content_vi": "$(P):2x-3z-3=0$",
+        "content_en": "$(P):2x-3z-3=0$",
         "is_correct": false
       }
     ],
@@ -14931,26 +14931,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$4x+5y-3z+22=0$.",
-        "content_en": "$4x+5y-3z+22=0$.",
+        "content_vi": "$4x+5y-3z+22=0$",
+        "content_en": "$4x+5y-3z+22=0$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$4x-5y-3z-12=0$.",
-        "content_en": "$4x-5y-3z-12=0$.",
+        "content_vi": "$4x-5y-3z-12=0$",
+        "content_en": "$4x-5y-3z-12=0$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$2x+y-3z-14=0$.",
-        "content_en": "$2x+y-3z-14=0$.",
+        "content_vi": "$2x+y-3z-14=0$",
+        "content_en": "$2x+y-3z-14=0$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$4x+5y-3z-22=0$.",
-        "content_en": "$4x+5y-3z-22=0$.",
+        "content_vi": "$4x+5y-3z-22=0$",
+        "content_en": "$4x+5y-3z-22=0$",
         "is_correct": true
       }
     ],
@@ -14979,26 +14979,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$x+2y+z=0$.",
-        "content_en": "$x+2y+z=0$.",
+        "content_vi": "$x+2y+z=0$",
+        "content_en": "$x+2y+z=0$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$2x-y-3=0$.",
-        "content_en": "$2x-y-3=0$.",
+        "content_vi": "$2x-y-3=0$",
+        "content_en": "$2x-y-3=0$",
         "is_correct": true
       },
       {
         "option_key": "C",
-        "content_vi": "$x+2y+z-6=0$.",
-        "content_en": "$x+2y+z-6=0$.",
+        "content_vi": "$x+2y+z-6=0$",
+        "content_en": "$x+2y+z-6=0$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$2x-y+5=0$.",
-        "content_en": "$2x-y+5=0$.",
+        "content_vi": "$2x-y+5=0$",
+        "content_en": "$2x-y+5=0$",
         "is_correct": false
       }
     ],
@@ -15027,26 +15027,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$3x+14y+4z+5=0$.",
-        "content_en": "$3x+14y+4z+5=0$.",
+        "content_vi": "$3x+14y+4z+5=0$",
+        "content_en": "$3x+14y+4z+5=0$",
         "is_correct": true
       },
       {
         "option_key": "B",
-        "content_vi": "$2x-y+2z-2=0$.",
-        "content_en": "$2x-y+2z-2=0$.",
+        "content_vi": "$2x-y+2z-2=0$",
+        "content_en": "$2x-y+2z-2=0$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$2x-y+2z+2=0$.",
-        "content_en": "$2x-y+2z+2=0$.",
+        "content_vi": "$2x-y+2z+2=0$",
+        "content_en": "$2x-y+2z+2=0$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$3x+14y+4z-5=0$.",
-        "content_en": "$3x+14y+4z-5=0$.",
+        "content_vi": "$3x+14y+4z-5=0$",
+        "content_en": "$3x+14y+4z-5=0$",
         "is_correct": false
       }
     ],
@@ -15330,26 +15330,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$5$.",
-        "content_en": "$5$.",
+        "content_vi": "$5$",
+        "content_en": "$5$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$\\sqrt{14}$.",
-        "content_en": "$\\sqrt{14}$.",
+        "content_vi": "$\\sqrt{14}$",
+        "content_en": "$\\sqrt{14}$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$2$.",
-        "content_en": "$2$.",
+        "content_vi": "$2$",
+        "content_en": "$2$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$3$.",
-        "content_en": "$3$.",
+        "content_vi": "$3$",
+        "content_en": "$3$",
         "is_correct": false
       }
     ],
@@ -15633,26 +15633,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$(x-2)^2+(y-1)^2+(z-1)^2=8$.",
-        "content_en": "$(x-2)^2+(y-1)^2+(z-1)^2=8$.",
+        "content_vi": "$(x-2)^2+(y-1)^2+(z-1)^2=8$",
+        "content_en": "$(x-2)^2+(y-1)^2+(z-1)^2=8$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$(x-2)^2+(y-1)^2+(z-1)^2=2$.",
-        "content_en": "$(x-2)^2+(y-1)^2+(z-1)^2=2$.",
+        "content_vi": "$(x-2)^2+(y-1)^2+(z-1)^2=2$",
+        "content_en": "$(x-2)^2+(y-1)^2+(z-1)^2=2$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$(x-1)^2+(y-1)^2+(z-2)^2=8$.",
-        "content_en": "$(x-1)^2+(y-1)^2+(z-2)^2=8$.",
+        "content_vi": "$(x-1)^2+(y-1)^2+(z-2)^2=8$",
+        "content_en": "$(x-1)^2+(y-1)^2+(z-2)^2=8$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$(x-3)^2+(y-1)^2+z^2=2$.",
-        "content_en": "$(x-3)^2+(y-1)^2+z^2=2$.",
+        "content_vi": "$(x-3)^2+(y-1)^2+z^2=2$",
+        "content_en": "$(x-3)^2+(y-1)^2+z^2=2$",
         "is_correct": false
       }
     ],
@@ -15681,26 +15681,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$(x-1)^2+y^2+(z+1)^2=9$.",
-        "content_en": "$(x-1)^2+y^2+(z+1)^2=9$.",
+        "content_vi": "$(x-1)^2+y^2+(z+1)^2=9$",
+        "content_en": "$(x-1)^2+y^2+(z+1)^2=9$",
         "is_correct": true
       },
       {
         "option_key": "B",
-        "content_vi": "$(x-1)^2+y^2+(z+1)^2=3$.",
-        "content_en": "$(x-1)^2+y^2+(z+1)^2=3$.",
+        "content_vi": "$(x-1)^2+y^2+(z+1)^2=3$",
+        "content_en": "$(x-1)^2+y^2+(z+1)^2=3$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$(x+1)^2+y^2+(z-1)^2=9$.",
-        "content_en": "$(x+1)^2+y^2+(z-1)^2=9$.",
+        "content_vi": "$(x+1)^2+y^2+(z-1)^2=9$",
+        "content_en": "$(x+1)^2+y^2+(z-1)^2=9$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$(x+1)^2+y^2+(z-1)^2=3$.",
-        "content_en": "$(x+1)^2+y^2+(z-1)^2=3$.",
+        "content_vi": "$(x+1)^2+y^2+(z-1)^2=3$",
+        "content_en": "$(x+1)^2+y^2+(z-1)^2=3$",
         "is_correct": false
       }
     ],
@@ -15729,26 +15729,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$(x-1)^2+(y-2)^2+(z-3)^2=9$.",
-        "content_en": "$(x-1)^2+(y-2)^2+(z-3)^2=9$.",
+        "content_vi": "$(x-1)^2+(y-2)^2+(z-3)^2=9$",
+        "content_en": "$(x-1)^2+(y-2)^2+(z-3)^2=9$",
         "is_correct": true
       },
       {
         "option_key": "B",
-        "content_vi": "$(x-1)^2+(y-2)^2+(z-3)^2=3$.",
-        "content_en": "$(x-1)^2+(y-2)^2+(z-3)^2=3$.",
+        "content_vi": "$(x-1)^2+(y-2)^2+(z-3)^2=3$",
+        "content_en": "$(x-1)^2+(y-2)^2+(z-3)^2=3$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$(x+1)^2+(y+2)^2+(z+3)^2=9$.",
-        "content_en": "$(x+1)^2+(y+2)^2+(z+3)^2=9$.",
+        "content_vi": "$(x+1)^2+(y+2)^2+(z+3)^2=9$",
+        "content_en": "$(x+1)^2+(y+2)^2+(z+3)^2=9$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$x^2+y^2+z^2+2x+4y+6z+5=0$.",
-        "content_en": "$x^2+y^2+z^2+2x+4y+6z+5=0$.",
+        "content_vi": "$x^2+y^2+z^2+2x+4y+6z+5=0$",
+        "content_en": "$x^2+y^2+z^2+2x+4y+6z+5=0$",
         "is_correct": false
       }
     ],
@@ -15777,26 +15777,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$(x+1)^2+(y-1)^2+z^2=3$.",
-        "content_en": "$(x+1)^2+(y-1)^2+z^2=3$.",
+        "content_vi": "$(x+1)^2+(y-1)^2+z^2=3$",
+        "content_en": "$(x+1)^2+(y-1)^2+z^2=3$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$(x-1)^2+(y+1)^2+z^2=3$.",
-        "content_en": "$(x-1)^2+(y+1)^2+z^2=3$.",
+        "content_vi": "$(x-1)^2+(y+1)^2+z^2=3$",
+        "content_en": "$(x-1)^2+(y+1)^2+z^2=3$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$(x+1)^2+(y-1)^2+z^2=9$.",
-        "content_en": "$(x+1)^2+(y-1)^2+z^2=9$.",
+        "content_vi": "$(x+1)^2+(y-1)^2+z^2=9$",
+        "content_en": "$(x+1)^2+(y-1)^2+z^2=9$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$(x-1)^2+(y+1)^2+z^2=9$.",
-        "content_en": "$(x-1)^2+(y+1)^2+z^2=9$.",
+        "content_vi": "$(x-1)^2+(y+1)^2+z^2=9$",
+        "content_en": "$(x-1)^2+(y+1)^2+z^2=9$",
         "is_correct": false
       }
     ],
@@ -15825,26 +15825,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$(x+2)^2+(y+1)^2+(z+2)^2=9$.",
-        "content_en": "$(x+2)^2+(y+1)^2+(z+2)^2=9$.",
+        "content_vi": "$(x+2)^2+(y+1)^2+(z+2)^2=9$",
+        "content_en": "$(x+2)^2+(y+1)^2+(z+2)^2=9$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$(x+2)^2+(y+1)^2+(z+2)^2=3$.",
-        "content_en": "$(x+2)^2+(y+1)^2+(z+2)^2=3$.",
+        "content_vi": "$(x+2)^2+(y+1)^2+(z+2)^2=3$",
+        "content_en": "$(x+2)^2+(y+1)^2+(z+2)^2=3$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$(x-2)^2+(y-1)^2+(z-2)^2=3$.",
-        "content_en": "$(x-2)^2+(y-1)^2+(z-2)^2=3$.",
+        "content_vi": "$(x-2)^2+(y-1)^2+(z-2)^2=3$",
+        "content_en": "$(x-2)^2+(y-1)^2+(z-2)^2=3$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$(x-2)^2+(y-1)^2+(z-2)^2=9$.",
-        "content_en": "$(x-2)^2+(y-1)^2+(z-2)^2=9$.",
+        "content_vi": "$(x-2)^2+(y-1)^2+(z-2)^2=9$",
+        "content_en": "$(x-2)^2+(y-1)^2+(z-2)^2=9$",
         "is_correct": false
       }
     ],
@@ -15873,26 +15873,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$(x+4)^2+(y-4)^2+(z+2)^2=6$.",
-        "content_en": "$(x+4)^2+(y-4)^2+(z+2)^2=6$.",
+        "content_vi": "$(x+4)^2+(y-4)^2+(z+2)^2=6$",
+        "content_en": "$(x+4)^2+(y-4)^2+(z+2)^2=6$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$(x+4)^2+(y-4)^2+(z+2)^2=36$.",
-        "content_en": "$(x+4)^2+(y-4)^2+(z+2)^2=36$.",
+        "content_vi": "$(x+4)^2+(y-4)^2+(z+2)^2=36$",
+        "content_en": "$(x+4)^2+(y-4)^2+(z+2)^2=36$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$(x-4)^2+(y+4)^2+(z-2)^2=36$.",
-        "content_en": "$(x-4)^2+(y+4)^2+(z-2)^2=36$.",
+        "content_vi": "$(x-4)^2+(y+4)^2+(z-2)^2=36$",
+        "content_en": "$(x-4)^2+(y+4)^2+(z-2)^2=36$",
         "is_correct": true
       },
       {
         "option_key": "D",
-        "content_vi": "$(x-4)^2+(y+4)^2+(z-2)^2=6$.",
-        "content_en": "$(x-4)^2+(y+4)^2+(z-2)^2=6$.",
+        "content_vi": "$(x-4)^2+(y+4)^2+(z-2)^2=6$",
+        "content_en": "$(x-4)^2+(y+4)^2+(z-2)^2=6$",
         "is_correct": false
       }
     ],
@@ -15921,26 +15921,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$(x-1)^2+y^2+(z+2)^2=4$.",
-        "content_en": "$(x-1)^2+y^2+(z+2)^2=4$.",
+        "content_vi": "$(x-1)^2+y^2+(z+2)^2=4$",
+        "content_en": "$(x-1)^2+y^2+(z+2)^2=4$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$(x+1)^2+y^2+(z+2)^2=16$.",
-        "content_en": "$(x+1)^2+y^2+(z+2)^2=16$.",
+        "content_vi": "$(x+1)^2+y^2+(z+2)^2=16$",
+        "content_en": "$(x+1)^2+y^2+(z+2)^2=16$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$(x+1)^2+y^2+(z-2)^2=4$.",
-        "content_en": "$(x+1)^2+y^2+(z-2)^2=4$.",
+        "content_vi": "$(x+1)^2+y^2+(z-2)^2=4$",
+        "content_en": "$(x+1)^2+y^2+(z-2)^2=4$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$(x+1)^2+y^2+(z-2)^2=16$.",
-        "content_en": "$(x+1)^2+y^2+(z-2)^2=16$.",
+        "content_vi": "$(x+1)^2+y^2+(z-2)^2=16$",
+        "content_en": "$(x+1)^2+y^2+(z-2)^2=16$",
         "is_correct": false
       }
     ],
@@ -15969,26 +15969,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$(x-1)^2+(y-1)^2+(z-1)^2=4$.",
-        "content_en": "$(x-1)^2+(y-1)^2+(z-1)^2=4$.",
+        "content_vi": "$(x-1)^2+(y-1)^2+(z-1)^2=4$",
+        "content_en": "$(x-1)^2+(y-1)^2+(z-1)^2=4$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$(x+1)^2+(y+1)^2+(z+1)^2=2$.",
-        "content_en": "$(x+1)^2+(y+1)^2+(z+1)^2=2$.",
+        "content_vi": "$(x+1)^2+(y+1)^2+(z+1)^2=2$",
+        "content_en": "$(x+1)^2+(y+1)^2+(z+1)^2=2$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$(x+1)^2+(y+1)^2+(z+1)^2=4$.",
-        "content_en": "$(x+1)^2+(y+1)^2+(z+1)^2=4$.",
+        "content_vi": "$(x+1)^2+(y+1)^2+(z+1)^2=4$",
+        "content_en": "$(x+1)^2+(y+1)^2+(z+1)^2=4$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$(x-1)^2+(y-1)^2+(z-1)^2=2$.",
-        "content_en": "$(x-1)^2+(y-1)^2+(z-1)^2=2$.",
+        "content_vi": "$(x-1)^2+(y-1)^2+(z-1)^2=2$",
+        "content_en": "$(x-1)^2+(y-1)^2+(z-1)^2=2$",
         "is_correct": false
       }
     ],
@@ -16017,26 +16017,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$(x+1)^2+(y-2)^2+(z-1)^2=3$.",
-        "content_en": "$(x+1)^2+(y-2)^2+(z-1)^2=3$.",
+        "content_vi": "$(x+1)^2+(y-2)^2+(z-1)^2=3$",
+        "content_en": "$(x+1)^2+(y-2)^2+(z-1)^2=3$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$(x+1)^2+(y-2)^2+(z+1)^2=9$.",
-        "content_en": "$(x+1)^2+(y-2)^2+(z+1)^2=9$.",
+        "content_vi": "$(x+1)^2+(y-2)^2+(z+1)^2=9$",
+        "content_en": "$(x+1)^2+(y-2)^2+(z+1)^2=9$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$(x+1)^2+(y-2)^2+(z+1)^2=3$.",
-        "content_en": "$(x+1)^2+(y-2)^2+(z+1)^2=3$.",
+        "content_vi": "$(x+1)^2+(y-2)^2+(z+1)^2=3$",
+        "content_en": "$(x+1)^2+(y-2)^2+(z+1)^2=3$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$(x+1)^2+(y-2)^2+(z-1)^2=9$.",
-        "content_en": "$(x+1)^2+(y-2)^2+(z-1)^2=9$.",
+        "content_vi": "$(x+1)^2+(y-2)^2+(z-1)^2=9$",
+        "content_en": "$(x+1)^2+(y-2)^2+(z-1)^2=9$",
         "is_correct": false
       }
     ],
@@ -16065,26 +16065,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$x^2+y^2+(z+3)^2=5$.",
-        "content_en": "$x^2+y^2+(z+3)^2=5$.",
+        "content_vi": "$x^2+y^2+(z+3)^2=5$",
+        "content_en": "$x^2+y^2+(z+3)^2=5$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$x^2+y^2+(z-3)^2=5$.",
-        "content_en": "$x^2+y^2+(z-3)^2=5$.",
+        "content_vi": "$x^2+y^2+(z-3)^2=5$",
+        "content_en": "$x^2+y^2+(z-3)^2=5$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$x^2+y^2+(z+3)^2=25$.",
-        "content_en": "$x^2+y^2+(z+3)^2=25$.",
+        "content_vi": "$x^2+y^2+(z+3)^2=25$",
+        "content_en": "$x^2+y^2+(z+3)^2=25$",
         "is_correct": true
       },
       {
         "option_key": "D",
-        "content_vi": "$x^2+y^2+(z-3)^2=25$.",
-        "content_en": "$x^2+y^2+(z-3)^2=25$.",
+        "content_vi": "$x^2+y^2+(z-3)^2=25$",
+        "content_en": "$x^2+y^2+(z-3)^2=25$",
         "is_correct": false
       }
     ],
@@ -16113,26 +16113,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$(x+1)^2+(y+3)^2+(z+2)^2=9$.",
-        "content_en": "$(x+1)^2+(y+3)^2+(z+2)^2=9$.",
+        "content_vi": "$(x+1)^2+(y+3)^2+(z+2)^2=9$",
+        "content_en": "$(x+1)^2+(y+3)^2+(z+2)^2=9$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$(x-1)^2+(y-3)^2+(z-2)^2=9$.",
-        "content_en": "$(x-1)^2+(y-3)^2+(z-2)^2=9$.",
+        "content_vi": "$(x-1)^2+(y-3)^2+(z-2)^2=9$",
+        "content_en": "$(x-1)^2+(y-3)^2+(z-2)^2=9$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$(x+1)^2+(y-3)^2+(z-2)^2=9$.",
-        "content_en": "$(x+1)^2+(y-3)^2+(z-2)^2=9$.",
+        "content_vi": "$(x+1)^2+(y-3)^2+(z-2)^2=9$",
+        "content_en": "$(x+1)^2+(y-3)^2+(z-2)^2=9$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$(x-1)^2+(y+3)^2+(z-2)^2=9$.",
-        "content_en": "$(x-1)^2+(y+3)^2+(z-2)^2=9$.",
+        "content_vi": "$(x-1)^2+(y+3)^2+(z-2)^2=9$",
+        "content_en": "$(x-1)^2+(y+3)^2+(z-2)^2=9$",
         "is_correct": false
       }
     ],
@@ -16161,26 +16161,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$(x-5)^2+(y-3)^2+(z+2)^2=36$.",
-        "content_en": "$(x-5)^2+(y-3)^2+(z+2)^2=36$.",
+        "content_vi": "$(x-5)^2+(y-3)^2+(z+2)^2=36$",
+        "content_en": "$(x-5)^2+(y-3)^2+(z+2)^2=36$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$(x-5)^2+(y-3)^2+(z+2)^2=6$.",
-        "content_en": "$(x-5)^2+(y-3)^2+(z+2)^2=6$.",
+        "content_vi": "$(x-5)^2+(y-3)^2+(z+2)^2=6$",
+        "content_en": "$(x-5)^2+(y-3)^2+(z+2)^2=6$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$(x+5)^2+(y+3)^2+(z-2)^2=36$.",
-        "content_en": "$(x+5)^2+(y+3)^2+(z-2)^2=36$.",
+        "content_vi": "$(x+5)^2+(y+3)^2+(z-2)^2=36$",
+        "content_en": "$(x+5)^2+(y+3)^2+(z-2)^2=36$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$(x+5)^2+(y+3)^2+(z-2)^2=6$.",
-        "content_en": "$(x+5)^2+(y+3)^2+(z-2)^2=6$.",
+        "content_vi": "$(x+5)^2+(y+3)^2+(z-2)^2=6$",
+        "content_en": "$(x+5)^2+(y+3)^2+(z-2)^2=6$",
         "is_correct": false
       }
     ],
@@ -16209,26 +16209,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$(x-2)^2+(y-2)^2+(z+1)^2=9$.",
-        "content_en": "$(x-2)^2+(y-2)^2+(z+1)^2=9$.",
+        "content_vi": "$(x-2)^2+(y-2)^2+(z+1)^2=9$",
+        "content_en": "$(x-2)^2+(y-2)^2+(z+1)^2=9$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$(x-2)^2+(y-2)^2+(z+1)^2=3$.",
-        "content_en": "$(x-2)^2+(y-2)^2+(z+1)^2=3$.",
+        "content_vi": "$(x-2)^2+(y-2)^2+(z+1)^2=3$",
+        "content_en": "$(x-2)^2+(y-2)^2+(z+1)^2=3$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$(x+2)^2+(y+2)^2+(z-1)^2=3$.",
-        "content_en": "$(x+2)^2+(y+2)^2+(z-1)^2=3$.",
+        "content_vi": "$(x+2)^2+(y+2)^2+(z-1)^2=3$",
+        "content_en": "$(x+2)^2+(y+2)^2+(z-1)^2=3$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$(x+2)^2+(y+2)^2+(z-1)^2=9$.",
-        "content_en": "$(x+2)^2+(y+2)^2+(z-1)^2=9$.",
+        "content_vi": "$(x+2)^2+(y+2)^2+(z-1)^2=9$",
+        "content_en": "$(x+2)^2+(y+2)^2+(z-1)^2=9$",
         "is_correct": false
       }
     ],
@@ -16257,26 +16257,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$(x+1)^2+(y-2)^2+(z+3)^2=6$.",
-        "content_en": "$(x+1)^2+(y-2)^2+(z+3)^2=6$.",
+        "content_vi": "$(x+1)^2+(y-2)^2+(z+3)^2=6$",
+        "content_en": "$(x+1)^2+(y-2)^2+(z+3)^2=6$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$(x-1)^2+(y+2)^2+(z-3)^2=24$.",
-        "content_en": "$(x-1)^2+(y+2)^2+(z-3)^2=24$.",
+        "content_vi": "$(x-1)^2+(y+2)^2+(z-3)^2=24$",
+        "content_en": "$(x-1)^2+(y+2)^2+(z-3)^2=24$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$(x+1)^2+(y-2)^2+(z+3)^2=24$.",
-        "content_en": "$(x+1)^2+(y-2)^2+(z+3)^2=24$.",
+        "content_vi": "$(x+1)^2+(y-2)^2+(z+3)^2=24$",
+        "content_en": "$(x+1)^2+(y-2)^2+(z+3)^2=24$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$(x-1)^2+(y+2)^2+(z-3)^2=6$.",
-        "content_en": "$(x-1)^2+(y+2)^2+(z-3)^2=6$.",
+        "content_vi": "$(x-1)^2+(y+2)^2+(z-3)^2=6$",
+        "content_en": "$(x-1)^2+(y+2)^2+(z-3)^2=6$",
         "is_correct": false
       }
     ],
@@ -16305,26 +16305,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$(x-1)^2+(y+2)^2+(z+3)^2=5$.",
-        "content_en": "$(x-1)^2+(y+2)^2+(z+3)^2=5$.",
+        "content_vi": "$(x-1)^2+(y+2)^2+(z+3)^2=5$",
+        "content_en": "$(x-1)^2+(y+2)^2+(z+3)^2=5$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$(x+1)^2+(y-2)^2+(z-3)^2=4$.",
-        "content_en": "$(x+1)^2+(y-2)^2+(z-3)^2=4$.",
+        "content_vi": "$(x+1)^2+(y-2)^2+(z-3)^2=4$",
+        "content_en": "$(x+1)^2+(y-2)^2+(z-3)^2=4$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$(x+1)^2+(y-2)^2+(z-3)^2=5$.",
-        "content_en": "$(x+1)^2+(y-2)^2+(z-3)^2=5$.",
+        "content_vi": "$(x+1)^2+(y-2)^2+(z-3)^2=5$",
+        "content_en": "$(x+1)^2+(y-2)^2+(z-3)^2=5$",
         "is_correct": true
       },
       {
         "option_key": "D",
-        "content_vi": "$(x+1)^2+(y-2)^2+(z-3)^2=25$.",
-        "content_en": "$(x+1)^2+(y-2)^2+(z-3)^2=25$.",
+        "content_vi": "$(x+1)^2+(y-2)^2+(z-3)^2=25$",
+        "content_en": "$(x+1)^2+(y-2)^2+(z-3)^2=25$",
         "is_correct": false
       }
     ],
@@ -16353,26 +16353,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$(x-1)^2+(y+1)^2+(z-1)^2=24$.",
-        "content_en": "$(x-1)^2+(y+1)^2+(z-1)^2=24$.",
+        "content_vi": "$(x-1)^2+(y+1)^2+(z-1)^2=24$",
+        "content_en": "$(x-1)^2+(y+1)^2+(z-1)^2=24$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$(x+1)^2+(y+1)^2+(z-1)^2=24$.",
-        "content_en": "$(x+1)^2+(y+1)^2+(z-1)^2=24$.",
+        "content_vi": "$(x+1)^2+(y+1)^2+(z-1)^2=24$",
+        "content_en": "$(x+1)^2+(y+1)^2+(z-1)^2=24$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$(x-1)^2+(y+1)^2+(z-1)^2=6$.",
-        "content_en": "$(x-1)^2+(y+1)^2+(z-1)^2=6$.",
+        "content_vi": "$(x-1)^2+(y+1)^2+(z-1)^2=6$",
+        "content_en": "$(x-1)^2+(y+1)^2+(z-1)^2=6$",
         "is_correct": true
       },
       {
         "option_key": "D",
-        "content_vi": "$(x-1)^2+(y-1)^2+(z-1)^2=25$.",
-        "content_en": "$(x-1)^2+(y-1)^2+(z-1)^2=25$.",
+        "content_vi": "$(x-1)^2+(y-1)^2+(z-1)^2=25$",
+        "content_en": "$(x-1)^2+(y-1)^2+(z-1)^2=25$",
         "is_correct": false
       }
     ],
@@ -16401,26 +16401,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$(x+10)^2+(y-17)^2+(z-7)^2=8$.",
-        "content_en": "$(x+10)^2+(y-17)^2+(z-7)^2=8$.",
+        "content_vi": "$(x+10)^2+(y-17)^2+(z-7)^2=8$",
+        "content_en": "$(x+10)^2+(y-17)^2+(z-7)^2=8$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$(x+10)^2+(y-17)^2+(z+7)^2=8$.",
-        "content_en": "$(x+10)^2+(y-17)^2+(z+7)^2=8$.",
+        "content_vi": "$(x+10)^2+(y-17)^2+(z+7)^2=8$",
+        "content_en": "$(x+10)^2+(y-17)^2+(z+7)^2=8$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$(x-10)^2+(y-17)^2+(z+7)^2=8$.",
-        "content_en": "$(x-10)^2+(y-17)^2+(z+7)^2=8$.",
+        "content_vi": "$(x-10)^2+(y-17)^2+(z+7)^2=8$",
+        "content_en": "$(x-10)^2+(y-17)^2+(z+7)^2=8$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$(x+10)^2+(y+17)^2+(z+7)^2=8$.",
-        "content_en": "$(x+10)^2+(y+17)^2+(z+7)^2=8$.",
+        "content_vi": "$(x+10)^2+(y+17)^2+(z+7)^2=8$",
+        "content_en": "$(x+10)^2+(y+17)^2+(z+7)^2=8$",
         "is_correct": false
       }
     ],
@@ -16449,26 +16449,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$(x+\\frac12)^2+(y-2)^2+(z-2)^2=\\frac54$.",
-        "content_en": "$(x+\\frac12)^2+(y-2)^2+(z-2)^2=\\frac54$.",
+        "content_vi": "$(x+\\frac12)^2+(y-2)^2+(z-2)^2=\\frac54$",
+        "content_en": "$(x+\\frac12)^2+(y-2)^2+(z-2)^2=\\frac54$",
         "is_correct": true
       },
       {
         "option_key": "B",
-        "content_vi": "$(x-\\frac12)^2+(y-2)^2+(z-2)^2=\\frac54$.",
-        "content_en": "$(x-\\frac12)^2+(y-2)^2+(z-2)^2=\\frac54$.",
+        "content_vi": "$(x-\\frac12)^2+(y-2)^2+(z-2)^2=\\frac54$",
+        "content_en": "$(x-\\frac12)^2+(y-2)^2+(z-2)^2=\\frac54$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$(x+\\frac12)^2+(y+2)^2+(z-2)^2=\\frac54$.",
-        "content_en": "$(x+\\frac12)^2+(y+2)^2+(z-2)^2=\\frac54$.",
+        "content_vi": "$(x+\\frac12)^2+(y+2)^2+(z-2)^2=\\frac54$",
+        "content_en": "$(x+\\frac12)^2+(y+2)^2+(z-2)^2=\\frac54$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$(x+\\frac12)^2+(y-2)^2+(z+2)^2=\\frac54$.",
-        "content_en": "$(x+\\frac12)^2+(y-2)^2+(z+2)^2=\\frac54$.",
+        "content_vi": "$(x+\\frac12)^2+(y-2)^2+(z+2)^2=\\frac54$",
+        "content_en": "$(x+\\frac12)^2+(y-2)^2+(z+2)^2=\\frac54$",
         "is_correct": false
       }
     ],
@@ -16497,26 +16497,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$(x-1)^2+(y-1)^2+(z-2)^2=3$.",
-        "content_en": "$(x-1)^2+(y-1)^2+(z-2)^2=3$.",
+        "content_vi": "$(x-1)^2+(y-1)^2+(z-2)^2=3$",
+        "content_en": "$(x-1)^2+(y-1)^2+(z-2)^2=3$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$(x-1)^2+(y-1)^2+(z-2)^2=9$.",
-        "content_en": "$(x-1)^2+(y-1)^2+(z-2)^2=9$.",
+        "content_vi": "$(x-1)^2+(y-1)^2+(z-2)^2=9$",
+        "content_en": "$(x-1)^2+(y-1)^2+(z-2)^2=9$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$(x-1)^2+(y-1)^2+(z+2)^2=3$.",
-        "content_en": "$(x-1)^2+(y-1)^2+(z+2)^2=3$.",
+        "content_vi": "$(x-1)^2+(y-1)^2+(z+2)^2=3$",
+        "content_en": "$(x-1)^2+(y-1)^2+(z+2)^2=3$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$(x-1)^2+(y-1)^2+(z+2)^2=9$.",
-        "content_en": "$(x-1)^2+(y-1)^2+(z+2)^2=9$.",
+        "content_vi": "$(x-1)^2+(y-1)^2+(z+2)^2=9$",
+        "content_en": "$(x-1)^2+(y-1)^2+(z+2)^2=9$",
         "is_correct": false
       }
     ],
@@ -16545,26 +16545,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$(x+10)^2+y^2+z^2=5\\sqrt2$.",
-        "content_en": "$(x+10)^2+y^2+z^2=5\\sqrt2$.",
+        "content_vi": "$(x+10)^2+y^2+z^2=5\\sqrt2$",
+        "content_en": "$(x+10)^2+y^2+z^2=5\\sqrt2$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$(x-10)^2+y^2+z^2=5\\sqrt2$.",
-        "content_en": "$(x-10)^2+y^2+z^2=5\\sqrt2$.",
+        "content_vi": "$(x-10)^2+y^2+z^2=5\\sqrt2$",
+        "content_en": "$(x-10)^2+y^2+z^2=5\\sqrt2$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$(x-10)^2+y^2+z^2=50$.",
-        "content_en": "$(x-10)^2+y^2+z^2=50$.",
+        "content_vi": "$(x-10)^2+y^2+z^2=50$",
+        "content_en": "$(x-10)^2+y^2+z^2=50$",
         "is_correct": true
       },
       {
         "option_key": "D",
-        "content_vi": "$(x+10)^2+y^2+z^2=50$.",
-        "content_en": "$(x+10)^2+y^2+z^2=50$.",
+        "content_vi": "$(x+10)^2+y^2+z^2=50$",
+        "content_en": "$(x+10)^2+y^2+z^2=50$",
         "is_correct": false
       }
     ],
@@ -16593,26 +16593,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$(x-1)^2+(y+2)^2+(z-3)^2=17$.",
-        "content_en": "$(x-1)^2+(y+2)^2+(z-3)^2=17$.",
+        "content_vi": "$(x-1)^2+(y+2)^2+(z-3)^2=17$",
+        "content_en": "$(x-1)^2+(y+2)^2+(z-3)^2=17$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$(x-3)^2+(y-1)^2+(z-5)^2=17$.",
-        "content_en": "$(x-3)^2+(y-1)^2+(z-5)^2=17$.",
+        "content_vi": "$(x-3)^2+(y-1)^2+(z-5)^2=17$",
+        "content_en": "$(x-3)^2+(y-1)^2+(z-5)^2=17$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$(x-5)^2+(y-4)^2+(z-7)^2=17$.",
-        "content_en": "$(x-5)^2+(y-4)^2+(z-7)^2=17$.",
+        "content_vi": "$(x-5)^2+(y-4)^2+(z-7)^2=17$",
+        "content_en": "$(x-5)^2+(y-4)^2+(z-7)^2=17$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$(x-6)^2+(y-2)^2+(z-10)^2=17$.",
-        "content_en": "$(x-6)^2+(y-2)^2+(z-10)^2=17$.",
+        "content_vi": "$(x-6)^2+(y-2)^2+(z-10)^2=17$",
+        "content_en": "$(x-6)^2+(y-2)^2+(z-10)^2=17$",
         "is_correct": false
       }
     ],
@@ -16641,26 +16641,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$(x-1)^2+(y+2)^2+(z-3)^2=9$.",
-        "content_en": "$(x-1)^2+(y+2)^2+(z-3)^2=9$.",
+        "content_vi": "$(x-1)^2+(y+2)^2+(z-3)^2=9$",
+        "content_en": "$(x-1)^2+(y+2)^2+(z-3)^2=9$",
         "is_correct": true
       },
       {
         "option_key": "B",
-        "content_vi": "$(x-1)^2+(y+2)^2+(z-3)^2=3$.",
-        "content_en": "$(x-1)^2+(y+2)^2+(z-3)^2=3$.",
+        "content_vi": "$(x-1)^2+(y+2)^2+(z-3)^2=3$",
+        "content_en": "$(x-1)^2+(y+2)^2+(z-3)^2=3$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$(x+1)^2+(y-2)^2+(z+3)^2=9$.",
-        "content_en": "$(x+1)^2+(y-2)^2+(z+3)^2=9$.",
+        "content_vi": "$(x+1)^2+(y-2)^2+(z+3)^2=9$",
+        "content_en": "$(x+1)^2+(y-2)^2+(z+3)^2=9$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$(x+1)^2+(y-2)^2+(z+3)^2=3$.",
-        "content_en": "$(x+1)^2+(y-2)^2+(z+3)^2=3$.",
+        "content_vi": "$(x+1)^2+(y-2)^2+(z+3)^2=3$",
+        "content_en": "$(x+1)^2+(y-2)^2+(z+3)^2=3$",
         "is_correct": false
       }
     ],
@@ -16689,26 +16689,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$(x+10)^2+(y-17)^2+(z-7)^2=8$.",
-        "content_en": "$(x+10)^2+(y-17)^2+(z-7)^2=8$.",
+        "content_vi": "$(x+10)^2+(y-17)^2+(z-7)^2=8$",
+        "content_en": "$(x+10)^2+(y-17)^2+(z-7)^2=8$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$(x+10)^2+(y-17)^2+(z+7)^2=8$.",
-        "content_en": "$(x+10)^2+(y-17)^2+(z+7)^2=8$.",
+        "content_vi": "$(x+10)^2+(y-17)^2+(z+7)^2=8$",
+        "content_en": "$(x+10)^2+(y-17)^2+(z+7)^2=8$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$(x-10)^2+(y-17)^2+(z+7)^2=8$.",
-        "content_en": "$(x-10)^2+(y-17)^2+(z+7)^2=8$.",
+        "content_vi": "$(x-10)^2+(y-17)^2+(z+7)^2=8$",
+        "content_en": "$(x-10)^2+(y-17)^2+(z+7)^2=8$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$(x+10)^2+(y+17)^2+(z+7)^2=8$.",
-        "content_en": "$(x+10)^2+(y+17)^2+(z+7)^2=8$.",
+        "content_vi": "$(x+10)^2+(y+17)^2+(z+7)^2=8$",
+        "content_en": "$(x+10)^2+(y+17)^2+(z+7)^2=8$",
         "is_correct": false
       }
     ],
@@ -16737,26 +16737,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$(x+2)^2+(y+2)^2+(z+3)^2=4$.",
-        "content_en": "$(x+2)^2+(y+2)^2+(z+3)^2=4$.",
+        "content_vi": "$(x+2)^2+(y+2)^2+(z+3)^2=4$",
+        "content_en": "$(x+2)^2+(y+2)^2+(z+3)^2=4$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$(x-2)^2+(y-2)^2+(z-3)^2=13$.",
-        "content_en": "$(x-2)^2+(y-2)^2+(z-3)^2=13$.",
+        "content_vi": "$(x-2)^2+(y-2)^2+(z-3)^2=13$",
+        "content_en": "$(x-2)^2+(y-2)^2+(z-3)^2=13$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$(x-2)^2+(y-2)^2+(z-3)^2=4$.",
-        "content_en": "$(x-2)^2+(y-2)^2+(z-3)^2=4$.",
+        "content_vi": "$(x-2)^2+(y-2)^2+(z-3)^2=4$",
+        "content_en": "$(x-2)^2+(y-2)^2+(z-3)^2=4$",
         "is_correct": true
       },
       {
         "option_key": "D",
-        "content_vi": "$(x-2)^2+(y-2)^2+(z-3)^2=2$.",
-        "content_en": "$(x-2)^2+(y-2)^2+(z-3)^2=2$.",
+        "content_vi": "$(x-2)^2+(y-2)^2+(z-3)^2=2$",
+        "content_en": "$(x-2)^2+(y-2)^2+(z-3)^2=2$",
         "is_correct": false
       }
     ],
@@ -16785,26 +16785,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$(x-3)^2+(y-1)^2+(z+2)^2=5$.",
-        "content_en": "$(x-3)^2+(y-1)^2+(z+2)^2=5$.",
+        "content_vi": "$(x-3)^2+(y-1)^2+(z+2)^2=5$",
+        "content_en": "$(x-3)^2+(y-1)^2+(z+2)^2=5$",
         "is_correct": true
       },
       {
         "option_key": "B",
-        "content_vi": "$(x-3)^2+(y-1)^2+(z+2)^2=25$.",
-        "content_en": "$(x-3)^2+(y-1)^2+(z+2)^2=25$.",
+        "content_vi": "$(x-3)^2+(y-1)^2+(z+2)^2=25$",
+        "content_en": "$(x-3)^2+(y-1)^2+(z+2)^2=25$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$(x+3)^2+(y+1)^2+(z-2)^2=5$.",
-        "content_en": "$(x+3)^2+(y+1)^2+(z-2)^2=5$.",
+        "content_vi": "$(x+3)^2+(y+1)^2+(z-2)^2=5$",
+        "content_en": "$(x+3)^2+(y+1)^2+(z-2)^2=5$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$(x+3)^2+(y+1)^2+(z-2)^2=25$.",
-        "content_en": "$(x+3)^2+(y+1)^2+(z-2)^2=25$.",
+        "content_vi": "$(x+3)^2+(y+1)^2+(z-2)^2=25$",
+        "content_en": "$(x+3)^2+(y+1)^2+(z-2)^2=25$",
         "is_correct": false
       }
     ],
@@ -16833,26 +16833,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$(x-2)^2+(y-1)^2+(z+3)^2=\\frac{16}{21}$.",
-        "content_en": "$(x-2)^2+(y-1)^2+(z+3)^2=\\frac{16}{21}$.",
+        "content_vi": "$(x-2)^2+(y-1)^2+(z+3)^2=\\frac{16}{21}$",
+        "content_en": "$(x-2)^2+(y-1)^2+(z+3)^2=\\frac{16}{21}$",
         "is_correct": true
       },
       {
         "option_key": "B",
-        "content_vi": "$(x+2)^2+(y+1)^2+(z-3)^2=\\frac{16}{21}$.",
-        "content_en": "$(x+2)^2+(y+1)^2+(z-3)^2=\\frac{16}{21}$.",
+        "content_vi": "$(x+2)^2+(y+1)^2+(z-3)^2=\\frac{16}{21}$",
+        "content_en": "$(x+2)^2+(y+1)^2+(z-3)^2=\\frac{16}{21}$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$(x-1)^2+(y-2)^2+(z+3)^2=\\frac{16}{441}$.",
-        "content_en": "$(x-1)^2+(y-2)^2+(z+3)^2=\\frac{16}{441}$.",
+        "content_vi": "$(x-1)^2+(y-2)^2+(z+3)^2=\\frac{16}{441}$",
+        "content_en": "$(x-1)^2+(y-2)^2+(z+3)^2=\\frac{16}{441}$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$(x-2)^2+(y-1)^2+(z-3)^2=\\frac{16}{441}$.",
-        "content_en": "$(x-2)^2+(y-1)^2+(z-3)^2=\\frac{16}{441}$.",
+        "content_vi": "$(x-2)^2+(y-1)^2+(z-3)^2=\\frac{16}{441}$",
+        "content_en": "$(x-2)^2+(y-1)^2+(z-3)^2=\\frac{16}{441}$",
         "is_correct": false
       }
     ],
@@ -16881,26 +16881,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$(x+1)^2+(y-2)^2+(z+1)^2=34$.",
-        "content_en": "$(x+1)^2+(y-2)^2+(z+1)^2=34$.",
+        "content_vi": "$(x+1)^2+(y-2)^2+(z+1)^2=34$",
+        "content_en": "$(x+1)^2+(y-2)^2+(z+1)^2=34$",
         "is_correct": true
       },
       {
         "option_key": "B",
-        "content_vi": "$(x-1)^2+(y+2)^2+(z-1)^2=34$.",
-        "content_en": "$(x-1)^2+(y+2)^2+(z-1)^2=34$.",
+        "content_vi": "$(x-1)^2+(y+2)^2+(z-1)^2=34$",
+        "content_en": "$(x-1)^2+(y+2)^2+(z-1)^2=34$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$(x+1)^2+(y-2)^2+(z+1)^2=25$.",
-        "content_en": "$(x+1)^2+(y-2)^2+(z+1)^2=25$.",
+        "content_vi": "$(x+1)^2+(y-2)^2+(z+1)^2=25$",
+        "content_en": "$(x+1)^2+(y-2)^2+(z+1)^2=25$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$(x+1)^2+(y-2)^2+(z+1)^2=16$.",
-        "content_en": "$(x+1)^2+(y-2)^2+(z+1)^2=16$.",
+        "content_vi": "$(x+1)^2+(y-2)^2+(z+1)^2=16$",
+        "content_en": "$(x+1)^2+(y-2)^2+(z+1)^2=16$",
         "is_correct": false
       }
     ],
@@ -16929,26 +16929,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$x^2+y^2+(z-4)^2=16$.",
-        "content_en": "$x^2+y^2+(z-4)^2=16$.",
+        "content_vi": "$x^2+y^2+(z-4)^2=16$",
+        "content_en": "$x^2+y^2+(z-4)^2=16$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$x^2+y^2+z^2=64$.",
-        "content_en": "$x^2+y^2+z^2=64$.",
+        "content_vi": "$x^2+y^2+z^2=64$",
+        "content_en": "$x^2+y^2+z^2=64$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$(x-4)^2+(y-4)^2+(z-8)^2=32$.",
-        "content_en": "$(x-4)^2+(y-4)^2+(z-8)^2=32$.",
+        "content_vi": "$(x-4)^2+(y-4)^2+(z-8)^2=32$",
+        "content_en": "$(x-4)^2+(y-4)^2+(z-8)^2=32$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$x^2+y^2+(z-3)^2=25$.",
-        "content_en": "$x^2+y^2+(z-3)^2=25$.",
+        "content_vi": "$x^2+y^2+(z-3)^2=25$",
+        "content_en": "$x^2+y^2+(z-3)^2=25$",
         "is_correct": false
       }
     ],
@@ -16977,26 +16977,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$(x-1)^2+(y+2)^2+(z+1)^2=\\frac{18}{17}$.",
-        "content_en": "$(x-1)^2+(y+2)^2+(z+1)^2=\\frac{18}{17}$.",
+        "content_vi": "$(x-1)^2+(y+2)^2+(z+1)^2=\\frac{18}{17}$",
+        "content_en": "$(x-1)^2+(y+2)^2+(z+1)^2=\\frac{18}{17}$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$(x-1)^2+(y+2)^2+(z+1)^2=\\frac{72}{17}$.",
-        "content_en": "$(x-1)^2+(y+2)^2+(z+1)^2=\\frac{72}{17}$.",
+        "content_vi": "$(x-1)^2+(y+2)^2+(z+1)^2=\\frac{72}{17}$",
+        "content_en": "$(x-1)^2+(y+2)^2+(z+1)^2=\\frac{72}{17}$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$(x-1)^2+(y+2)^2+(z+1)^2=\\frac{18}{11}$.",
-        "content_en": "$(x-1)^2+(y+2)^2+(z+1)^2=\\frac{18}{11}$.",
+        "content_vi": "$(x-1)^2+(y+2)^2+(z+1)^2=\\frac{18}{11}$",
+        "content_en": "$(x-1)^2+(y+2)^2+(z+1)^2=\\frac{18}{11}$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$(x-1)^2+(y+2)^2+(z+1)^2=\\frac{72}{11}$.",
-        "content_en": "$(x-1)^2+(y+2)^2+(z+1)^2=\\frac{72}{11}$.",
+        "content_vi": "$(x-1)^2+(y+2)^2+(z+1)^2=\\frac{72}{11}$",
+        "content_en": "$(x-1)^2+(y+2)^2+(z+1)^2=\\frac{72}{11}$",
         "is_correct": false
       }
     ],
@@ -17025,26 +17025,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$x^2+y^2+z^2=4$.",
-        "content_en": "$x^2+y^2+z^2=4$.",
+        "content_vi": "$x^2+y^2+z^2=4$",
+        "content_en": "$x^2+y^2+z^2=4$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$x^2+y^2+z^2=16$.",
-        "content_en": "$x^2+y^2+z^2=16$.",
+        "content_vi": "$x^2+y^2+z^2=16$",
+        "content_en": "$x^2+y^2+z^2=16$",
         "is_correct": true
       },
       {
         "option_key": "C",
-        "content_vi": "$x^2+y^2+z^2=2$.",
-        "content_en": "$x^2+y^2+z^2=2$.",
+        "content_vi": "$x^2+y^2+z^2=2$",
+        "content_en": "$x^2+y^2+z^2=2$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$x^2+y^2+z^2=5$.",
-        "content_en": "$x^2+y^2+z^2=5$.",
+        "content_vi": "$x^2+y^2+z^2=5$",
+        "content_en": "$x^2+y^2+z^2=5$",
         "is_correct": false
       }
     ],
@@ -17073,26 +17073,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$M(1,0,2)$.",
-        "content_en": "$M(1,0,2)$.",
+        "content_vi": "$M(1,0,2)$",
+        "content_en": "$M(1,0,2)$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$N(2,-1,1)$.",
-        "content_en": "$N(2,-1,1)$.",
+        "content_vi": "$N(2,-1,1)$",
+        "content_en": "$N(2,-1,1)$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$P(1,1,\\sqrt2)$.",
-        "content_en": "$P(1,1,\\sqrt2)$.",
+        "content_vi": "$P(1,1,\\sqrt2)$",
+        "content_en": "$P(1,1,\\sqrt2)$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$Q(3,0,0)$.",
-        "content_en": "$Q(3,0,0)$.",
+        "content_vi": "$Q(3,0,0)$",
+        "content_en": "$Q(3,0,0)$",
         "is_correct": false
       }
     ],
@@ -17334,26 +17334,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$R=4$.",
-        "content_en": "$R=4$.",
+        "content_vi": "$R=4$",
+        "content_en": "$R=4$",
         "is_correct": true
       },
       {
         "option_key": "B",
-        "content_vi": "$R=16$.",
-        "content_en": "$R=16$.",
+        "content_vi": "$R=16$",
+        "content_en": "$R=16$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$R=0$.",
-        "content_en": "$R=0$.",
+        "content_vi": "$R=0$",
+        "content_en": "$R=0$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$R=2$.",
-        "content_en": "$R=2$.",
+        "content_vi": "$R=2$",
+        "content_en": "$R=2$",
         "is_correct": false
       }
     ],
@@ -17382,26 +17382,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$I(1,2,-1),\\ R=2\\sqrt2$.",
-        "content_en": "$I(1,2,-1),\\ R=2\\sqrt2$.",
+        "content_vi": "$I(1,2,-1),\\ R=2\\sqrt2$",
+        "content_en": "$I(1,2,-1),\\ R=2\\sqrt2$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$I(-1,-2,1),\\ R=2\\sqrt2$.",
-        "content_en": "$I(-1,-2,1),\\ R=2\\sqrt2$.",
+        "content_vi": "$I(-1,-2,1),\\ R=2\\sqrt2$",
+        "content_en": "$I(-1,-2,1),\\ R=2\\sqrt2$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$I(2,4,-2),\\ R=2$.",
-        "content_en": "$I(2,4,-2),\\ R=2$.",
+        "content_vi": "$I(2,4,-2),\\ R=2$",
+        "content_en": "$I(2,4,-2),\\ R=2$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$I(2,4,2),\\ R=8$.",
-        "content_en": "$I(2,4,2),\\ R=8$.",
+        "content_vi": "$I(2,4,2),\\ R=8$",
+        "content_en": "$I(2,4,2),\\ R=8$",
         "is_correct": false
       }
     ],
@@ -17430,26 +17430,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$(S):x^2+y^2-z^2-4x+2y+2z-3=0$.",
-        "content_en": "$(S):x^2+y^2-z^2-4x+2y+2z-3=0$.",
+        "content_vi": "$(S):x^2+y^2-z^2-4x+2y+2z-3=0$",
+        "content_en": "$(S):x^2+y^2-z^2-4x+2y+2z-3=0$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$(S):x^2+2y^2+z^2-4x+2y+2z-10=0$.",
-        "content_en": "$(S):x^2+2y^2+z^2-4x+2y+2z-10=0$.",
+        "content_vi": "$(S):x^2+2y^2+z^2-4x+2y+2z-10=0$",
+        "content_en": "$(S):x^2+2y^2+z^2-4x+2y+2z-10=0$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$(S):x^2+y^2+z^2-4x+2y+2z+2=0$.",
-        "content_en": "$(S):x^2+y^2+z^2-4x+2y+2z+2=0$.",
+        "content_vi": "$(S):x^2+y^2+z^2-4x+2y+2z+2=0$",
+        "content_en": "$(S):x^2+y^2+z^2-4x+2y+2z+2=0$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$(S):x^2+y^2+z^2-4x+2y+2z+8=0$.",
-        "content_en": "$(S):x^2+y^2+z^2-4x+2y+2z+8=0$.",
+        "content_vi": "$(S):x^2+y^2+z^2-4x+2y+2z+8=0$",
+        "content_en": "$(S):x^2+y^2+z^2-4x+2y+2z+8=0$",
         "is_correct": false
       }
     ],
@@ -17478,26 +17478,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$I(2,-1,3)$.",
-        "content_en": "$I(2,-1,3)$.",
+        "content_vi": "$I(2,-1,3)$",
+        "content_en": "$I(2,-1,3)$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$I(2,3,-1)$.",
-        "content_en": "$I(2,3,-1)$.",
+        "content_vi": "$I(2,3,-1)$",
+        "content_en": "$I(2,3,-1)$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$I(2,-3,1)$.",
-        "content_en": "$I(2,-3,1)$.",
+        "content_vi": "$I(2,-3,1)$",
+        "content_en": "$I(2,-3,1)$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$I(2,1,-3)$.",
-        "content_en": "$I(2,1,-3)$.",
+        "content_vi": "$I(2,1,-3)$",
+        "content_en": "$I(2,1,-3)$",
         "is_correct": false
       }
     ],
@@ -17526,26 +17526,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$x^2+y^2+z^2-2x+4z-1=0$.",
-        "content_en": "$x^2+y^2+z^2-2x+4z-1=0$.",
+        "content_vi": "$x^2+y^2+z^2-2x+4z-1=0$",
+        "content_en": "$x^2+y^2+z^2-2x+4z-1=0$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$x^2+z^2+3x-2y+4z-1=0$.",
-        "content_en": "$x^2+z^2+3x-2y+4z-1=0$.",
+        "content_vi": "$x^2+z^2+3x-2y+4z-1=0$",
+        "content_en": "$x^2+z^2+3x-2y+4z-1=0$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$x^2+y^2+z^2+2xy-4y+4z-1=0$.",
-        "content_en": "$x^2+y^2+z^2+2xy-4y+4z-1=0$.",
+        "content_vi": "$x^2+y^2+z^2+2xy-4y+4z-1=0$",
+        "content_en": "$x^2+y^2+z^2+2xy-4y+4z-1=0$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$x^2+y^2+z^2-2x+2y-4z+8=0$.",
-        "content_en": "$x^2+y^2+z^2-2x+2y-4z+8=0$.",
+        "content_vi": "$x^2+y^2+z^2-2x+2y-4z+8=0$",
+        "content_en": "$x^2+y^2+z^2-2x+2y-4z+8=0$",
         "is_correct": false
       }
     ],
@@ -17574,26 +17574,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$x^2+y^2+z^2+x-2y+4z-3=0$.",
-        "content_en": "$x^2+y^2+z^2+x-2y+4z-3=0$.",
+        "content_vi": "$x^2+y^2+z^2+x-2y+4z-3=0$",
+        "content_en": "$x^2+y^2+z^2+x-2y+4z-3=0$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$2x^2+2y^2+2z^2-x-y-z=0$.",
-        "content_en": "$2x^2+2y^2+2z^2-x-y-z=0$.",
+        "content_vi": "$2x^2+2y^2+2z^2-x-y-z=0$",
+        "content_en": "$2x^2+2y^2+2z^2-x-y-z=0$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$2x^2+2y^2+2z^2+4x+8y+6z+3=0$.",
-        "content_en": "$2x^2+2y^2+2z^2+4x+8y+6z+3=0$.",
+        "content_vi": "$2x^2+2y^2+2z^2+4x+8y+6z+3=0$",
+        "content_en": "$2x^2+2y^2+2z^2+4x+8y+6z+3=0$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$x^2+y^2+z^2-2x+4y-4z+10=0$.",
-        "content_en": "$x^2+y^2+z^2-2x+4y-4z+10=0$.",
+        "content_vi": "$x^2+y^2+z^2-2x+4y-4z+10=0$",
+        "content_en": "$x^2+y^2+z^2-2x+4y-4z+10=0$",
         "is_correct": false
       }
     ],
@@ -17622,26 +17622,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$x^2+2y^2+2z^2-2x+4z-1=0$.",
-        "content_en": "$x^2+2y^2+2z^2-2x+4z-1=0$.",
+        "content_vi": "$x^2+2y^2+2z^2-2x+4z-1=0$",
+        "content_en": "$x^2+2y^2+2z^2-2x+4z-1=0$",
         "is_correct": true
       },
       {
         "option_key": "B",
-        "content_vi": "$x^2+y^2+z^2+3x-2y+4z-1=0$.",
-        "content_en": "$x^2+y^2+z^2+3x-2y+4z-1=0$.",
+        "content_vi": "$x^2+y^2+z^2+3x-2y+4z-1=0$",
+        "content_en": "$x^2+y^2+z^2+3x-2y+4z-1=0$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$x^2+y^2+z^2+2x-4y+4z-1=0$.",
-        "content_en": "$x^2+y^2+z^2+2x-4y+4z-1=0$.",
+        "content_vi": "$x^2+y^2+z^2+2x-4y+4z-1=0$",
+        "content_en": "$x^2+y^2+z^2+2x-4y+4z-1=0$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$x^2+y^2+z^2-2x+2y-4z-8=0$.",
-        "content_en": "$x^2+y^2+z^2-2x+2y-4z-8=0$.",
+        "content_vi": "$x^2+y^2+z^2-2x+2y-4z-8=0$",
+        "content_en": "$x^2+y^2+z^2-2x+2y-4z-8=0$",
         "is_correct": false
       }
     ],
@@ -17670,26 +17670,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$(S):x^2+y^2+z^2-4x+2y+2z-3=0$.",
-        "content_en": "$(S):x^2+y^2+z^2-4x+2y+2z-3=0$.",
+        "content_vi": "$(S):x^2+y^2+z^2-4x+2y+2z-3=0$",
+        "content_en": "$(S):x^2+y^2+z^2-4x+2y+2z-3=0$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$(S):x^2+y^2+z^2-4x+2y+2z-10=0$.",
-        "content_en": "$(S):x^2+y^2+z^2-4x+2y+2z-10=0$.",
+        "content_vi": "$(S):x^2+y^2+z^2-4x+2y+2z-10=0$",
+        "content_en": "$(S):x^2+y^2+z^2-4x+2y+2z-10=0$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$(S):x^2+y^2+z^2-4x+2y+2z+2=0$.",
-        "content_en": "$(S):x^2+y^2+z^2-4x+2y+2z+2=0$.",
+        "content_vi": "$(S):x^2+y^2+z^2-4x+2y+2z+2=0$",
+        "content_en": "$(S):x^2+y^2+z^2-4x+2y+2z+2=0$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$(S):x^2+y^2+z^2-4x+2y+2z+5=0$.",
-        "content_en": "$(S):x^2+y^2+z^2-4x+2y+2z+5=0$.",
+        "content_vi": "$(S):x^2+y^2+z^2-4x+2y+2z+5=0$",
+        "content_en": "$(S):x^2+y^2+z^2-4x+2y+2z+5=0$",
         "is_correct": false
       }
     ],
@@ -17718,26 +17718,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$x^2+y^2+z^2-x+6z+16=0$.",
-        "content_en": "$x^2+y^2+z^2-x+6z+16=0$.",
+        "content_vi": "$x^2+y^2+z^2-x+6z+16=0$",
+        "content_en": "$x^2+y^2+z^2-x+6z+16=0$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$x^2+y^2+z^2+4x-6y+8z-1=0$.",
-        "content_en": "$x^2+y^2+z^2+4x-6y+8z-1=0$.",
+        "content_vi": "$x^2+y^2+z^2+4x-6y+8z-1=0$",
+        "content_en": "$x^2+y^2+z^2+4x-6y+8z-1=0$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$x^2+y^2+z^2+2x-4y+4z+13=0$.",
-        "content_en": "$x^2+y^2+z^2+2x-4y+4z+13=0$.",
+        "content_vi": "$x^2+y^2+z^2+2x-4y+4z+13=0$",
+        "content_en": "$x^2+y^2+z^2+2x-4y+4z+13=0$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$x^2+y^2+z^2-2x+2y-4z+9=0$.",
-        "content_en": "$x^2+y^2+z^2-2x+2y-4z+9=0$.",
+        "content_vi": "$x^2+y^2+z^2-2x+2y-4z+9=0$",
+        "content_en": "$x^2+y^2+z^2-2x+2y-4z+9=0$",
         "is_correct": false
       }
     ],
@@ -17766,26 +17766,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$x^2+y^2+z^2-2x+4y+6z-2=0$.",
-        "content_en": "$x^2+y^2+z^2-2x+4y+6z-2=0$.",
+        "content_vi": "$x^2+y^2+z^2-2x+4y+6z-2=0$",
+        "content_en": "$x^2+y^2+z^2-2x+4y+6z-2=0$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$x^2+y^2+z^2-2x+2y-2z=6$.",
-        "content_en": "$x^2+y^2+z^2-2x+2y-2z=6$.",
+        "content_vi": "$x^2+y^2+z^2-2x+2y-2z=6$",
+        "content_en": "$x^2+y^2+z^2-2x+2y-2z=6$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$x^2+y^2+z^2+2x-4y-6z+5=0$.",
-        "content_en": "$x^2+y^2+z^2+2x-4y-6z+5=0$.",
+        "content_vi": "$x^2+y^2+z^2+2x-4y-6z+5=0$",
+        "content_en": "$x^2+y^2+z^2+2x-4y-6z+5=0$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$x^2+y^2+z^2-2y+4xz+2=0$.",
-        "content_en": "$x^2+y^2+z^2-2y+4xz+2=0$.",
+        "content_vi": "$x^2+y^2+z^2-2y+4xz+2=0$",
+        "content_en": "$x^2+y^2+z^2-2y+4xz+2=0$",
         "is_correct": false
       }
     ],
@@ -17814,26 +17814,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$3$.",
-        "content_en": "$3$.",
+        "content_vi": "$3$",
+        "content_en": "$3$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$\\sqrt{61}$.",
-        "content_en": "$\\sqrt{61}$.",
+        "content_vi": "$\\sqrt{61}$",
+        "content_en": "$\\sqrt{61}$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$4$.",
-        "content_en": "$4$.",
+        "content_vi": "$4$",
+        "content_en": "$4$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$2$.",
-        "content_en": "$2$.",
+        "content_vi": "$2$",
+        "content_en": "$2$",
         "is_correct": false
       }
     ],
@@ -18764,26 +18764,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "a",
-        "content_vi": "$P(A^c)=\\frac{5}{12}$.",
-        "content_en": "$P(A^c)=\\frac{5}{12}$.",
+        "content_vi": "$P(A^c)=\\frac{5}{12}$",
+        "content_en": "$P(A^c)=\\frac{5}{12}$",
         "is_correct": false
       },
       {
         "option_key": "b",
-        "content_vi": "$P(B\\mid A)=\\frac{1}{15}$.",
-        "content_en": "$P(B\\mid A)=\\frac{1}{15}$.",
+        "content_vi": "$P(B\\mid A)=\\frac{1}{15}$",
+        "content_en": "$P(B\\mid A)=\\frac{1}{15}$",
         "is_correct": false
       },
       {
         "option_key": "c",
-        "content_vi": "$P(B\\mid A^c)=\\frac{12}{35}$.",
-        "content_en": "$P(B\\mid A^c)=\\frac{12}{35}$.",
+        "content_vi": "$P(B\\mid A^c)=\\frac{12}{35}$",
+        "content_en": "$P(B\\mid A^c)=\\frac{12}{35}$",
         "is_correct": true
       },
       {
         "option_key": "d",
-        "content_vi": "$P(B)=\\frac{14}{45}$.",
-        "content_en": "$P(B)=\\frac{14}{45}$.",
+        "content_vi": "$P(B)=\\frac{14}{45}$",
+        "content_en": "$P(B)=\\frac{14}{45}$",
         "is_correct": true
       }
     ],
@@ -19827,26 +19827,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$\\Omega=\\{(1,2),(1,3),(1,4),(2,3),(2,4),(3,4)\\}$.",
-        "content_en": "$\\Omega=\\{(1,2),(1,3),(1,4),(2,3),(2,4),(3,4)\\}$.",
+        "content_vi": "$\\Omega=\\{(1,2),(1,3),(1,4),(2,3),(2,4),(3,4)\\}$",
+        "content_en": "$\\Omega=\\{(1,2),(1,3),(1,4),(2,3),(2,4),(3,4)\\}$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$\\Omega=\\{(1,2),(1,1),(1,3),(1,4),(2,1),(2,3),(2,4),(3,1),(3,2),(3,4),(4,1),(4,2),(4,3)\\}$.",
-        "content_en": "$\\Omega=\\{(1,2),(1,1),(1,3),(1,4),(2,1),(2,3),(2,4),(3,1),(3,2),(3,4),(4,1),(4,2),(4,3)\\}$.",
+        "content_vi": "$\\Omega=\\{(1,2),(1,1),(1,3),(1,4),(2,1),(2,3),(2,4),(3,1),(3,2),(3,4),(4,1),(4,2),(4,3)\\}$",
+        "content_en": "$\\Omega=\\{(1,2),(1,1),(1,3),(1,4),(2,1),(2,3),(2,4),(3,1),(3,2),(3,4),(4,1),(4,2),(4,3)\\}$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$\\Omega=\\{(1,2),(1,3),(1,4),(2,1),(2,2),(2,3),(2,4),(1,1),(3,4),(4,4),(3,3)\\}$.",
-        "content_en": "$\\Omega=\\{(1,2),(1,3),(1,4),(2,1),(2,2),(2,3),(2,4),(1,1),(3,4),(4,4),(3,3)\\}$.",
+        "content_vi": "$\\Omega=\\{(1,2),(1,3),(1,4),(2,1),(2,2),(2,3),(2,4),(1,1),(3,4),(4,4),(3,3)\\}$",
+        "content_en": "$\\Omega=\\{(1,2),(1,3),(1,4),(2,1),(2,2),(2,3),(2,4),(1,1),(3,4),(4,4),(3,3)\\}$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$\\Omega=\\{(1,2),(1,3),(1,4),(2,1),(2,3),(2,4),(3,1),(3,2),(3,4),(4,1),(4,2),(4,3)\\}$.",
-        "content_en": "$\\Omega=\\{(1,2),(1,3),(1,4),(2,1),(2,3),(2,4),(3,1),(3,2),(3,4),(4,1),(4,2),(4,3)\\}$.",
+        "content_vi": "$\\Omega=\\{(1,2),(1,3),(1,4),(2,1),(2,3),(2,4),(3,1),(3,2),(3,4),(4,1),(4,2),(4,3)\\}$",
+        "content_en": "$\\Omega=\\{(1,2),(1,3),(1,4),(2,1),(2,3),(2,4),(3,1),(3,2),(3,4),(4,1),(4,2),(4,3)\\}$",
         "is_correct": true
       }
     ],
@@ -19923,26 +19923,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "a",
-        "content_vi": "$P(A)=\\frac{5}{10}$.",
-        "content_en": "$P(A)=\\frac{5}{10}$.",
+        "content_vi": "$P(A)=\\frac{5}{10}$",
+        "content_en": "$P(A)=\\frac{5}{10}$",
         "is_correct": false
       },
       {
         "option_key": "b",
-        "content_vi": "$P(B)=\\frac{7}{20}$.",
-        "content_en": "$P(B)=\\frac{7}{20}$.",
+        "content_vi": "$P(B)=\\frac{7}{20}$",
+        "content_en": "$P(B)=\\frac{7}{20}$",
         "is_correct": false
       },
       {
         "option_key": "c",
-        "content_vi": "$P(A\\mid B)=0.75$.",
-        "content_en": "$P(A\\mid B)=0.75$.",
+        "content_vi": "$P(A\\mid B)=0.75$",
+        "content_en": "$P(A\\mid B)=0.75$",
         "is_correct": true
       },
       {
         "option_key": "d",
-        "content_vi": "$P(B\\mid A)=0.48$.",
-        "content_en": "$P(B\\mid A)=0.48$.",
+        "content_vi": "$P(B\\mid A)=0.48$",
+        "content_en": "$P(B\\mid A)=0.48$",
         "is_correct": true
       }
     ],
@@ -20510,26 +20510,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "a",
-        "content_vi": "$f'(x)=4x^3-4x$.",
-        "content_en": "$f'(x)=4x^3-4x$.",
+        "content_vi": "$f'(x)=4x^3-4x$",
+        "content_en": "$f'(x)=4x^3-4x$",
         "is_correct": true
       },
       {
         "option_key": "b",
-        "content_vi": "$f''(x)=12x^2-4$.",
-        "content_en": "$f''(x)=12x^2-4$.",
+        "content_vi": "$f''(x)=12x^2-4$",
+        "content_en": "$f''(x)=12x^2-4$",
         "is_correct": true
       },
       {
         "option_key": "c",
-        "content_vi": "$f''(0)=4$.",
-        "content_en": "$f''(0)=4$.",
+        "content_vi": "$f''(0)=4$",
+        "content_en": "$f''(0)=4$",
         "is_correct": false
       },
       {
         "option_key": "d",
-        "content_vi": "$f''(1)=8$.",
-        "content_en": "$f''(1)=8$.",
+        "content_vi": "$f''(1)=8$",
+        "content_en": "$f''(1)=8$",
         "is_correct": true
       }
     ],
@@ -20558,26 +20558,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "a",
-        "content_vi": "$f'(x)=-\\sin2x$.",
-        "content_en": "$f'(x)=-\\sin2x$.",
+        "content_vi": "$f'(x)=-\\sin2x$",
+        "content_en": "$f'(x)=-\\sin2x$",
         "is_correct": true
       },
       {
         "option_key": "b",
-        "content_vi": "$f''(x)=-2\\cos2x$.",
-        "content_en": "$f''(x)=-2\\cos2x$.",
+        "content_vi": "$f''(x)=-2\\cos2x$",
+        "content_en": "$f''(x)=-2\\cos2x$",
         "is_correct": true
       },
       {
         "option_key": "c",
-        "content_vi": "$f''(0)=-2$.",
-        "content_en": "$f''(0)=-2$.",
+        "content_vi": "$f''(0)=-2$",
+        "content_en": "$f''(0)=-2$",
         "is_correct": true
       },
       {
         "option_key": "d",
-        "content_vi": "$f''(\\pi/4)=2$.",
-        "content_en": "$f''(\\pi/4)=2$.",
+        "content_vi": "$f''(\\pi/4)=2$",
+        "content_en": "$f''(\\pi/4)=2$",
         "is_correct": false
       }
     ],
@@ -20796,26 +20796,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "a",
-        "content_vi": "$v(t)=4t^3-6t^2+1$.",
-        "content_en": "$v(t)=4t^3-6t^2+1$.",
+        "content_vi": "$v(t)=4t^3-6t^2+1$",
+        "content_en": "$v(t)=4t^3-6t^2+1$",
         "is_correct": true
       },
       {
         "option_key": "b",
-        "content_vi": "$a(t)=12t^2-12t$.",
-        "content_en": "$a(t)=12t^2-12t$.",
+        "content_vi": "$a(t)=12t^2-12t$",
+        "content_en": "$a(t)=12t^2-12t$",
         "is_correct": true
       },
       {
         "option_key": "c",
-        "content_vi": "$a(1)=0$.",
-        "content_en": "$a(1)=0$.",
+        "content_vi": "$a(1)=0$",
+        "content_en": "$a(1)=0$",
         "is_correct": true
       },
       {
         "option_key": "d",
-        "content_vi": "$a(2)=12$.",
-        "content_en": "$a(2)=12$.",
+        "content_vi": "$a(2)=12$",
+        "content_en": "$a(2)=12$",
         "is_correct": true
       }
     ],
@@ -20938,26 +20938,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "a",
-        "content_vi": "$v(t)=3t^2-6t+2$.",
-        "content_en": "$v(t)=3t^2-6t+2$.",
+        "content_vi": "$v(t)=3t^2-6t+2$",
+        "content_en": "$v(t)=3t^2-6t+2$",
         "is_correct": true
       },
       {
         "option_key": "b",
-        "content_vi": "$a(t)=6t-6$.",
-        "content_en": "$a(t)=6t-6$.",
+        "content_vi": "$a(t)=6t-6$",
+        "content_en": "$a(t)=6t-6$",
         "is_correct": true
       },
       {
         "option_key": "c",
-        "content_vi": "$a(1)=0$.",
-        "content_en": "$a(1)=0$.",
+        "content_vi": "$a(1)=0$",
+        "content_en": "$a(1)=0$",
         "is_correct": true
       },
       {
         "option_key": "d",
-        "content_vi": "$a(2)=12$.",
-        "content_en": "$a(2)=12$.",
+        "content_vi": "$a(2)=12$",
+        "content_en": "$a(2)=12$",
         "is_correct": false
       }
     ],
@@ -21057,26 +21057,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "a",
-        "content_vi": "$f''(x)=6x-12$.",
-        "content_en": "$f''(x)=6x-12$.",
+        "content_vi": "$f''(x)=6x-12$",
+        "content_en": "$f''(x)=6x-12$",
         "is_correct": true
       },
       {
         "option_key": "b",
-        "content_vi": "$f''(2)=0$.",
-        "content_en": "$f''(2)=0$.",
+        "content_vi": "$f''(2)=0$",
+        "content_en": "$f''(2)=0$",
         "is_correct": true
       },
       {
         "option_key": "c",
-        "content_vi": "$f''(x)<0$ khi $x<2$.",
-        "content_en": "$f''(x)<0$ when $x<2$.",
+        "content_vi": "$f''(x)<0$ khi $x<2$",
+        "content_en": "$f''(x)<0$ when $x<2$",
         "is_correct": true
       },
       {
         "option_key": "d",
-        "content_vi": "$f''(x)>0$ khi $x>2$.",
-        "content_en": "$f''(x)>0$ when $x>2$.",
+        "content_vi": "$f''(x)>0$ khi $x>2$",
+        "content_en": "$f''(x)>0$ when $x>2$",
         "is_correct": true
       }
     ],
@@ -21176,26 +21176,26 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "a",
-        "content_vi": "$f''(x)=12x^2-8$.",
-        "content_en": "$f''(x)=12x^2-8$.",
+        "content_vi": "$f''(x)=12x^2-8$",
+        "content_en": "$f''(x)=12x^2-8$",
         "is_correct": true
       },
       {
         "option_key": "b",
-        "content_vi": "$f''(0)<0$.",
-        "content_en": "$f''(0)<0$.",
+        "content_vi": "$f''(0)<0$",
+        "content_en": "$f''(0)<0$",
         "is_correct": true
       },
       {
         "option_key": "c",
-        "content_vi": "$f''(1)>0$.",
-        "content_en": "$f''(1)>0$.",
+        "content_vi": "$f''(1)>0$",
+        "content_en": "$f''(1)>0$",
         "is_correct": true
       },
       {
         "option_key": "d",
-        "content_vi": "$f''(x)$ không đổi dấu trên $\\mathbb R$.",
-        "content_en": "$f''(x)$ does not change sign on $\\mathbb R$.",
+        "content_vi": "$f''(x)$ không đổi dấu trên $\\mathbb R$",
+        "content_en": "$f''(x)$ does not change sign on $\\mathbb R$",
         "is_correct": false
       }
     ],

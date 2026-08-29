@@ -1,0 +1,21 @@
+{
+  "Bộ 1. 10 mới - PNL KNTT-20250407T033158Z-001(1).zip": {
+    "sha256": "063bad458860942219f67975b8e8c0e6482f597cb096bce9d39d219f145bb412",
+    "used": true,
+    "visual_questions_in_original_bank": 9,
+    "note": "Đã dùng nguồn PNL lớp 10; không nhập lại để tránh trùng."
+  },
+  "Bộ 2. 11 mới - PNL KNTT-20250314T022424Z-001(2).zip": {
+    "sha256": "b6cfbaa5d2c5445535e75a50954c919cbfe3f2b1b6bb637abcf82fb8c923a6c3",
+    "used": true,
+    "visual_questions_in_original_bank": 9,
+    "note": "Đã dùng nguồn PNL lớp 11; không nhập lại để tránh trùng."
+  },
+  "Bộ 8. 12 mới - PNL KNTT-20250314T022356Z-001(1).zip": {
+    "sha256": "5604be14d783159a64e1de14c4c7f55289ed0c8663e503eca2a546543f581f1b",
+    "used": true,
+    "visual_questions_explicit_b8": 27,
+    "additional_pnl12_ch4_visuals": 10,
+    "note": "Đã dùng Bộ 8 lớp 12 và tiếp tục lấy hình Chương 4; không nhập lại bản trùng."
+  }
+}

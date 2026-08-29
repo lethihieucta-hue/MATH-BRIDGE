@@ -679,25 +679,25 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$S_{10}=-511$.",
+        "content_vi": "$S_{10}=-511$",
         "content_en": "S_{10}=-511.",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$S_{10}=1023$.",
+        "content_vi": "$S_{10}=1023$",
         "content_en": "S_{10}=1023.",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$S_{10}=1025$.",
+        "content_vi": "$S_{10}=1025$",
         "content_en": "S_{10}=1025.",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$S_{10}=-1025$.",
+        "content_vi": "$S_{10}=-1025$",
         "content_en": "S_{10}=-1025.",
         "is_correct": false
       }
@@ -728,7 +728,7 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
       {
         "option_key": "A",
         "content_vi": "3. 212 - 3.",
-        "content_en": "$3\\cdot 2^{12}-3$.",
+        "content_en": "$3\\cdot 2^{12}-3$",
         "is_correct": false
       },
       {
@@ -740,13 +740,13 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
       {
         "option_key": "C",
         "content_vi": "3. 212 - 1.",
-        "content_en": "$3\\cdot 2^{12}-1$.",
+        "content_en": "$3\\cdot 2^{12}-1$",
         "is_correct": false
       },
       {
         "option_key": "D",
         "content_vi": "3. 212.",
-        "content_en": "$3\\cdot 2^{12}$.",
+        "content_en": "$3\\cdot 2^{12}$",
         "is_correct": false
       }
     ],
@@ -1358,7 +1358,7 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
       {
         "option_key": "b",
         "content_vi": "Số hạng thứ 25 của cấp số nhân đó bằng -3. 2 24.",
-        "content_en": "$u_{25}=-3\\cdot 2^{24}$.",
+        "content_en": "$u_{25}=-3\\cdot 2^{24}$",
         "is_correct": false
       },
       {
@@ -1702,25 +1702,25 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$q=4$.",
+        "content_vi": "$q=4$",
         "content_en": "q=4.",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$q=-4$.",
+        "content_vi": "$q=-4$",
         "content_en": "q=-4.",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$q=21$.",
+        "content_vi": "$q=21$",
         "content_en": "q=21.",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$q=22$.",
+        "content_vi": "$q=22$",
         "content_en": "q=22.",
         "is_correct": false
       }
@@ -1750,25 +1750,25 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$q=-3$.",
+        "content_vi": "$q=-3$",
         "content_en": "q=-3.",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$q=3$.",
+        "content_vi": "$q=3$",
         "content_en": "q=3.",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$q=3$; $q=-3$.",
+        "content_vi": "$q=3$; $q=-3$",
         "content_en": "q=3 or q=-3.",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$q=-2$.",
+        "content_vi": "$q=-2$",
         "content_en": "q=-2.",
         "is_correct": false
       }
@@ -1942,26 +1942,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$x=4$.",
-        "content_en": "$x=4$.",
+        "content_vi": "$x=4$",
+        "content_en": "$x=4$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$x=5$.",
-        "content_en": "$x=5$.",
+        "content_vi": "$x=5$",
+        "content_en": "$x=5$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$x=2$.",
-        "content_en": "$x=2$.",
+        "content_vi": "$x=2$",
+        "content_en": "$x=2$",
         "is_correct": true
       },
       {
         "option_key": "D",
-        "content_vi": "$x=1$.",
-        "content_en": "$x=1$.",
+        "content_vi": "$x=1$",
+        "content_en": "$x=1$",
         "is_correct": false
       }
     ],
@@ -1991,25 +1991,25 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
       {
         "option_key": "A",
         "content_vi": "2. 32018.",
-        "content_en": "$2\\cdot3^{2018}$.",
+        "content_en": "$2\\cdot3^{2018}$",
         "is_correct": true
       },
       {
         "option_key": "B",
         "content_vi": "3. 2 2018.",
-        "content_en": "$3\\cdot2^{2018}$.",
+        "content_en": "$3\\cdot2^{2018}$",
         "is_correct": false
       },
       {
         "option_key": "C",
         "content_vi": "2. 32019.",
-        "content_en": "$2\\cdot3^{2019}$.",
+        "content_en": "$2\\cdot3^{2019}$",
         "is_correct": false
       },
       {
         "option_key": "D",
         "content_vi": "3. 2 2019.",
-        "content_en": "$3\\cdot2^{2019}$.",
+        "content_en": "$3\\cdot2^{2019}$",
         "is_correct": false
       }
     ],
@@ -2086,26 +2086,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$u_6=320$.",
-        "content_en": "$u_6=320$.",
+        "content_vi": "$u_6=320$",
+        "content_en": "$u_6=320$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$u_6=-160$.",
-        "content_en": "$u_6=-160$.",
+        "content_vi": "$u_6=-160$",
+        "content_en": "$u_6=-160$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$u_6=-320$.",
-        "content_en": "$u_6=-320$.",
+        "content_vi": "$u_6=-320$",
+        "content_en": "$u_6=-320$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$u_6=160$.",
-        "content_en": "$u_6=160$.",
+        "content_vi": "$u_6=160$",
+        "content_en": "$u_6=160$",
         "is_correct": false
       }
     ],
@@ -2134,26 +2134,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$u_7=320$.",
-        "content_en": "$u_7=320$.",
+        "content_vi": "$u_7=320$",
+        "content_en": "$u_7=320$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$u_7=640$.",
-        "content_en": "$u_7=640$.",
+        "content_vi": "$u_7=640$",
+        "content_en": "$u_7=640$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$u_7=160$.",
-        "content_en": "$u_7=160$.",
+        "content_vi": "$u_7=160$",
+        "content_en": "$u_7=160$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$u_7=80$.",
-        "content_en": "$u_7=80$.",
+        "content_vi": "$u_7=80$",
+        "content_en": "$u_7=80$",
         "is_correct": false
       }
     ],
@@ -2230,25 +2230,25 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$u_1=5$, $q=4$.",
+        "content_vi": "$u_1=5$, $q=4$",
         "content_en": "u_1=5, q=4.",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$u_1=5$, $q=6$.",
+        "content_vi": "$u_1=5$, $q=6$",
         "content_en": "u_1=5, q=6.",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$u_1=4$, $q=5$.",
+        "content_vi": "$u_1=4$, $q=5$",
         "content_en": "u_1=4, q=5.",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$u_1=6$, $q=5$.",
+        "content_vi": "$u_1=6$, $q=5$",
         "content_en": "u_1=6, q=5.",
         "is_correct": false
       }
@@ -2290,8 +2290,8 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
       },
       {
         "option_key": "C",
-        "content_vi": "$\\pm48$.",
-        "content_en": "$\\pm48$.",
+        "content_vi": "$\\pm48$",
+        "content_en": "$\\pm48$",
         "is_correct": false
       },
       {
@@ -2326,26 +2326,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$u_{2019}=5\\cdot2^{2019}-6062$.",
-        "content_en": "$u_{2019}=5\\cdot2^{2019}-6062$.",
+        "content_vi": "$u_{2019}=5\\cdot2^{2019}-6062$",
+        "content_en": "$u_{2019}=5\\cdot2^{2019}-6062$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$u_{2019}=5\\cdot2^{2019}+6062$.",
-        "content_en": "$u_{2019}=5\\cdot2^{2019}+6062$.",
+        "content_vi": "$u_{2019}=5\\cdot2^{2019}+6062$",
+        "content_en": "$u_{2019}=5\\cdot2^{2019}+6062$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$u_{2019}=5\\cdot2^{2020}-6062$.",
-        "content_en": "$u_{2019}=5\\cdot2^{2020}-6062$.",
+        "content_vi": "$u_{2019}=5\\cdot2^{2020}-6062$",
+        "content_en": "$u_{2019}=5\\cdot2^{2020}-6062$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$u_{2019}=5\\cdot2^{2020}+6062$.",
-        "content_en": "$u_{2019}=5\\cdot2^{2020}+6062$.",
+        "content_vi": "$u_{2019}=5\\cdot2^{2020}+6062$",
+        "content_en": "$u_{2019}=5\\cdot2^{2020}+6062$",
         "is_correct": false
       }
     ],
@@ -2387,7 +2387,7 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
       {
         "option_key": "c",
         "content_vi": "Số hạng $u_{5}$ = 2 2187",
-        "content_en": "$u_5=\\frac{27}{2}$.",
+        "content_en": "$u_5=\\frac{27}{2}$",
         "is_correct": false
       },
       {
@@ -2750,26 +2750,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$1,-1,1,-1$.",
-        "content_en": "$1,-1,1,-1$.",
+        "content_vi": "$1,-1,1,-1$",
+        "content_en": "$1,-1,1,-1$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$1,-3,9,10$.",
-        "content_en": "$1,-3,9,10$.",
+        "content_vi": "$1,-3,9,10$",
+        "content_en": "$1,-3,9,10$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$1,0,0,0$.",
-        "content_en": "$1,0,0,0$.",
+        "content_vi": "$1,0,0,0$",
+        "content_en": "$1,0,0,0$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$32,16,8,4$.",
-        "content_en": "$32,16,8,4$.",
+        "content_vi": "$32,16,8,4$",
+        "content_en": "$32,16,8,4$",
         "is_correct": false
       }
     ],
@@ -2798,26 +2798,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$2;4;8;16$.",
-        "content_en": "$2;4;8;16$.",
+        "content_vi": "$2;4;8;16$",
+        "content_en": "$2;4;8;16$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$1;-1;1;-1$.",
-        "content_en": "$1;-1;1;-1$.",
+        "content_vi": "$1;-1;1;-1$",
+        "content_en": "$1;-1;1;-1$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$1^2;2^2;3^2;4^2$.",
-        "content_en": "$1^2;2^2;3^2;4^2$.",
+        "content_vi": "$1^2;2^2;3^2;4^2$",
+        "content_en": "$1^2;2^2;3^2;4^2$",
         "is_correct": false
       },
       {
         "option_key": "D",
         "content_vi": "$a; a^3; a^5; a^7$; ($a\\ne0$).",
-        "content_en": "$a;a^3;a^5;a^7$, where $a\\ne0$.",
+        "content_en": "$a;a^3;a^5;a^7$, where $a\\ne0$",
         "is_correct": false
       }
     ],
@@ -2846,26 +2846,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$-2,10,50,-250$.",
-        "content_en": "$-2,10,50,-250$.",
+        "content_vi": "$-2,10,50,-250$",
+        "content_en": "$-2,10,50,-250$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$-2,10,-50,250$.",
-        "content_en": "$-2,10,-50,250$.",
+        "content_vi": "$-2,10,-50,250$",
+        "content_en": "$-2,10,-50,250$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$-2,-10,-50,-250$.",
-        "content_en": "$-2,-10,-50,-250$.",
+        "content_vi": "$-2,-10,-50,-250$",
+        "content_en": "$-2,-10,-50,-250$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$-2,10,50,250$.",
-        "content_en": "$-2,10,50,250$.",
+        "content_vi": "$-2,10,50,250$",
+        "content_en": "$-2,10,50,250$",
         "is_correct": false
       }
     ],
@@ -2894,26 +2894,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$1,2,3,4,5$.",
-        "content_en": "$1,2,3,4,5$.",
+        "content_vi": "$1,2,3,4,5$",
+        "content_en": "$1,2,3,4,5$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$1,3,6,9,12$.",
-        "content_en": "$1,3,6,9,12$.",
+        "content_vi": "$1,3,6,9,12$",
+        "content_en": "$1,3,6,9,12$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$2,4,6,8,10$.",
-        "content_en": "$2,4,6,8,10$.",
+        "content_vi": "$2,4,6,8,10$",
+        "content_en": "$2,4,6,8,10$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$2,2,2,2,2$.",
-        "content_en": "$2,2,2,2,2$.",
+        "content_vi": "$2,2,2,2,2$",
+        "content_en": "$2,2,2,2,2$",
         "is_correct": false
       }
     ],
@@ -3044,20 +3044,20 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
       },
       {
         "option_key": "B",
-        "content_vi": "$x=\\pm1$.",
-        "content_en": "$x=\\pm1$.",
+        "content_vi": "$x=\\pm1$",
+        "content_en": "$x=\\pm1$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$x=2$.",
-        "content_en": "$x=2$.",
+        "content_vi": "$x=2$",
+        "content_en": "$x=2$",
         "is_correct": true
       },
       {
         "option_key": "D",
-        "content_vi": "$x=-3$.",
-        "content_en": "$x=-3$.",
+        "content_vi": "$x=-3$",
+        "content_en": "$x=-3$",
         "is_correct": false
       }
     ],
@@ -3183,25 +3183,25 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
       {
         "option_key": "A",
         "content_vi": "3. 2n.",
-        "content_en": "$u_n=3\\cdot 2^n$.",
+        "content_en": "$u_n=3\\cdot 2^n$",
         "is_correct": true
       },
       {
         "option_key": "B",
         "content_vi": "3. 2 n + 2.",
-        "content_en": "$u_n=3\\cdot 2^{n+2}$.",
+        "content_en": "$u_n=3\\cdot 2^{n+2}$",
         "is_correct": false
       },
       {
         "option_key": "C",
         "content_vi": "3. 2 n +1.",
-        "content_en": "$u_n=3\\cdot 2^{n+1}$.",
+        "content_en": "$u_n=3\\cdot 2^{n+1}$",
         "is_correct": false
       },
       {
         "option_key": "D",
         "content_vi": "3. 2 n -1.",
-        "content_en": "$u_n=3\\cdot 2^{n-1}$.",
+        "content_en": "$u_n=3\\cdot 2^{n-1}$",
         "is_correct": false
       }
     ],
@@ -3464,26 +3464,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$S=46$.",
-        "content_en": "$S=46$.",
+        "content_vi": "$S=46$",
+        "content_en": "$S=46$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$S=308$.",
-        "content_en": "$S=308$.",
+        "content_vi": "$S=308$",
+        "content_en": "$S=308$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$S=644$.",
-        "content_en": "$S=644$.",
+        "content_vi": "$S=644$",
+        "content_en": "$S=644$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$S=280$.",
-        "content_en": "$S=280$.",
+        "content_vi": "$S=280$",
+        "content_en": "$S=280$",
         "is_correct": true
       }
     ],
@@ -3512,26 +3512,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$d=-3$.",
-        "content_en": "$d=-3$.",
+        "content_vi": "$d=-3$",
+        "content_en": "$d=-3$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$d=-5$.",
-        "content_en": "$d=-5$.",
+        "content_vi": "$d=-5$",
+        "content_en": "$d=-5$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$d=3$.",
-        "content_en": "$d=3$.",
+        "content_vi": "$d=3$",
+        "content_en": "$d=3$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$d=5$.",
-        "content_en": "$d=5$.",
+        "content_vi": "$d=5$",
+        "content_en": "$d=5$",
         "is_correct": false
       }
     ],
@@ -3560,26 +3560,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$u_n=21+2n$.",
-        "content_en": "$u_n=21+2n$.",
+        "content_vi": "$u_n=21+2n$",
+        "content_en": "$u_n=21+2n$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$u_n=21-2n$.",
-        "content_en": "$u_n=21-2n$.",
+        "content_vi": "$u_n=21-2n$",
+        "content_en": "$u_n=21-2n$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$u_n=23-2n$.",
-        "content_en": "$u_n=23-2n$.",
+        "content_vi": "$u_n=23-2n$",
+        "content_en": "$u_n=23-2n$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$u_n=23+2n$.",
-        "content_en": "$u_n=23+2n$.",
+        "content_vi": "$u_n=23+2n$",
+        "content_en": "$u_n=23+2n$",
         "is_correct": false
       }
     ],
@@ -3608,26 +3608,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$u_4=20$.",
-        "content_en": "$u_4=20$.",
+        "content_vi": "$u_4=20$",
+        "content_en": "$u_4=20$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$u_4=19$.",
-        "content_en": "$u_4=19$.",
+        "content_vi": "$u_4=19$",
+        "content_en": "$u_4=19$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$u_4=16$.",
-        "content_en": "$u_4=16$.",
+        "content_vi": "$u_4=16$",
+        "content_en": "$u_4=16$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$u_4=18$.",
-        "content_en": "$u_4=18$.",
+        "content_vi": "$u_4=18$",
+        "content_en": "$u_4=18$",
         "is_correct": false
       }
     ],
@@ -3704,26 +3704,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$S_{20}=250$.",
-        "content_en": "$S_{20}=250$.",
+        "content_vi": "$S_{20}=250$",
+        "content_en": "$S_{20}=250$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$S_{20}=200$.",
-        "content_en": "$S_{20}=200$.",
+        "content_vi": "$S_{20}=200$",
+        "content_en": "$S_{20}=200$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$S_{20}=-200$.",
-        "content_en": "$S_{20}=-200$.",
+        "content_vi": "$S_{20}=-200$",
+        "content_en": "$S_{20}=-200$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$S_{20}=-25$.",
-        "content_en": "$S_{20}=-25$.",
+        "content_vi": "$S_{20}=-25$",
+        "content_en": "$S_{20}=-25$",
         "is_correct": false
       }
     ],
@@ -3752,26 +3752,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$d=2;\\ S_{10}=100$.",
-        "content_en": "$d=2;\\ S_{10}=100$.",
+        "content_vi": "$d=2;\\ S_{10}=100$",
+        "content_en": "$d=2;\\ S_{10}=100$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$d=1;\\ S_{10}=80$.",
-        "content_en": "$d=1;\\ S_{10}=80$.",
+        "content_vi": "$d=1;\\ S_{10}=80$",
+        "content_en": "$d=1;\\ S_{10}=80$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$d=2;\\ S_{10}=120$.",
-        "content_en": "$d=2;\\ S_{10}=120$.",
+        "content_vi": "$d=2;\\ S_{10}=120$",
+        "content_en": "$d=2;\\ S_{10}=120$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$d=2;\\ S_{10}=110$.",
-        "content_en": "$d=2;\\ S_{10}=110$.",
+        "content_vi": "$d=2;\\ S_{10}=110$",
+        "content_en": "$d=2;\\ S_{10}=110$",
         "is_correct": false
       }
     ],
@@ -3800,26 +3800,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$-6960$.",
-        "content_en": "$-6960$.",
+        "content_vi": "$-6960$",
+        "content_en": "$-6960$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$-117$.",
-        "content_en": "$-117$.",
+        "content_vi": "$-117$",
+        "content_en": "$-117$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$-3840$.",
-        "content_en": "$-3840$.",
+        "content_vi": "$-3840$",
+        "content_en": "$-3840$",
         "is_correct": true
       },
       {
         "option_key": "D",
-        "content_vi": "$-116$.",
-        "content_en": "$-116$.",
+        "content_vi": "$-116$",
+        "content_en": "$-116$",
         "is_correct": false
       }
     ],
@@ -3896,26 +3896,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$S=24$.",
-        "content_en": "$S=24$.",
+        "content_vi": "$S=24$",
+        "content_en": "$S=24$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$S=-25$.",
-        "content_en": "$S=-25$.",
+        "content_vi": "$S=-25$",
+        "content_en": "$S=-25$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$S=-24$.",
-        "content_en": "$S=-24$.",
+        "content_vi": "$S=-24$",
+        "content_en": "$S=-24$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$S=26$.",
-        "content_en": "$S=26$.",
+        "content_vi": "$S=26$",
+        "content_en": "$S=26$",
         "is_correct": false
       }
     ],
@@ -3944,26 +3944,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$u_n=1+4n$.",
-        "content_en": "$u_n=1+4n$.",
+        "content_vi": "$u_n=1+4n$",
+        "content_en": "$u_n=1+4n$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$u_n=5n$.",
-        "content_en": "$u_n=5n$.",
+        "content_vi": "$u_n=5n$",
+        "content_en": "$u_n=5n$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$u_n=3+2n$.",
-        "content_en": "$u_n=3+2n$.",
+        "content_vi": "$u_n=3+2n$",
+        "content_en": "$u_n=3+2n$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$u_n=2+3n$.",
-        "content_en": "$u_n=2+3n$.",
+        "content_vi": "$u_n=2+3n$",
+        "content_en": "$u_n=2+3n$",
         "is_correct": false
       }
     ],
@@ -3992,26 +3992,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$u_1=-8;\\ d=10$.",
-        "content_en": "$u_1=-8;\\ d=10$.",
+        "content_vi": "$u_1=-8;\\ d=10$",
+        "content_en": "$u_1=-8;\\ d=10$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$u_1=-8;\\ d=-10$.",
-        "content_en": "$u_1=-8;\\ d=-10$.",
+        "content_vi": "$u_1=-8;\\ d=-10$",
+        "content_en": "$u_1=-8;\\ d=-10$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$u_1=8;\\ d=10$.",
-        "content_en": "$u_1=8;\\ d=10$.",
+        "content_vi": "$u_1=8;\\ d=10$",
+        "content_en": "$u_1=8;\\ d=10$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$u_1=8;\\ d=-10$.",
-        "content_en": "$u_1=8;\\ d=-10$.",
+        "content_vi": "$u_1=8;\\ d=-10$",
+        "content_en": "$u_1=8;\\ d=-10$",
         "is_correct": false
       }
     ],
@@ -4040,26 +4040,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$u_1=2,\\ d=3$.",
-        "content_en": "$u_1=2,\\ d=3$.",
+        "content_vi": "$u_1=2,\\ d=3$",
+        "content_en": "$u_1=2,\\ d=3$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$u_1=3,\\ d=2$.",
-        "content_en": "$u_1=3,\\ d=2$.",
+        "content_vi": "$u_1=3,\\ d=2$",
+        "content_en": "$u_1=3,\\ d=2$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$u_1=2,\\ d=2$.",
-        "content_en": "$u_1=2,\\ d=2$.",
+        "content_vi": "$u_1=2,\\ d=2$",
+        "content_en": "$u_1=2,\\ d=2$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$u_1=2,\\ d=4$.",
-        "content_en": "$u_1=2,\\ d=4$.",
+        "content_vi": "$u_1=2,\\ d=4$",
+        "content_en": "$u_1=2,\\ d=4$",
         "is_correct": false
       }
     ],
@@ -4088,26 +4088,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$u_n=5+4n$.",
-        "content_en": "$u_n=5+4n$.",
+        "content_vi": "$u_n=5+4n$",
+        "content_en": "$u_n=5+4n$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$u_n=3+2n$.",
-        "content_en": "$u_n=3+2n$.",
+        "content_vi": "$u_n=3+2n$",
+        "content_en": "$u_n=3+2n$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$u_n=2+3n$.",
-        "content_en": "$u_n=2+3n$.",
+        "content_vi": "$u_n=2+3n$",
+        "content_en": "$u_n=2+3n$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$u_n=4+5n$.",
-        "content_en": "$u_n=4+5n$.",
+        "content_vi": "$u_n=4+5n$",
+        "content_en": "$u_n=4+5n$",
         "is_correct": false
       }
     ],
@@ -4136,26 +4136,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$P=8$.",
-        "content_en": "$P=8$.",
+        "content_vi": "$P=8$",
+        "content_en": "$P=8$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$P=24$.",
-        "content_en": "$P=24$.",
+        "content_vi": "$P=24$",
+        "content_en": "$P=24$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$P=6$.",
-        "content_en": "$P=6$.",
+        "content_vi": "$P=6$",
+        "content_en": "$P=6$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$P=18$.",
-        "content_en": "$P=18$.",
+        "content_vi": "$P=18$",
+        "content_en": "$P=18$",
         "is_correct": false
       }
     ],
@@ -4190,14 +4190,14 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
       },
       {
         "option_key": "b",
-        "content_vi": "$u_1+u_5=40$.",
-        "content_en": "$u_1+u_5=40$.",
+        "content_vi": "$u_1+u_5=40$",
+        "content_en": "$u_1+u_5=40$",
         "is_correct": true
       },
       {
         "option_key": "c",
-        "content_vi": "$u_2=16$.",
-        "content_en": "$u_2=16$.",
+        "content_vi": "$u_2=16$",
+        "content_en": "$u_2=16$",
         "is_correct": true
       },
       {
@@ -4238,20 +4238,20 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
       },
       {
         "option_key": "b",
-        "content_vi": "$u_4=8$.",
-        "content_en": "$u_4=8$.",
+        "content_vi": "$u_4=8$",
+        "content_en": "$u_4=8$",
         "is_correct": false
       },
       {
         "option_key": "c",
-        "content_vi": "$S_{10}=120$.",
-        "content_en": "$S_{10}=120$.",
+        "content_vi": "$S_{10}=120$",
+        "content_en": "$S_{10}=120$",
         "is_correct": true
       },
       {
         "option_key": "d",
-        "content_vi": "$S_8-S_4=60$.",
-        "content_en": "$S_8-S_4=60$.",
+        "content_vi": "$S_8-S_4=60$",
+        "content_en": "$S_8-S_4=60$",
         "is_correct": true
       }
     ],
@@ -4424,8 +4424,8 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "a",
-        "content_vi": "$u_2=18$.",
-        "content_en": "$u_2=18$.",
+        "content_vi": "$u_2=18$",
+        "content_en": "$u_2=18$",
         "is_correct": true
       },
       {
@@ -4894,26 +4894,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$u_n=5n+1$.",
-        "content_en": "$u_n=5n+1$.",
+        "content_vi": "$u_n=5n+1$",
+        "content_en": "$u_n=5n+1$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$u_n=5n-1$.",
-        "content_en": "$u_n=5n-1$.",
+        "content_vi": "$u_n=5n-1$",
+        "content_en": "$u_n=5n-1$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$u_n=4n+1$.",
-        "content_en": "$u_n=4n+1$.",
+        "content_vi": "$u_n=4n+1$",
+        "content_en": "$u_n=4n+1$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$u_n=4n-1$.",
-        "content_en": "$u_n=4n-1$.",
+        "content_vi": "$u_n=4n-1$",
+        "content_en": "$u_n=4n-1$",
         "is_correct": false
       }
     ],
@@ -4942,26 +4942,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$u_n=-4n+9$.",
-        "content_en": "$u_n=-4n+9$.",
+        "content_vi": "$u_n=-4n+9$",
+        "content_en": "$u_n=-4n+9$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$u_n=-2n+19$.",
-        "content_en": "$u_n=-2n+19$.",
+        "content_vi": "$u_n=-2n+19$",
+        "content_en": "$u_n=-2n+19$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$u_n=-2n-21$.",
-        "content_en": "$u_n=-2n-21$.",
+        "content_vi": "$u_n=-2n-21$",
+        "content_en": "$u_n=-2n-21$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$u_n=-2n+15$.",
-        "content_en": "$u_n=-2n+15$.",
+        "content_vi": "$u_n=-2n+15$",
+        "content_en": "$u_n=-2n+15$",
         "is_correct": false
       }
     ],
@@ -4990,26 +4990,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$d=3$.",
-        "content_en": "$d=3$.",
+        "content_vi": "$d=3$",
+        "content_en": "$d=3$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$d=-2$.",
-        "content_en": "$d=-2$.",
+        "content_vi": "$d=-2$",
+        "content_en": "$d=-2$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$d=1$.",
-        "content_en": "$d=1$.",
+        "content_vi": "$d=1$",
+        "content_en": "$d=1$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$d=2$.",
-        "content_en": "$d=2$.",
+        "content_vi": "$d=2$",
+        "content_en": "$d=2$",
         "is_correct": false
       }
     ],
@@ -5044,20 +5044,20 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
       },
       {
         "option_key": "B",
-        "content_vi": "$a=\\pm\\dfrac{4}{3}$.",
-        "content_en": "$a=\\pm\\dfrac{4}{3}$.",
+        "content_vi": "$a=\\pm\\dfrac{4}{3}$",
+        "content_en": "$a=\\pm\\dfrac{4}{3}$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$a=\\pm3$.",
-        "content_en": "$a=\\pm3$.",
+        "content_vi": "$a=\\pm3$",
+        "content_en": "$a=\\pm3$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$a=\\pm\\dfrac{\\sqrt3}{2}$.",
-        "content_en": "$a=\\pm\\dfrac{\\sqrt3}{2}$.",
+        "content_vi": "$a=\\pm\\dfrac{\\sqrt3}{2}$",
+        "content_en": "$a=\\pm\\dfrac{\\sqrt3}{2}$",
         "is_correct": false
       }
     ],
@@ -5134,8 +5134,8 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "a",
-        "content_vi": "$u_2=630$.",
-        "content_en": "$u_2=630$.",
+        "content_vi": "$u_2=630$",
+        "content_en": "$u_2=630$",
         "is_correct": true
       },
       {
@@ -5251,26 +5251,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$u_1=3,\\ d=4$.",
-        "content_en": "$u_1=3,\\ d=4$.",
+        "content_vi": "$u_1=3,\\ d=4$",
+        "content_en": "$u_1=3,\\ d=4$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$u_1=3,\\ d=5$.",
-        "content_en": "$u_1=3,\\ d=5$.",
+        "content_vi": "$u_1=3,\\ d=5$",
+        "content_en": "$u_1=3,\\ d=5$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$u_1=4,\\ d=5$.",
-        "content_en": "$u_1=4,\\ d=5$.",
+        "content_vi": "$u_1=4,\\ d=5$",
+        "content_en": "$u_1=4,\\ d=5$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$u_1=4,\\ d=3$.",
-        "content_en": "$u_1=4,\\ d=3$.",
+        "content_vi": "$u_1=4,\\ d=3$",
+        "content_en": "$u_1=4,\\ d=3$",
         "is_correct": false
       }
     ],
@@ -5347,26 +5347,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$u_5=8$.",
-        "content_en": "$u_5=8$.",
+        "content_vi": "$u_5=8$",
+        "content_en": "$u_5=8$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$u_5=1$.",
-        "content_en": "$u_5=1$.",
+        "content_vi": "$u_5=1$",
+        "content_en": "$u_5=1$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$u_5=-5$.",
-        "content_en": "$u_5=-5$.",
+        "content_vi": "$u_5=-5$",
+        "content_en": "$u_5=-5$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$u_5=-7$.",
-        "content_en": "$u_5=-7$.",
+        "content_vi": "$u_5=-7$",
+        "content_en": "$u_5=-7$",
         "is_correct": false
       }
     ],
@@ -5395,26 +5395,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$u_5=15$.",
-        "content_en": "$u_5=15$.",
+        "content_vi": "$u_5=15$",
+        "content_en": "$u_5=15$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$u_4=8$.",
-        "content_en": "$u_4=8$.",
+        "content_vi": "$u_4=8$",
+        "content_en": "$u_4=8$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$u_3=5$.",
-        "content_en": "$u_3=5$.",
+        "content_vi": "$u_3=5$",
+        "content_en": "$u_3=5$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$u_2=2$.",
-        "content_en": "$u_2=2$.",
+        "content_vi": "$u_2=2$",
+        "content_en": "$u_2=2$",
         "is_correct": false
       }
     ],
@@ -5491,26 +5491,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$u_3=4$.",
-        "content_en": "$u_3=4$.",
+        "content_vi": "$u_3=4$",
+        "content_en": "$u_3=4$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$u_3=7$.",
-        "content_en": "$u_3=7$.",
+        "content_vi": "$u_3=7$",
+        "content_en": "$u_3=7$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$u_3=2$.",
-        "content_en": "$u_3=2$.",
+        "content_vi": "$u_3=2$",
+        "content_en": "$u_3=2$",
         "is_correct": true
       },
       {
         "option_key": "D",
-        "content_vi": "$u_3=-5$.",
-        "content_en": "$u_3=-5$.",
+        "content_vi": "$u_3=-5$",
+        "content_en": "$u_3=-5$",
         "is_correct": false
       }
     ],
@@ -5683,26 +5683,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$-21$.",
-        "content_en": "$-21$.",
+        "content_vi": "$-21$",
+        "content_en": "$-21$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$23$.",
-        "content_en": "$23$.",
+        "content_vi": "$23$",
+        "content_en": "$23$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$-19$.",
-        "content_en": "$-19$.",
+        "content_vi": "$-19$",
+        "content_en": "$-19$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$-17$.",
-        "content_en": "$-17$.",
+        "content_vi": "$-17$",
+        "content_en": "$-17$",
         "is_correct": true
       }
     ],
@@ -5737,14 +5737,14 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
       },
       {
         "option_key": "B",
-        "content_vi": "$-37$.",
-        "content_en": "$-37$.",
+        "content_vi": "$-37$",
+        "content_en": "$-37$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$-33$.",
-        "content_en": "$-33$.",
+        "content_vi": "$-33$",
+        "content_en": "$-33$",
         "is_correct": false
       },
       {
@@ -5779,14 +5779,14 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$2^{2018}$.",
-        "content_en": "$2^{2018}$.",
+        "content_vi": "$2^{2018}$",
+        "content_en": "$2^{2018}$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$2^{2017}$.",
-        "content_en": "$2^{2017}$.",
+        "content_vi": "$2^{2017}$",
+        "content_en": "$2^{2017}$",
         "is_correct": false
       },
       {
@@ -5923,26 +5923,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$u_4=8$.",
-        "content_en": "$u_4=8$.",
+        "content_vi": "$u_4=8$",
+        "content_en": "$u_4=8$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$u_5=15$.",
-        "content_en": "$u_5=15$.",
+        "content_vi": "$u_5=15$",
+        "content_en": "$u_5=15$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$u_2=3$.",
-        "content_en": "$u_2=3$.",
+        "content_vi": "$u_2=3$",
+        "content_en": "$u_2=3$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$u_3=6$.",
-        "content_en": "$u_3=6$.",
+        "content_vi": "$u_3=6$",
+        "content_en": "$u_3=6$",
         "is_correct": false
       }
     ],
@@ -6115,26 +6115,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$u_5=2$.",
-        "content_en": "$u_5=2$.",
+        "content_vi": "$u_5=2$",
+        "content_en": "$u_5=2$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$u_5=-2$.",
-        "content_en": "$u_5=-2$.",
+        "content_vi": "$u_5=-2$",
+        "content_en": "$u_5=-2$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$u_5=0$.",
-        "content_en": "$u_5=0$.",
+        "content_vi": "$u_5=0$",
+        "content_en": "$u_5=0$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$u_5=4$.",
-        "content_en": "$u_5=4$.",
+        "content_vi": "$u_5=4$",
+        "content_en": "$u_5=4$",
         "is_correct": false
       }
     ],
@@ -6451,26 +6451,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$u_{406}$.",
-        "content_en": "$u_{406}$.",
+        "content_vi": "$u_{406}$",
+        "content_en": "$u_{406}$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$u_{403}$.",
-        "content_en": "$u_{403}$.",
+        "content_vi": "$u_{403}$",
+        "content_en": "$u_{403}$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$u_{405}$.",
-        "content_en": "$u_{405}$.",
+        "content_vi": "$u_{405}$",
+        "content_en": "$u_{405}$",
         "is_correct": true
       },
       {
         "option_key": "D",
-        "content_vi": "$u_{404}$.",
-        "content_en": "$u_{404}$.",
+        "content_vi": "$u_{404}$",
+        "content_en": "$u_{404}$",
         "is_correct": false
       }
     ],
@@ -6691,14 +6691,14 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "a",
-        "content_vi": "$u_{11}=-65$.",
-        "content_en": "$u_{11}=-65$.",
+        "content_vi": "$u_{11}=-65$",
+        "content_en": "$u_{11}=-65$",
         "is_correct": true
       },
       {
         "option_key": "b",
-        "content_vi": "$u_5+u_7=-50$.",
-        "content_en": "$u_5+u_7=-50$.",
+        "content_vi": "$u_5+u_7=-50$",
+        "content_en": "$u_5+u_7=-50$",
         "is_correct": false
       },
       {
@@ -6950,26 +6950,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$a=2$.",
-        "content_en": "$a=2$.",
+        "content_vi": "$a=2$",
+        "content_en": "$a=2$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$a>2$.",
-        "content_en": "$a>2$.",
+        "content_vi": "$a>2$",
+        "content_en": "$a>2$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$a<2$.",
-        "content_en": "$a<2$.",
+        "content_vi": "$a<2$",
+        "content_en": "$a<2$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$a\\ge2$.",
-        "content_en": "$a\\ge2$.",
+        "content_vi": "$a\\ge2$",
+        "content_en": "$a\\ge2$",
         "is_correct": false
       }
     ],
@@ -6998,26 +6998,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$u_n=n^2$.",
-        "content_en": "$u_n=n^2$.",
+        "content_vi": "$u_n=n^2$",
+        "content_en": "$u_n=n^2$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$u_n=-3$.",
-        "content_en": "$u_n=-3$.",
+        "content_vi": "$u_n=-3$",
+        "content_en": "$u_n=-3$",
         "is_correct": true
       },
       {
         "option_key": "C",
-        "content_vi": "$u_n=3n$.",
-        "content_en": "$u_n=3n$.",
+        "content_vi": "$u_n=3n$",
+        "content_en": "$u_n=3n$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$u_n=n^3-\\dfrac{2}{n}$.",
-        "content_en": "$u_n=n^3-\\dfrac{2}{n}$.",
+        "content_vi": "$u_n=n^3-\\dfrac{2}{n}$",
+        "content_en": "$u_n=n^3-\\dfrac{2}{n}$",
         "is_correct": false
       }
     ],
@@ -7378,20 +7378,20 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$0$.",
-        "content_en": "$0$.",
+        "content_vi": "$0$",
+        "content_en": "$0$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$1$.",
-        "content_en": "$1$.",
+        "content_vi": "$1$",
+        "content_en": "$1$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$\\sqrt2$.",
-        "content_en": "$\\sqrt2$.",
+        "content_vi": "$\\sqrt2$",
+        "content_en": "$\\sqrt2$",
         "is_correct": false
       },
       {
@@ -7426,20 +7426,20 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$0$.",
-        "content_en": "$0$.",
+        "content_vi": "$0$",
+        "content_en": "$0$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$-1$.",
-        "content_en": "$-1$.",
+        "content_vi": "$-1$",
+        "content_en": "$-1$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$-\\sqrt2$.",
-        "content_en": "$-\\sqrt2$.",
+        "content_vi": "$-\\sqrt2$",
+        "content_en": "$-\\sqrt2$",
         "is_correct": false
       },
       {
@@ -7639,26 +7639,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$u_n=-2n$.",
-        "content_en": "$u_n=-2n$.",
+        "content_vi": "$u_n=-2n$",
+        "content_en": "$u_n=-2n$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$u_n=-2+n$.",
-        "content_en": "$u_n=-2+n$.",
+        "content_vi": "$u_n=-2+n$",
+        "content_en": "$u_n=-2+n$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$u_n=(-2)(n+1)$.",
-        "content_en": "$u_n=(-2)(n+1)$.",
+        "content_vi": "$u_n=(-2)(n+1)$",
+        "content_en": "$u_n=(-2)(n+1)$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$u_n=-2+2(n-1)$.",
-        "content_en": "$u_n=-2+2(n-1)$.",
+        "content_vi": "$u_n=-2+2(n-1)$",
+        "content_en": "$u_n=-2+2(n-1)$",
         "is_correct": true
       }
     ],
@@ -7735,26 +7735,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$u_{n+1}=2n\\cdot2$.",
-        "content_en": "$u_{n+1}=2n\\cdot2$.",
+        "content_vi": "$u_{n+1}=2n\\cdot2$",
+        "content_en": "$u_{n+1}=2n\\cdot2$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$u_{n+1}=2n+1$.",
-        "content_en": "$u_{n+1}=2n+1$.",
+        "content_vi": "$u_{n+1}=2n+1$",
+        "content_en": "$u_{n+1}=2n+1$",
         "is_correct": true
       },
       {
         "option_key": "C",
-        "content_vi": "$u_{n+1}=2(n+1)$.",
-        "content_en": "$u_{n+1}=2(n+1)$.",
+        "content_vi": "$u_{n+1}=2(n+1)$",
+        "content_en": "$u_{n+1}=2(n+1)$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$u_{n+1}=2n+2$.",
-        "content_en": "$u_{n+1}=2n+2$.",
+        "content_vi": "$u_{n+1}=2n+2$",
+        "content_en": "$u_{n+1}=2n+2$",
         "is_correct": false
       }
     ],
@@ -7902,26 +7902,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$8$.",
-        "content_en": "$8$.",
+        "content_vi": "$8$",
+        "content_en": "$8$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$-8$.",
-        "content_en": "$-8$.",
+        "content_vi": "$-8$",
+        "content_en": "$-8$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$12$.",
-        "content_en": "$12$.",
+        "content_vi": "$12$",
+        "content_en": "$12$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$-12$.",
-        "content_en": "$-12$.",
+        "content_vi": "$-12$",
+        "content_en": "$-12$",
         "is_correct": false
       }
     ],
@@ -7950,26 +7950,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$(5,1,-1)$.",
-        "content_en": "$(5,1,-1)$.",
+        "content_vi": "$(5,1,-1)$",
+        "content_en": "$(5,1,-1)$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$(5,-1,-1)$.",
-        "content_en": "$(5,-1,-1)$.",
+        "content_vi": "$(5,-1,-1)$",
+        "content_en": "$(5,-1,-1)$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$(-1,-1,-1)$.",
-        "content_en": "$(-1,-1,-1)$.",
+        "content_vi": "$(-1,-1,-1)$",
+        "content_en": "$(-1,-1,-1)$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$(-1,-1,5)$.",
-        "content_en": "$(-1,-1,5)$.",
+        "content_vi": "$(-1,-1,5)$",
+        "content_en": "$(-1,-1,5)$",
         "is_correct": false
       }
     ],
@@ -7998,26 +7998,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$m=-5$.",
-        "content_en": "$m=-5$.",
+        "content_vi": "$m=-5$",
+        "content_en": "$m=-5$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$m=5$.",
-        "content_en": "$m=5$.",
+        "content_vi": "$m=5$",
+        "content_en": "$m=5$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$m=-1$.",
-        "content_en": "$m=-1$.",
+        "content_vi": "$m=-1$",
+        "content_en": "$m=-1$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$m=1$.",
-        "content_en": "$m=1$.",
+        "content_vi": "$m=1$",
+        "content_en": "$m=1$",
         "is_correct": false
       }
     ],
@@ -8046,26 +8046,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$(-2,-1)$.",
-        "content_en": "$(-2,-1)$.",
+        "content_vi": "$(-2,-1)$",
+        "content_en": "$(-2,-1)$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$(-1,1)$.",
-        "content_en": "$(-1,1)$.",
+        "content_vi": "$(-1,1)$",
+        "content_en": "$(-1,1)$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$(1,2)$.",
-        "content_en": "$(1,2)$.",
+        "content_vi": "$(1,2)$",
+        "content_en": "$(1,2)$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$(5,7)$.",
-        "content_en": "$(5,7)$.",
+        "content_vi": "$(5,7)$",
+        "content_en": "$(5,7)$",
         "is_correct": false
       }
     ],
@@ -8094,26 +8094,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$10$.",
-        "content_en": "$10$.",
+        "content_vi": "$10$",
+        "content_en": "$10$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$2$.",
-        "content_en": "$2$.",
+        "content_vi": "$2$",
+        "content_en": "$2$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$4$.",
-        "content_en": "$4$.",
+        "content_vi": "$4$",
+        "content_en": "$4$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$3$.",
-        "content_en": "$3$.",
+        "content_vi": "$3$",
+        "content_en": "$3$",
         "is_correct": false
       }
     ],
@@ -8142,26 +8142,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$-8$.",
-        "content_en": "$-8$.",
+        "content_vi": "$-8$",
+        "content_en": "$-8$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$8$.",
-        "content_en": "$8$.",
+        "content_vi": "$8$",
+        "content_en": "$8$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$3$.",
-        "content_en": "$3$.",
+        "content_vi": "$3$",
+        "content_en": "$3$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$-3$.",
-        "content_en": "$-3$.",
+        "content_vi": "$-3$",
+        "content_en": "$-3$",
         "is_correct": false
       }
     ],
@@ -8190,26 +8190,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$3$.",
-        "content_en": "$3$.",
+        "content_vi": "$3$",
+        "content_en": "$3$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$2$.",
-        "content_en": "$2$.",
+        "content_vi": "$2$",
+        "content_en": "$2$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$10$.",
-        "content_en": "$10$.",
+        "content_vi": "$10$",
+        "content_en": "$10$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$4$.",
-        "content_en": "$4$.",
+        "content_vi": "$4$",
+        "content_en": "$4$",
         "is_correct": false
       }
     ],
@@ -8238,26 +8238,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$S=2\\sqrt2$.",
-        "content_en": "$S=2\\sqrt2$.",
+        "content_vi": "$S=2\\sqrt2$",
+        "content_en": "$S=2\\sqrt2$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$S=6\\sqrt2$.",
-        "content_en": "$S=6\\sqrt2$.",
+        "content_vi": "$S=6\\sqrt2$",
+        "content_en": "$S=6\\sqrt2$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$S=4\\sqrt2$.",
-        "content_en": "$S=4\\sqrt2$.",
+        "content_vi": "$S=4\\sqrt2$",
+        "content_en": "$S=4\\sqrt2$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$S=3\\sqrt2$.",
-        "content_en": "$S=3\\sqrt2$.",
+        "content_vi": "$S=3\\sqrt2$",
+        "content_en": "$S=3\\sqrt2$",
         "is_correct": false
       }
     ],
@@ -8286,26 +8286,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$m=1$.",
-        "content_en": "$m=1$.",
+        "content_vi": "$m=1$",
+        "content_en": "$m=1$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$m=2$.",
-        "content_en": "$m=2$.",
+        "content_vi": "$m=2$",
+        "content_en": "$m=2$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$m=-1$.",
-        "content_en": "$m=-1$.",
+        "content_vi": "$m=-1$",
+        "content_en": "$m=-1$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$m=-2$.",
-        "content_en": "$m=-2$.",
+        "content_vi": "$m=-2$",
+        "content_en": "$m=-2$",
         "is_correct": false
       }
     ],
@@ -8334,26 +8334,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$M(-4,0,0)$.",
-        "content_en": "$M(-4,0,0)$.",
+        "content_vi": "$M(-4,0,0)$",
+        "content_en": "$M(-4,0,0)$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$M(5,0,0)$.",
-        "content_en": "$M(5,0,0)$.",
+        "content_vi": "$M(5,0,0)$",
+        "content_en": "$M(5,0,0)$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$M(4,0,0)$.",
-        "content_en": "$M(4,0,0)$.",
+        "content_vi": "$M(4,0,0)$",
+        "content_en": "$M(4,0,0)$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$M(-5,0,0)$.",
-        "content_en": "$M(-5,0,0)$.",
+        "content_vi": "$M(-5,0,0)$",
+        "content_en": "$M(-5,0,0)$",
         "is_correct": false
       }
     ],
@@ -8382,26 +8382,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$2\\sqrt5$.",
-        "content_en": "$2\\sqrt5$.",
+        "content_vi": "$2\\sqrt5$",
+        "content_en": "$2\\sqrt5$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$2\\sqrt7$.",
-        "content_en": "$2\\sqrt7$.",
+        "content_vi": "$2\\sqrt7$",
+        "content_en": "$2\\sqrt7$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$2$.",
-        "content_en": "$2$.",
+        "content_vi": "$2$",
+        "content_en": "$2$",
         "is_correct": true
       },
       {
         "option_key": "D",
-        "content_vi": "$\\sqrt{8\\sqrt3+20}$.",
-        "content_en": "$\\sqrt{8\\sqrt3+20}$.",
+        "content_vi": "$\\sqrt{8\\sqrt3+20}$",
+        "content_en": "$\\sqrt{8\\sqrt3+20}$",
         "is_correct": false
       }
     ],
@@ -8430,26 +8430,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$3\\sqrt2$.",
-        "content_en": "$3\\sqrt2$.",
+        "content_vi": "$3\\sqrt2$",
+        "content_en": "$3\\sqrt2$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$5\\sqrt2$.",
-        "content_en": "$5\\sqrt2$.",
+        "content_vi": "$5\\sqrt2$",
+        "content_en": "$5\\sqrt2$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$4\\sqrt2$.",
-        "content_en": "$4\\sqrt2$.",
+        "content_vi": "$4\\sqrt2$",
+        "content_en": "$4\\sqrt2$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$2\\sqrt3$.",
-        "content_en": "$2\\sqrt3$.",
+        "content_vi": "$2\\sqrt3$",
+        "content_en": "$2\\sqrt3$",
         "is_correct": false
       }
     ],
@@ -8478,26 +8478,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$M(4,0,0)$.",
-        "content_en": "$M(4,0,0)$.",
+        "content_vi": "$M(4,0,0)$",
+        "content_en": "$M(4,0,0)$",
         "is_correct": true
       },
       {
         "option_key": "B",
-        "content_vi": "$M(3,0,0)$.",
-        "content_en": "$M(3,0,0)$.",
+        "content_vi": "$M(3,0,0)$",
+        "content_en": "$M(3,0,0)$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$M(2,0,0)$.",
-        "content_en": "$M(2,0,0)$.",
+        "content_vi": "$M(2,0,0)$",
+        "content_en": "$M(2,0,0)$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$M(1,0,0)$.",
-        "content_en": "$M(1,0,0)$.",
+        "content_vi": "$M(1,0,0)$",
+        "content_en": "$M(1,0,0)$",
         "is_correct": false
       }
     ],
@@ -8526,26 +8526,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$m=-4$.",
-        "content_en": "$m=-4$.",
+        "content_vi": "$m=-4$",
+        "content_en": "$m=-4$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$m=4$.",
-        "content_en": "$m=4$.",
+        "content_vi": "$m=4$",
+        "content_en": "$m=4$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$m=-3$.",
-        "content_en": "$m=-3$.",
+        "content_vi": "$m=-3$",
+        "content_en": "$m=-3$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$m=3$.",
-        "content_en": "$m=3$.",
+        "content_vi": "$m=3$",
+        "content_en": "$m=3$",
         "is_correct": false
       }
     ],
@@ -8574,26 +8574,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$m\\ne6$.",
-        "content_en": "$m\\ne6$.",
+        "content_vi": "$m\\ne6$",
+        "content_en": "$m\\ne6$",
         "is_correct": true
       },
       {
         "option_key": "B",
-        "content_vi": "$m\\ne4$.",
-        "content_en": "$m\\ne4$.",
+        "content_vi": "$m\\ne4$",
+        "content_en": "$m\\ne4$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$m\\in\\mathbb R$.",
-        "content_en": "$m\\in\\mathbb R$.",
+        "content_vi": "$m\\in\\mathbb R$",
+        "content_en": "$m\\in\\mathbb R$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$m<0$.",
-        "content_en": "$m<0$.",
+        "content_vi": "$m<0$",
+        "content_en": "$m<0$",
         "is_correct": false
       }
     ],
@@ -8808,26 +8808,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$\\sqrt{74}$.",
-        "content_en": "$\\sqrt{74}$.",
+        "content_vi": "$\\sqrt{74}$",
+        "content_en": "$\\sqrt{74}$",
         "is_correct": true
       },
       {
         "option_key": "B",
-        "content_vi": "$3\\sqrt6$.",
-        "content_en": "$3\\sqrt6$.",
+        "content_vi": "$3\\sqrt6$",
+        "content_en": "$3\\sqrt6$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$5\\sqrt2$.",
-        "content_en": "$5\\sqrt2$.",
+        "content_vi": "$5\\sqrt2$",
+        "content_en": "$5\\sqrt2$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$\\sqrt{42}$.",
-        "content_en": "$\\sqrt{42}$.",
+        "content_vi": "$\\sqrt{42}$",
+        "content_en": "$\\sqrt{42}$",
         "is_correct": false
       }
     ],
@@ -8856,26 +8856,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$x=4,y=-7$.",
-        "content_en": "$x=4,y=-7$.",
+        "content_vi": "$x=4,y=-7$",
+        "content_en": "$x=4,y=-7$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$x=-4,y=7$.",
-        "content_en": "$x=-4,y=7$.",
+        "content_vi": "$x=-4,y=7$",
+        "content_en": "$x=-4,y=7$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$x=4,y=7$.",
-        "content_en": "$x=4,y=7$.",
+        "content_vi": "$x=4,y=7$",
+        "content_en": "$x=4,y=7$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$x=-4,y=-7$.",
-        "content_en": "$x=-4,y=-7$.",
+        "content_vi": "$x=-4,y=-7$",
+        "content_en": "$x=-4,y=-7$",
         "is_correct": false
       }
     ],
@@ -8904,26 +8904,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$(-2,2,5)$.",
-        "content_en": "$(-2,2,5)$.",
+        "content_vi": "$(-2,2,5)$",
+        "content_en": "$(-2,2,5)$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$(-4,8,-5)$.",
-        "content_en": "$(-4,8,-5)$.",
+        "content_vi": "$(-4,8,-5)$",
+        "content_en": "$(-4,8,-5)$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$(-4,8,-3)$.",
-        "content_en": "$(-4,8,-3)$.",
+        "content_vi": "$(-4,8,-3)$",
+        "content_en": "$(-4,8,-3)$",
         "is_correct": true
       },
       {
         "option_key": "D",
-        "content_vi": "$(-2,8,-3)$.",
-        "content_en": "$(-2,8,-3)$.",
+        "content_vi": "$(-2,8,-3)$",
+        "content_en": "$(-2,8,-3)$",
         "is_correct": false
       }
     ],
@@ -8952,26 +8952,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$G(2,-1,-1)$.",
-        "content_en": "$G(2,-1,-1)$.",
+        "content_vi": "$G(2,-1,-1)$",
+        "content_en": "$G(2,-1,-1)$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$G(2,-2,-1)$.",
-        "content_en": "$G(2,-2,-1)$.",
+        "content_vi": "$G(2,-2,-1)$",
+        "content_en": "$G(2,-2,-1)$",
         "is_correct": true
       },
       {
         "option_key": "C",
-        "content_vi": "$G(0,-1,-1)$.",
-        "content_en": "$G(0,-1,-1)$.",
+        "content_vi": "$G(0,-1,-1)$",
+        "content_en": "$G(0,-1,-1)$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$G(6,-3,-3)$.",
-        "content_en": "$G(6,-3,-3)$.",
+        "content_vi": "$G(6,-3,-3)$",
+        "content_en": "$G(6,-3,-3)$",
         "is_correct": false
       }
     ],
@@ -9000,26 +9000,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$(3,6,3)$.",
-        "content_en": "$(3,6,3)$.",
+        "content_vi": "$(3,6,3)$",
+        "content_en": "$(3,6,3)$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$(3,6,-3)$.",
-        "content_en": "$(3,6,-3)$.",
+        "content_vi": "$(3,6,-3)$",
+        "content_en": "$(3,6,-3)$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$(3,-3,6)$.",
-        "content_en": "$(3,-3,6)$.",
+        "content_vi": "$(3,-3,6)$",
+        "content_en": "$(3,-3,6)$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$(3,2,1)$.",
-        "content_en": "$(3,2,1)$.",
+        "content_vi": "$(3,2,1)$",
+        "content_en": "$(3,2,1)$",
         "is_correct": false
       }
     ],
@@ -9048,26 +9048,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$(-1,1,-2)$.",
-        "content_en": "$(-1,1,-2)$.",
+        "content_vi": "$(-1,1,-2)$",
+        "content_en": "$(-1,1,-2)$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$(-2,2,-3)$.",
-        "content_en": "$(-2,2,-3)$.",
+        "content_vi": "$(-2,2,-3)$",
+        "content_en": "$(-2,2,-3)$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$(0,1,3)$.",
-        "content_en": "$(0,1,3)$.",
+        "content_vi": "$(0,1,3)$",
+        "content_en": "$(0,1,3)$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$(2,-1,1)$.",
-        "content_en": "$(2,-1,1)$.",
+        "content_vi": "$(2,-1,1)$",
+        "content_en": "$(2,-1,1)$",
         "is_correct": true
       }
     ],
@@ -9144,26 +9144,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$(6,-2,4)$.",
-        "content_en": "$(6,-2,4)$.",
+        "content_vi": "$(6,-2,4)$",
+        "content_en": "$(6,-2,4)$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$(3,-1,2)$.",
-        "content_en": "$(3,-1,2)$.",
+        "content_vi": "$(3,-1,2)$",
+        "content_en": "$(3,-1,2)$",
         "is_correct": true
       },
       {
         "option_key": "C",
-        "content_vi": "$(1,-2,-1)$.",
-        "content_en": "$(1,-2,-1)$.",
+        "content_vi": "$(1,-2,-1)$",
+        "content_en": "$(1,-2,-1)$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$(2,-4,-2)$.",
-        "content_en": "$(2,-4,-2)$.",
+        "content_vi": "$(2,-4,-2)$",
+        "content_en": "$(2,-4,-2)$",
         "is_correct": false
       }
     ],
@@ -9192,26 +9192,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$(-2,10,16)$.",
-        "content_en": "$(-2,10,16)$.",
+        "content_vi": "$(-2,10,16)$",
+        "content_en": "$(-2,10,16)$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$(2,10,-16)$.",
-        "content_en": "$(2,10,-16)$.",
+        "content_vi": "$(2,10,-16)$",
+        "content_en": "$(2,10,-16)$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$(-1,5,8)$.",
-        "content_en": "$(-1,5,8)$.",
+        "content_vi": "$(-1,5,8)$",
+        "content_en": "$(-1,5,8)$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$(-2,-10,16)$.",
-        "content_en": "$(-2,-10,16)$.",
+        "content_vi": "$(-2,-10,16)$",
+        "content_en": "$(-2,-10,16)$",
         "is_correct": false
       }
     ],
@@ -9240,26 +9240,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$(-9,2,10)$.",
-        "content_en": "$(-9,2,10)$.",
+        "content_vi": "$(-9,2,10)$",
+        "content_en": "$(-9,2,10)$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$(9,-1,10)$.",
-        "content_en": "$(9,-1,10)$.",
+        "content_vi": "$(9,-1,10)$",
+        "content_en": "$(9,-1,10)$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$(9,2,10)$.",
-        "content_en": "$(9,2,10)$.",
+        "content_vi": "$(9,2,10)$",
+        "content_en": "$(9,2,10)$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$(9,-2,10)$.",
-        "content_en": "$(9,-2,10)$.",
+        "content_vi": "$(9,-2,10)$",
+        "content_en": "$(9,-2,10)$",
         "is_correct": false
       }
     ],
@@ -9288,26 +9288,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$5$.",
-        "content_en": "$5$.",
+        "content_vi": "$5$",
+        "content_en": "$5$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$3$.",
-        "content_en": "$3$.",
+        "content_vi": "$3$",
+        "content_en": "$3$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$\\sqrt{54}$.",
-        "content_en": "$\\sqrt{54}$.",
+        "content_vi": "$\\sqrt{54}$",
+        "content_en": "$\\sqrt{54}$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$\\sqrt{17}$.",
-        "content_en": "$\\sqrt{17}$.",
+        "content_vi": "$\\sqrt{17}$",
+        "content_en": "$\\sqrt{17}$",
         "is_correct": false
       }
     ],
@@ -9336,26 +9336,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$3$.",
-        "content_en": "$3$.",
+        "content_vi": "$3$",
+        "content_en": "$3$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$9$.",
-        "content_en": "$9$.",
+        "content_vi": "$9$",
+        "content_en": "$9$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$6$.",
-        "content_en": "$6$.",
+        "content_vi": "$6$",
+        "content_en": "$6$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$0$.",
-        "content_en": "$0$.",
+        "content_vi": "$0$",
+        "content_en": "$0$",
         "is_correct": false
       }
     ],
@@ -9384,26 +9384,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$D(4,3,4)$.",
-        "content_en": "$D(4,3,4)$.",
+        "content_vi": "$D(4,3,4)$",
+        "content_en": "$D(4,3,4)$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$D(4,-1,4)$.",
-        "content_en": "$D(4,-1,4)$.",
+        "content_vi": "$D(4,-1,4)$",
+        "content_en": "$D(4,-1,4)$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$D(2,-3,2)$.",
-        "content_en": "$D(2,-3,2)$.",
+        "content_vi": "$D(2,-3,2)$",
+        "content_en": "$D(2,-3,2)$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$D(4,1,4)$.",
-        "content_en": "$D(4,1,4)$.",
+        "content_vi": "$D(4,1,4)$",
+        "content_en": "$D(4,1,4)$",
         "is_correct": false
       }
     ],
@@ -9432,26 +9432,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$\\vec{AC}=-\\dfrac14\\vec{AB}$.",
-        "content_en": "$\\vec{AC}=-\\dfrac14\\vec{AB}$.",
+        "content_vi": "$\\vec{AC}=-\\dfrac14\\vec{AB}$",
+        "content_en": "$\\vec{AC}=-\\dfrac14\\vec{AB}$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$\\vec{AB}=5\\vec{BC}$.",
-        "content_en": "$\\vec{AB}=5\\vec{BC}$.",
+        "content_vi": "$\\vec{AB}=5\\vec{BC}$",
+        "content_en": "$\\vec{AB}=5\\vec{BC}$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$\\vec{AC}=4\\vec{BC}$.",
-        "content_en": "$\\vec{AC}=4\\vec{BC}$.",
+        "content_vi": "$\\vec{AC}=4\\vec{BC}$",
+        "content_en": "$\\vec{AC}=4\\vec{BC}$",
         "is_correct": true
       },
       {
         "option_key": "D",
-        "content_vi": "$\\vec{AC}=-4\\vec{BC}$.",
-        "content_en": "$\\vec{AC}=-4\\vec{BC}$.",
+        "content_vi": "$\\vec{AC}=-4\\vec{BC}$",
+        "content_en": "$\\vec{AC}=-4\\vec{BC}$",
         "is_correct": false
       }
     ],
@@ -9481,25 +9481,25 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
       {
         "option_key": "A",
         "content_vi": "a và b.",
-        "content_en": "$\\vec a$ and $\\vec b$.",
+        "content_en": "$\\vec a$ and $\\vec b$",
         "is_correct": false
       },
       {
         "option_key": "B",
         "content_vi": "a và d.",
-        "content_en": "$\\vec a$ and $\\vec d$.",
+        "content_en": "$\\vec a$ and $\\vec d$",
         "is_correct": false
       },
       {
         "option_key": "C",
         "content_vi": "a và c.",
-        "content_en": "$\\vec a$ and $\\vec c$.",
+        "content_en": "$\\vec a$ and $\\vec c$",
         "is_correct": false
       },
       {
         "option_key": "D",
         "content_vi": "b và c.",
-        "content_en": "$\\vec b$ and $\\vec c$.",
+        "content_en": "$\\vec b$ and $\\vec c$",
         "is_correct": false
       }
     ],
@@ -9528,26 +9528,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$m=1,n=1$.",
-        "content_en": "$m=1,n=1$.",
+        "content_vi": "$m=1,n=1$",
+        "content_en": "$m=1,n=1$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$m=1,n=2$.",
-        "content_en": "$m=1,n=2$.",
+        "content_vi": "$m=1,n=2$",
+        "content_en": "$m=1,n=2$",
         "is_correct": true
       },
       {
         "option_key": "C",
-        "content_vi": "$m=2,n=1$.",
-        "content_en": "$m=2,n=1$.",
+        "content_vi": "$m=2,n=1$",
+        "content_en": "$m=2,n=1$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$m=2,n=2$.",
-        "content_en": "$m=2,n=2$.",
+        "content_vi": "$m=2,n=2$",
+        "content_en": "$m=2,n=2$",
         "is_correct": false
       }
     ],
@@ -9672,26 +9672,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$D(9,8,0)$.",
-        "content_en": "$D(9,8,0)$.",
+        "content_vi": "$D(9,8,0)$",
+        "content_en": "$D(9,8,0)$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$D(-11, 0, 4)$ và $D(9, 8, 0)$.",
-        "content_en": "$D(-11,0,4)$ and $D(9,8,0)$.",
+        "content_vi": "$D(-11, 0, 4)$ và $D(9, 8, 0)$",
+        "content_en": "$D(-11,0,4)$ and $D(9,8,0)$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$D(-11,0,4)$.",
-        "content_en": "$D(-11,0,4)$.",
+        "content_vi": "$D(-11,0,4)$",
+        "content_en": "$D(-11,0,4)$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$D(11, 0,-4)$ và $D(-9,-8, 0)$.",
-        "content_en": "$D(11,0,-4)$ and $D(-9,-8,0)$.",
+        "content_vi": "$D(11, 0,-4)$ và $D(-9,-8, 0)$",
+        "content_en": "$D(11,0,-4)$ and $D(-9,-8,0)$",
         "is_correct": false
       }
     ],
@@ -9720,20 +9720,20 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "a",
-        "content_vi": "$\\vec{AB}=(-3,3,-1)$.",
-        "content_en": "$\\vec{AB}=(-3,3,-1)$.",
+        "content_vi": "$\\vec{AB}=(-3,3,-1)$",
+        "content_en": "$\\vec{AB}=(-3,3,-1)$",
         "is_correct": true
       },
       {
         "option_key": "b",
-        "content_vi": "$\\vec{AC}=(-2,-1,1)$.",
-        "content_en": "$\\vec{AC}=(-2,-1,1)$.",
+        "content_vi": "$\\vec{AC}=(-2,-1,1)$",
+        "content_en": "$\\vec{AC}=(-2,-1,1)$",
         "is_correct": false
       },
       {
         "option_key": "c",
-        "content_vi": "$\\vec{AB}=3\\vec{AC}$.",
-        "content_en": "$\\vec{AB}=3\\vec{AC}$.",
+        "content_vi": "$\\vec{AB}=3\\vec{AC}$",
+        "content_en": "$\\vec{AB}=3\\vec{AC}$",
         "is_correct": false
       },
       {
@@ -9768,8 +9768,8 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "a",
-        "content_vi": "$M(2,3,2)$.",
-        "content_en": "$M(2,3,2)$.",
+        "content_vi": "$M(2,3,2)$",
+        "content_en": "$M(2,3,2)$",
         "is_correct": false
       },
       {
@@ -9931,26 +9931,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$\\vec{AG}=\\vec a+\\vec b+\\vec c$.",
-        "content_en": "$\\vec{AG}=\\vec a+\\vec b+\\vec c$.",
+        "content_vi": "$\\vec{AG}=\\vec a+\\vec b+\\vec c$",
+        "content_en": "$\\vec{AG}=\\vec a+\\vec b+\\vec c$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$\\vec{AG}=\\dfrac13(\\vec a+\\vec b+\\vec c)$.",
-        "content_en": "$\\vec{AG}=\\dfrac13(\\vec a+\\vec b+\\vec c)$.",
+        "content_vi": "$\\vec{AG}=\\dfrac13(\\vec a+\\vec b+\\vec c)$",
+        "content_en": "$\\vec{AG}=\\dfrac13(\\vec a+\\vec b+\\vec c)$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$\\vec{AG}=\\dfrac12(\\vec a+\\vec b+\\vec c)$.",
-        "content_en": "$\\vec{AG}=\\dfrac12(\\vec a+\\vec b+\\vec c)$.",
+        "content_vi": "$\\vec{AG}=\\dfrac12(\\vec a+\\vec b+\\vec c)$",
+        "content_en": "$\\vec{AG}=\\dfrac12(\\vec a+\\vec b+\\vec c)$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$\\vec{AG}=\\dfrac14(\\vec a+\\vec b+\\vec c)$.",
-        "content_en": "$\\vec{AG}=\\dfrac14(\\vec a+\\vec b+\\vec c)$.",
+        "content_vi": "$\\vec{AG}=\\dfrac14(\\vec a+\\vec b+\\vec c)$",
+        "content_en": "$\\vec{AG}=\\dfrac14(\\vec a+\\vec b+\\vec c)$",
         "is_correct": false
       }
     ],
@@ -9979,26 +9979,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$\\vec{DM}=\\dfrac12(\\vec a+\\vec b-2\\vec c)$.",
-        "content_en": "$\\vec{DM}=\\dfrac12(\\vec a+\\vec b-2\\vec c)$.",
+        "content_vi": "$\\vec{DM}=\\dfrac12(\\vec a+\\vec b-2\\vec c)$",
+        "content_en": "$\\vec{DM}=\\dfrac12(\\vec a+\\vec b-2\\vec c)$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$\\vec{DM}=\\dfrac12(\\vec a+2\\vec b-\\vec c)$.",
-        "content_en": "$\\vec{DM}=\\dfrac12(\\vec a+2\\vec b-\\vec c)$.",
+        "content_vi": "$\\vec{DM}=\\dfrac12(\\vec a+2\\vec b-\\vec c)$",
+        "content_en": "$\\vec{DM}=\\dfrac12(\\vec a+2\\vec b-\\vec c)$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$\\vec{DM}=\\dfrac12(\\vec a-2\\vec b+\\vec c)$.",
-        "content_en": "$\\vec{DM}=\\dfrac12(\\vec a-2\\vec b+\\vec c)$.",
+        "content_vi": "$\\vec{DM}=\\dfrac12(\\vec a-2\\vec b+\\vec c)$",
+        "content_en": "$\\vec{DM}=\\dfrac12(\\vec a-2\\vec b+\\vec c)$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$\\vec{DM}=\\dfrac12(\\vec a+2\\vec b-\\vec c)$.",
-        "content_en": "$\\vec{DM}=\\dfrac12(\\vec a+2\\vec b-\\vec c)$.",
+        "content_vi": "$\\vec{DM}=\\dfrac12(\\vec a+2\\vec b-\\vec c)$",
+        "content_en": "$\\vec{DM}=\\dfrac12(\\vec a+2\\vec b-\\vec c)$",
         "is_correct": false
       }
     ],
@@ -10027,26 +10027,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$\\vec{MP}=\\dfrac12(\\vec c+\\vec d+\\vec b)$.",
-        "content_en": "$\\vec{MP}=\\dfrac12(\\vec c+\\vec d+\\vec b)$.",
+        "content_vi": "$\\vec{MP}=\\dfrac12(\\vec c+\\vec d+\\vec b)$",
+        "content_en": "$\\vec{MP}=\\dfrac12(\\vec c+\\vec d+\\vec b)$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$\\vec{MP}=\\dfrac12(\\vec d+\\vec b-\\vec c)$.",
-        "content_en": "$\\vec{MP}=\\dfrac12(\\vec d+\\vec b-\\vec c)$.",
+        "content_vi": "$\\vec{MP}=\\dfrac12(\\vec d+\\vec b-\\vec c)$",
+        "content_en": "$\\vec{MP}=\\dfrac12(\\vec d+\\vec b-\\vec c)$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$\\vec{MP}=\\dfrac12(\\vec c+\\vec b-\\vec d)$.",
-        "content_en": "$\\vec{MP}=\\dfrac12(\\vec c+\\vec b-\\vec d)$.",
+        "content_vi": "$\\vec{MP}=\\dfrac12(\\vec c+\\vec b-\\vec d)$",
+        "content_en": "$\\vec{MP}=\\dfrac12(\\vec c+\\vec b-\\vec d)$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$\\vec{MP}=\\dfrac12(\\vec c+\\vec d-\\vec b)$.",
-        "content_en": "$\\vec{MP}=\\dfrac12(\\vec c+\\vec d-\\vec b)$.",
+        "content_vi": "$\\vec{MP}=\\dfrac12(\\vec c+\\vec d-\\vec b)$",
+        "content_en": "$\\vec{MP}=\\dfrac12(\\vec c+\\vec d-\\vec b)$",
         "is_correct": false
       }
     ],
@@ -10075,26 +10075,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$\\vec{GA}=-2\\vec{G_0G}$.",
-        "content_en": "$\\vec{GA}=-2\\vec{G_0G}$.",
+        "content_vi": "$\\vec{GA}=-2\\vec{G_0G}$",
+        "content_en": "$\\vec{GA}=-2\\vec{G_0G}$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$\\vec{GA}=4\\vec{G_0G}$.",
-        "content_en": "$\\vec{GA}=4\\vec{G_0G}$.",
+        "content_vi": "$\\vec{GA}=4\\vec{G_0G}$",
+        "content_en": "$\\vec{GA}=4\\vec{G_0G}$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$\\vec{GA}=3\\vec{G_0G}$.",
-        "content_en": "$\\vec{GA}=3\\vec{G_0G}$.",
+        "content_vi": "$\\vec{GA}=3\\vec{G_0G}$",
+        "content_en": "$\\vec{GA}=3\\vec{G_0G}$",
         "is_correct": true
       },
       {
         "option_key": "D",
-        "content_vi": "$\\vec{GA}=2\\vec{G_0G}$.",
-        "content_en": "$\\vec{GA}=2\\vec{G_0G}$.",
+        "content_vi": "$\\vec{GA}=2\\vec{G_0G}$",
+        "content_en": "$\\vec{GA}=2\\vec{G_0G}$",
         "is_correct": false
       }
     ],
@@ -10363,26 +10363,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "a",
-        "content_vi": "$\\vec{GA}+\\vec{GB}+\\vec{GC}+\\vec{GD}=\\vec0$.",
-        "content_en": "$\\vec{GA}+\\vec{GB}+\\vec{GC}+\\vec{GD}=\\vec0$.",
+        "content_vi": "$\\vec{GA}+\\vec{GB}+\\vec{GC}+\\vec{GD}=\\vec0$",
+        "content_en": "$\\vec{GA}+\\vec{GB}+\\vec{GC}+\\vec{GD}=\\vec0$",
         "is_correct": true
       },
       {
         "option_key": "b",
-        "content_vi": "$\\vec{OG}=\\dfrac14(\\vec{OA}+\\vec{OB}+\\vec{OC}+\\vec{OD})$.",
-        "content_en": "$\\vec{OG}=\\dfrac14(\\vec{OA}+\\vec{OB}+\\vec{OC}+\\vec{OD})$.",
+        "content_vi": "$\\vec{OG}=\\dfrac14(\\vec{OA}+\\vec{OB}+\\vec{OC}+\\vec{OD})$",
+        "content_en": "$\\vec{OG}=\\dfrac14(\\vec{OA}+\\vec{OB}+\\vec{OC}+\\vec{OD})$",
         "is_correct": true
       },
       {
         "option_key": "c",
-        "content_vi": "$\\vec{BG}=\\vec{GA}+\\vec{GC}+\\vec{GD}$.",
-        "content_en": "$\\vec{BG}=\\vec{GA}+\\vec{GC}+\\vec{GD}$.",
+        "content_vi": "$\\vec{BG}=\\vec{GA}+\\vec{GC}+\\vec{GD}$",
+        "content_en": "$\\vec{BG}=\\vec{GA}+\\vec{GC}+\\vec{GD}$",
         "is_correct": true
       },
       {
         "option_key": "d",
-        "content_vi": "$\\vec{AG}=\\dfrac23(\\vec{AB}+\\vec{AC}+\\vec{AD})$.",
-        "content_en": "$\\vec{AG}=\\dfrac23(\\vec{AB}+\\vec{AC}+\\vec{AD})$.",
+        "content_vi": "$\\vec{AG}=\\dfrac23(\\vec{AB}+\\vec{AC}+\\vec{AD})$",
+        "content_en": "$\\vec{AG}=\\dfrac23(\\vec{AB}+\\vec{AC}+\\vec{AD})$",
         "is_correct": false
       }
     ],
@@ -10411,26 +10411,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "a",
-        "content_vi": "$\\vec{GA}+\\vec{GB}+\\vec{GC}+\\vec{GD}=\\vec0$.",
-        "content_en": "$\\vec{GA}+\\vec{GB}+\\vec{GC}+\\vec{GD}=\\vec0$.",
+        "content_vi": "$\\vec{GA}+\\vec{GB}+\\vec{GC}+\\vec{GD}=\\vec0$",
+        "content_en": "$\\vec{GA}+\\vec{GB}+\\vec{GC}+\\vec{GD}=\\vec0$",
         "is_correct": true
       },
       {
         "option_key": "b",
-        "content_vi": "$\\vec{MA}+\\vec{MB}+\\vec{MC}+\\vec{MD}=4\\vec{MG}$.",
-        "content_en": "$\\vec{MA}+\\vec{MB}+\\vec{MC}+\\vec{MD}=4\\vec{MG}$.",
+        "content_vi": "$\\vec{MA}+\\vec{MB}+\\vec{MC}+\\vec{MD}=4\\vec{MG}$",
+        "content_en": "$\\vec{MA}+\\vec{MB}+\\vec{MC}+\\vec{MD}=4\\vec{MG}$",
         "is_correct": true
       },
       {
         "option_key": "c",
-        "content_vi": "$\\vec{MN}=\\dfrac12(\\vec{AB}+\\vec{CD})$.",
-        "content_en": "$\\vec{MN}=\\dfrac12(\\vec{AB}+\\vec{CD})$.",
+        "content_vi": "$\\vec{MN}=\\dfrac12(\\vec{AB}+\\vec{CD})$",
+        "content_en": "$\\vec{MN}=\\dfrac12(\\vec{AB}+\\vec{CD})$",
         "is_correct": false
       },
       {
         "option_key": "d",
-        "content_vi": "$2\\vec{MN}=\\vec{AC}+\\vec{BD}$.",
-        "content_en": "$2\\vec{MN}=\\vec{AC}+\\vec{BD}$.",
+        "content_vi": "$2\\vec{MN}=\\vec{AC}+\\vec{BD}$",
+        "content_en": "$2\\vec{MN}=\\vec{AC}+\\vec{BD}$",
         "is_correct": false
       }
     ],
@@ -10507,20 +10507,20 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "a",
-        "content_vi": "$\\vec{PQ}=\\vec{AC}+\\vec{DB}$.",
-        "content_en": "$\\vec{PQ}=\\vec{AC}+\\vec{DB}$.",
+        "content_vi": "$\\vec{PQ}=\\vec{AC}+\\vec{DB}$",
+        "content_en": "$\\vec{PQ}=\\vec{AC}+\\vec{DB}$",
         "is_correct": false
       },
       {
         "option_key": "b",
-        "content_vi": "$\\vec{MN}=\\vec{MA}+\\vec{AC}+\\vec{CN}$.",
-        "content_en": "$\\vec{MN}=\\vec{MA}+\\vec{AC}+\\vec{CN}$.",
+        "content_vi": "$\\vec{MN}=\\vec{MA}+\\vec{AC}+\\vec{CN}$",
+        "content_en": "$\\vec{MN}=\\vec{MA}+\\vec{AC}+\\vec{CN}$",
         "is_correct": true
       },
       {
         "option_key": "c",
-        "content_vi": "$\\vec{MN}=\\vec{MD}+\\vec{DB}+\\vec{BN}$.",
-        "content_en": "$\\vec{MN}=\\vec{MD}+\\vec{DB}+\\vec{BN}$.",
+        "content_vi": "$\\vec{MN}=\\vec{MD}+\\vec{DB}+\\vec{BN}$",
+        "content_en": "$\\vec{MN}=\\vec{MD}+\\vec{DB}+\\vec{BN}$",
         "is_correct": true
       },
       {
@@ -10555,26 +10555,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "a",
-        "content_vi": "$\\vec{AB}-\\vec{CD}=\\vec{AC}-\\vec{BD}$.",
-        "content_en": "$\\vec{AB}-\\vec{CD}=\\vec{AC}-\\vec{BD}$.",
+        "content_vi": "$\\vec{AB}-\\vec{CD}=\\vec{AC}-\\vec{BD}$",
+        "content_en": "$\\vec{AB}-\\vec{CD}=\\vec{AC}-\\vec{BD}$",
         "is_correct": false
       },
       {
         "option_key": "b",
-        "content_vi": "$\\vec{AB}+\\vec{CD}=\\vec{AD}+\\vec{CB}$.",
-        "content_en": "$\\vec{AB}+\\vec{CD}=\\vec{AD}+\\vec{CB}$.",
+        "content_vi": "$\\vec{AB}+\\vec{CD}=\\vec{AD}+\\vec{CB}$",
+        "content_en": "$\\vec{AB}+\\vec{CD}=\\vec{AD}+\\vec{CB}$",
         "is_correct": true
       },
       {
         "option_key": "c",
-        "content_vi": "$\\vec{AB}+\\vec{DC}=2\\vec{MN}$.",
-        "content_en": "$\\vec{AB}+\\vec{DC}=2\\vec{MN}$.",
+        "content_vi": "$\\vec{AB}+\\vec{DC}=2\\vec{MN}$",
+        "content_en": "$\\vec{AB}+\\vec{DC}=2\\vec{MN}$",
         "is_correct": true
       },
       {
         "option_key": "d",
-        "content_vi": "$\\vec{IA}+\\vec{IB}+\\vec{IC}+\\vec{ID}=\\vec0$.",
-        "content_en": "$\\vec{IA}+\\vec{IB}+\\vec{IC}+\\vec{ID}=\\vec0$.",
+        "content_vi": "$\\vec{IA}+\\vec{IB}+\\vec{IC}+\\vec{ID}=\\vec0$",
+        "content_en": "$\\vec{IA}+\\vec{IB}+\\vec{IC}+\\vec{ID}=\\vec0$",
         "is_correct": true
       }
     ],
@@ -10672,26 +10672,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$25$.",
-        "content_en": "$25$.",
+        "content_vi": "$25$",
+        "content_en": "$25$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$\\sqrt{616}$.",
-        "content_en": "$\\sqrt{616}$.",
+        "content_vi": "$\\sqrt{616}$",
+        "content_en": "$\\sqrt{616}$",
         "is_correct": true
       },
       {
         "option_key": "C",
-        "content_vi": "$9$.",
-        "content_en": "$9$.",
+        "content_vi": "$9$",
+        "content_en": "$9$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$\\sqrt{618}$.",
-        "content_en": "$\\sqrt{618}$.",
+        "content_vi": "$\\sqrt{618}$",
+        "content_en": "$\\sqrt{618}$",
         "is_correct": false
       }
     ],
@@ -10720,26 +10720,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$0^\\circ$.",
-        "content_en": "$0^\\circ$.",
+        "content_vi": "$0^\\circ$",
+        "content_en": "$0^\\circ$",
         "is_correct": true
       },
       {
         "option_key": "B",
-        "content_vi": "$30^\\circ$.",
-        "content_en": "$30^\\circ$.",
+        "content_vi": "$30^\\circ$",
+        "content_en": "$30^\\circ$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$90^\\circ$.",
-        "content_en": "$90^\\circ$.",
+        "content_vi": "$90^\\circ$",
+        "content_en": "$90^\\circ$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$60^\\circ$.",
-        "content_en": "$60^\\circ$.",
+        "content_vi": "$60^\\circ$",
+        "content_en": "$60^\\circ$",
         "is_correct": false
       }
     ],
@@ -10816,26 +10816,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$(0,2,0)$.",
-        "content_en": "$(0,2,0)$.",
+        "content_vi": "$(0,2,0)$",
+        "content_en": "$(0,2,0)$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$(0,0,5)$.",
-        "content_en": "$(0,0,5)$.",
+        "content_vi": "$(0,0,5)$",
+        "content_en": "$(0,0,5)$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$(1,0,0)$.",
-        "content_en": "$(1,0,0)$.",
+        "content_vi": "$(1,0,0)$",
+        "content_en": "$(1,0,0)$",
         "is_correct": true
       },
       {
         "option_key": "D",
-        "content_vi": "$(0,2,5)$.",
-        "content_en": "$(0,2,5)$.",
+        "content_vi": "$(0,2,5)$",
+        "content_en": "$(0,2,5)$",
         "is_correct": false
       }
     ],
@@ -10864,26 +10864,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$(0,-1,0)$.",
-        "content_en": "$(0,-1,0)$.",
+        "content_vi": "$(0,-1,0)$",
+        "content_en": "$(0,-1,0)$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$(-2,0,0)$.",
-        "content_en": "$(-2,0,0)$.",
+        "content_vi": "$(-2,0,0)$",
+        "content_en": "$(-2,0,0)$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$(0,-1,3)$.",
-        "content_en": "$(0,-1,3)$.",
+        "content_vi": "$(0,-1,3)$",
+        "content_en": "$(0,-1,3)$",
         "is_correct": true
       },
       {
         "option_key": "D",
-        "content_vi": "$(-2,-1,0)$.",
-        "content_en": "$(-2,-1,0)$.",
+        "content_vi": "$(-2,-1,0)$",
+        "content_en": "$(-2,-1,0)$",
         "is_correct": false
       }
     ],
@@ -10912,26 +10912,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$H(-1,-2,3)$.",
-        "content_en": "$H(-1,-2,3)$.",
+        "content_vi": "$H(-1,-2,3)$",
+        "content_en": "$H(-1,-2,3)$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$H(0,0,3)$.",
-        "content_en": "$H(0,0,3)$.",
+        "content_vi": "$H(0,0,3)$",
+        "content_en": "$H(0,0,3)$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$H(1,0,0)$.",
-        "content_en": "$H(1,0,0)$.",
+        "content_vi": "$H(1,0,0)$",
+        "content_en": "$H(1,0,0)$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$H(1,2,0)$.",
-        "content_en": "$H(1,2,0)$.",
+        "content_vi": "$H(1,2,0)$",
+        "content_en": "$H(1,2,0)$",
         "is_correct": true
       }
     ],
@@ -10960,26 +10960,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$(3,4,1)$.",
-        "content_en": "$(3,4,1)$.",
+        "content_vi": "$(3,4,1)$",
+        "content_en": "$(3,4,1)$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$(-1,-2,3)$.",
-        "content_en": "$(-1,-2,3)$.",
+        "content_vi": "$(-1,-2,3)$",
+        "content_en": "$(-1,-2,3)$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$(3,5,1)$.",
-        "content_en": "$(3,5,1)$.",
+        "content_vi": "$(3,5,1)$",
+        "content_en": "$(3,5,1)$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$(1,2,3)$.",
-        "content_en": "$(1,2,3)$.",
+        "content_vi": "$(1,2,3)$",
+        "content_en": "$(1,2,3)$",
         "is_correct": false
       }
     ],
@@ -11008,26 +11008,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$(1,0,1)$.",
-        "content_en": "$(1,0,1)$.",
+        "content_vi": "$(1,0,1)$",
+        "content_en": "$(1,0,1)$",
         "is_correct": true
       },
       {
         "option_key": "B",
-        "content_vi": "$(0,1,0)$.",
-        "content_en": "$(0,1,0)$.",
+        "content_vi": "$(0,1,0)$",
+        "content_en": "$(0,1,0)$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$(1,1,0)$.",
-        "content_en": "$(1,1,0)$.",
+        "content_vi": "$(1,1,0)$",
+        "content_en": "$(1,1,0)$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$(0,1,1)$.",
-        "content_en": "$(0,1,1)$.",
+        "content_vi": "$(0,1,1)$",
+        "content_en": "$(0,1,1)$",
         "is_correct": false
       }
     ],
@@ -11056,26 +11056,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$(-2,-1,-3)$.",
-        "content_en": "$(-2,-1,-3)$.",
+        "content_vi": "$(-2,-1,-3)$",
+        "content_en": "$(-2,-1,-3)$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$(-3,2,-1)$.",
-        "content_en": "$(-3,2,-1)$.",
+        "content_vi": "$(-3,2,-1)$",
+        "content_en": "$(-3,2,-1)$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$(2,-3,-1)$.",
-        "content_en": "$(2,-3,-1)$.",
+        "content_vi": "$(2,-3,-1)$",
+        "content_en": "$(2,-3,-1)$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$(-1,2,-3)$.",
-        "content_en": "$(-1,2,-3)$.",
+        "content_vi": "$(-1,2,-3)$",
+        "content_en": "$(-1,2,-3)$",
         "is_correct": true
       }
     ],
@@ -11104,26 +11104,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$(5,-1,-10)$.",
-        "content_en": "$(5,-1,-10)$.",
+        "content_vi": "$(5,-1,-10)$",
+        "content_en": "$(5,-1,-10)$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$(0,3,0)$.",
-        "content_en": "$(0,3,0)$.",
+        "content_vi": "$(0,3,0)$",
+        "content_en": "$(0,3,0)$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$(-3,3,6)$.",
-        "content_en": "$(-3,3,6)$.",
+        "content_vi": "$(-3,3,6)$",
+        "content_en": "$(-3,3,6)$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$(5,-1,10)$.",
-        "content_en": "$(5,-1,10)$.",
+        "content_vi": "$(5,-1,10)$",
+        "content_en": "$(5,-1,10)$",
         "is_correct": false
       }
     ],
@@ -11152,26 +11152,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$M(3,0,0)$.",
-        "content_en": "$M(3,0,0)$.",
+        "content_vi": "$M(3,0,0)$",
+        "content_en": "$M(3,0,0)$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$N(0,-1,1)$.",
-        "content_en": "$N(0,-1,1)$.",
+        "content_vi": "$N(0,-1,1)$",
+        "content_en": "$N(0,-1,1)$",
         "is_correct": true
       },
       {
         "option_key": "C",
-        "content_vi": "$P(0,-1,0)$.",
-        "content_en": "$P(0,-1,0)$.",
+        "content_vi": "$P(0,-1,0)$",
+        "content_en": "$P(0,-1,0)$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$Q(0,0,1)$.",
-        "content_en": "$Q(0,0,1)$.",
+        "content_vi": "$Q(0,0,1)$",
+        "content_en": "$Q(0,0,1)$",
         "is_correct": false
       }
     ],
@@ -11200,26 +11200,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$(0,2,5)$.",
-        "content_en": "$(0,2,5)$.",
+        "content_vi": "$(0,2,5)$",
+        "content_en": "$(0,2,5)$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$(0,2,0)$.",
-        "content_en": "$(0,2,0)$.",
+        "content_vi": "$(0,2,0)$",
+        "content_en": "$(0,2,0)$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$(1,0,5)$.",
-        "content_en": "$(1,0,5)$.",
+        "content_vi": "$(1,0,5)$",
+        "content_en": "$(1,0,5)$",
         "is_correct": true
       },
       {
         "option_key": "D",
-        "content_vi": "$(0,0,5)$.",
-        "content_en": "$(0,0,5)$.",
+        "content_vi": "$(0,0,5)$",
+        "content_en": "$(0,0,5)$",
         "is_correct": false
       }
     ],
@@ -11248,26 +11248,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$(3,0,-2)$.",
-        "content_en": "$(3,0,-2)$.",
+        "content_vi": "$(3,0,-2)$",
+        "content_en": "$(3,0,-2)$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$(-1,-2,6)$.",
-        "content_en": "$(-1,-2,6)$.",
+        "content_vi": "$(-1,-2,6)$",
+        "content_en": "$(-1,-2,6)$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$(1,0,-6)$.",
-        "content_en": "$(1,0,-6)$.",
+        "content_vi": "$(1,0,-6)$",
+        "content_en": "$(1,0,-6)$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$(1,2,-6)$.",
-        "content_en": "$(1,2,-6)$.",
+        "content_vi": "$(1,2,-6)$",
+        "content_en": "$(1,2,-6)$",
         "is_correct": false
       }
     ],
@@ -11296,26 +11296,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$(1,0,3)$.",
-        "content_en": "$(1,0,3)$.",
+        "content_vi": "$(1,0,3)$",
+        "content_en": "$(1,0,3)$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$(1,0,0)$.",
-        "content_en": "$(1,0,0)$.",
+        "content_vi": "$(1,0,0)$",
+        "content_en": "$(1,0,0)$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$(1,-2,0)$.",
-        "content_en": "$(1,-2,0)$.",
+        "content_vi": "$(1,-2,0)$",
+        "content_en": "$(1,-2,0)$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$(0,-2,3)$.",
-        "content_en": "$(0,-2,3)$.",
+        "content_vi": "$(0,-2,3)$",
+        "content_en": "$(0,-2,3)$",
         "is_correct": false
       }
     ],
@@ -11344,26 +11344,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$(1,-2,-4)$.",
-        "content_en": "$(1,-2,-4)$.",
+        "content_vi": "$(1,-2,-4)$",
+        "content_en": "$(1,-2,-4)$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$(0,3,-1)$.",
-        "content_en": "$(0,3,-1)$.",
+        "content_vi": "$(0,3,-1)$",
+        "content_en": "$(0,3,-1)$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$(4,3,2)$.",
-        "content_en": "$(4,3,2)$.",
+        "content_vi": "$(4,3,2)$",
+        "content_en": "$(4,3,2)$",
         "is_correct": true
       },
       {
         "option_key": "D",
-        "content_vi": "$(0,-1,3)$.",
-        "content_en": "$(0,-1,3)$.",
+        "content_vi": "$(0,-1,3)$",
+        "content_en": "$(0,-1,3)$",
         "is_correct": false
       }
     ],
@@ -11392,26 +11392,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$(2,-3,1)$.",
-        "content_en": "$(2,-3,1)$.",
+        "content_vi": "$(2,-3,1)$",
+        "content_en": "$(2,-3,1)$",
         "is_correct": true
       },
       {
         "option_key": "B",
-        "content_vi": "$(1,-3,2)$.",
-        "content_en": "$(1,-3,2)$.",
+        "content_vi": "$(1,-3,2)$",
+        "content_en": "$(1,-3,2)$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$(2,1,-3)$.",
-        "content_en": "$(2,1,-3)$.",
+        "content_vi": "$(2,1,-3)$",
+        "content_en": "$(2,1,-3)$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$(1,2,-3)$.",
-        "content_en": "$(1,2,-3)$.",
+        "content_vi": "$(1,2,-3)$",
+        "content_en": "$(1,2,-3)$",
         "is_correct": false
       }
     ],
@@ -11440,26 +11440,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$M(0,2,1)$.",
-        "content_en": "$M(0,2,1)$.",
+        "content_vi": "$M(0,2,1)$",
+        "content_en": "$M(0,2,1)$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$M(1,2,0)$.",
-        "content_en": "$M(1,2,0)$.",
+        "content_vi": "$M(1,2,0)$",
+        "content_en": "$M(1,2,0)$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$M(2,1,0)$.",
-        "content_en": "$M(2,1,0)$.",
+        "content_vi": "$M(2,1,0)$",
+        "content_en": "$M(2,1,0)$",
         "is_correct": true
       },
       {
         "option_key": "D",
-        "content_vi": "$M(2,0,1)$.",
-        "content_en": "$M(2,0,1)$.",
+        "content_vi": "$M(2,0,1)$",
+        "content_en": "$M(2,0,1)$",
         "is_correct": false
       }
     ],
@@ -11488,26 +11488,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$(-1,2,-1)$.",
-        "content_en": "$(-1,2,-1)$.",
+        "content_vi": "$(-1,2,-1)$",
+        "content_en": "$(-1,2,-1)$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$(-1,-2,3)$.",
-        "content_en": "$(-1,-2,3)$.",
+        "content_vi": "$(-1,-2,3)$",
+        "content_en": "$(-1,-2,3)$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$(-1,6,3)$.",
-        "content_en": "$(-1,6,3)$.",
+        "content_vi": "$(-1,6,3)$",
+        "content_en": "$(-1,6,3)$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$(-1,2,7)$.",
-        "content_en": "$(-1,2,7)$.",
+        "content_vi": "$(-1,2,7)$",
+        "content_en": "$(-1,2,7)$",
         "is_correct": true
       }
     ],
@@ -11536,26 +11536,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$(-2,-3,4)$.",
-        "content_en": "$(-2,-3,4)$.",
+        "content_vi": "$(-2,-3,4)$",
+        "content_en": "$(-2,-3,4)$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$(-2,-3,-4)$.",
-        "content_en": "$(-2,-3,-4)$.",
+        "content_vi": "$(-2,-3,-4)$",
+        "content_en": "$(-2,-3,-4)$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$(2,3,4)$.",
-        "content_en": "$(2,3,4)$.",
+        "content_vi": "$(2,3,4)$",
+        "content_en": "$(2,3,4)$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$(3,4,2)$.",
-        "content_en": "$(3,4,2)$.",
+        "content_vi": "$(3,4,2)$",
+        "content_en": "$(3,4,2)$",
         "is_correct": false
       }
     ],
@@ -11584,26 +11584,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$D(2,3,-3)$.",
-        "content_en": "$D(2,3,-3)$.",
+        "content_vi": "$D(2,3,-3)$",
+        "content_en": "$D(2,3,-3)$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$D(-3,3,-3)$.",
-        "content_en": "$D(-3,3,-3)$.",
+        "content_vi": "$D(-3,3,-3)$",
+        "content_en": "$D(-3,3,-3)$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$D(-3,-3,3)$.",
-        "content_en": "$D(-3,-3,3)$.",
+        "content_vi": "$D(-3,-3,3)$",
+        "content_en": "$D(-3,-3,3)$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$D(-6,5,-12)$.",
-        "content_en": "$D(-6,5,-12)$.",
+        "content_vi": "$D(-6,5,-12)$",
+        "content_en": "$D(-6,5,-12)$",
         "is_correct": false
       }
     ],
@@ -11632,26 +11632,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$(-1,-8,2)$.",
-        "content_en": "$(-1,-8,2)$.",
+        "content_vi": "$(-1,-8,2)$",
+        "content_en": "$(-1,-8,2)$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$(7,4,-4)$.",
-        "content_en": "$(7,4,-4)$.",
+        "content_vi": "$(7,4,-4)$",
+        "content_en": "$(7,4,-4)$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$(1,8,-2)$.",
-        "content_en": "$(1,8,-2)$.",
+        "content_vi": "$(1,8,-2)$",
+        "content_en": "$(1,8,-2)$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$(-7,-4,4)$.",
-        "content_en": "$(-7,-4,4)$.",
+        "content_vi": "$(-7,-4,4)$",
+        "content_en": "$(-7,-4,4)$",
         "is_correct": false
       }
     ],
@@ -11680,26 +11680,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$m=-7$.",
-        "content_en": "$m=-7$.",
+        "content_vi": "$m=-7$",
+        "content_en": "$m=-7$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$m=-14$.",
-        "content_en": "$m=-14$.",
+        "content_vi": "$m=-14$",
+        "content_en": "$m=-14$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$m=7$.",
-        "content_en": "$m=7$.",
+        "content_vi": "$m=7$",
+        "content_en": "$m=7$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$m=14$.",
-        "content_en": "$m=14$.",
+        "content_vi": "$m=14$",
+        "content_en": "$m=14$",
         "is_correct": false
       }
     ],
@@ -11728,26 +11728,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$D(-4,8,-3)$.",
-        "content_en": "$D(-4,8,-3)$.",
+        "content_vi": "$D(-4,8,-3)$",
+        "content_en": "$D(-4,8,-3)$",
         "is_correct": true
       },
       {
         "option_key": "B",
-        "content_vi": "$D(-2,8,-3)$.",
-        "content_en": "$D(-2,8,-3)$.",
+        "content_vi": "$D(-2,8,-3)$",
+        "content_en": "$D(-2,8,-3)$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$D(-4,8,-5)$.",
-        "content_en": "$D(-4,8,-5)$.",
+        "content_vi": "$D(-4,8,-5)$",
+        "content_en": "$D(-4,8,-5)$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$D(-2,2,5)$.",
-        "content_en": "$D(-2,2,5)$.",
+        "content_vi": "$D(-2,2,5)$",
+        "content_en": "$D(-2,2,5)$",
         "is_correct": false
       }
     ],
@@ -11776,26 +11776,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$(2,3,5)$.",
-        "content_en": "$(2,3,5)$.",
+        "content_vi": "$(2,3,5)$",
+        "content_en": "$(2,3,5)$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$(2,0,3)$.",
-        "content_en": "$(2,0,3)$.",
+        "content_vi": "$(2,0,3)$",
+        "content_en": "$(2,0,3)$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$(2,-1,3)$.",
-        "content_en": "$(2,-1,3)$.",
+        "content_vi": "$(2,-1,3)$",
+        "content_en": "$(2,-1,3)$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$(1,3,2)$.",
-        "content_en": "$(1,3,2)$.",
+        "content_vi": "$(1,3,2)$",
+        "content_en": "$(1,3,2)$",
         "is_correct": true
       }
     ],
@@ -11824,26 +11824,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "a",
-        "content_vi": "$|\\vec a|=2$.",
-        "content_en": "$|\\vec a|=2$.",
+        "content_vi": "$|\\vec a|=2$",
+        "content_en": "$|\\vec a|=2$",
         "is_correct": true
       },
       {
         "option_key": "b",
-        "content_vi": "$\\vec b\\perp\\vec a$.",
-        "content_en": "$\\vec b\\perp\\vec a$.",
+        "content_vi": "$\\vec b\\perp\\vec a$",
+        "content_en": "$\\vec b\\perp\\vec a$",
         "is_correct": true
       },
       {
         "option_key": "c",
-        "content_vi": "$\\vec b\\perp\\vec c$.",
-        "content_en": "$\\vec b\\perp\\vec c$.",
+        "content_vi": "$\\vec b\\perp\\vec c$",
+        "content_en": "$\\vec b\\perp\\vec c$",
         "is_correct": false
       },
       {
         "option_key": "d",
-        "content_vi": "$3\\vec a+2\\vec b-\\vec c=(-2,4,-1)$.",
-        "content_en": "$3\\vec a+2\\vec b-\\vec c=(-2,4,-1)$.",
+        "content_vi": "$3\\vec a+2\\vec b-\\vec c=(-2,4,-1)$",
+        "content_en": "$3\\vec a+2\\vec b-\\vec c=(-2,4,-1)$",
         "is_correct": false
       }
     ],
@@ -11872,8 +11872,8 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "a",
-        "content_vi": "$\\vec a=(1,3,-4)$.",
-        "content_en": "$\\vec a=(1,3,-4)$.",
+        "content_vi": "$\\vec a=(1,3,-4)$",
+        "content_en": "$\\vec a=(1,3,-4)$",
         "is_correct": false
       },
       {
@@ -11920,26 +11920,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "a",
-        "content_vi": "$\\vec a=2\\vec i+2\\vec k$.",
-        "content_en": "$\\vec a=2\\vec i+2\\vec k$.",
+        "content_vi": "$\\vec a=2\\vec i+2\\vec k$",
+        "content_en": "$\\vec a=2\\vec i+2\\vec k$",
         "is_correct": false
       },
       {
         "option_key": "b",
-        "content_vi": "$\\vec b=(0,2,2)$.",
-        "content_en": "$\\vec b=(0,2,2)$.",
+        "content_vi": "$\\vec b=(0,2,2)$",
+        "content_en": "$\\vec b=(0,2,2)$",
         "is_correct": true
       },
       {
         "option_key": "c",
-        "content_vi": "$\\vec{AB}=(-2,2,0)$.",
-        "content_en": "$\\vec{AB}=(-2,2,0)$.",
+        "content_vi": "$\\vec{AB}=(-2,2,0)$",
+        "content_en": "$\\vec{AB}=(-2,2,0)$",
         "is_correct": true
       },
       {
         "option_key": "d",
-        "content_vi": "$\\angle AOB=45^\\circ$.",
-        "content_en": "$\\angle AOB=45^\\circ$.",
+        "content_vi": "$\\angle AOB=45^\\circ$",
+        "content_en": "$\\angle AOB=45^\\circ$",
         "is_correct": false
       }
     ],
@@ -12106,26 +12106,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$16$.",
-        "content_en": "$16$.",
+        "content_vi": "$16$",
+        "content_en": "$16$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$4$.",
-        "content_en": "$4$.",
+        "content_vi": "$4$",
+        "content_en": "$4$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$0$.",
-        "content_en": "$0$.",
+        "content_vi": "$0$",
+        "content_en": "$0$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$1$.",
-        "content_en": "$1$.",
+        "content_vi": "$1$",
+        "content_en": "$1$",
         "is_correct": false
       }
     ],
@@ -12154,26 +12154,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$8-8$.",
-        "content_en": "$8-8$.",
+        "content_vi": "$8-8$",
+        "content_en": "$8-8$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$8$.",
-        "content_en": "$8$.",
+        "content_vi": "$8$",
+        "content_en": "$8$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$0$.",
-        "content_en": "$0$.",
+        "content_vi": "$0$",
+        "content_en": "$0$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$8$.",
-        "content_en": "$8$.",
+        "content_vi": "$8$",
+        "content_en": "$8$",
         "is_correct": false
       }
     ],
@@ -12465,26 +12465,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$1.01\\,\\text{m}^3$.",
-        "content_en": "$1.01\\,\\text{m}^3$.",
+        "content_vi": "$1.01\\,\\text{m}^3$",
+        "content_en": "$1.01\\,\\text{m}^3$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$1.17\\,\\text{m}^3$.",
-        "content_en": "$1.17\\,\\text{m}^3$.",
+        "content_vi": "$1.17\\,\\text{m}^3$",
+        "content_en": "$1.17\\,\\text{m}^3$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$1.51\\,\\text{m}^3$.",
-        "content_en": "$1.51\\,\\text{m}^3$.",
+        "content_vi": "$1.51\\,\\text{m}^3$",
+        "content_en": "$1.51\\,\\text{m}^3$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$1.40\\,\\text{m}^3$.",
-        "content_en": "$1.40\\,\\text{m}^3$.",
+        "content_vi": "$1.40\\,\\text{m}^3$",
+        "content_en": "$1.40\\,\\text{m}^3$",
         "is_correct": false
       }
     ],
@@ -12845,26 +12845,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$m=0$.",
-        "content_en": "$m=0$.",
+        "content_vi": "$m=0$",
+        "content_en": "$m=0$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$m=1$.",
-        "content_en": "$m=1$.",
+        "content_vi": "$m=1$",
+        "content_en": "$m=1$",
         "is_correct": true
       },
       {
         "option_key": "C",
-        "content_vi": "$m=2$.",
-        "content_en": "$m=2$.",
+        "content_vi": "$m=2$",
+        "content_en": "$m=2$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$m=3$.",
-        "content_en": "$m=3$.",
+        "content_vi": "$m=3$",
+        "content_en": "$m=3$",
         "is_correct": false
       }
     ],
@@ -12893,26 +12893,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$m\\ge-3$.",
-        "content_en": "$m\\ge-3$.",
+        "content_vi": "$m\\ge-3$",
+        "content_en": "$m\\ge-3$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$m>-2$.",
-        "content_en": "$m>-2$.",
+        "content_vi": "$m>-2$",
+        "content_en": "$m>-2$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$m>-3$.",
-        "content_en": "$m>-3$.",
+        "content_vi": "$m>-3$",
+        "content_en": "$m>-3$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$m\\ge-2$.",
-        "content_en": "$m\\ge-2$.",
+        "content_vi": "$m\\ge-2$",
+        "content_en": "$m\\ge-2$",
         "is_correct": false
       }
     ],
@@ -13102,26 +13102,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$(-1,1)$.",
-        "content_en": "$(-1,1)$.",
+        "content_vi": "$(-1,1)$",
+        "content_en": "$(-1,1)$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$(-\\infty,1)$.",
-        "content_en": "$(-\\infty,1)$.",
+        "content_vi": "$(-\\infty,1)$",
+        "content_en": "$(-\\infty,1)$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$(0,2)$.",
-        "content_en": "$(0,2)$.",
+        "content_vi": "$(0,2)$",
+        "content_en": "$(0,2)$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$(1,2)$.",
-        "content_en": "$(1,2)$.",
+        "content_vi": "$(1,2)$",
+        "content_en": "$(1,2)$",
         "is_correct": true
       }
     ],
@@ -13150,26 +13150,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$(-2, 0)$ và $(2,+\\infty)$.",
-        "content_en": "$(-2,0)$ and $(2,+\\infty)$.",
+        "content_vi": "$(-2, 0)$ và $(2,+\\infty)$",
+        "content_en": "$(-2,0)$ and $(2,+\\infty)$",
         "is_correct": false
       },
       {
         "option_key": "B",
         "content_vi": "$(-\\infty,-2)$ và ( 0; 2 ).",
-        "content_en": "$(-\\infty,-2)$ and $(0,2)$.",
+        "content_en": "$(-\\infty,-2)$ and $(0,2)$",
         "is_correct": true
       },
       {
         "option_key": "C",
-        "content_vi": "$(-\\infty,-2)$ và $(2,+\\infty)$.",
-        "content_en": "$(-\\infty,-2)$ and $(2,+\\infty)$.",
+        "content_vi": "$(-\\infty,-2)$ và $(2,+\\infty)$",
+        "content_en": "$(-\\infty,-2)$ and $(2,+\\infty)$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$(-2,2)$.",
-        "content_en": "$(-2,2)$.",
+        "content_vi": "$(-2,2)$",
+        "content_en": "$(-2,2)$",
         "is_correct": false
       }
     ],
@@ -13198,26 +13198,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$(-\\infty,0)$.",
-        "content_en": "$(-\\infty,0)$.",
+        "content_vi": "$(-\\infty,0)$",
+        "content_en": "$(-\\infty,0)$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$(-2,1)$.",
-        "content_en": "$(-2,1)$.",
+        "content_vi": "$(-2,1)$",
+        "content_en": "$(-2,1)$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$(0,+\\infty)$.",
-        "content_en": "$(0,+\\infty)$.",
+        "content_vi": "$(0,+\\infty)$",
+        "content_en": "$(0,+\\infty)$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$(0,2)$.",
-        "content_en": "$(0,2)$.",
+        "content_vi": "$(0,2)$",
+        "content_en": "$(0,2)$",
         "is_correct": false
       }
     ],
@@ -13246,26 +13246,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$f(5)>f(4)>f(3)$.",
-        "content_en": "$f(5)>f(4)>f(3)$.",
+        "content_vi": "$f(5)>f(4)>f(3)$",
+        "content_en": "$f(5)>f(4)>f(3)$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$f(-1)>f(0)>f(1)$.",
-        "content_en": "$f(-1)>f(0)>f(1)$.",
+        "content_vi": "$f(-1)>f(0)>f(1)$",
+        "content_en": "$f(-1)>f(0)>f(1)$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$f(-3)<f(-2)<f(-1)$.",
-        "content_en": "$f(-3)<f(-2)<f(-1)$.",
+        "content_vi": "$f(-3)<f(-2)<f(-1)$",
+        "content_en": "$f(-3)<f(-2)<f(-1)$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$f(0)<f(1)<f(2)$.",
-        "content_en": "$f(0)<f(1)<f(2)$.",
+        "content_vi": "$f(0)<f(1)<f(2)$",
+        "content_en": "$f(0)<f(1)<f(2)$",
         "is_correct": false
       }
     ],
@@ -13294,26 +13294,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$(1,+\\infty)$.",
-        "content_en": "$(1,+\\infty)$.",
+        "content_vi": "$(1,+\\infty)$",
+        "content_en": "$(1,+\\infty)$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$(-\\infty,1)$.",
-        "content_en": "$(-\\infty,1)$.",
+        "content_vi": "$(-\\infty,1)$",
+        "content_en": "$(-\\infty,1)$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$(-2,1)$.",
-        "content_en": "$(-2,1)$.",
+        "content_vi": "$(-2,1)$",
+        "content_en": "$(-2,1)$",
         "is_correct": true
       },
       {
         "option_key": "D",
-        "content_vi": "$(1,4)$.",
-        "content_en": "$(1,4)$.",
+        "content_vi": "$(1,4)$",
+        "content_en": "$(1,4)$",
         "is_correct": false
       }
     ],
@@ -13342,26 +13342,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$y_{\\min}=2$.",
-        "content_en": "$y_{\\min}=2$.",
+        "content_vi": "$y_{\\min}=2$",
+        "content_en": "$y_{\\min}=2$",
         "is_correct": true
       },
       {
         "option_key": "B",
-        "content_vi": "$y_{\\min}=1$.",
-        "content_en": "$y_{\\min}=1$.",
+        "content_vi": "$y_{\\min}=1$",
+        "content_en": "$y_{\\min}=1$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$y_{\\min}=6$.",
-        "content_en": "$y_{\\min}=6$.",
+        "content_vi": "$y_{\\min}=6$",
+        "content_en": "$y_{\\min}=6$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$y_{\\min}=-1$.",
-        "content_en": "$y_{\\min}=-1$.",
+        "content_vi": "$y_{\\min}=-1$",
+        "content_en": "$y_{\\min}=-1$",
         "is_correct": false
       }
     ],
@@ -13390,26 +13390,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$3$.",
-        "content_en": "$3$.",
+        "content_vi": "$3$",
+        "content_en": "$3$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$0$.",
-        "content_en": "$0$.",
+        "content_vi": "$0$",
+        "content_en": "$0$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$1$.",
-        "content_en": "$1$.",
+        "content_vi": "$1$",
+        "content_en": "$1$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$2$.",
-        "content_en": "$2$.",
+        "content_vi": "$2$",
+        "content_en": "$2$",
         "is_correct": false
       }
     ],
@@ -13530,26 +13530,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$2$.",
-        "content_en": "$2$.",
+        "content_vi": "$2$",
+        "content_en": "$2$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$3$.",
-        "content_en": "$3$.",
+        "content_vi": "$3$",
+        "content_en": "$3$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$1$.",
-        "content_en": "$1$.",
+        "content_vi": "$1$",
+        "content_en": "$1$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$0$.",
-        "content_en": "$0$.",
+        "content_vi": "$0$",
+        "content_en": "$0$",
         "is_correct": false
       }
     ],
@@ -13578,26 +13578,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$7$.",
-        "content_en": "$7$.",
+        "content_vi": "$7$",
+        "content_en": "$7$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$9$.",
-        "content_en": "$9$.",
+        "content_vi": "$9$",
+        "content_en": "$9$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$4$.",
-        "content_en": "$4$.",
+        "content_vi": "$4$",
+        "content_en": "$4$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$6$.",
-        "content_en": "$6$.",
+        "content_vi": "$6$",
+        "content_en": "$6$",
         "is_correct": false
       }
     ],
@@ -13626,26 +13626,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$m\\ge2$.",
-        "content_en": "$m\\ge2$.",
+        "content_vi": "$m\\ge2$",
+        "content_en": "$m\\ge2$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$m\\le2$.",
-        "content_en": "$m\\le2$.",
+        "content_vi": "$m\\le2$",
+        "content_en": "$m\\le2$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$m\\ge-2$.",
-        "content_en": "$m\\ge-2$.",
+        "content_vi": "$m\\ge-2$",
+        "content_en": "$m\\ge-2$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$-2\\le m\\le2$.",
-        "content_en": "$-2\\le m\\le2$.",
+        "content_vi": "$-2\\le m\\le2$",
+        "content_en": "$-2\\le m\\le2$",
         "is_correct": false
       }
     ],
@@ -13674,26 +13674,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$1$.",
-        "content_en": "$1$.",
+        "content_vi": "$1$",
+        "content_en": "$1$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$0$.",
-        "content_en": "$0$.",
+        "content_vi": "$0$",
+        "content_en": "$0$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$3$.",
-        "content_en": "$3$.",
+        "content_vi": "$3$",
+        "content_en": "$3$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$2$.",
-        "content_en": "$2$.",
+        "content_vi": "$2$",
+        "content_en": "$2$",
         "is_correct": false
       }
     ],
@@ -13722,26 +13722,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$m=-4$.",
-        "content_en": "$m=-4$.",
+        "content_vi": "$m=-4$",
+        "content_en": "$m=-4$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$m=-2$.",
-        "content_en": "$m=-2$.",
+        "content_vi": "$m=-2$",
+        "content_en": "$m=-2$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$m=4$.",
-        "content_en": "$m=4$.",
+        "content_vi": "$m=4$",
+        "content_en": "$m=4$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$m=2$.",
-        "content_en": "$m=2$.",
+        "content_vi": "$m=2$",
+        "content_en": "$m=2$",
         "is_correct": false
       }
     ],
@@ -13770,26 +13770,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$m\\ge1$.",
-        "content_en": "$m\\ge1$.",
+        "content_vi": "$m\\ge1$",
+        "content_en": "$m\\ge1$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$1<m<3$.",
-        "content_en": "$1<m<3$.",
+        "content_vi": "$1<m<3$",
+        "content_en": "$1<m<3$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$m>3$.",
-        "content_en": "$m>3$.",
+        "content_vi": "$m>3$",
+        "content_en": "$m>3$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$m\\ge3$.",
-        "content_en": "$m\\ge3$.",
+        "content_vi": "$m\\ge3$",
+        "content_en": "$m\\ge3$",
         "is_correct": true
       }
     ],
@@ -13818,26 +13818,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$8$.",
-        "content_en": "$8$.",
+        "content_vi": "$8$",
+        "content_en": "$8$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$10$.",
-        "content_en": "$10$.",
+        "content_vi": "$10$",
+        "content_en": "$10$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$11$.",
-        "content_en": "$11$.",
+        "content_vi": "$11$",
+        "content_en": "$11$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$9$.",
-        "content_en": "$9$.",
+        "content_vi": "$9$",
+        "content_en": "$9$",
         "is_correct": false
       }
     ],
@@ -13866,26 +13866,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$2012$.",
-        "content_en": "$2012$.",
+        "content_vi": "$2012$",
+        "content_en": "$2012$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$2009$.",
-        "content_en": "$2009$.",
+        "content_vi": "$2009$",
+        "content_en": "$2009$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$2011$.",
-        "content_en": "$2011$.",
+        "content_vi": "$2011$",
+        "content_en": "$2011$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$2010$.",
-        "content_en": "$2010$.",
+        "content_vi": "$2010$",
+        "content_en": "$2010$",
         "is_correct": true
       }
     ],
@@ -13914,26 +13914,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$2017$.",
-        "content_en": "$2017$.",
+        "content_vi": "$2017$",
+        "content_en": "$2017$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$2018$.",
-        "content_en": "$2018$.",
+        "content_vi": "$2018$",
+        "content_en": "$2018$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$2020$.",
-        "content_en": "$2020$.",
+        "content_vi": "$2020$",
+        "content_en": "$2020$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$2019$.",
-        "content_en": "$2019$.",
+        "content_vi": "$2019$",
+        "content_en": "$2019$",
         "is_correct": true
       }
     ],
@@ -14031,26 +14031,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$0<m\\le4$.",
-        "content_en": "$0<m\\le4$.",
+        "content_vi": "$0<m\\le4$",
+        "content_en": "$0<m\\le4$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$m>4$.",
-        "content_en": "$m>4$.",
+        "content_vi": "$m>4$",
+        "content_en": "$m>4$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$m=0$.",
-        "content_en": "$m=0$.",
+        "content_vi": "$m=0$",
+        "content_en": "$m=0$",
         "is_correct": true
       },
       {
         "option_key": "D",
-        "content_vi": "$0\\le m<4$.",
-        "content_en": "$0\\le m<4$.",
+        "content_vi": "$0\\le m<4$",
+        "content_en": "$0\\le m<4$",
         "is_correct": false
       }
     ],
@@ -14079,26 +14079,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$m=1$.",
-        "content_en": "$m=1$.",
+        "content_vi": "$m=1$",
+        "content_en": "$m=1$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$m=2$.",
-        "content_en": "$m=2$.",
+        "content_vi": "$m=2$",
+        "content_en": "$m=2$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$m=3$.",
-        "content_en": "$m=3$.",
+        "content_vi": "$m=3$",
+        "content_en": "$m=3$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$m=4$.",
-        "content_en": "$m=4$.",
+        "content_vi": "$m=4$",
+        "content_en": "$m=4$",
         "is_correct": false
       }
     ],
@@ -14127,26 +14127,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$m=-1$.",
-        "content_en": "$m=-1$.",
+        "content_vi": "$m=-1$",
+        "content_en": "$m=-1$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$m=3$.",
-        "content_en": "$m=3$.",
+        "content_vi": "$m=3$",
+        "content_en": "$m=3$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$m=1$.",
-        "content_en": "$m=1$.",
+        "content_vi": "$m=1$",
+        "content_en": "$m=1$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$m=-2$.",
-        "content_en": "$m=-2$.",
+        "content_vi": "$m=-2$",
+        "content_en": "$m=-2$",
         "is_correct": false
       }
     ],
@@ -14175,26 +14175,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$m\\le-1$.",
-        "content_en": "$m\\le-1$.",
+        "content_vi": "$m\\le-1$",
+        "content_en": "$m\\le-1$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$m\\in(2,3)$.",
-        "content_en": "$m\\in(2,3)$.",
+        "content_vi": "$m\\in(2,3)$",
+        "content_en": "$m\\in(2,3)$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$m\\in(1,2)$.",
-        "content_en": "$m\\in(1,2)$.",
+        "content_vi": "$m\\in(1,2)$",
+        "content_en": "$m\\in(1,2)$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$m\\in(0,1)$.",
-        "content_en": "$m\\in(0,1)$.",
+        "content_vi": "$m\\in(0,1)$",
+        "content_en": "$m\\in(0,1)$",
         "is_correct": false
       }
     ],
@@ -14223,26 +14223,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$m_0\\in(-4,-2)$.",
-        "content_en": "$m_0\\in(-4,-2)$.",
+        "content_vi": "$m_0\\in(-4,-2)$",
+        "content_en": "$m_0\\in(-4,-2)$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$m_0\\in(2,4)$.",
-        "content_en": "$m_0\\in(2,4)$.",
+        "content_vi": "$m_0\\in(2,4)$",
+        "content_en": "$m_0\\in(2,4)$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$m_0\\in(0,2)$.",
-        "content_en": "$m_0\\in(0,2)$.",
+        "content_vi": "$m_0\\in(0,2)$",
+        "content_en": "$m_0\\in(0,2)$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$m_0\\in(-2,0)$.",
-        "content_en": "$m_0\\in(-2,0)$.",
+        "content_vi": "$m_0\\in(-2,0)$",
+        "content_en": "$m_0\\in(-2,0)$",
         "is_correct": false
       }
     ],
@@ -14271,26 +14271,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$9$.",
-        "content_en": "$9$.",
+        "content_vi": "$9$",
+        "content_en": "$9$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$10$.",
-        "content_en": "$10$.",
+        "content_vi": "$10$",
+        "content_en": "$10$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$11$.",
-        "content_en": "$11$.",
+        "content_vi": "$11$",
+        "content_en": "$11$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$12$.",
-        "content_en": "$12$.",
+        "content_vi": "$12$",
+        "content_en": "$12$",
         "is_correct": false
       }
     ],
@@ -14319,26 +14319,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$m=-5$.",
-        "content_en": "$m=-5$.",
+        "content_vi": "$m=-5$",
+        "content_en": "$m=-5$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$m=31$.",
-        "content_en": "$m=31$.",
+        "content_vi": "$m=31$",
+        "content_en": "$m=31$",
         "is_correct": true
       },
       {
         "option_key": "C",
-        "content_vi": "$m=23$.",
-        "content_en": "$m=23$.",
+        "content_vi": "$m=23$",
+        "content_en": "$m=23$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$m=5$.",
-        "content_en": "$m=5$.",
+        "content_vi": "$m=5$",
+        "content_en": "$m=5$",
         "is_correct": false
       }
     ],
@@ -14367,26 +14367,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$0$.",
-        "content_en": "$0$.",
+        "content_vi": "$0$",
+        "content_en": "$0$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$1$.",
-        "content_en": "$1$.",
+        "content_vi": "$1$",
+        "content_en": "$1$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$2$.",
-        "content_en": "$2$.",
+        "content_vi": "$2$",
+        "content_en": "$2$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$3$.",
-        "content_en": "$3$.",
+        "content_vi": "$3$",
+        "content_en": "$3$",
         "is_correct": false
       }
     ],
@@ -14415,26 +14415,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$0$.",
-        "content_en": "$0$.",
+        "content_vi": "$0$",
+        "content_en": "$0$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$2$.",
-        "content_en": "$2$.",
+        "content_vi": "$2$",
+        "content_en": "$2$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$3$.",
-        "content_en": "$3$.",
+        "content_vi": "$3$",
+        "content_en": "$3$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$1$.",
-        "content_en": "$1$.",
+        "content_vi": "$1$",
+        "content_en": "$1$",
         "is_correct": false
       }
     ],
@@ -14463,26 +14463,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$4$.",
-        "content_en": "$4$.",
+        "content_vi": "$4$",
+        "content_en": "$4$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$5$.",
-        "content_en": "$5$.",
+        "content_vi": "$5$",
+        "content_en": "$5$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$6$.",
-        "content_en": "$6$.",
+        "content_vi": "$6$",
+        "content_en": "$6$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$7$.",
-        "content_en": "$7$.",
+        "content_vi": "$7$",
+        "content_en": "$7$",
         "is_correct": false
       }
     ],
@@ -14651,26 +14651,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$(1,2)$.",
-        "content_en": "$(1,2)$.",
+        "content_vi": "$(1,2)$",
+        "content_en": "$(1,2)$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$(1,1)$.",
-        "content_en": "$(1,1)$.",
+        "content_vi": "$(1,1)$",
+        "content_en": "$(1,1)$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$(1,-1)$.",
-        "content_en": "$(1,-1)$.",
+        "content_vi": "$(1,-1)$",
+        "content_en": "$(1,-1)$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$(1,0)$.",
-        "content_en": "$(1,0)$.",
+        "content_vi": "$(1,0)$",
+        "content_en": "$(1,0)$",
         "is_correct": false
       }
     ],
@@ -14699,26 +14699,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$8$.",
-        "content_en": "$8$.",
+        "content_vi": "$8$",
+        "content_en": "$8$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$9$.",
-        "content_en": "$9$.",
+        "content_vi": "$9$",
+        "content_en": "$9$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$6$.",
-        "content_en": "$6$.",
+        "content_vi": "$6$",
+        "content_en": "$6$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$-6$.",
-        "content_en": "$-6$.",
+        "content_vi": "$-6$",
+        "content_en": "$-6$",
         "is_correct": false
       }
     ],
@@ -14818,26 +14818,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$t=2$.",
-        "content_en": "$t=2$.",
+        "content_vi": "$t=2$",
+        "content_en": "$t=2$",
         "is_correct": true
       },
       {
         "option_key": "B",
-        "content_vi": "$t=0.5$.",
-        "content_en": "$t=0.5$.",
+        "content_vi": "$t=0.5$",
+        "content_en": "$t=0.5$",
         "is_correct": false
       },
       {
         "option_key": "C",
-        "content_vi": "$t=2.5$.",
-        "content_en": "$t=2.5$.",
+        "content_vi": "$t=2.5$",
+        "content_en": "$t=2.5$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$t=1$.",
-        "content_en": "$t=1$.",
+        "content_vi": "$t=1$",
+        "content_en": "$t=1$",
         "is_correct": false
       }
     ],
@@ -15058,26 +15058,26 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "options": [
       {
         "option_key": "A",
-        "content_vi": "$27.832^\\circ\\text{C}$.",
-        "content_en": "$27.832^\\circ\\text{C}$.",
+        "content_vi": "$27.832^\\circ\\text{C}$",
+        "content_en": "$27.832^\\circ\\text{C}$",
         "is_correct": false
       },
       {
         "option_key": "B",
-        "content_vi": "$18.4^\\circ\\text{C}$.",
-        "content_en": "$18.4^\\circ\\text{C}$.",
+        "content_vi": "$18.4^\\circ\\text{C}$",
+        "content_en": "$18.4^\\circ\\text{C}$",
         "is_correct": true
       },
       {
         "option_key": "C",
-        "content_vi": "$26.2^\\circ\\text{C}$.",
-        "content_en": "$26.2^\\circ\\text{C}$.",
+        "content_vi": "$26.2^\\circ\\text{C}$",
+        "content_en": "$26.2^\\circ\\text{C}$",
         "is_correct": false
       },
       {
         "option_key": "D",
-        "content_vi": "$25.312^\\circ\\text{C}$.",
-        "content_en": "$25.312^\\circ\\text{C}$.",
+        "content_vi": "$25.312^\\circ\\text{C}$",
+        "content_en": "$25.312^\\circ\\text{C}$",
         "is_correct": false
       }
     ],

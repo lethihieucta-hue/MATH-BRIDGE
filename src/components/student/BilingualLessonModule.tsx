@@ -47,6 +47,7 @@ import {
 
 type QuestionCounts = { tn: number; ds: number; tln: number; tl: number };
 const DEFAULT_COUNTS: QuestionCounts = { tn: 4, ds: 2, tln: 2, tl: 1 };
+const MAX_COUNTS: QuestionCounts = { tn: 12, ds: 4, tln: 6, tl: 2 };
 const getDefaultCountsForType = (type?: MathType): QuestionCounts => ({
   tn: type?.sample_count_tn ?? DEFAULT_COUNTS.tn,
   ds: type?.sample_count_ds ?? DEFAULT_COUNTS.ds,
@@ -111,6 +112,8 @@ export const BilingualLessonModule: React.FC = () => {
   const [typeQuestionCounts, setTypeQuestionCounts] = useState<Record<string, QuestionCounts>>({});
   const [isAutoGeneratingQuestions, setIsAutoGeneratingQuestions] = useState(false);
   const [questionGenerationMessage, setQuestionGenerationMessage] = useState<string>('');
+  // Seed changes whenever the teacher asks for another set, so the same type can surface different clean questions.
+  const [questionShuffleSeed, setQuestionShuffleSeed] = useState<number>(() => Date.now());
 
   // Online practice interactive state
   const [onlinePracticeAnswers, setOnlinePracticeAnswers] = useState<Record<string, string>>({});
@@ -406,6 +409,7 @@ export const BilingualLessonModule: React.FC = () => {
   // Tree Action: Select All Types of Current Lesson
   const handleSelectCurrentLessonAllTypes = () => {
     if (!activeLesson) return;
+    setQuestionShuffleSeed(Date.now());
     autoGenerationRunRef.current = '';
     setQuestionGenerationMessage('');
     const lessonTypeIds = activeLesson.types?.map((t) => t.id) || [];
@@ -424,6 +428,7 @@ export const BilingualLessonModule: React.FC = () => {
 
   // Tree Action: Deselect All
   const handleDeselectAllTypes = () => {
+    setQuestionShuffleSeed(Date.now());
     autoGenerationRunRef.current = '';
     setQuestionGenerationMessage('');
     setSelectedTypeIds([]);
@@ -434,6 +439,7 @@ export const BilingualLessonModule: React.FC = () => {
   // Toggle single type checkbox
   const toggleTypeSelection = (type: MathType, e: React.MouseEvent) => {
     e.stopPropagation();
+    setQuestionShuffleSeed(Date.now());
     autoGenerationRunRef.current = '';
     setQuestionGenerationMessage('');
     const isSelected = selectedTypeIds.includes(type.id);
@@ -453,6 +459,7 @@ export const BilingualLessonModule: React.FC = () => {
 
   // Switch Active Lesson
   const handleSelectLesson = (lesson: Lesson) => {
+    setQuestionShuffleSeed(Date.now());
     autoGenerationRunRef.current = '';
     setQuestionGenerationMessage('');
     setActiveLesson(lesson);
@@ -467,7 +474,8 @@ export const BilingualLessonModule: React.FC = () => {
   };
 
   const updateTypeQuestionCount = (typeId: string, kind: keyof QuestionCounts, rawValue: string) => {
-    const value = Math.max(0, Math.min(10, Number.parseInt(rawValue, 10) || 0));
+    const value = Math.max(0, Math.min(MAX_COUNTS[kind], Number.parseInt(rawValue, 10) || 0));
+    setQuestionShuffleSeed(Date.now());
     autoGenerationRunRef.current = '';
     setQuestionGenerationMessage('');
     setTypeQuestionCounts((prev) => ({
@@ -505,6 +513,34 @@ export const BilingualLessonModule: React.FC = () => {
     return [...firstOfVariant, ...repeatedVariant];
   };
 
+  const isPnlQuestion = (q: Question): boolean => {
+    const source = `${q.source_name || ''} ${q.created_by || ''}`.toLowerCase();
+    return /phan nhật linh|phan nhat linh|source-pnl|pnl-/.test(source);
+  };
+
+  const questionSourcePriority = (q: Question): number => {
+    if (isPnlQuestion(q) && q.grading_safe !== false) return 0; // PNL sạch trước tiên.
+    if ((q.source_name || q.created_by?.startsWith('source-')) && q.grading_safe !== false) return 1;
+    if (q.id?.startsWith('q-static-')) return 3;
+    return 2;
+  };
+
+  const seededQuestionScore = (q: Question, salt: string): number => {
+    const text = `${questionShuffleSeed}|${salt}|${q.id}`;
+    let h = 2166136261;
+    for (let i = 0; i < text.length; i += 1) {
+      h ^= text.charCodeAt(i);
+      h = Math.imul(h, 16777619);
+    }
+    return h >>> 0;
+  };
+
+  const orderQuestionPool = (items: Question[], salt: string): Question[] =>
+    [...items].sort((a, b) => {
+      const priority = questionSourcePriority(a) - questionSourcePriority(b);
+      return priority !== 0 ? priority : seededQuestionScore(a, salt) - seededQuestionScore(b, salt);
+    });
+
   const getQuestionCandidatesForType = (typeId: string): Question[] => {
     if (!activeLesson) return [];
     const builtIn = getQuestionsForMathTypeStructured(typeId, activeLesson.topic_id).all;
@@ -514,22 +550,26 @@ export const BilingualLessonModule: React.FC = () => {
     );
     const customExact = dbExact.filter((q) => !builtInIds.has(q.id));
 
-    // Prefer the canonical STATIC bank first so every selected type immediately has the guaranteed 4-2-2-1 baseline.
-    // Teacher/AI extras are appended only after the static baseline. variant_tag preserves authored structural diversity.
+    // Ưu tiên PNL -> nguồn sạch khác -> câu tùy biến -> static fallback.
+    // Mỗi lần đổi seed, câu trong cùng tầng ưu tiên được xáo lại để phiếu không lặp máy móc.
     const seen = new Set<string>();
-    return [...builtIn, ...customExact].filter((q) => {
+    const deduped = [...builtIn, ...customExact].filter((q) => {
+      // Các mảnh nguồn đã bị đánh dấu không an toàn không được phép quay lại phiếu qua API/DB.
+      if (q.grading_safe === false) return false;
       const key = getQuestionDedupSignature(q);
       if (seen.has(key)) return false;
       seen.add(key);
       return true;
     });
+    return orderQuestionPool(deduped, typeId);
   };
 
   const takeQuestionsForType = (typeId: string, requested: QuestionCounts): Question[] => {
     const candidates = getQuestionCandidatesForType(typeId);
     const selected: Question[] = [];
     (['tn', 'ds', 'tln', 'tl'] as const).forEach((kind) => {
-      selected.push(...diversifyByVariant(candidates.filter((q) => bucketQuestion(q) === kind)).slice(0, requested[kind]));
+      const bucket = orderQuestionPool(candidates.filter((q) => bucketQuestion(q) === kind), `${typeId}|${kind}`);
+      selected.push(...diversifyByVariant(bucket).slice(0, requested[kind]));
     });
     return selected;
   };
@@ -897,8 +937,8 @@ export const BilingualLessonModule: React.FC = () => {
   const shortagePlans = getShortagePlans();
 
   // IMPORTANT: selecting a type never calls Gemini automatically anymore.
-  // The canonical static bank already guarantees 4 TN + 2 Đ/S + 2 TLN + 1 TL for every type_id.
-  // AI is only an optional manual extension when the teacher requests MORE than the static baseline.
+  // The static bank guarantees the minimum 4 TN + 2 Đ/S + 2 TLN + 1 TL for every type_id.
+  // PNL/source questions extend that pool; AI remains optional only when the clean pool is still short.
   useEffect(() => {
     if (!activeLesson || selectedTypeIds.length === 0) return;
     if (shortagePlans.length === 0) {
@@ -906,7 +946,7 @@ export const BilingualLessonModule: React.FC = () => {
       return;
     }
     const missing = shortagePlans.reduce((sum, p) => sum + p.missing.tn + p.missing.ds + p.missing.tln + p.missing.tl, 0);
-    setQuestionGenerationMessage(`Ngân hàng tĩnh đã dùng hết. Nếu cần thêm ${missing} câu vượt mức 4–2–2–1, Thầy/Cô có thể bấm AI tạo thêm biến thể.`);
+    setQuestionGenerationMessage(`Kho câu sạch hiện có còn thiếu ${missing} câu so với số lượng Thầy/Cô yêu cầu. Có thể bấm AI tạo thêm biến thể; hệ thống không lấy câu sai dạng để bù.`);
   }, [activeLesson?.id, selectedTypeIds, typeQuestionCounts, allQuestions]);
 
   // Export Action: Copy Word Text
@@ -1542,10 +1582,10 @@ export const BilingualLessonModule: React.FC = () => {
                             <div className="flex items-center justify-between gap-3 p-3 rounded-xl border border-amber-200 bg-amber-50 font-sans text-xs">
                               <div>
                                 <p className="font-bold text-amber-900">
-                                  {isAutoGeneratingQuestions ? 'AI đang tạo thêm biến thể...' : 'Số lượng yêu cầu đang vượt ngân hàng tĩnh 4–2–2–1.'}
+                                  {isAutoGeneratingQuestions ? 'AI đang tạo thêm biến thể...' : 'Số lượng yêu cầu đang vượt số câu sạch hiện có trong kho.'}
                                 </p>
                                 <p className="text-amber-800 mt-0.5">
-                                  Cần thêm {shortagePlans.reduce((sum, p) => sum + p.missing.tn + p.missing.ds + p.missing.tln + p.missing.tl, 0)} câu ngoài bộ tĩnh; hệ thống không dùng câu của dạng khác để bù.
+                                  Còn thiếu {shortagePlans.reduce((sum, p) => sum + p.missing.tn + p.missing.ds + p.missing.tln + p.missing.tl, 0)} câu so với yêu cầu; hệ thống không lấy câu sai dạng để bù.
                                 </p>
                                 {questionGenerationMessage && (
                                   <p className="text-violet-700 mt-1 font-semibold">{questionGenerationMessage}</p>
@@ -1745,9 +1785,19 @@ export const BilingualLessonModule: React.FC = () => {
                   <span className="text-violet-600 font-black text-sm">◆</span>
                   <h3 className="font-extrabold text-sm text-slate-900">Dạng đã chọn</h3>
                 </div>
-                <span className="text-xs font-bold text-violet-700 bg-violet-50 px-2 py-0.5 rounded-full font-mono">
-                  {selectedTypesList.length} dạng
-                </span>
+                <div className="flex items-center gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => setQuestionShuffleSeed(Date.now())}
+                    className="text-[10px] font-bold text-violet-700 bg-violet-50 hover:bg-violet-100 px-2 py-1 rounded-lg inline-flex items-center gap-1"
+                    title="Đổi sang bộ câu khác trong cùng dạng"
+                  >
+                    <RotateCcw className="w-3 h-3" /> Đổi bộ câu
+                  </button>
+                  <span className="text-xs font-bold text-violet-700 bg-violet-50 px-2 py-0.5 rounded-full font-mono">
+                    {selectedTypesList.length} dạng
+                  </span>
+                </div>
               </div>
 
               {/* List of Selected Types */}
@@ -1795,7 +1845,7 @@ export const BilingualLessonModule: React.FC = () => {
                             <input
                               type="number"
                               min={0}
-                              max={10}
+                              max={MAX_COUNTS.tn}
                               value={counts.tn}
                               onChange={(e) => updateTypeQuestionCount(type.id, 'tn', e.target.value)}
                               className="w-full text-center bg-white border border-slate-200 rounded py-0.5 text-xs font-bold text-violet-900"
@@ -1807,7 +1857,7 @@ export const BilingualLessonModule: React.FC = () => {
                             <input
                               type="number"
                               min={0}
-                              max={10}
+                              max={MAX_COUNTS.ds}
                               value={counts.ds}
                               onChange={(e) => updateTypeQuestionCount(type.id, 'ds', e.target.value)}
                               className="w-full text-center bg-white border border-slate-200 rounded py-0.5 text-xs font-bold text-violet-900"
@@ -1819,7 +1869,7 @@ export const BilingualLessonModule: React.FC = () => {
                             <input
                               type="number"
                               min={0}
-                              max={10}
+                              max={MAX_COUNTS.tln}
                               value={counts.tln}
                               onChange={(e) => updateTypeQuestionCount(type.id, 'tln', e.target.value)}
                               className="w-full text-center bg-white border border-slate-200 rounded py-0.5 text-xs font-bold text-violet-900"
@@ -1831,7 +1881,7 @@ export const BilingualLessonModule: React.FC = () => {
                             <input
                               type="number"
                               min={0}
-                              max={10}
+                              max={MAX_COUNTS.tl}
                               value={counts.tl}
                               onChange={(e) => updateTypeQuestionCount(type.id, 'tl', e.target.value)}
                               className="w-full text-center bg-white border border-slate-200 rounded py-0.5 text-xs font-bold text-violet-900"

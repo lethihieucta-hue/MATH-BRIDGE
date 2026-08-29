@@ -1,0 +1,53 @@
+{
+  "release": "AI Math Bridge final PNL enhanced",
+  "date": "2026-08-29",
+  "active_questions": 2887,
+  "online_safe_questions": 2596,
+  "type_count": 289,
+  "format_totals": {
+    "TN": 1322,
+    "TLN": 638,
+    "DS": 636,
+    "TL": 291
+  },
+  "format_min": {
+    "TN": 4,
+    "DS": 2,
+    "TLN": 2,
+    "TL": 1
+  },
+  "format_max": {
+    "TN": 12,
+    "DS": 4,
+    "TLN": 6,
+    "TL": 2
+  },
+  "types_below_minimum": 0,
+  "types_above_cap": 0,
+  "duplicate_ids": 0,
+  "duplicate_exact_same_type_format": 0,
+  "numeric_clone_same_type_format": 0,
+  "grade11_oxyz_leaks": 0,
+  "grade12_stats_representative_value_tables": 0,
+  "grade12_stats_bad_grouped_tables": 0,
+  "math_occurrences": 21246,
+  "unique_math_formulas": 3717,
+  "unbalanced_dollar_strings": 0,
+  "latex_commands_outside_math": 0,
+  "unique_array_formulas": 52,
+  "bad_array_formulas": 0,
+  "xelatex_unique_formula_pass": 3717,
+  "xelatex_unique_formula_fail": 0,
+  "active_image_assets": 70,
+  "image_assets_by_grade": {
+    "12": 52,
+    "10": 9,
+    "11": 9
+  },
+  "missing_assets": 0,
+  "asset_hash_mismatches": 0,
+  "visible_source_captions": 0,
+  "placeholder_diagrams": 0,
+  "active_pnl_questions": 222,
+  "pnl_visual_questions_total_source_bank": 72
+}

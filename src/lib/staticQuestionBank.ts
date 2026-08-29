@@ -294,7 +294,7 @@ function semanticExactTypeSample(type: MathType, variant: number): Sample | null
         ['Mặt phẳng qua ba điểm trên các cạnh $SA,SB,SC$ của tứ diện $SABC$ cắt khối theo một','A plane through points on $SA,SB,SC$ cuts tetrahedron $SABC$ in a','Tam giác',['Hình tròn','Ngũ giác','Đường thẳng']],
         ['Thiết diện của hình chóp bởi một mặt phẳng là','A section of a pyramid by a plane is','Đa giác có các đỉnh trên các cạnh của hình chóp',['Luôn là tam giác','Luôn là hình vuông','Một đường tròn']],
         ['Mặt phẳng cắt bốn cạnh bên thích hợp của một hình chóp tứ giác có thể tạo','A plane cutting four suitable edges of a quadrilateral pyramid can form','Tứ giác',['Chỉ tam giác','Chỉ ngũ giác','Đường tròn']],
-        ['Khi tìm thiết diện, bước quan trọng là xác định','When finding a cross-section, an important step is to determine','Các giao điểm của mặt phẳng cắt với các cạnh/mặt của khối',['Tọa độ Oxyz bắt buộc','Đạo hàm','Xác suất']]],
+        ['Khi tìm thiết diện, bước quan trọng là xác định','When finding a cross-section, an important step is to determine','Các giao điểm của mặt phẳng cắt với các cạnh/mặt của khối',['Phương trình đại số của một đường cong','Đạo hàm','Xác suất']]],
       '11-01':[
         ['Trong lăng trụ $ABC.A\\prime B\\prime C\\prime$, quan hệ $AB$ và $A\\prime B\\prime$ là','In prism $ABC.A\\prime B\\prime C\\prime$, $AB$ and $A\\prime B\\prime$ are','Song song',['Cắt nhau','Chéo nhau','Vuông góc']],
         ['Trong hình hộp $ABCD.A\\prime B\\prime C\\prime D\\prime$, $AD$ song song với','In a box, $AD$ is parallel to','$BC$',['$AB$','$AC$','$BD$']],
@@ -1066,15 +1066,6 @@ function remainingDuplicateFixSample(tid: string, variant: number): Sample | nul
     ][v];
     return mk(r[0] as string,r[0] as string,r[1] as string,'Dùng góc giữa hai mặt phẳng, đo bởi hai đường thẳng cùng vuông góc giao tuyến.',r[2] as string[]);
   }
-  if (tid === 'type-kntt-11-26-01') {
-    const r=[
-      ['$M(1,2,3)$','$x+2y+2z-3=0$','$8/3$',['8','$4/3$','3']],
-      ['$M(0,0,0)$','$2x-y+2z-6=0$','2',['6','3','$2/3$']],
-      ['$M(1,0,0)$','$x+y+z-4=0$','$\\sqrt3$',['3','$1/\\sqrt3$','4']],
-      ['$M(0,2,0)$','$2x+2y+z-1=0$','1',['3','$1/3$','2']],
-    ][v];
-    return mk(`Khoảng cách từ ${r[0]} đến mặt phẳng ${r[1]} bằng`,`The distance from ${r[0]} to plane ${r[1]} equals`,r[2] as string,'Dùng công thức khoảng cách từ điểm đến mặt phẳng.',r[3] as string[]);
-  }
   if (tid === 'type-kntt-11-27-01') {
     const r=[
       [12,6,'24',['72','36','18']],
@@ -1364,6 +1355,26 @@ function remainingDuplicateFixSample(tid: string, variant: number): Sample | nul
       ['Hệ số của số hạng không chứa $x$ trong $(2x+1/x)^4$ là','The coefficient of the constant term in $(2x+1/x)^4$ is','24',['6','16','32'],'Với $k=2$, hệ số là $\\binom42 2^{2}=24$.'],
       ['Hệ số của $x$ trong khai triển $(x+1/x)^5$ là','The coefficient of $x$ in $(x+1/x)^5$ is','10',['5','20','1'],'Số mũ $5-2k=1$ cho $k=2$, hệ số $\\binom52=10$.'],
     ][v]; return mk(r[0],r[1],r[2],r[4],r[3]);
+  }
+
+  if (tid === 'type-kntt-11-22-01') {
+    const r = [
+      {vi:'Trong hình lập phương $ABCD.A\\prime B\\prime C\\prime D\\prime$, góc giữa hai đường thẳng $AB$ và $AD$ bằng', en:'In cube $ABCD.A\\prime B\\prime C\\prime D\\prime$, the angle between $AB$ and $AD$ is', ans:'$90^\\circ$', w:['$0^\\circ$','$45^\\circ$','$60^\\circ$'], sol:'Hai cạnh kề $AB$ và $AD$ của hình vuông $ABCD$ vuông góc nhau.'},
+      {vi:'Trong hình lập phương $ABCD.A\\prime B\\prime C\\prime D\\prime$, góc giữa hai đường thẳng $AB$ và $A\\prime B\\prime$ bằng', en:'In a cube, the angle between $AB$ and $A\\prime B\\prime$ is', ans:'$0^\\circ$', w:['$30^\\circ$','$45^\\circ$','$90^\\circ$'], sol:'Ta có $AB\\parallel A\\prime B\\prime$, nên góc giữa hai đường thẳng bằng $0^\\circ$.'},
+      {vi:'Cho hình vuông $ABCD$. Góc giữa hai đường thẳng $AB$ và $AC$ bằng', en:'In square $ABCD$, the angle between $AB$ and diagonal $AC$ is', ans:'$45^\\circ$', w:['$30^\\circ$','$60^\\circ$','$90^\\circ$'], sol:'Đường chéo $AC$ phân giác góc vuông $DAB$, nên $\\angle BAC=45^\\circ$.'},
+      {vi:'Trong hình lập phương $ABCD.A\\prime B\\prime C\\prime D\\prime$, hai đường thẳng $AB$ và $CC\\prime$ chéo nhau. Góc giữa chúng bằng', en:'In a cube, $AB$ and $CC\\prime$ are skew. Their angle is', ans:'$90^\\circ$', w:['$0^\\circ$','$45^\\circ$','$60^\\circ$'], sol:'Qua $C$ kẻ $CD\\parallel AB$. Vì $CD\\perp CC\\prime$, góc giữa $AB$ và $CC\\prime$ bằng $90^\\circ$.'},
+    ][v];
+    return mk(r.vi,r.en,r.ans,r.sol,r.w);
+  }
+
+  if (tid === 'type-kntt-11-26-01') {
+    const r = [
+      {vi:'Cho hình chóp $S.ABC$ có $SA\\perp(ABC)$ và $SA=6$. Khoảng cách từ $S$ đến mặt phẳng $(ABC)$ bằng', en:'In pyramid $S.ABC$, $SA\\perp(ABC)$ and $SA=6$. The distance from $S$ to plane $(ABC)$ is', ans:'6', w:['3','12','$6\\sqrt2$'], sol:'Vì $SA\\perp(ABC)$ và $A\\in(ABC)$ nên $SA$ chính là đoạn vuông góc từ $S$ đến $(ABC)$.'},
+      {vi:'Cho hình lập phương $ABCD.A\\prime B\\prime C\\prime D\\prime$ cạnh $a$. Khoảng cách từ $A\\prime$ đến mặt phẳng $(ABCD)$ bằng', en:'A cube $ABCD.A\\prime B\\prime C\\prime D\\prime$ has side $a$. The distance from $A\\prime$ to plane $(ABCD)$ is', ans:'$a$', w:['$a\\sqrt2$','$a\\sqrt3$','$a/2$'], sol:'Cạnh $AA\\prime$ vuông góc với mặt đáy $(ABCD)$, do đó khoảng cách bằng $AA\\prime=a$.'},
+      {vi:'Cho lăng trụ đứng $ABC.A\\prime B\\prime C\\prime$ có cạnh bên $AA\\prime=5$. Khoảng cách từ $A\\prime$ đến mặt phẳng $(ABC)$ bằng', en:'A right prism $ABC.A\\prime B\\prime C\\prime$ has lateral edge $AA\\prime=5$. The distance from $A\\prime$ to plane $(ABC)$ is', ans:'5', w:['$5\\sqrt2$','10','$5/2$'], sol:'Trong lăng trụ đứng, cạnh bên vuông góc với đáy nên $d(A\\prime,(ABC))=AA\\prime=5$.'},
+      {vi:'Cho hình hộp chữ nhật $ABCD.A\\prime B\\prime C\\prime D\\prime$ với $AA\\prime=4$. Khoảng cách từ $C\\prime$ đến mặt phẳng $(ABCD)$ bằng', en:'A rectangular box $ABCD.A\\prime B\\prime C\\prime D\\prime$ has $AA\\prime=4$. The distance from $C\\prime$ to plane $(ABCD)$ is', ans:'4', w:['2','8','$4\\sqrt2$'], sol:'Ta có $CC\\prime\\perp(ABCD)$ và $CC\\prime=AA\\prime=4$, nên khoảng cách cần tìm bằng 4.'},
+    ][v];
+    return mk(r.vi,r.en,r.ans,r.sol,r.w);
   }
 
   return null;
@@ -1985,23 +1996,23 @@ function directSample(type: MathType, family: ExerciseFamily, variant: number): 
     }
     if (hasAny(t,['phương sai']) && hasAny(t,['ghép nhóm'])) {
       const rows=[
-        {x:[0,2],f:[1,1],ans:'1',w:['0','2','4']},
-        {x:[1,3],f:[2,2],ans:'1',w:['2','0.5','4']},
-        {x:[0,4],f:[1,1],ans:'4',w:['2','8','16']},
-        {x:[2,6],f:[3,3],ans:'4',w:['2','6','8']},
+        {cls:['[0;2)','[2;4)','[4;6)','[6;8)'],f:[1,1,1,1],ans:'5',w:['4','10','$\\sqrt5$']},
+        {cls:['[0;4)','[4;8)','[8;12)','[12;16)'],f:[1,1,1,1],ans:'20',w:['10','16','$2\\sqrt5$']},
+        {cls:['[10;20)','[20;30)','[30;40)','[40;50)'],f:[1,1,1,1],ans:'125',w:['100','25','$5\\sqrt5$']},
+        {cls:['[0;6)','[6;12)','[12;18)','[18;24)'],f:[1,1,1,1],ans:'45',w:['36','90','$3\\sqrt5$']},
       ][variant%4];
-      const table=`$$\\begin{array}{c|cc}\\text{Giá trị đại diện}&${rows.x.join('&')}\\\\\\hline\\text{Tần số}&${rows.f.join('&')}\\end{array}$$`;
-      return {vi:`Một mẫu ghép nhóm có bảng giá trị đại diện ${table} Phương sai (chia cho $n$) bằng`,en:`A grouped sample has representative values ${table} The variance (dividing by $n$) is`,answer:rows.ans,solutionVi:'Tính trung bình rồi lấy trung bình các bình phương độ lệch.',solutionEn:'Compute the mean and the average squared deviation.',options:[[rows.ans,rows.ans,true],[rows.w[0],rows.w[0],false],[rows.w[1],rows.w[1],false],[rows.w[2],rows.w[2],false]]};
+      const table=`$$\\begin{array}{c|cccc}\\text{Khoảng lớp}&${rows.cls.join('&')}\\\\\\hline\\text{Tần số}&${rows.f.join('&')}\\end{array}$$`;
+      return {vi:`Cho mẫu số liệu ghép nhóm ${table} Phương sai của mẫu (chia cho $n$) bằng`,en:`For the grouped sample ${table} the variance (dividing by $n$) is`,answer:rows.ans,solutionVi:'Lấy trung điểm mỗi khoảng lớp làm giá trị đại diện, tính số trung bình rồi tính trung bình bình phương các độ lệch.',solutionEn:'Use class midpoints, compute the weighted mean, then the mean squared deviation.',options:[[rows.ans,rows.ans,true],[rows.w[0],rows.w[0],false],[rows.w[1],rows.w[1],false],[rows.w[2],rows.w[2],false]]};
     }
     if (hasAny(t,['độ lệch chuẩn']) && hasAny(t,['ghép nhóm'])) {
       const rows=[
-        {x:[0,2],f:[1,1],ans:'1',w:['2','0','$\\sqrt2$']},
-        {x:[1,5],f:[1,1],ans:'2',w:['4','1','$\\sqrt2$']},
-        {x:[0,6],f:[1,1],ans:'3',w:['9','6','$\\sqrt3$']},
-        {x:[2,10],f:[1,1],ans:'4',w:['16','8','2']},
+        {cls:['[0;2)','[2;4)','[4;6)','[6;8)'],f:[1,1,1,1],ans:'$\\sqrt5$',w:['5','2','$2\\sqrt5$']},
+        {cls:['[0;4)','[4;8)','[8;12)','[12;16)'],f:[1,1,1,1],ans:'$2\\sqrt5$',w:['20','4','$\\sqrt5$']},
+        {cls:['[10;20)','[20;30)','[30;40)','[40;50)'],f:[1,1,1,1],ans:'$5\\sqrt5$',w:['125','25','$10\\sqrt5$']},
+        {cls:['[0;6)','[6;12)','[12;18)','[18;24)'],f:[1,1,1,1],ans:'$3\\sqrt5$',w:['45','9','$5\\sqrt3$']},
       ][variant%4];
-      const table=`$$\\begin{array}{c|cc}\\text{Giá trị đại diện}&${rows.x.join('&')}\\\\\\hline\\text{Tần số}&${rows.f.join('&')}\\end{array}$$`;
-      return {vi:`Một mẫu ghép nhóm có bảng ${table} Độ lệch chuẩn bằng`,en:`A grouped sample has table ${table} The standard deviation is`,answer:rows.ans,solutionVi:'Tính phương sai rồi lấy căn bậc hai.',solutionEn:'Compute the variance and take its square root.',options:[[rows.ans,rows.ans,true],[rows.w[0],rows.w[0],false],[rows.w[1],rows.w[1],false],[rows.w[2],rows.w[2],false]]};
+      const table=`$$\\begin{array}{c|cccc}\\text{Khoảng lớp}&${rows.cls.join('&')}\\\\\\hline\\text{Tần số}&${rows.f.join('&')}\\end{array}$$`;
+      return {vi:`Cho mẫu số liệu ghép nhóm ${table} Độ lệch chuẩn của mẫu bằng`,en:`For the grouped sample ${table} the standard deviation is`,answer:rows.ans,solutionVi:'Tính phương sai từ các trung điểm khoảng lớp rồi lấy căn bậc hai.',solutionEn:'Compute the variance from class midpoints, then take its square root.',options:[[rows.ans,rows.ans,true],[rows.w[0],rows.w[0],false],[rows.w[1],rows.w[1],false],[rows.w[2],rows.w[2],false]]};
     }
     if (hasAny(t,['tứ phân vị'])) {
       const rows=[
