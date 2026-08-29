@@ -7,239 +7,196 @@ interface MathRendererProps {
   className?: string;
 }
 
-type Token =
-  | { type: 'text'; value: string }
-  | { type: 'math'; value: string; display: boolean };
+export const MathRenderer: React.FC<MathRendererProps> = ({
+  content,
+  inline = false,
+  className = '',
+}) => {
+  if (!content) return null;
 
-const stripOuterDelimiters = (input: string): string => {
-  const s = input.trim();
-  if (s.startsWith('$$') && s.endsWith('$$')) return s.slice(2, -2).trim();
-  if (s.startsWith('$') && s.endsWith('$')) return s.slice(1, -1).trim();
-  if (s.startsWith('\\[') && s.endsWith('\\]')) return s.slice(2, -2).trim();
-  if (s.startsWith('\\(') && s.endsWith('\\)')) return s.slice(2, -2).trim();
-  return s;
-};
-
-const normalizeLatex = (input: string): string => {
-  let s = stripOuterDelimiters(input)
-    .replace(/\r\n?/g, '\n')
-    .replace(/\\\\([a-zA-Z]+)/g, '\\$1')
-    .replace(/\\\\([{}\[\]])/g, '\\$1')
-    .replace(/\u00a0/g, ' ')
-    .trim();
-  return s;
-};
-
-const renderKatex = (latex: string, displayMode: boolean) => {
-  try {
-    return katex.renderToString(normalizeLatex(latex), {
-      displayMode,
-      throwOnError: false,
-      strict: 'ignore',
-      output: 'htmlAndMathml',
-      trust: false,
-    });
-  } catch {
-    return null;
-  }
-};
-
-const tokenizeMath = (text: string): Token[] => {
-  const tokens: Token[] = [];
-  let i = 0;
-  let buffer = '';
-
-  const pushText = () => {
-    if (buffer) {
-      tokens.push({ type: 'text', value: buffer });
-      buffer = '';
+  // Safe KaTeX renderer helper
+  const renderLatexSafe = (latex: string, isInline: boolean) => {
+    try {
+      let clean = latex.trim().replace(/\\\\([a-zA-Z]+)/g, '\\$1');
+      return katex.renderToString(clean, {
+        displayMode: !isInline,
+        throwOnError: false,
+      });
+    } catch (e) {
+      console.warn('KaTeX render error:', e);
+      return latex;
     }
   };
 
-  while (i < text.length) {
-    if (text.startsWith('$$', i)) {
-      const end = text.indexOf('$$', i + 2);
-      if (end !== -1) {
-        pushText();
-        tokens.push({ type: 'math', value: text.slice(i + 2, end), display: true });
-        i = end + 2;
-        continue;
-      }
+  // Helper to determine if a string is a PURE math formula (no English/Vietnamese prose)
+  const isPureMathFormula = (text: string): boolean => {
+    const trimmed = text.trim();
+
+    // Already wrapped in delimiters?
+    if (
+      (trimmed.startsWith('$') && trimmed.endsWith('$')) ||
+      (trimmed.startsWith('$$') && trimmed.endsWith('$$')) ||
+      (trimmed.startsWith('\\[') && trimmed.endsWith('\\]')) ||
+      (trimmed.startsWith('\\(') && trimmed.endsWith('\\)'))
+    ) {
+      return true;
     }
-    if (text.startsWith('\\[', i)) {
-      const end = text.indexOf('\\]', i + 2);
-      if (end !== -1) {
-        pushText();
-        tokens.push({ type: 'math', value: text.slice(i + 2, end), display: true });
-        i = end + 2;
-        continue;
-      }
+
+    // List of common English/Vietnamese sentence indicator words that signal prose, NOT a pure formula
+    const proseWordsRegex = /\b(Find|Given|Determine|Calculate|What|How|If|Then|Because|Therefore|Thus|Let|Cho|Tìm|Tính|Xác định|Hãy|Khi|Vì|Vậy|hàm số|đồ thị|parabol|tọa độ|đỉnh|giá trị|lớn nhất|nhỏ nhất|tập xác định|tập giá trị|phương trình|nghiệm|đồng biến|nghịch biến|đạo hàm|bài toán|ví dụ|the|of|is|are|and|or|in|on|at|to|with|for|by)\b/i;
+
+    if (proseWordsRegex.test(trimmed)) {
+      return false; // Contains sentence words -> must be treated as mixed prose
     }
-    if (text.startsWith('\\(', i)) {
-      const end = text.indexOf('\\)', i + 2);
-      if (end !== -1) {
-        pushText();
-        tokens.push({ type: 'math', value: text.slice(i + 2, end), display: false });
-        i = end + 2;
-        continue;
-      }
+
+    // Contains LaTeX commands (e.g. \frac, \Delta, \left, \right, \neq, \sqrt, \alpha, etc.)
+    if (/\\[a-zA-Z]+/.test(trimmed)) {
+      return true;
     }
-    if (text[i] === '$') {
-      let end = i + 1;
-      while (end < text.length) {
-        if (text[end] === '$' && text[end - 1] !== '\\') break;
-        end += 1;
-      }
-      if (end < text.length && text[end] === '$') {
-        pushText();
-        tokens.push({ type: 'math', value: text.slice(i + 1, end), display: false });
-        i = end + 1;
-        continue;
-      }
+
+    // Mathematical equation or expression patterns without words
+    // e.g. "y = ax^2 + bx + c", "x = -b / (2a)", "f(x) = x^2 - 4x + 3", "(2, -1)", "D = [0, +\\infty)"
+    if (
+      /^[a-zA-Z_0-9\s^+\-*/=><≤≥≠∈∉∪∩∅∞()[\],{}|:;.\\]+$/.test(trimmed) &&
+      (/[=^_\\]|\/|\\le|\\ge|\\in|\([0-9\-+,\s]+\)/.test(trimmed) || /^[a-zA-Z]\([a-zA-Z0-9\s]+\)/.test(trimmed))
+    ) {
+      return true;
     }
-    buffer += text[i];
-    i += 1;
-  }
-  pushText();
-  return tokens;
-};
 
-const renderInlineLatex = (latex: string) => {
-  const html = renderKatex(latex, false);
-  return html ? <span dangerouslySetInnerHTML={{ __html: html }} /> : <span>{latex}</span>;
-};
+    return false;
+  };
 
-const renderArrayAsTable = (latex: string, key: React.Key) => {
-  const normalized = normalizeLatex(latex);
-  const m = normalized.match(/^\\begin\{array\}\{[^}]*\}([\s\S]*)\\end\{array\}$/);
-  if (!m) return null;
-  const body = m[1].replace(/\\hline/g, '');
-  const rows = body
-    .split(/\\\\/)
-    .map((row) => row.trim())
-    .filter(Boolean)
-    .map((row) => row.split('&').map((cell) => cell.trim()));
-  if (!rows.length) return null;
-  return (
-    <div key={key} className="my-3 overflow-x-auto">
-      <table className="mx-auto border-collapse border border-slate-400 text-sm text-slate-800">
-        <tbody>
-          {rows.map((row, rIdx) => (
-            <tr key={rIdx}>
-              {row.map((cell, cIdx) => (
-                <td key={cIdx} className="border border-slate-400 px-3 py-1 text-center align-middle">
-                  {renderInlineLatex(cell)}
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-};
+  // If the entire content is a pure math formula
+  if (isPureMathFormula(content)) {
+    let cleanLatex = content.trim();
+    if (cleanLatex.startsWith('$$') && cleanLatex.endsWith('$$')) {
+      cleanLatex = cleanLatex.slice(2, -2).trim();
+    } else if (cleanLatex.startsWith('$') && cleanLatex.endsWith('$')) {
+      cleanLatex = cleanLatex.slice(1, -1).trim();
+    } else if (cleanLatex.startsWith('\\[') && cleanLatex.endsWith('\\]')) {
+      cleanLatex = cleanLatex.slice(2, -2).trim();
+    } else if (cleanLatex.startsWith('\\(') && cleanLatex.endsWith('\\)')) {
+      cleanLatex = cleanLatex.slice(2, -2).trim();
+    }
 
-const renderCases = (latex: string, key: React.Key) => {
-  const normalized = normalizeLatex(latex);
-  const m = normalized.match(/^\\begin\{cases\}([\s\S]*)\\end\{cases\}$/);
-  if (!m) return null;
-  const rows = m[1]
-    .split(/\\\\/)
-    .map((row) => row.trim())
-    .filter(Boolean)
-    .map((row) => row.split('&').map((cell) => cell.trim()));
-  if (!rows.length) return null;
-  return (
-    <span key={key} className="inline-flex items-start align-middle px-1">
-      <span className="text-3xl leading-none pr-1">&#123;</span>
-      <span className="inline-flex flex-col gap-1">
-        {rows.map((row, idx) => (
-          <span key={idx} className="inline-flex gap-2 items-center">
-            <span>{renderInlineLatex(row[0] || '')}</span>
-            {row[1] ? <span>{renderInlineLatex(row[1])}</span> : null}
-          </span>
-        ))}
-      </span>
-    </span>
-  );
-};
-
-const renderMathToken = (latex: string, display: boolean, key: React.Key) => {
-  const normalized = normalizeLatex(latex);
-
-  if (/^\\begin\{array\}/.test(normalized)) {
-    return renderArrayAsTable(normalized, key) ?? (
-      <div key={key} className="my-3 overflow-x-auto text-center" dangerouslySetInnerHTML={{ __html: renderKatex(normalized, true) || normalized }} />
-    );
-  }
-
-  if (/^\\begin\{cases\}/.test(normalized)) {
-    return renderCases(normalized, key) ?? (
-      <span key={key} className="inline-block align-middle px-0.5" dangerouslySetInnerHTML={{ __html: renderKatex(normalized, false) || normalized }} />
-    );
-  }
-
-  const html = renderKatex(normalized, display);
-  if (!html) {
-    return display ? <div key={key} className="my-2 overflow-x-auto text-slate-900">{normalized}</div> : <span key={key} className="text-slate-900">{normalized}</span>;
-  }
-
-  if (display) {
-    return <div key={key} className="my-2 overflow-x-auto text-center" dangerouslySetInnerHTML={{ __html: html }} />;
-  }
-
-  return <span key={key} className="inline-block align-middle px-0.5" dangerouslySetInnerHTML={{ __html: html }} />;
-};
-
-const renderText = (text: string, key: React.Key) => {
-  const lines = text.split('\n');
-  return (
-    <span key={key} className="whitespace-normal">
-      {lines.map((line, idx) => (
-        <React.Fragment key={idx}>
-          {idx > 0 && <br />}
-          {line.split(/(\*\*.*?\*\*|\*.*?\*)/g).map((chunk, cIdx) => {
-            if (chunk.startsWith('**') && chunk.endsWith('**')) {
-              return <strong key={cIdx}>{chunk.slice(2, -2)}</strong>;
-            }
-            if (chunk.startsWith('*') && chunk.endsWith('*')) {
-              return <em key={cIdx}>{chunk.slice(1, -1)}</em>;
-            }
-            return <span key={cIdx}>{chunk}</span>;
-          })}
-        </React.Fragment>
-      ))}
-    </span>
-  );
-};
-
-const looksLikePureMath = (content: string) => {
-  const s = content.trim();
-  return (
-    /^(\$\$?[\s\S]+\$\$?|\\\([\s\S]+\\\)|\\\[[\s\S]+\\\])$/.test(s) ||
-    /^\\begin\{(array|cases)\}/.test(s)
-  );
-};
-
-export const MathRenderer: React.FC<MathRendererProps> = ({ content, inline = false, className = '' }) => {
-  if (!content) return null;
-
-  if (looksLikePureMath(content)) {
+    const html = renderLatexSafe(cleanLatex, inline);
+    if (inline) {
+      return (
+        <span
+          className={`math-render inline-block align-middle px-0.5 ${className}`}
+          dangerouslySetInnerHTML={{ __html: html }}
+        />
+      );
+    }
     return (
-      <div className={`math-render ${inline ? 'inline' : 'block'} ${className}`}>
-        {renderMathToken(content, !inline, 'pure')}
-      </div>
+      <div
+        className={`math-render my-2 overflow-x-auto text-center ${className}`}
+        dangerouslySetInnerHTML={{ __html: html }}
+      />
     );
   }
 
-  const tokens = tokenizeMath(content);
+  // Mixed text processor: splits into Markdown / Text tokens and Math tokens
+  const renderMixedContent = (text: string) => {
+    // 1. Normalize LaTeX delimiters & double backslashes
+    let normalized = text
+      .replace(/\\\\([a-zA-Z]+)/g, '\\$1')
+      .replace(/\\\$/g, '$')
+      .replace(/`/g, '')
+      .replace(/\\\[([\s\S]*?)\\\]/g, '$$$$$1$$$$')
+      .replace(/\\\(([\s\S]*?)\\\)/g, '$$$1$$');
+
+    // 2. Auto-wrap common inline math expressions that lack $ delimiters in English/Vietnamese sentences
+    // e.g. "parabola y = x^2 - 4x + 3" or "function f(x) = 2x + 3" or "interval [0, 5]" or "point I(2, -1)"
+    // Only if not already inside $...$
+    if (!normalized.includes('$')) {
+      normalized = normalized
+        // Wrap equations like y = ax^2 + bx + c or f(x) = ...
+        .replace(/\b([yxfg]\s*=\s*[-+0-9a-zA-Z_\\^/{}\s()*.]+)/g, (match) => {
+          // If ends with a sentence period/comma, keep the punctuation outside $...$
+          const trimmed = match.trim();
+          if (trimmed.endsWith('.')) {
+            return `$${trimmed.slice(0, -1).trim()}$.`;
+          }
+          if (trimmed.endsWith(',')) {
+            return `$${trimmed.slice(0, -1).trim()}$,`;
+          }
+          return `$${trimmed}$`;
+        })
+        // Wrap coordinate points like I(-b/2a, -\Delta/4a) or (2, -1)
+        .replace(/\b([IABCDEFMO]\s*\([-+0-9a-zA-Z_\\^/{}\s,*.]+\))/g, '$$$1$$')
+        // Wrap isolated LaTeX commands like \sqrt{...} or \frac{...}{...}
+        .replace(/(\\[a-zA-Z]+(?:\{[^}]*\})*)/g, '$$$1$$');
+    }
+
+    // 3. Tokenize by $$...$$ (block math) and $...$ (inline math) safely
+    const regex = /(\$\$[\s\S]*?\$\$|\$[^$\n]+?\$)/g;
+    const parts = normalized.split(regex);
+
+    return parts.map((part, idx) => {
+      if (!part) return null;
+
+      // Block Math $$...$$
+      if (part.startsWith('$$') && part.endsWith('$$') && part.length > 4) {
+        const latex = part.slice(2, -2).trim();
+        const html = renderLatexSafe(latex, false);
+        return (
+          <div
+            key={idx}
+            className="my-3 overflow-x-auto text-center font-serif text-teal-800"
+            dangerouslySetInnerHTML={{ __html: html }}
+          />
+        );
+      }
+
+      // Inline Math $...$
+      if (part.startsWith('$') && part.endsWith('$') && part.length > 2) {
+        const latex = part.slice(1, -1).trim();
+        const html = renderLatexSafe(latex, true);
+        return (
+          <span
+            key={idx}
+            className="inline-block align-middle px-0.5 font-serif text-teal-900 font-medium"
+            dangerouslySetInnerHTML={{ __html: html }}
+          />
+        );
+      }
+
+      // Plain Text & Markdown formatting (render linebreaks, bold **text**, italics, and normal spacing)
+      // Process simple markdown inside text: **bold**, *italic*, \n
+      const lines = part.split('\n');
+      return (
+        <span key={idx} className="whitespace-normal">
+          {lines.map((line, lIdx) => (
+            <React.Fragment key={lIdx}>
+              {lIdx > 0 && <br />}
+              {line.split(/(\*\*.*?\*\*|\*.*?\*)/g).map((chunk, cIdx) => {
+                if (chunk.startsWith('**') && chunk.endsWith('**')) {
+                  return (
+                    <strong key={cIdx} className="font-bold text-slate-900">
+                      {chunk.slice(2, -2)}
+                    </strong>
+                  );
+                }
+                if (chunk.startsWith('*') && chunk.endsWith('*')) {
+                  return (
+                    <em key={cIdx} className="italic text-slate-700">
+                      {chunk.slice(1, -1)}
+                    </em>
+                  );
+                }
+                return <span key={cIdx}>{chunk}</span>;
+              })}
+            </React.Fragment>
+          ))}
+        </span>
+      );
+    });
+  };
+
   return (
     <div className={`math-render leading-relaxed ${inline ? 'inline' : 'block'} ${className}`}>
-      {tokens.map((token, idx) =>
-        token.type === 'math'
-          ? renderMathToken(token.value, token.display, idx)
-          : renderText(token.value, idx)
-      )}
+      {renderMixedContent(content)}
     </div>
   );
 };

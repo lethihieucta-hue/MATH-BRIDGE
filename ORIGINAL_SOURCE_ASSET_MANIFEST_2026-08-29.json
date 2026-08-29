@@ -1,0 +1,124 @@
+{
+  "source_docx": "/mnt/data/math_assets_work/grade12_ch1/Chương 01. Ứng dụng đạo hàm để khảo sát và vẽ ĐTHS-20240811T085610Z-001/Chương 01. Ứng dụng đạo hàm để khảo sát và vẽ ĐTHS/Bài 01. Tính đơn điệu và cực trị của hàm số/Bài 01_Dạng 01. Lý thuyết về tính đơn điệu, cực trị của hàm số cho trước_GV.docx",
+  "assets": [
+    {
+      "asset": "image224.png",
+      "sha256": "10e9d015acb38418db489ebb2cd29e9748d9c0e553698fd7aa2643d398cfd397",
+      "bytes": 6546,
+      "source_docx": "Bài 01_Dạng 01. Lý thuyết về tính đơn điệu, cực trị của hàm số cho trước_GV.docx"
+    },
+    {
+      "asset": "image231.png",
+      "sha256": "82aadd1c130ec888b213104ef599fdbb7791d1397a601929d73cd9d6f7686c19",
+      "bytes": 32958,
+      "source_docx": "Bài 01_Dạng 01. Lý thuyết về tính đơn điệu, cực trị của hàm số cho trước_GV.docx"
+    },
+    {
+      "asset": "image246.png",
+      "sha256": "76ae2b61566b566957df35260fbc2374ae175683b15afc107879ef6912a73c67",
+      "bytes": 11326,
+      "source_docx": "Bài 01_Dạng 01. Lý thuyết về tính đơn điệu, cực trị của hàm số cho trước_GV.docx"
+    },
+    {
+      "asset": "image310.png",
+      "sha256": "509b2f95098225f2b7aa5c1e1e52f09b465183ff0fc6fd6468365aad0cf97698",
+      "bytes": 3624,
+      "source_docx": "Bài 01_Dạng 01. Lý thuyết về tính đơn điệu, cực trị của hàm số cho trước_GV.docx"
+    },
+    {
+      "asset": "image329.png",
+      "sha256": "ee255ed94452a67f53f78eaf5aaff0ab88503e45b53be5ef51139a41dc735436",
+      "bytes": 2300,
+      "source_docx": "Bài 01_Dạng 01. Lý thuyết về tính đơn điệu, cực trị của hàm số cho trước_GV.docx"
+    },
+    {
+      "asset": "image533.png",
+      "sha256": "01357dfb70cfde57a2bb14ab0f3375da4a2a89a0eefdff143552c3004e85252a",
+      "bytes": 11321,
+      "source_docx": "Bài 01_Dạng 01. Lý thuyết về tính đơn điệu, cực trị của hàm số cho trước_GV.docx"
+    },
+    {
+      "asset": "image538.png",
+      "sha256": "80516feb9b8a14e88a5b818a9cec4b304db0824ec29381e10562799db4adb89d",
+      "bytes": 8626,
+      "source_docx": "Bài 01_Dạng 01. Lý thuyết về tính đơn điệu, cực trị của hàm số cho trước_GV.docx"
+    },
+    {
+      "asset": "image750.png",
+      "sha256": "e311c8ebf4a6c0752c9095db30fcd3ee9950f9a94c83cdbead646e0647c3ac76",
+      "bytes": 5540,
+      "source_docx": "Bài 01_Dạng 01. Lý thuyết về tính đơn điệu, cực trị của hàm số cho trước_GV.docx"
+    }
+  ],
+  "questions": [
+    "src-pnl12ch1-visual-b1-c02",
+    "src-pnl12ch1-visual-b1-c03",
+    "src-pnl12ch1-visual-b1-c05",
+    "src-pnl12ch1-visual-b1-c12",
+    "src-pnl12ch1-visual-b1-c14",
+    "src-pnl12ch1-visual-b1-c35",
+    "src-pnl12ch1-visual-b1-c36",
+    "src-pnl12ch1-visual-b1-short-c06"
+  ],
+  "additional_sources": [
+    {
+      "source_docx": "/mnt/data/math_assets_work/grade12_ch1/Chương 01. Ứng dụng đạo hàm để khảo sát và vẽ ĐTHS-20240811T085610Z-001/Chương 01. Ứng dụng đạo hàm để khảo sát và vẽ ĐTHS/Đề ôn tập theo bài học và cuối chương/Đề 04_Bài 04_Khảo sát sự biến thiên và vẽ đồ thị hàm số_GV.docx",
+      "assets": [
+        {
+          "asset": "image1.png",
+          "sha256": "7f7e387e0e499910b2897bd2d50d67817c49d23397b3aa634a5ffd17e45133b4"
+        },
+        {
+          "asset": "image9.png",
+          "sha256": "b37b1a5286d2e1e5aa43d0797876fefa5f18ec119acb623c5624cd1927cf2f15"
+        },
+        {
+          "asset": "image22.png",
+          "sha256": "eb3332c57653ff78dd6f98ab6980ba799a0c339306cc1c93bf1a32c7e484fad6"
+        },
+        {
+          "asset": "image31.png",
+          "sha256": "dafc2956ebb1a0b5ae1077da5663490b6aaee12c0e864ac80343194d294a9f8d"
+        },
+        {
+          "asset": "image51.png",
+          "sha256": "5b9e88538cabba8706e29ebaed424bdae9d2709f7345ae201ae458dadb5e9180"
+        },
+        {
+          "asset": "image59.png",
+          "sha256": "6231b68b7107c649da07278f317745087a136d2f1834adf172b80dd0ca4a9f93"
+        }
+      ],
+      "questions": [
+        "src-pnl12ch1-visual-b4-de04-c01",
+        "src-pnl12ch1-visual-b4-de04-c02",
+        "src-pnl12ch1-visual-b4-de04-c03",
+        "src-pnl12ch1-visual-b4-de04-c04",
+        "src-pnl12ch1-visual-b4-de04-c05",
+        "src-pnl12ch1-visual-b4-de04-c06"
+      ]
+    },
+    {
+      "source_docx": "/mnt/data/math_assets_work/grade12_ch1/Chương 01. Ứng dụng đạo hàm để khảo sát và vẽ ĐTHS-20240811T085610Z-001/Chương 01. Ứng dụng đạo hàm để khảo sát và vẽ ĐTHS/Bài 05. Ứng dụng đạo hàm và KSHS để giải quyết bài toán thực tiễn/Bài 05_Dạng 02. Một số bài toán tối ưu đơn giản_GV.docx",
+      "assets": [
+        {
+          "asset": "image279.png",
+          "sha256": "602187f81260b930007e7eac5ef2df13f58cdf5de8e17e23bb050d0acbed8467"
+        },
+        {
+          "asset": "image292.png",
+          "sha256": "e5c87fcc133a8fc07a5615df7b257fe58f38c1a371f437f6d4b5717eabf0675f"
+        },
+        {
+          "asset": "image406.png",
+          "sha256": "89f9200fec0e805037bbd574ffa4c2b0ef584079ff1bd7369cf8b422bc67d5eb"
+        }
+      ],
+      "questions": [
+        "src-pnl12ch1-visual-b5-c11",
+        "src-pnl12ch1-visual-b5-c12",
+        "src-pnl12ch1-visual-b5-ds-rowing"
+      ]
+    }
+  ]
+}

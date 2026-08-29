@@ -3,6 +3,7 @@ import { ALL_CURRENT_TYPE_IDS, LEGACY_TYPE_MIGRATION, TYPE_LESSON_BY_ID, migrate
 import { STATIC_QUESTION_BANK } from './staticQuestionBank';
 import { REAL_SOURCE_QUESTION_BANK } from './realSourceQuestionBank';
 import { SOURCE_SUPPLEMENT_QUESTION_BANK } from './sourceSupplementQuestionBank';
+import { ORIGINAL_SOURCE_VISUAL_QUESTION_BANK } from './originalSourceVisualQuestionBank';
 
 // =========================================================================
 // BỘ BÀI TẬP MẪU CÓ LỜI GIẢI CHI TIẾT THEO TỪNG BÀI HỌC (WORKED EXAMPLES)
@@ -1365,11 +1366,12 @@ export function isSourceQuestionStructurallyComplete(q: Question): boolean {
     /kết\s+quả\s+(?:thu\s+được\s+)?như\s+sau\s*[:：]?/i,
   ];
   const numericTokens = combined.match(/[-+]?\d+(?:[.,]\d+)?/g) || [];
-  // Trả lời ngắn trong bộ nguồn phải còn ít nhất một dữ kiện số hoặc biểu thức rõ ràng;
+  const hasOriginalVisualAsset = !!q.assets?.some((asset) => asset.kind === 'image');
+  // Trả lời ngắn trong bộ nguồn phải còn ít nhất một dữ kiện số/biểu thức, trừ khi đã gắn lại hình/bảng gốc.
   // nếu không, MathType/bảng nguồn rất có thể đã rơi khỏi câu khi trích PDF.
   if ((q.format_type === 'TLN' || q.question_type === 'SHORT' || q.question_type === 'NUMERIC')
-      && numericTokens.length < 1 && !/[=<>≤≥]/.test(stem)) return false;
-  if (visualPatterns.some((re) => re.test(stem)) && numericTokens.length < 4) return false;
+      && numericTokens.length < 1 && !/[=<>≤≥]/.test(stem) && !hasOriginalVisualAsset) return false;
+  if (visualPatterns.some((re) => re.test(stem)) && numericTokens.length < 4 && !hasOriginalVisualAsset) return false;
   if (/(?:mẫu|dãy)\s+số\s+liệu[^.]{0,80}(?:trên|sau)/i.test(stem) && numericTokens.length < 4) return false;
 
   // Các mảnh câu kiểu “là nghiệm ...” nhưng đối tượng đứng trước đã mất hoàn toàn.
@@ -1434,7 +1436,7 @@ function sanitizeImportedQuestion(q: Question): Question {
 
 // Static bank is the baseline for every worksheet: 4 TN + 2 Đ/S + 2 TLN + 1 TL per type_id.
 // Nguồn GV sạch được xếp trước; nếu câu nguồn hỏng dữ kiện hoặc nặng lý thuyết thì tự loại.
-const RAW_FULL_QUESTION_BANK: Question[] = [...SOURCE_SUPPLEMENT_QUESTION_BANK, ...REAL_SOURCE_QUESTION_BANK, ...STATIC_QUESTION_BANK, ...MIGRATED_LEGACY_QUESTION_BANK].map(sanitizeImportedQuestion);
+const RAW_FULL_QUESTION_BANK: Question[] = [...ORIGINAL_SOURCE_VISUAL_QUESTION_BANK, ...SOURCE_SUPPLEMENT_QUESTION_BANK, ...REAL_SOURCE_QUESTION_BANK, ...STATIC_QUESTION_BANK, ...MIGRATED_LEGACY_QUESTION_BANK].map(sanitizeImportedQuestion);
 export const FULL_QUESTION_BANK: Question[] = RAW_FULL_QUESTION_BANK.filter(
   (q) => isSourceQuestionStructurallyComplete(q) && !isPureTheoryRecallQuestion(q)
 );

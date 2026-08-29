@@ -13,7 +13,7 @@ const SvgFrame: React.FC<{ children: React.ReactNode; compact?: boolean }> = ({ 
   </svg>
 );
 
-const Diagram: React.FC<{ kind: QuestionAsset['diagram']; compact?: boolean }> = ({ kind, compact }) => {
+const Diagram: React.FC<{ kind: import('../../types').QuestionDiagramKind; compact?: boolean }> = ({ kind, compact }) => {
   const common = { fill: 'none', stroke: 'currentColor', strokeWidth: 2 } as const;
   switch (kind) {
     case 'triangle':
@@ -45,14 +45,24 @@ export const QuestionAssetRenderer: React.FC<Props> = ({ assets, language = 'VIE
   if (!assets?.length) return null;
   return (
     <div className="space-y-2 my-2 print:break-inside-avoid">
-      {assets.map((asset, index) => (
-        <figure key={`${asset.diagram}-${index}`} className="rounded-lg border border-slate-200 bg-white p-2 max-w-md print:max-w-sm">
-          <Diagram kind={asset.diagram} compact={compact} />
-          <figcaption className="text-[10px] sm:text-xs text-slate-500 text-center font-sans mt-1">
-            {language === 'ENGLISH' ? (asset.title_en || asset.title_vi) : (asset.title_vi || asset.title_en)}
-          </figcaption>
-        </figure>
-      ))}
+      {assets.map((asset, index) => {
+        const caption = language === 'ENGLISH' ? (asset.title_en || asset.title_vi) : (asset.title_vi || asset.title_en);
+        if (asset.kind === 'image') {
+          const alt = language === 'ENGLISH' ? (asset.alt_en || asset.alt_vi || caption || 'Source math figure') : (asset.alt_vi || asset.alt_en || caption || 'Hình toán học từ tài liệu gốc');
+          return (
+            <figure key={`${asset.src}-${index}`} className="rounded-lg border border-slate-200 bg-white p-2 max-w-2xl print:max-w-xl">
+              <img src={asset.src} alt={alt} loading="lazy" className={`${compact ? 'max-h-[250px]' : 'max-h-[420px]'} w-full h-auto object-contain mx-auto`} />
+              {caption ? <figcaption className="text-[10px] sm:text-xs text-slate-500 text-center font-sans mt-1">{caption}</figcaption> : null}
+            </figure>
+          );
+        }
+        return (
+          <figure key={`${asset.diagram}-${index}`} className="rounded-lg border border-slate-200 bg-white p-2 max-w-md print:max-w-sm">
+            <Diagram kind={asset.diagram} compact={compact} />
+            {caption ? <figcaption className="text-[10px] sm:text-xs text-slate-500 text-center font-sans mt-1">{caption}</figcaption> : null}
+          </figure>
+        );
+      })}
     </div>
   );
 };

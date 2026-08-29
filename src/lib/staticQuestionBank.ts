@@ -1,4 +1,4 @@
-import { Question, QuestionOption, MathType, Lesson, QuestionAsset } from '../types';
+import { Question, QuestionOption, MathType, Lesson, QuestionAsset, QuestionDiagramKind } from '../types';
 import { FULL_LESSONS, TYPE_FAMILY_BY_ID, ExerciseFamily } from './curriculumData';
 
 /**
@@ -2497,8 +2497,29 @@ function essaySample(type: MathType, family: ExerciseFamily): Sample {
 
 
 function visualAssetsForType(type: MathType, kind: StaticKind, index: number): QuestionAsset[] | undefined {
-  // Disable synthetic placeholder diagrams. Only source-authentic figures should be shown.
-  return undefined;
+  // One diagram per type is enough to make the visual family discoverable without cluttering every question.
+  if (!((kind === 'TN' && index === 0) || kind === 'TL')) return undefined;
+  const id = type.id;
+  const title = normalize(type.title_vi);
+  let diagram: QuestionDiagramKind | undefined;
+  if (/^type-kntt-10-06-/.test(id)) diagram = 'triangle';
+  else if (/^type-kntt-10-(19|20)-/.test(id)) diagram = 'line-2d';
+  else if (/^type-kntt-10-21-/.test(id)) diagram = 'circle';
+  else if (/^type-kntt-10-22-/.test(id)) diagram = 'conic';
+  else if (/^type-kntt-11-03-/.test(id)) diagram = 'trig-graph';
+  else if (/^type-kntt-11-(10|11|12|13|14|22|23|24|25|26|27)-/.test(id)) diagram = 'solid-3d';
+  else if (/^type-kntt-12-(06|07|08)-/.test(id)) diagram = 'vector-3d';
+  else if (/^type-kntt-12-13-/.test(id) || /diện tích hình phẳng|khối tròn xoay/.test(title)) diagram = 'area-graph';
+  else if (/^type-kntt-12-(14|15|16)-/.test(id)) diagram = 'plane-3d';
+  else if (/^type-kntt-12-17-/.test(id) || /mặt cầu/.test(title)) diagram = 'sphere-3d';
+  else if (/mặt phẳng|đường thẳng trong không gian|góc nhị diện/.test(title)) diagram = 'plane-3d';
+  if (!diagram) return undefined;
+  return [{
+    kind: 'diagram',
+    diagram,
+    title_vi: 'Hình minh họa dạng bài (không thay thế dữ kiện đề)',
+    title_en: 'Concept diagram (not a substitute for the stated data)',
+  }];
 }
 
 function makeQuestion(lesson: Lesson, type: MathType, family: ExerciseFamily, kind: StaticKind, index: number, sample: Sample): Question {

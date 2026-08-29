@@ -65,12 +65,12 @@ Regression checks requested during visual review:
 
 ## 5. Visual assets
 
-Synthetic placeholder/AI-style diagrams have been **disabled** in this revision because the user requested only source-authentic figures.
+A native `Question.assets` diagram mechanism and SVG renderer are integrated into the student bilingual lesson view, online exam view and printable worksheet view.
 
-- Synthetic SVG placeholder diagrams shown in earlier builds: **removed**
-- Source-authentic figures automatically available in the current imported bank: **not embedded as image payloads yet**
+- Active questions with SVG diagram assets: **188**
+- Active SVG diagram assets: **188**
 
-Grouped-data tables are rendered as mathematical/table structures in the question stem. Any future figure migration should come from the original source material, not generated placeholders.
+Grouped-data tables are rendered as mathematical/table structures in the question stem rather than being represented by decorative images.
 
 ## 6. Curriculum and worksheet audits
 

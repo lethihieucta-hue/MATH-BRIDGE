@@ -182,12 +182,26 @@ export type QuestionDiagramKind =
   | 'solid-3d'
   | 'area-graph';
 
-export interface QuestionAsset {
+export interface QuestionDiagramAsset {
   kind: 'diagram';
   diagram: QuestionDiagramKind;
   title_vi?: string;
   title_en?: string;
 }
+
+/** Original source image/table/graph extracted from the teacher document. */
+export interface QuestionImageAsset {
+  kind: 'image';
+  src: string;
+  alt_vi?: string;
+  alt_en?: string;
+  title_vi?: string;
+  title_en?: string;
+  source_name?: string;
+  source_sha256?: string;
+}
+
+export type QuestionAsset = QuestionDiagramAsset | QuestionImageAsset;
 
 export interface QuestionOption {
   option_key: string; // 'A', 'B', 'C', 'D'
