@@ -7,6 +7,13 @@ interface Props {
   compact?: boolean;
 }
 
+const HIDDEN_CAPTION_PATTERNS = [
+  /hình\/bảng gốc từ (?:bản gv|tài liệu) phan nhật linh/i,
+  /original figure\/table from phan nhat linh/i,
+  /hình minh họa dạng bài/i,
+  /concept diagram/i,
+];
+
 const SvgFrame: React.FC<{ children: React.ReactNode; compact?: boolean }> = ({ children, compact }) => (
   <svg viewBox="0 0 320 180" role="img" aria-label="Math diagram" className={`${compact ? 'max-w-[260px]' : 'max-w-[360px]'} w-full h-auto mx-auto text-slate-700`}>
     {children}
@@ -41,14 +48,25 @@ const Diagram: React.FC<{ kind: import('../../types').QuestionDiagramKind; compa
   }
 };
 
+function cleanCaption(caption?: string): string {
+  if (!caption) return '';
+  return HIDDEN_CAPTION_PATTERNS.some((re) => re.test(caption)) ? '' : caption;
+}
+
 export const QuestionAssetRenderer: React.FC<Props> = ({ assets, language = 'VIETNAMESE', compact = false }) => {
   if (!assets?.length) return null;
   return (
     <div className="space-y-2 my-2 print:break-inside-avoid">
       {assets.map((asset, index) => {
-        const caption = language === 'ENGLISH' ? (asset.title_en || asset.title_vi) : (asset.title_vi || asset.title_en);
+        // All SVG concept diagrams are placeholder illustrations only; suppress them entirely.
+        if (asset.kind === 'diagram') return null;
+
+        const rawCaption = language === 'ENGLISH' ? (asset.title_en || asset.title_vi) : (asset.title_vi || asset.title_en);
+        const caption = cleanCaption(rawCaption);
         if (asset.kind === 'image') {
-          const alt = language === 'ENGLISH' ? (asset.alt_en || asset.alt_vi || caption || 'Source math figure') : (asset.alt_vi || asset.alt_en || caption || 'Hình toán học từ tài liệu gốc');
+          const alt = language === 'ENGLISH'
+            ? (asset.alt_en || asset.alt_vi || caption || 'Source math figure')
+            : (asset.alt_vi || asset.alt_en || caption || 'Hình toán học từ tài liệu gốc');
           return (
             <figure key={`${asset.src}-${index}`} className="rounded-lg border border-slate-200 bg-white p-2 max-w-2xl print:max-w-xl">
               <img src={asset.src} alt={alt} loading="lazy" className={`${compact ? 'max-h-[250px]' : 'max-h-[420px]'} w-full h-auto object-contain mx-auto`} />
@@ -56,12 +74,7 @@ export const QuestionAssetRenderer: React.FC<Props> = ({ assets, language = 'VIE
             </figure>
           );
         }
-        return (
-          <figure key={`${asset.diagram}-${index}`} className="rounded-lg border border-slate-200 bg-white p-2 max-w-md print:max-w-sm">
-            <Diagram kind={asset.diagram} compact={compact} />
-            {caption ? <figcaption className="text-[10px] sm:text-xs text-slate-500 text-center font-sans mt-1">{caption}</figcaption> : null}
-          </figure>
-        );
+        return null;
       })}
     </div>
   );

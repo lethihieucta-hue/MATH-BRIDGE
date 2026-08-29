@@ -9,6 +9,7 @@ import { generateCompleteLessonWorksheetAi, generateWorksheetQuestionsByPlanAi, 
 import {
   getQuestionsForMathTypeStructured,
   getWorkedExamplesForLesson,
+  getQuestionDedupSignature,
   getQuestionStructureSignature,
   isQuestionCompatibleWithTopic,
 } from '../../lib/questionBankData';
@@ -517,7 +518,7 @@ export const BilingualLessonModule: React.FC = () => {
     // Teacher/AI extras are appended only after the static baseline. variant_tag preserves authored structural diversity.
     const seen = new Set<string>();
     return [...builtIn, ...customExact].filter((q) => {
-      const key = `${bucketQuestion(q)}|${q.variant_tag || getQuestionStructureSignature(q.question_vi || q.question_en)}`;
+      const key = getQuestionDedupSignature(q);
       if (seen.has(key)) return false;
       seen.add(key);
       return true;
