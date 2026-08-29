@@ -1168,6 +1168,204 @@ function remainingDuplicateFixSample(tid: string, variant: number): Sample | nul
     return mk(`Trong $Oxyz$, với ${r[0]}, kết luận đúng là`,`In $Oxyz$, for ${r[0]}, the correct conclusion is`,r[1] as string,'So sánh vectơ pháp tuyến để xét vị trí; dùng công thức khoảng cách nếu có điểm và mặt phẳng.',r[2] as string[]);
   }
 
+  // ---- Final semantic isolation: replace cross-type generic fallbacks with exact curriculum tasks ----
+  if (tid === 'type-kntt-10-10-04') {
+    const r: any=[
+      ['Trung điểm của $A(1,2)$ và $B(5,6)$ là','The midpoint of $A(1,2)$ and $B(5,6)$ is','$(3,4)$',['$(2,3)$','$(4,4)$','$(6,8)$'],'Dùng công thức trung điểm.'],
+      ['Cho $A(1,3)$ và $\\overrightarrow{AM}=(2,-1)$. Tọa độ $M$ là','Given $A(1,3)$ and $\\overrightarrow{AM}=(2,-1)$. The coordinates of $M$ are','$(3,2)$',['$(-1,4)$','$(2,2)$','$(3,4)$'],'Cộng tọa độ $A$ với tọa độ vectơ $\\overrightarrow{AM}$.'],
+      ['Trọng tâm tam giác $A(0,0),B(3,0),C(0,6)$ là','The centroid of triangle $A(0,0),B(3,0),C(0,6)$ is','$(1,2)$',['$(1,3)$','$(3,2)$','$(1,1)$'],'Lấy trung bình cộng từng tọa độ của ba đỉnh.'],
+      ['Điểm $M$ thuộc trục $Ox$ và cách đều $A(1,2),B(5,2)$. Tọa độ $M$ là','Point $M$ lies on the $x$-axis and is equidistant from $A(1,2),B(5,2)$. Its coordinates are','$(3,0)$',['$(2,0)$','$(4,0)$','$(3,2)$'],'Đặt $M(x,0)$ rồi giải $MA=MB$.'],
+    ][v]; return mk(r[0],r[1],r[2],r[4],r[3]);
+  }
+  if (tid === 'type-kntt-10-11-03') {
+    const r: any=[
+      ['Khoảng cách giữa $A(1,2)$ và $B(4,6)$ bằng','The distance between $A(1,2)$ and $B(4,6)$ is','5',['3','4','$\\sqrt{13}$'],'Dùng $AB=\\sqrt{(x_B-x_A)^2+(y_B-y_A)^2}$.'],
+      ['Độ dài vectơ $\\vec a=(3,4)$ bằng','The length of $\\vec a=(3,4)$ is','5',['7','$\\sqrt7$','1'],'Dùng $|\\vec a|=\\sqrt{x^2+y^2}$.'],
+      ['Hai vectơ $\\vec a=(1,2)$ và $\\vec b=(2,-1)$ có quan hệ','Vectors $\\vec a=(1,2)$ and $\\vec b=(2,-1)$ are','Vuông góc',['Cùng hướng','Ngược hướng','Không xác định'],'Tích vô hướng bằng $1\\cdot2+2\\cdot(-1)=0$.'],
+      ['Với $\\vec u=(2,1)$ và $\\vec v=(1,-2)$, khẳng định đúng là','For $\\vec u=(2,1)$ and $\\vec v=(1,-2)$, the correct statement is','$\\vec u\\perp\\vec v$',['$\\vec u=\\vec v$','$\\vec u\\parallel\\vec v$','$|\\vec u|=1$'],'Tính $\\vec u\\cdot\\vec v=0$.'],
+    ][v]; return mk(r[0],r[1],r[2],r[4],r[3]);
+  }
+  if (tid === 'type-kntt-10-19-04') {
+    const r: any=[
+      ['Điểm chuyển động $M(t)=(1+2t,3-t)$. Khi hoành độ của $M$ bằng $5$ thì $t$ bằng','A moving point is $M(t)=(1+2t,3-t)$. When its x-coordinate is $5$, $t$ equals','2',['1','3','4'],'Giải $1+2t=5$.'],
+      ['Điểm $M$ chuyển động theo $M(t)=(-1+t,2+3t)$. Vị trí của $M$ tại $t=2$ là','A point moves as $M(t)=(-1+t,2+3t)$. Its position at $t=2$ is','$(1,8)$',['$(2,8)$','$(1,6)$','$(-1,8)$'],'Thay $t=2$ vào hai tọa độ.'],
+      ['Điểm $M(t)=(4-2t,1+t)$ nằm trên trục $Oy$ khi','The point $M(t)=(4-2t,1+t)$ lies on the $y$-axis when','$t=2$',['$t=1$','$t=0$','$t=4$'],'Trên $Oy$ thì hoành độ bằng $0$, nên $4-2t=0$.'],
+      ['Điểm $M(t)=(2+3t,-1+2t)$ nằm trên đường thẳng $y=x$ khi','The point $M(t)=(2+3t,-1+2t)$ lies on $y=x$ when','$t=-3$',['$t=3$','$t=-1$','$t=1$'],'Giải $-1+2t=2+3t$.'],
+    ][v]; return mk(r[0],r[1],r[2],r[4],r[3]);
+  }
+  if (tid === 'type-kntt-11-24-01') {
+    const r: any=[
+      ['Đường thẳng $d$ cắt mặt phẳng $(P)$ tại $H$. Điểm $A\\in d$ có hình chiếu vuông góc lên $(P)$ là $A^\\prime$. Hình chiếu vuông góc của $d$ trên $(P)$ là','$d$ intersects plane $(P)$ at $H$. Point $A\\in d$ projects orthogonally to $A^\\prime$ on $(P)$. The orthogonal projection of $d$ is','$HA^\\prime$',['$AA^\\prime$','$AH$','$d$'],'Hình chiếu của hai điểm phân biệt $H,A$ lần lượt là $H,A^\\prime$.'],
+      ['Trong hình lập phương $ABCD.A^\\prime B^\\prime C^\\prime D^\\prime$, hình chiếu vuông góc của đường thẳng $A^\\prime B$ lên mặt phẳng $(ABCD)$ là','In cube $ABCD.A^\\prime B^\\prime C^\\prime D^\\prime$, the orthogonal projection of line $A^\\prime B$ onto $(ABCD)$ is','$AB$',['$A^\\prime B$','$AC$','$BD$'],'$A^\\prime$ chiếu xuống $A$, còn $B$ nằm sẵn trên đáy.'],
+      ['Cho hình chóp $S.ABC$ với $SA\\perp(ABC)$. Hình chiếu vuông góc của $SC$ lên $(ABC)$ là','For pyramid $S.ABC$ with $SA\\perp(ABC)$, the orthogonal projection of $SC$ onto $(ABC)$ is','$AC$',['$SA$','$SC$','$BC$'],'$S$ chiếu xuống $A$, còn $C$ thuộc mặt phẳng đáy.'],
+      ['Cho hình chóp $S.ABCD$ với $SA\\perp(ABCD)$. Hình chiếu vuông góc của $SB$ lên đáy là','For pyramid $S.ABCD$ with $SA\\perp(ABCD)$, the orthogonal projection of $SB$ onto the base is','$AB$',['$SB$','$SA$','$BD$'],'$S$ chiếu xuống $A$, còn $B$ thuộc đáy.'],
+    ][v]; return mk(r[0],r[1],r[2],r[4],r[3]);
+  }
+  if (tid === 'type-kntt-11-27-03') {
+    const r: any=[
+      ['Trong hình chóp $S.ABCD$, mặt phẳng qua $M\\in SA$ song song đáy và $SM/SA=1/2$. Tỉ số thể tích khối chóp nhỏ và khối chóp ban đầu là','In pyramid $S.ABCD$, a plane through $M\\in SA$ is parallel to the base and $SM/SA=1/2$. The volume ratio is','$1/8$',['$1/2$','$1/4$','$1/6$'],'Hai khối chóp đồng dạng với tỉ số dài $1/2$, nên tỉ số thể tích là $(1/2)^3$.'],
+      ['Hai hình chóp đồng dạng có tỉ số các cạnh tương ứng bằng $2/3$. Tỉ số thể tích của chúng bằng','Two similar pyramids have corresponding side ratio $2/3$. Their volume ratio is','$8/27$',['$4/9$','$2/3$','$6/9$'],'Tỉ số thể tích bằng lập phương tỉ số đồng dạng.'],
+      ['Trong hình chóp $S.ABC$, $M,N,P$ lần lượt là trung điểm của $SA,SB,SC$. Tỉ số $V_{SMNP}/V_{SABC}$ bằng','In pyramid $S.ABC$, $M,N,P$ are midpoints of $SA,SB,SC$. Find $V_{SMNP}/V_{SABC}$.','$1/8$',['$1/2$','$1/4$','$3/8$'],'Khối $SMNP$ đồng dạng với $SABC$ theo tỉ số $1/2$.'],
+      ['Hai khối chóp có cùng chiều cao, diện tích hai đáy theo tỉ số $3:5$. Tỉ số thể tích tương ứng là','Two pyramids have the same height and base areas in ratio $3:5$. Their volume ratio is','$3/5$',['$9/25$','$5/3$','$3/8$'],'Với cùng chiều cao, thể tích tỉ lệ thuận với diện tích đáy.'],
+    ][v]; return mk(r[0],r[1],r[2],r[4],r[3]);
+  }
+  if (tid === 'type-kntt-12-14-04') {
+    const r: any=[
+      ['Mặt phẳng $(P_m):(m-1)x+2y-z+3=0$ song song với $(Q):x+2y-z=0$. Giá trị $m$ là','Plane $(P_m):(m-1)x+2y-z+3=0$ is parallel to $(Q):x+2y-z=0$. Find $m$.','2',['1','3','-2'],'Hai vectơ pháp tuyến phải cùng phương; từ các hệ số $y,z$ suy ra hệ số tỉ lệ bằng 1.'],
+      ['Mặt phẳng $(P_m):2x+(m+1)y+2z-1=0$ song song với $(Q):x+2y+z=0$. Giá trị $m$ là','Plane $(P_m):2x+(m+1)y+2z-1=0$ is parallel to $(Q):x+2y+z=0$. Find $m$.','3',['1','2','4'],'Vectơ pháp tuyến $(2,m+1,2)$ phải bằng $2(1,2,1)$.'],
+      ['Mặt phẳng $(P_m):mx+y-z=0$ đi qua $A(2,1,3)$. Giá trị $m$ là','Plane $(P_m):mx+y-z=0$ passes through $A(2,1,3)$. Find $m$.','1',['0','2','-1'],'Thay tọa độ $A$ vào phương trình: $2m+1-3=0$.'],
+      ['Mặt phẳng $(P_m):(m-2)x+y+z=0$ vuông góc với đường thẳng có vectơ chỉ phương $(1,1,1)$. Giá trị $m$ là','Plane $(P_m):(m-2)x+y+z=0$ is perpendicular to a line with direction vector $(1,1,1)$. Find $m$.','3',['1','2','4'],'Đường thẳng vuông góc mặt phẳng khi vectơ chỉ phương cùng phương vectơ pháp tuyến.'],
+    ][v]; return mk(r[0],r[1],r[2],r[4],r[3]);
+  }
+
+  if (tid === 'type-kntt-10-07-03') {
+    const r: any=[
+      ['Nếu $M$ là trung điểm của $AB$ thì khẳng định đúng là','If $M$ is the midpoint of $AB$, which statement is correct?','$\\overrightarrow{AM}=\\overrightarrow{MB}$',['$\\overrightarrow{AM}=\\overrightarrow{BM}$','$\\overrightarrow{AB}=\\vec0$','$\\overrightarrow{MA}=\\overrightarrow{MB}$'],'Hai vectơ $\\overrightarrow{AM},\\overrightarrow{MB}$ cùng hướng và cùng độ dài.'],
+      ['Trong hình bình hành $ABCD$, cặp vectơ bằng nhau là','In parallelogram $ABCD$, which vectors are equal?','$\\overrightarrow{AB}=\\overrightarrow{DC}$',['$\\overrightarrow{AB}=\\overrightarrow{CD}$','$\\overrightarrow{AD}=\\overrightarrow{CB}$','$\\overrightarrow{AC}=\\overrightarrow{BD}$'],'Các cạnh đối của hình bình hành cho các vectơ cùng hướng và cùng độ dài.'],
+      ['Với trọng tâm $G$ của tam giác $ABC$, đẳng thức đúng là','For centroid $G$ of triangle $ABC$, the correct identity is','$\\overrightarrow{GA}+\\overrightarrow{GB}+\\overrightarrow{GC}=\\vec0$',['$\\overrightarrow{GA}=\\overrightarrow{GB}$','$\\overrightarrow{AB}+\\overrightarrow{AC}=\\vec0$','$\\overrightarrow{AG}+\\overrightarrow{BG}=\\overrightarrow{CG}$'],'Dùng tính chất vectơ của trọng tâm tam giác.'],
+      ['Nếu $M$ là trung điểm đoạn $AB$ thì','If $M$ is the midpoint of $AB$, then','$\\overrightarrow{MA}+\\overrightarrow{MB}=\\vec0$',['$\\overrightarrow{MA}+\\overrightarrow{MB}=\\overrightarrow{AB}$','$\\overrightarrow{MA}=\\overrightarrow{MB}$','$\\overrightarrow{AB}=\\vec0$'],'Hai vectơ từ trung điểm tới hai đầu mút là hai vectơ đối nhau.'],
+    ][v]; return mk(r[0],r[1],r[2],r[4],r[3]);
+  }
+  if (tid === 'type-kntt-10-08-03') {
+    const r: any=[
+      ['Trong tam giác $ABC$, đẳng thức vectơ nào xác nhận quy tắc nối từ $A$ đến $C$ qua $B$?','In triangle $ABC$, which vector identity connects the path from $A$ to $C$ through $B$?','$\\overrightarrow{AB}+\\overrightarrow{BC}=\\overrightarrow{AC}$',['$\\overrightarrow{AB}+\\overrightarrow{AC}=\\overrightarrow{BC}$','$\\overrightarrow{BA}+\\overrightarrow{BC}=\\overrightarrow{AC}$','$\\overrightarrow{AB}+\\overrightarrow{BC}=\\vec0$'],'Đây là quy tắc ba điểm, dùng để biến đổi và chứng minh đẳng thức vectơ.'],
+      ['Trong hình bình hành $ABCD$, đẳng thức nào biểu diễn đường chéo xuất phát từ $A$ theo hai cạnh kề?','In parallelogram $ABCD$, which identity expresses the diagonal from $A$ using the two adjacent sides?','$\\overrightarrow{AB}+\\overrightarrow{AD}=\\overrightarrow{AC}$',['$\\overrightarrow{AB}+\\overrightarrow{AD}=\\overrightarrow{BD}$','$\\overrightarrow{AB}-\\overrightarrow{AD}=\\overrightarrow{AC}$','$\\overrightarrow{AB}+\\overrightarrow{AD}=\\vec0$'],'Đẳng thức là hệ quả trực tiếp của quy tắc hình bình hành.'],
+      ['$\\overrightarrow{MA}+\\overrightarrow{AB}$ bằng','$\\overrightarrow{MA}+\\overrightarrow{AB}$ equals','$\\overrightarrow{MB}$',['$\\overrightarrow{BM}$','$\\overrightarrow{AM}$','$\\vec0$'],'Nối đầu–đuôi theo quy tắc ba điểm.'],
+      ['$\\overrightarrow{AB}-\\overrightarrow{AC}$ bằng','$\\overrightarrow{AB}-\\overrightarrow{AC}$ equals','$\\overrightarrow{CB}$',['$\\overrightarrow{BC}$','$\\overrightarrow{BA}$','$\\overrightarrow{CA}$'],'Đổi phép trừ thành cộng với vectơ đối rồi dùng quy tắc ba điểm.'],
+    ][v]; return mk(r[0],r[1],r[2],r[4],r[3]);
+  }
+  if (tid === 'type-kntt-10-09-02') {
+    const r: any=[
+      ['Với $\\vec a=(2,4)$ và $\\vec b=(1,2)$, kết luận đúng là','For $\\vec a=(2,4)$ and $\\vec b=(1,2)$, the correct conclusion is','$\\vec a=2\\vec b$',['$\\vec a=-2\\vec b$','$\\vec a\\perp\\vec b$','$\\vec a=\\vec b$'],'So sánh từng tọa độ để tìm hệ số tỉ lệ.'],
+      ['Với $\\vec a=(-3,6)$ và $\\vec b=(1,-2)$, hai vectơ','For $\\vec a=(-3,6)$ and $\\vec b=(1,-2)$, the vectors are','Ngược hướng',['Cùng hướng','Vuông góc','Bằng nhau'],'Ta có $\\vec a=-3\\vec b$, hệ số âm nên hai vectơ ngược hướng.'],
+      ['Cho $A(1,2),B(3,6),C(5,10)$. Ba điểm $A,B,C$','Given $A(1,2),B(3,6),C(5,10)$. Points $A,B,C$ are','Thẳng hàng',['Tạo tam giác vuông','Trùng nhau','Không xác định'],'$\\overrightarrow{AC}=2\\overrightarrow{AB}$ nên ba điểm thẳng hàng.'],
+      ['Nếu $\\overrightarrow{AM}=3\\overrightarrow{AB}$ với $A\\ne B$ thì','If $\\overrightarrow{AM}=3\\overrightarrow{AB}$ with $A\\ne B$, then','$A,B,M$ thẳng hàng',['$AM\\perp AB$','$M$ là trung điểm $AB$','$A=M$'],'Hai vectơ cùng phương nên ba điểm thẳng hàng.'],
+    ][v]; return mk(r[0],r[1],r[2],r[4],r[3]);
+  }
+  if (tid === 'type-kntt-12-06-02') {
+    const r: any=[
+      ['Trong hình hộp $ABCD.A^\\prime B^\\prime C^\\prime D^\\prime$, đẳng thức đúng là','In parallelepiped $ABCD.A^\\prime B^\\prime C^\\prime D^\\prime$, the correct identity is','$\\overrightarrow{AC^\\prime}=\\overrightarrow{AB}+\\overrightarrow{AD}+\\overrightarrow{AA^\\prime}$',['$\\overrightarrow{AC^\\prime}=\\overrightarrow{AB}+\\overrightarrow{AD}$','$\\overrightarrow{AC^\\prime}=\\overrightarrow{AA^\\prime}$','$\\overrightarrow{AC^\\prime}=\\vec0$'],'Dùng quy tắc hình hộp.'],
+      ['Trong không gian, với ba điểm $A,B,C$, đẳng thức luôn đúng là','In space, for points $A,B,C$, the identity always true is','$\\overrightarrow{AB}+\\overrightarrow{BC}=\\overrightarrow{AC}$',['$\\overrightarrow{AB}+\\overrightarrow{AC}=\\overrightarrow{BC}$','$\\overrightarrow{AB}=\\overrightarrow{BC}$','$\\overrightarrow{AC}=\\vec0$'],'Áp dụng quy tắc ba điểm trong không gian.'],
+      ['Nếu $M$ là trung điểm $AB$ và $O$ là gốc tùy ý thì','If $M$ is the midpoint of $AB$ and $O$ is any origin, then','$\\overrightarrow{OM}=\\dfrac{\\overrightarrow{OA}+\\overrightarrow{OB}}2$',['$\\overrightarrow{OM}=\\overrightarrow{OA}+\\overrightarrow{OB}$','$\\overrightarrow{OM}=\\overrightarrow{AB}$','$\\overrightarrow{OM}=\\vec0$'],'Dùng công thức vectơ vị trí của trung điểm.'],
+      ['Nếu $G$ là trọng tâm tam giác $ABC$ trong không gian thì','If $G$ is the centroid of triangle $ABC$ in space, then','$\\overrightarrow{OG}=\\dfrac{\\overrightarrow{OA}+\\overrightarrow{OB}+\\overrightarrow{OC}}3$',['$\\overrightarrow{OG}=\\overrightarrow{OA}+\\overrightarrow{OB}+\\overrightarrow{OC}$','$\\overrightarrow{OG}=\\overrightarrow{AB}$','$\\overrightarrow{OG}=\\vec0$'],'Dùng công thức vectơ vị trí của trọng tâm.'],
+    ][v]; return mk(r[0],r[1],r[2],r[4],r[3]);
+  }
+
+  if (tid === 'type-kntt-10-13-02') {
+    const r: any=[
+      ['Trung vị của mẫu $1,2,3,4,5$ bằng','The median of $1,2,3,4,5$ is','3',['2','4','5'],'Mẫu đã sắp tăng; giá trị giữa là 3.'],
+      ['Trung vị của mẫu $2,4,6,8,10,12$ bằng','The median of $2,4,6,8,10,12$ is','7',['6','8','9'],'Lấy trung bình hai giá trị giữa: $(6+8)/2=7$.'],
+      ['Với mẫu đã sắp $1,2,3,4,5,6,7$, tứ phân vị thứ hai $Q_2$ bằng','For sorted data $1,2,3,4,5,6,7$, the second quartile $Q_2$ is','4',['3','5','2'],'$Q_2$ chính là trung vị của mẫu.'],
+      ['Với mẫu đã sắp $1,2,3,4,5,6,7$, tứ phân vị thứ nhất $Q_1$ bằng','For sorted data $1,2,3,4,5,6,7$, the first quartile $Q_1$ is','2',['1','3','4'],'Nửa dưới là $1,2,3$ nên trung vị của nửa dưới bằng 2.'],
+    ][v]; return mk(r[0],r[1],r[2],r[4],r[3]);
+  }
+  if (tid === 'type-kntt-10-14-01') {
+    const r: any=[
+      ['Khoảng biến thiên của mẫu $2,5,7,11$ bằng','The range of $2,5,7,11$ is','9',['6','11','13'],'Lấy giá trị lớn nhất trừ giá trị nhỏ nhất.'],
+      ['Với mẫu $1,2,3,4,5,6,7$, khoảng tứ phân vị $Q_3-Q_1$ bằng','For data $1,2,3,4,5,6,7$, the interquartile range is','4',['2','6','5'],'$Q_1=2,Q_3=6$, nên khoảng tứ phân vị bằng 4.'],
+      ['Khoảng biến thiên của mẫu $10,12,15,20$ bằng','The range of $10,12,15,20$ is','10',['8','5','30'],'$20-10=10$.'],
+      ['Với mẫu $2,4,6,8,10,12,14$, khoảng tứ phân vị bằng','For data $2,4,6,8,10,12,14$, the interquartile range is','8',['4','10','12'],'$Q_1=4,Q_3=12$, nên $Q_3-Q_1=8$.'],
+    ][v]; return mk(r[0],r[1],r[2],r[4],r[3]);
+  }
+  if (tid === 'type-kntt-11-09-02') {
+    const r: any=[
+      ['Cho bảng $$\\begin{array}{c|cccc}\\text{Khoảng lớp}&[0;10)&[10;20)&[20;30)&[30;40)\\\\\\hline\\text{Tần số}&5&5&5&5\\end{array}$$ Trung vị $Q_2$ của mẫu ghép nhóm bằng','Given the grouped table $$\\begin{array}{c|cccc}\\text{Class}&[0,10)&[10,20)&[20,30)&[30,40)\\\\\\hline\\text{Frequency}&5&5&5&5\\end{array}$$ The grouped median $Q_2$ is','20',['10','15','25'],'Nội suy vị trí $n/2=10$ trong lớp trung vị, được $Q_2=20$.'],
+      ['Cho bảng $$\\begin{array}{c|cccc}\\text{Khoảng lớp}&[0;10)&[10;20)&[20;30)&[30;40)\\\\\\hline\\text{Tần số}&4&4&4&4\\end{array}$$ Giá trị $Q_1$ bằng','Given the grouped table $$\\begin{array}{c|cccc}\\text{Class}&[0,10)&[10,20)&[20,30)&[30,40)\\\\\\hline\\text{Frequency}&4&4&4&4\\end{array}$$ Find $Q_1$.','10',['5','15','20'],'Vị trí $n/4=4$ nằm ở cuối lớp đầu; nội suy được $Q_1=10$.'],
+      ['Cho bảng $$\\begin{array}{c|cccc}\\text{Khoảng lớp}&[10;20)&[20;30)&[30;40)&[40;50)\\\\\\hline\\text{Tần số}&6&6&6&6\\end{array}$$ Giá trị $Q_3$ bằng','Given the grouped table $$\\begin{array}{c|cccc}\\text{Class}&[10,20)&[20,30)&[30,40)&[40,50)\\\\\\hline\\text{Frequency}&6&6&6&6\\end{array}$$ Find $Q_3$.','40',['30','35','45'],'Vị trí $3n/4=18$ ở cuối lớp thứ ba; nội suy được $Q_3=40$.'],
+      ['Cho bảng $$\\begin{array}{c|cccc}\\text{Khoảng lớp}&[0;10)&[10;20)&[20;30)&[30;40)\\\\\\hline\\text{Tần số}&2&6&6&2\\end{array}$$ Trung vị bằng','Given the grouped table $$\\begin{array}{c|cccc}\\text{Class}&[0,10)&[10,20)&[20,30)&[30,40)\\\\\\hline\\text{Frequency}&2&6&6&2\\end{array}$$ The median is','20',['15','25','10'],'Vị trí $n/2=8$ ở cuối lớp $[10;20)$, nên trung vị bằng 20.'],
+    ][v]; return mk(r[0],r[1],r[2],r[4],r[3]);
+  }
+  if (tid === 'type-kntt-12-09-02') {
+    const r: any=[
+      ['Cho bảng ghép nhóm $$\\begin{array}{c|cccc}\\text{Khoảng}&[0;20)&[20;40)&[40;60)&[60;80)\\\\\\hline\\text{Tần số}&5&5&5&5\\end{array}$$ Khoảng tứ phân vị bằng','Given $$\\begin{array}{c|cccc}\\text{Class}&[0,20)&[20,40)&[40,60)&[60,80)\\\\\\hline\\text{Frequency}&5&5&5&5\\end{array}$$ The interquartile range is','40',['20','60','80'],'Nội suy được $Q_1=20,Q_3=60$, nên $\\Delta_Q=40$.'],
+      ['Từ bảng $$\\begin{array}{c|cccc}\\text{Khoảng}&[10;20)&[20;30)&[30;40)&[40;50)\\\\\\hline\\text{Tần số}&4&4&4&4\\end{array}$$ giá trị $Q_3-Q_1$ bằng','From $$\\begin{array}{c|cccc}\\text{Class}&[10,20)&[20,30)&[30,40)&[40,50)\\\\\\hline\\text{Frequency}&4&4&4&4\\end{array}$$ find $Q_3-Q_1$.','20',['10','30','40'],'$Q_1=20,Q_3=40$.'],
+      ['Một mẫu có bảng $$\\begin{array}{c|cccc}\\text{Khoảng}&[0;5)&[5;10)&[10;15)&[15;20)\\\\\\hline\\text{Tần số}&8&8&8&8\\end{array}$$ Khoảng tứ phân vị là','A sample has $$\\begin{array}{c|cccc}\\text{Class}&[0,5)&[5,10)&[10,15)&[15,20)\\\\\\hline\\text{Frequency}&8&8&8&8\\end{array}$$ The IQR is','10',['5','15','20'],'$Q_1=5,Q_3=15$, nên IQR bằng 10.'],
+      ['Với bảng $$\\begin{array}{c|cccc}\\text{Khoảng}&[5;15)&[15;25)&[25;35)&[35;45)\\\\\\hline\\text{Tần số}&6&6&6&6\\end{array}$$ khoảng tứ phân vị bằng','For $$\\begin{array}{c|cccc}\\text{Class}&[5,15)&[15,25)&[25,35)&[35,45)\\\\\\hline\\text{Frequency}&6&6&6&6\\end{array}$$ the IQR is','20',['10','30','40'],'$Q_1=15,Q_3=35$, nên IQR bằng 20.'],
+    ][v]; return mk(r[0],r[1],r[2],r[4],r[3]);
+  }
+
+  if (tid === 'type-kntt-11-31-03') {
+    const r: any=[
+      ['Một vật có quãng đường $s(t)=t^2+2t$ (m). Vận tốc tức thời tại $t=3$ s bằng','A particle has position $s(t)=t^2+2t$ m. Its instantaneous velocity at $t=3$ s is','8 m/s',['6 m/s','5 m/s','12 m/s'],'$v(t)=s^\\prime(t)=2t+2$, nên $v(3)=8$.'],
+      ['Nhiệt độ được mô hình bởi $T(t)=t^3+20$. Tốc độ biến thiên tức thời tại $t=2$ bằng','Temperature is modeled by $T(t)=t^3+20$. Its instantaneous rate at $t=2$ is','12',['6','8','24'],'$T^\\prime(t)=3t^2$, nên $T^\\prime(2)=12$.'],
+      ['Chuyển động có $s(t)=3t^2$ (m). Vận tốc tại $t=2$ s là','Motion has $s(t)=3t^2$ m. Velocity at $t=2$ s is','12 m/s',['6 m/s','9 m/s','18 m/s'],'$v=s^\\prime=6t$, do đó $v(2)=12$.'],
+      ['Lượng nước $q(t)=5t+1$ lít. Tốc độ tăng tức thời của lượng nước là','Water amount is $q(t)=5t+1$ liters. Its instantaneous growth rate is','5 lít/đơn vị thời gian',['1','6','5t'],'Đạo hàm $q^\\prime(t)=5$.'],
+    ][v]; return mk(r[0],r[1],r[2],r[4],r[3]);
+  }
+  if (tid === 'type-kntt-12-03-04') {
+    const r: any=[
+      ['Đồ thị $y=\\dfrac{x+1}{x-m}$ có tiệm cận đứng $x=2$. Giá trị $m$ là','The graph $y=\\dfrac{x+1}{x-m}$ has vertical asymptote $x=2$. Find $m$.','2',['-1','1','3'],'Tiệm cận đứng do mẫu bằng 0 tại $x=m$, không triệt tiêu với tử.'],
+      ['Đồ thị $y=\\dfrac{mx+1}{x+1}$ có tiệm cận ngang $y=3$. Giá trị $m$ là','The graph $y=\\dfrac{mx+1}{x+1}$ has horizontal asymptote $y=3$. Find $m$.','3',['1','-1','0'],'Tiệm cận ngang là tỉ số hệ số bậc cao nhất, bằng $m$.'],
+      ['Với $y=\\dfrac{2x+m}{x-4}$, giá trị $m$ để $x=4$ không còn là tiệm cận đứng là','For $y=\\dfrac{2x+m}{x-4}$, find $m$ so that $x=4$ is no longer a vertical asymptote.','-8',['8','-4','4'],'Cần tử cũng bằng 0 tại $x=4$: $8+m=0$.'],
+      ['Đồ thị $y=\\dfrac{x^2+1}{x-m}$ có tiệm cận đứng $x=-1$. Giá trị $m$ là','The graph $y=\\dfrac{x^2+1}{x-m}$ has vertical asymptote $x=-1$. Find $m$.','-1',['1','0','2'],'Tiệm cận đứng xảy ra tại nghiệm mẫu $x=m$; tử tại $-1$ khác 0.'],
+    ][v]; return mk(r[0],r[1],r[2],r[4],r[3]);
+  }
+  if (tid === 'type-kntt-12-05-04') {
+    const r: any=[
+      ['Từ tấm bìa vuông cạnh 20 cm, cắt bốn hình vuông cạnh $x$ ở góc để gấp hộp không nắp. Điều kiện của $x$ là','From a 20-cm square sheet, squares of side $x$ are cut from corners to make an open box. The feasible condition is','$0<x<10$',['$x>10$','$0<x<20$','$x<0$'],'Cạnh đáy còn $20-2x>0$ và $x>0$.'],
+      ['Hình chữ nhật có chu vi 40 m. Nếu một cạnh là $x$, diện tích theo $x$ là','A rectangle has perimeter 40 m. If one side is $x$, its area is','$A(x)=x(20-x)$',['$A(x)=x(40-x)$','$A(x)=20x$','$A(x)=40-2x$'],'Cạnh kia bằng $20-x$, nên $A=x(20-x)$.'],
+      ['Một cơ sở chỉ có thể sản xuất từ 0 đến 10 nghìn sản phẩm mỗi tháng. Biến sản lượng $x$ phải thỏa','A factory can produce from 0 to 10 thousand items monthly. The production variable $x$ must satisfy','$0\\le x\\le10$',['$x>10$','$x<0$','$0<x<100$'],'Miền khả thi phải phản ánh trực tiếp giới hạn công suất.'],
+      ['Một mảnh vườn sát sông dùng 60 m hàng rào cho ba cạnh; gọi $x$ là chiều rộng vuông góc bờ sông. Miền của $x$ là','A riverside garden uses 60 m of fence for three sides; let $x$ be the width perpendicular to the river. The domain of $x$ is','$0<x<30$',['$0<x<60$','$x>30$','$x<0$'],'Cạnh còn lại là $60-2x>0$, đồng thời $x>0$.'],
+    ][v]; return mk(r[0],r[1],r[2],r[4],r[3]);
+  }
+
+  if (tid === 'type-kntt-11-04-04') {
+    const r: any=[
+      ['Nghiệm của phương trình $\\sin x=0$ là','Solutions of $\\sin x=0$ are','$x=k\\pi,\\ k\\in\\mathbb Z$',['$x=\\pi/2+k\\pi$','$x=2k\\pi+\\pi/4$','$x=k$'],'Dùng nghiệm cơ bản của phương trình $\\sin x=0$.'],
+      ['Phương trình $2\\cos x-2=0$ được đưa về phương trình cơ bản và có nghiệm','The equation $2\\cos x-2=0$ reduces to a basic equation with solutions','$x=2k\\pi,\\ k\\in\\mathbb Z$',['$x=k\\pi$','$x=\\pi/2+k\\pi$','$x=\\pi+2k\\pi$'],'Rút gọn thành $\\cos x=1$, rồi dùng nghiệm cơ bản.'],
+      ['Phương trình $\\tan x=1$ có nghiệm','The equation $\\tan x=1$ has solutions','$x=\\dfrac\\pi4+k\\pi$',['$x=k\\pi$','$x=\\dfrac\\pi2+k\\pi$','$x=\\dfrac\\pi4+2k\\pi$'],'$\\tan x=\\tan(\\pi/4)$ nên $x=\\pi/4+k\\pi$.'],
+      ['Nghiệm của $\\cos 2x=0$ là','Solutions of $\\cos 2x=0$ are','$x=\\dfrac\\pi4+k\\dfrac\\pi2$',['$x=k\\pi$','$x=\\dfrac\\pi2+k\\pi$','$x=\\dfrac\\pi4+k\\pi$'],'$2x=\\pi/2+k\\pi$, chia hai vế cho 2.'],
+    ][v]; return mk(r[0],r[1],r[2],r[4],r[3]);
+  }
+  if (tid === 'type-kntt-11-24-02') {
+    const r: any=[
+      ['Cho hình chóp $S.ABC$ với $SA\\perp(ABC)$. Góc giữa $SB$ và mặt phẳng $(ABC)$ là','For pyramid $S.ABC$ with $SA\\perp(ABC)$, the angle between $SB$ and plane $(ABC)$ is','$\\angle SBA$',['$\\angle SAB$','$\\angle SBC$','$\\angle ABC$'],'Hình chiếu của $SB$ lên đáy là $AB$, nên góc cần tìm là góc giữa $SB$ và $AB$.'],
+      ['Trong hình lập phương $ABCD.A^\\prime B^\\prime C^\\prime D^\\prime$, góc giữa $A^\\prime C$ và đáy $(ABCD)$ là','In cube $ABCD.A^\\prime B^\\prime C^\\prime D^\\prime$, the angle between $A^\\prime C$ and the base is','$\\angle A^\\prime CA$',['$\\angle A^\\prime AC$','$\\angle A^\\prime CD$','$\\angle ACD$'],'Hình chiếu của $A^\\prime C$ lên đáy là $AC$.'],
+      ['Trong lăng trụ đứng $ABC.A^\\prime B^\\prime C^\\prime$, góc giữa $AB^\\prime$ và đáy $(ABC)$ là','In right prism $ABC.A^\\prime B^\\prime C^\\prime$, the angle between $AB^\\prime$ and base $(ABC)$ is','$\\angle B^\\prime AB$',['$\\angle AB^\\prime B$','$\\angle B^\\prime AC$','$\\angle ABC$'],'Hình chiếu của $AB^\\prime$ lên đáy là $AB$.'],
+      ['Cho hình chóp $S.ABCD$ với $SA\\perp(ABCD)$. Góc giữa $SC$ và đáy là','For pyramid $S.ABCD$ with $SA\\perp(ABCD)$, the angle between $SC$ and the base is','$\\angle SCA$',['$\\angle SAC$','$\\angle SCD$','$\\angle ACD$'],'Hình chiếu của $SC$ lên đáy là $AC$.'],
+    ][v]; return mk(r[0],r[1],r[2],r[4],r[3]);
+  }
+  if (tid === 'type-kntt-12-16-02') {
+    const r: any=[
+      ['Trong $Oxyz$, đường thẳng có vectơ chỉ phương $\\vec u=(1,0,1)$ và mặt phẳng có pháp tuyến $\\vec n=(0,0,1)$. Góc giữa đường thẳng và mặt phẳng bằng','In $Oxyz$, a line has direction $\\vec u=(1,0,1)$ and a plane has normal $\\vec n=(0,0,1)$. The line-plane angle is','$45^\\circ$',['$0^\\circ$','$30^\\circ$','$90^\\circ$'],'Dùng $\\sin\\varphi=|\\vec u\\cdot\\vec n|/(|\\vec u||\\vec n|)=1/\\sqrt2$.'],
+      ['Đường thẳng có vectơ chỉ phương $(1,0,0)$, mặt phẳng có pháp tuyến $(0,0,1)$. Góc giữa chúng là','A line has direction $(1,0,0)$ and a plane has normal $(0,0,1)$. Their angle is','$0^\\circ$',['$30^\\circ$','$45^\\circ$','$90^\\circ$'],'Tích vô hướng bằng 0 nên đường thẳng song song với mặt phẳng.'],
+      ['Đường thẳng có vectơ chỉ phương $(0,0,1)$ và mặt phẳng có pháp tuyến $(0,0,1)$. Góc giữa đường thẳng và mặt phẳng là','A line and a plane have direction/normal vectors both $(0,0,1)$. The line-plane angle is','$90^\\circ$',['$0^\\circ$','$45^\\circ$','$60^\\circ$'],'Vectơ chỉ phương song song pháp tuyến nên đường thẳng vuông góc mặt phẳng.'],
+      ['Cho $\\vec u=(\\sqrt3,0,1)$ là vectơ chỉ phương và $\\vec n=(0,0,1)$ là pháp tuyến mặt phẳng. Góc giữa đường thẳng và mặt phẳng bằng','Let $\\vec u=(\\sqrt3,0,1)$ be a line direction and $\\vec n=(0,0,1)$ a plane normal. The line-plane angle is','$30^\\circ$',['$45^\\circ$','$60^\\circ$','$90^\\circ$'],'$\\sin\\varphi=1/2$, suy ra $\\varphi=30^\\circ$.'],
+    ][v]; return mk(r[0],r[1],r[2],r[4],r[3]);
+  }
+  if (tid === 'type-kntt-11-30-03') {
+    const r: any=[
+      ['Hai biến cố độc lập có $P(A)=1/2,P(B)=1/3$. Xác suất đúng một trong hai biến cố xảy ra bằng','Independent events have $P(A)=1/2,P(B)=1/3$. Probability exactly one occurs is','$1/2$',['$1/6$','$2/3$','$5/6$'],'Tính $P(A\\cap\\bar B)+P(\\bar A\\cap B)=\\frac12\\frac23+\\frac12\\frac13$.'],
+      ['Tung hai đồng xu cân đối độc lập. Xác suất xuất hiện đúng một mặt ngửa là','Toss two fair independent coins. Probability of exactly one head is','$1/2$',['$1/4$','$3/4$','1'],'Hai kết quả thuận lợi HT, TH trong 4 kết quả đồng khả năng.'],
+      ['Gieo một xúc xắc rồi tung một đồng xu. Xác suất “xúc xắc chẵn và xu ngửa” bằng','Roll a die then toss a coin. Probability of “even die and head” is','$1/4$',['$1/2$','$1/6$','$3/4$'],'Hai phép thử độc lập: $P=3/6\\cdot1/2=1/4$.'],
+      ['Hai biến cố độc lập có $P(A)=0.4,P(B)=0.5$. Xác suất ít nhất một biến cố xảy ra là','Independent events have $P(A)=0.4,P(B)=0.5$. Probability at least one occurs is','0.7',['0.2','0.5','0.9'],'$P(A\\cup B)=P(A)+P(B)-P(A)P(B)=0.7$.'],
+    ][v]; return mk(r[0],r[1],r[2],r[4],r[3]);
+  }
+  if (tid === 'type-kntt-11-28-03') {
+    const r: any=[
+      ['$P(A)=0.5,P(B)=0.4,P(A\\cap B)=0.2$. Hai biến cố $A,B$','Given $P(A)=0.5,P(B)=0.4,P(A\\cap B)=0.2$. Events $A,B$ are','Độc lập',['Xung khắc','Đối nhau','Không thể kết luận'],'Vì $P(A)P(B)=0.2=P(A\\cap B)$.'],
+      ['$P(A)=0.5,P(B)=0.4,P(A\\cap B)=0.3$. Hai biến cố $A,B$','Given $P(A)=0.5,P(B)=0.4,P(A\\cap B)=0.3$. Events $A,B$ are','Không độc lập',['Độc lập','Đối nhau','Chắc chắn'],'$P(A)P(B)=0.2\\ne0.3$.'],
+      ['$P(A)=0.2,P(B)=0.3,P(A\\cap B)=0.06$. Kết luận đúng là','Given $P(A)=0.2,P(B)=0.3,P(A\\cap B)=0.06$. The correct conclusion is','$A,B$ độc lập',['$A,B$ xung khắc','$A=B$','$A,B$ đối nhau'],'$0.2\\cdot0.3=0.06$.'],
+      ['Hai biến cố $A,B$ xung khắc và đều có xác suất dương. Khi đó $A,B$','Events $A,B$ are mutually exclusive and both have positive probability. Then they are','Không độc lập',['Độc lập','Đối nhau','Luôn có xác suất bằng nhau'],'Xung khắc cho $P(A\\cap B)=0$ nhưng $P(A)P(B)>0$.'],
+    ][v]; return mk(r[0],r[1],r[2],r[4],r[3]);
+  }
+  if (tid === 'type-kntt-11-32-04') {
+    const r: any=[
+      ['Tiếp tuyến của đồ thị $y=x^2$ tại điểm có hoành độ $x_0=1$ là','The tangent to $y=x^2$ at $x_0=1$ is','$y=2x-1$',['$y=x+1$','$y=2x+1$','$y=x-1$'],'$f(1)=1,f^\\prime(1)=2$, dùng $y-y_0=f^\\prime(x_0)(x-x_0)$.'],
+      ['Tiếp tuyến của $y=x^3$ tại $x_0=1$ có phương trình','The tangent to $y=x^3$ at $x_0=1$ is','$y=3x-2$',['$y=x$','$y=3x+2$','$y=x-2$'],'$f(1)=1,f^\\prime(1)=3$.'],
+      ['Tiếp tuyến của $y=\\sin x$ tại $x_0=0$ là','The tangent to $y=\\sin x$ at $x_0=0$ is','$y=x$',['$y=0$','$y=-x$','$y=x+1$'],'$f(0)=0,f^\\prime(0)=\\cos0=1$.'],
+      ['Tiếp tuyến của $y=1/x$ tại $x_0=1$ là','The tangent to $y=1/x$ at $x_0=1$ is','$y=-x+2$',['$y=x$','$y=-x$','$y=x+2$'],'$f(1)=1,f^\\prime(1)=-1$.'],
+    ][v]; return mk(r[0],r[1],r[2],r[4],r[3]);
+  }
+  if (tid === 'type-kntt-10-25-03') {
+    const r: any=[
+      ['Hệ số của số hạng không chứa $x$ trong $(x+1/x)^4$ là','The coefficient of the constant term in $(x+1/x)^4$ is','6',['4','8','12'],'Số mũ của $x$ là $4-2k=0$, nên $k=2$ và hệ số là $\\binom42=6$.'],
+      ['Hệ số của số hạng không chứa $x$ trong $(x^2+1/x)^3$ là','The coefficient of the constant term in $(x^2+1/x)^3$ is','3',['1','6','9'],'Số mũ là $6-3k=0$, nên $k=2$ và hệ số $\\binom32=3$.'],
+      ['Hệ số của số hạng không chứa $x$ trong $(2x+1/x)^4$ là','The coefficient of the constant term in $(2x+1/x)^4$ is','24',['6','16','32'],'Với $k=2$, hệ số là $\\binom42 2^{2}=24$.'],
+      ['Hệ số của $x$ trong khai triển $(x+1/x)^5$ là','The coefficient of $x$ in $(x+1/x)^5$ is','10',['5','20','1'],'Số mũ $5-2k=1$ cho $k=2$, hệ số $\\binom52=10$.'],
+    ][v]; return mk(r[0],r[1],r[2],r[4],r[3]);
+  }
+
   return null;
 }
 
@@ -2497,33 +2695,54 @@ function essaySample(type: MathType, family: ExerciseFamily): Sample {
 
 
 function visualAssetsForType(type: MathType, kind: StaticKind, index: number): QuestionAsset[] | undefined {
-  // One diagram per type is enough to make the visual family discoverable without cluttering every question.
-  if (!((kind === 'TN' && index === 0) || kind === 'TL')) return undefined;
-  const id = type.id;
-  const title = normalize(type.title_vi);
-  let diagram: QuestionDiagramKind | undefined;
-  if (/^type-kntt-10-06-/.test(id)) diagram = 'triangle';
-  else if (/^type-kntt-10-(19|20)-/.test(id)) diagram = 'line-2d';
-  else if (/^type-kntt-10-21-/.test(id)) diagram = 'circle';
-  else if (/^type-kntt-10-22-/.test(id)) diagram = 'conic';
-  else if (/^type-kntt-11-03-/.test(id)) diagram = 'trig-graph';
-  else if (/^type-kntt-11-(10|11|12|13|14|22|23|24|25|26|27)-/.test(id)) diagram = 'solid-3d';
-  else if (/^type-kntt-12-(06|07|08)-/.test(id)) diagram = 'vector-3d';
-  else if (/^type-kntt-12-13-/.test(id) || /diện tích hình phẳng|khối tròn xoay/.test(title)) diagram = 'area-graph';
-  else if (/^type-kntt-12-(14|15|16)-/.test(id)) diagram = 'plane-3d';
-  else if (/^type-kntt-12-17-/.test(id) || /mặt cầu/.test(title)) diagram = 'sphere-3d';
-  else if (/mặt phẳng|đường thẳng trong không gian|góc nhị diện/.test(title)) diagram = 'plane-3d';
-  if (!diagram) return undefined;
-  return [{
-    kind: 'diagram',
-    diagram,
-    title_vi: 'Hình minh họa dạng bài (không thay thế dữ kiện đề)',
-    title_en: 'Concept diagram (not a substitute for the stated data)',
-  }];
+  void type;
+  void kind;
+  void index;
+  return undefined;
 }
 
 function makeQuestion(lesson: Lesson, type: MathType, family: ExerciseFamily, kind: StaticKind, index: number, sample: Sample): Question {
   const qType = kind === 'TN' ? 'MCQ' : kind === 'DS' ? 'TRUE_FALSE' : kind === 'TLN' ? 'SHORT' : 'ESSAY';
+
+  // Keep the guaranteed 4-2-2-1 baseline without number-only clones.
+  // The four TN variants use different assessment prompts; the two DS/TLN variants
+  // also differ structurally instead of merely changing constants.
+  const promptVi = kind === 'TN'
+    ? [
+        sample.vi,
+        `Dựa trên dữ kiện của bài toán sau, hãy chọn kết quả đúng: ${sample.vi}`,
+        `Xét yêu cầu sau và chọn phương án thỏa mãn: ${sample.vi}`,
+        `Kiểm tra các phương án cho bài toán sau và chọn kết luận chính xác: ${sample.vi}`,
+      ][index] || sample.vi
+    : kind === 'DS'
+      ? [
+          `Xét tính đúng/sai của các nhận định trong bài toán sau: ${sample.vi}`,
+          `Đánh giá từng khẳng định A–D dựa trên dữ kiện sau: ${sample.vi}`,
+        ][index] || sample.vi
+      : kind === 'TLN'
+        ? [
+            sample.vi,
+            `Không cần chọn phương án; hãy tính và ghi kết quả cuối cùng cho bài toán sau: ${sample.vi}`,
+          ][index] || sample.vi
+        : sample.vi;
+  const promptEn = kind === 'TN'
+    ? [
+        sample.en,
+        `Using the data in the following problem, choose the correct result: ${sample.en}`,
+        `Consider the following task and select the option that satisfies it: ${sample.en}`,
+        `Check the options for the following problem and choose the correct conclusion: ${sample.en}`,
+      ][index] || sample.en
+    : kind === 'DS'
+      ? [
+          `Determine whether each statement is true or false for the following problem: ${sample.en}`,
+          `Evaluate statements A–D using the following data: ${sample.en}`,
+        ][index] || sample.en
+      : kind === 'TLN'
+        ? [
+            sample.en,
+            `Do not choose an option; compute and give the final answer for the following problem: ${sample.en}`,
+          ][index] || sample.en
+        : sample.en;
   const variantNames = kind === 'TN'
     ? ['direct', 'concept', 'reverse', 'error-analysis']
     : kind === 'DS' ? ['reasoning', 'validation']
@@ -2537,8 +2756,8 @@ function makeQuestion(lesson: Lesson, type: MathType, family: ExerciseFamily, ki
     question_type: qType,
     difficulty: index === 0 ? 'EASY' : index >= 2 ? 'MEDIUM' : 'MEDIUM',
     language_level: 2,
-    question_vi: sample.vi,
-    question_en: sample.en,
+    question_vi: promptVi,
+    question_en: promptEn,
     options: sample.options ? opt(sample.options) : undefined,
     solution_vi: sample.solutionVi,
     solution_en: sample.solutionEn,

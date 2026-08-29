@@ -3692,54 +3692,6 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "created_at": "2026-08-27T00:00:00.000Z"
   },
   {
-    "id": "src-pnl-0092f2be2f5def",
-    "topic_id": "top-11-2-2",
-    "type_id": "type-kntt-11-06-02",
-    "question_type": "MCQ",
-    "format_type": "TN",
-    "difficulty": "MEDIUM",
-    "language_level": 2,
-    "question_vi": "Cho cấp số cộng $(u_n)$, biết $u_1=2$ và $u_4=8$. Giá trị của $u_{5}$ bằng",
-    "question_en": "Given an arithmetic progression $(u_n)$ with $u_1=2$ and $u_4=8$, find $u_5$.",
-    "options": [
-      {
-        "option_key": "A",
-        "content_vi": "12.",
-        "content_en": "12.",
-        "is_correct": false
-      },
-      {
-        "option_key": "B",
-        "content_vi": "10.",
-        "content_en": "10.",
-        "is_correct": true
-      },
-      {
-        "option_key": "C",
-        "content_vi": "9.",
-        "content_en": "9.",
-        "is_correct": false
-      },
-      {
-        "option_key": "D",
-        "content_vi": "11.",
-        "content_en": "11.",
-        "is_correct": false
-      }
-    ],
-    "solution_vi": "Từ giả thiết $u_{1}$ = 2 và $u_{4}$ = $u_{1}$ + 3d = 8 ⇒ d = 2\nVậy $u_{5}$ = $u_{1}$ + 4d = 2 + 4.2 = 10.",
-    "solution_en": "",
-    "correct_answer": "B",
-    "math_skill": "Cấp số cộng",
-    "english_skill": "",
-    "status": "PUBLISHED",
-    "created_by": "source-pnl-gv",
-    "variant_tag": "pnl-11-6-tinh tong cac so hang trong mot cap so c-10",
-    "grading_safe": true,
-    "source_name": "Phan Nhật Linh - bản GV",
-    "created_at": "2026-08-27T00:00:00.000Z"
-  },
-  {
     "id": "src-pnl-e9bc1f06df9090",
     "topic_id": "top-11-2-2",
     "type_id": "type-kntt-11-06-02",

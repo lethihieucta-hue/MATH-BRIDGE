@@ -1485,6 +1485,15 @@ export function getQuestionStructureSignature(questionText?: string): string {
     .trim();
 }
 
+export function getQuestionDedupSignature(q: Question): string {
+  const format = q.format_type || q.question_type || 'UNKNOWN';
+  const combined = [
+    q.question_vi || q.question_en || '',
+    ...(q.options || []).map((o) => o.content_vi || o.content_en || ''),
+  ].join(' | ');
+  return `${format}|${getQuestionStructureSignature(combined)}`;
+}
+
 /**
  * Guardrail against obvious cross-chapter contamination. It is intentionally conservative:
  * it only blocks strong signatures from unrelated chapters, not generic terms such as
@@ -1540,7 +1549,7 @@ export function getQuestionsForMathTypeStructured(typeId: string, topicId?: stri
   const dedupe = (items: Question[]) => {
     const seen = new Set<string>();
     return items.filter((q) => {
-      const signature = `${q.format_type || q.question_type}|${q.variant_tag || getQuestionStructureSignature(q.question_vi || q.question_en)}`;
+      const signature = getQuestionDedupSignature(q);
       if (seen.has(signature)) return false;
       seen.add(signature);
       return true;
