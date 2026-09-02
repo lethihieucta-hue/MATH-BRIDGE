@@ -65,23 +65,119 @@ const escapeWordHtml = (value: string): string => (value || '')
   .replace(/"/g, '&quot;')
   .replace(/'/g, '&#39;');
 
-/** Render delimited LaTeX as MathML so Word receives equations instead of literal $...$ text. */
-const renderWordRichText = (value: string, forceMath = false): string => {
+const ommlRun = (value: string): string => {
+  const cleaned = value
+    .replace(/[\u2061\u2062\u2063\u2064]/g, '')
+    .replace(/\u2212/g, '−');
+  return cleaned ? `<m:r><m:t xml:space="preserve">${escapeWordHtml(cleaned)}</m:t></m:r>` : '';
+};
+
+/** Convert KaTeX MathML nodes to Word's native Office Math (OMML/Equation). */
+const mathMlNodeToOmml = (node: Element): string => {
+  const children = Array.from(node.children) as Element[];
+  const child = (index: number) => children[index] ? mathMlNodeToOmml(children[index]) : '';
+  const allChildren = () => children
+    .filter((item) => !['annotation', 'annotation-xml'].includes(item.localName.toLowerCase()))
+    .map(mathMlNodeToOmml)
+    .join('');
+  const tag = node.localName.toLowerCase();
+
+  if (['annotation', 'annotation-xml', 'mphantom'].includes(tag)) return '';
+  if (['math', 'semantics', 'mrow', 'mstyle', 'mpadded', 'menclose'].includes(tag)) return allChildren();
+  if (['mi', 'mn', 'mo', 'mtext', 'ms'].includes(tag)) return ommlRun(node.textContent || '');
+  if (tag === 'mspace') return ommlRun(' ');
+
+  if (tag === 'mfrac') {
+    return `<m:f><m:num>${child(0)}</m:num><m:den>${child(1)}</m:den></m:f>`;
+  }
+  if (tag === 'msqrt') {
+    return `<m:rad><m:radPr><m:degHide m:val="1"/></m:radPr><m:deg/><m:e>${allChildren()}</m:e></m:rad>`;
+  }
+  if (tag === 'mroot') {
+    return `<m:rad><m:radPr/><m:deg>${child(1)}</m:deg><m:e>${child(0)}</m:e></m:rad>`;
+  }
+  if (tag === 'msup') {
+    return `<m:sSup><m:e>${child(0)}</m:e><m:sup>${child(1)}</m:sup></m:sSup>`;
+  }
+  if (tag === 'msub') {
+    return `<m:sSub><m:e>${child(0)}</m:e><m:sub>${child(1)}</m:sub></m:sSub>`;
+  }
+  if (tag === 'msubsup') {
+    return `<m:sSubSup><m:e>${child(0)}</m:e><m:sub>${child(1)}</m:sub><m:sup>${child(2)}</m:sup></m:sSubSup>`;
+  }
+  if (tag === 'mover') {
+    const accent = (children[1]?.textContent || '').trim();
+    if (/^[→←↔^~¯ˉ¨˙]$/.test(accent)) {
+      return `<m:acc><m:accPr><m:chr m:val="${escapeWordHtml(accent)}"/></m:accPr><m:e>${child(0)}</m:e></m:acc>`;
+    }
+    return `<m:limUpp><m:e>${child(0)}</m:e><m:lim>${child(1)}</m:lim></m:limUpp>`;
+  }
+  if (tag === 'munder') {
+    return `<m:limLow><m:e>${child(0)}</m:e><m:lim>${child(1)}</m:lim></m:limLow>`;
+  }
+  if (tag === 'munderover') {
+    return `<m:sSubSup><m:e>${child(0)}</m:e><m:sub>${child(1)}</m:sub><m:sup>${child(2)}</m:sup></m:sSubSup>`;
+  }
+  if (tag === 'mfenced') {
+    const open = node.getAttribute('open') || '(';
+    const close = node.getAttribute('close') || ')';
+    const separators = node.getAttribute('separators') || ',';
+    return `<m:d><m:dPr><m:begChr m:val="${escapeWordHtml(open)}"/><m:endChr m:val="${escapeWordHtml(close)}"/><m:sepChr m:val="${escapeWordHtml(separators.charAt(0))}"/></m:dPr><m:e>${allChildren()}</m:e></m:d>`;
+  }
+  if (tag === 'mtable') {
+    const rows = children.map((row) => {
+      const cells = Array.from(row.children) as Element[];
+      return `<m:mr>${cells.map((cell) => `<m:e>${mathMlNodeToOmml(cell)}</m:e>`).join('')}</m:mr>`;
+    }).join('');
+    return `<m:m><m:mPr/>${rows || '<m:mr><m:e/></m:mr>'}</m:m>`;
+  }
+  if (tag === 'mtr' || tag === 'mlabeledtr') {
+    return children.map((cell) => `<m:e>${mathMlNodeToOmml(cell)}</m:e>`).join('');
+  }
+  if (tag === 'mtd') return allChildren();
+
+  return children.length > 0 ? allChildren() : ommlRun(node.textContent || '');
+};
+
+const latexToOmml = (latex: string): string | null => {
+  try {
+    const cleaned = latex.trim().replace(/(?<!\\)\\\\([a-zA-Z]+)/g, '\\$1');
+    const mathMl = katex.renderToString(cleaned, {
+      displayMode: false,
+      output: 'mathml',
+      throwOnError: true,
+      strict: 'ignore',
+    });
+    const parsed = new DOMParser().parseFromString(mathMl, 'text/html');
+    const math = parsed.querySelector('math');
+    if (!math) return null;
+    return mathMlNodeToOmml(math) || null;
+  } catch {
+    return null;
+  }
+};
+
+const docxTextRun = (value: string, options: { bold?: boolean; italic?: boolean; color?: string; font?: string } = {}): string => {
+  if (!value) return '';
+  const runProperties = [
+    options.bold ? '<w:b/>' : '',
+    options.italic ? '<w:i/>' : '',
+    options.color ? `<w:color w:val="${options.color}"/>` : '',
+    options.font ? `<w:rFonts w:ascii="${escapeWordHtml(options.font)}" w:hAnsi="${escapeWordHtml(options.font)}"/>` : '',
+  ].join('');
+  return `<w:r>${runProperties ? `<w:rPr>${runProperties}</w:rPr>` : ''}<w:t xml:space="preserve">${escapeWordHtml(value)}</w:t></w:r>`;
+};
+
+/** Return WordprocessingML runs with native Office Equation nodes and LaTeX fallback runs. */
+const renderDocxRichText = (value: string, forceMath = false): string => {
   const source = (value || '').normalize('NFC').trim();
   if (!source) return '';
 
-  const renderMath = (latex: string, displayMode: boolean): string => {
-    try {
-      const cleaned = latex.trim().replace(/(?<!\\)\\\\([a-zA-Z]+)/g, '\\$1');
-      return `<span class="word-math ${displayMode ? 'word-math-block' : 'word-math-inline'}">${katex.renderToString(cleaned, {
-        displayMode,
-        output: 'mathml',
-        throwOnError: false,
-        strict: 'ignore',
-      })}</span>`;
-    } catch {
-      return escapeWordHtml(latex);
-    }
+  const renderMath = (latex: string): string => {
+    const omml = latexToOmml(latex);
+    return omml
+      ? `<m:oMath>${omml}</m:oMath>`
+      : docxTextRun(`$${latex}$`, { font: 'Cambria Math', color: '9A3412' });
   };
 
   if (forceMath) {
@@ -90,7 +186,7 @@ const renderWordRichText = (value: string, forceMath = false): string => {
       .replace(/^\$|\$$/g, '')
       .replace(/^\\\[|\\\]$/g, '')
       .replace(/^\\\(|\\\)$/g, '');
-    return renderMath(unwrapped, true);
+    return renderMath(unwrapped);
   }
 
   const parts = source.split(WORD_MATH_REGEX);
@@ -98,10 +194,75 @@ const renderWordRichText = (value: string, forceMath = false): string => {
     if (!part) return '';
     const isDisplay = (part.startsWith('$$') && part.endsWith('$$')) || (part.startsWith('\\[') && part.endsWith('\\]'));
     const isInline = (part.startsWith('$') && part.endsWith('$')) || (part.startsWith('\\(') && part.endsWith('\\)'));
-    if (isDisplay) return renderMath(part.slice(2, -2), true);
-    if (isInline) return renderMath(part.startsWith('$') ? part.slice(1, -1) : part.slice(2, -2), false);
-    return escapeWordHtml(part).replace(/\n/g, '<br/>');
+    if (isDisplay) return renderMath(part.slice(2, -2));
+    if (isInline) return renderMath(part.startsWith('$') ? part.slice(1, -1) : part.slice(2, -2));
+    return part.split('\n').map((line, index) => `${index > 0 ? '<w:r><w:br/></w:r>' : ''}${docxTextRun(line)}`).join('');
   }).join('');
+};
+
+const crc32Table = (() => {
+  const table = new Uint32Array(256);
+  for (let n = 0; n < 256; n += 1) {
+    let value = n;
+    for (let bit = 0; bit < 8; bit += 1) value = (value & 1) ? (0xedb88320 ^ (value >>> 1)) : (value >>> 1);
+    table[n] = value >>> 0;
+  }
+  return table;
+})();
+
+const crc32 = (data: Uint8Array): number => {
+  let value = 0xffffffff;
+  data.forEach((byte) => { value = crc32Table[(value ^ byte) & 0xff] ^ (value >>> 8); });
+  return (value ^ 0xffffffff) >>> 0;
+};
+
+const concatBytes = (chunks: Uint8Array[]): Uint8Array => {
+  const result = new Uint8Array(chunks.reduce((sum, chunk) => sum + chunk.length, 0));
+  let offset = 0;
+  chunks.forEach((chunk) => { result.set(chunk, offset); offset += chunk.length; });
+  return result;
+};
+
+const zipNumber = (value: number, bytes: number): Uint8Array => {
+  const result = new Uint8Array(bytes);
+  for (let index = 0; index < bytes; index += 1) result[index] = (value >>> (index * 8)) & 0xff;
+  return result;
+};
+
+/** Minimal standards-compliant stored ZIP writer used to build a real .docx in the browser. */
+const createStoredZip = (entries: Array<{ name: string; content: string }>): Blob => {
+  const encoder = new TextEncoder();
+  const localParts: Uint8Array[] = [];
+  const centralParts: Uint8Array[] = [];
+  let offset = 0;
+
+  entries.forEach(({ name, content }) => {
+    const nameBytes = encoder.encode(name);
+    const data = encoder.encode(content);
+    const checksum = crc32(data);
+    const local = concatBytes([
+      zipNumber(0x04034b50, 4), zipNumber(20, 2), zipNumber(0x0800, 2), zipNumber(0, 2),
+      zipNumber(0, 2), zipNumber(0x0021, 2), zipNumber(checksum, 4), zipNumber(data.length, 4),
+      zipNumber(data.length, 4), zipNumber(nameBytes.length, 2), zipNumber(0, 2), nameBytes, data,
+    ]);
+    localParts.push(local);
+    centralParts.push(concatBytes([
+      zipNumber(0x02014b50, 4), zipNumber(20, 2), zipNumber(20, 2), zipNumber(0x0800, 2), zipNumber(0, 2),
+      zipNumber(0, 2), zipNumber(0x0021, 2), zipNumber(checksum, 4), zipNumber(data.length, 4),
+      zipNumber(data.length, 4), zipNumber(nameBytes.length, 2), zipNumber(0, 2), zipNumber(0, 2),
+      zipNumber(0, 2), zipNumber(0, 2), zipNumber(0, 4), zipNumber(offset, 4), nameBytes,
+    ]));
+    offset += local.length;
+  });
+
+  const central = concatBytes(centralParts);
+  const end = concatBytes([
+    zipNumber(0x06054b50, 4), zipNumber(0, 2), zipNumber(0, 2), zipNumber(entries.length, 2),
+    zipNumber(entries.length, 2), zipNumber(central.length, 4), zipNumber(offset, 4), zipNumber(0, 2),
+  ]);
+  return new Blob([...localParts, central, end], {
+    type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  });
 };
 
 const withTimeout = async <T,>(promise: Promise<T>, ms: number, label = 'AI'): Promise<T> => {
@@ -998,13 +1159,6 @@ export const BilingualLessonModule: React.FC = () => {
     if (isBilingualExport) return [vi, en].filter(Boolean).join('\n');
     return vi || en || '';
   };
-  const wordLocalized = (vi?: string, en?: string): string => {
-    if (isEnglishExport) return renderWordRichText(en || vi || '');
-    if (isBilingualExport) {
-      return `<div>${renderWordRichText(vi || en || '')}</div>${en ? `<div class="english-line">${renderWordRichText(en)}</div>` : ''}`;
-    }
-    return renderWordRichText(vi || en || '');
-  };
 
   // IMPORTANT: selecting a type never calls Gemini automatically anymore.
   // The static bank guarantees the minimum 4 TN + 2 Đ/S + 2 TLN + 1 TL for every type_id.
@@ -1063,91 +1217,122 @@ export const BilingualLessonModule: React.FC = () => {
     showNotification('📋 Đã sao chép toàn bộ nội dung phiếu học tập sang Clipboard để dán vào Microsoft Word!');
   };
 
-  // Download Word file (.doc)
+  // Download a real .docx with native Office Equation (OMML), editable by Word/MathType.
   const handleDownloadDoc = () => {
-    let docContent = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
-    <head><meta charset='utf-8'><title>${escapeWordHtml(localizedDocumentTitle)}</title>
-    <style>
-      @page { size: 21cm 29.7cm; margin: 1.5cm 1.6cm; }
-      body { font-family: 'Times New Roman', serif; font-size: 12pt; line-height: 1.35; margin: 0; color: #111; }
-      h1, h2, h3 { page-break-after: avoid; }
-      h2 { text-align: center; font-size: 16pt; margin: 6pt 0; }
-      h3 { font-size: 13pt; margin: 14pt 0 7pt; }
-      p { margin: 5pt 0; }
-      .school { text-align: center; font-weight: bold; margin-bottom: 3pt; }
-      .english-line { color: #0f766e; font-style: italic; margin-top: 2pt; }
-      .question, .worked-example, .solution-item { page-break-inside: avoid; margin: 8pt 0; }
-      .option { margin-left: 18pt; }
-      .word-math-inline math { display: inline; vertical-align: middle; }
-      .word-math-block { display: block; text-align: center; margin: 5pt 0; }
-      table.answer-key { width: 100%; border-collapse: collapse; margin-top: 7pt; }
-      table.answer-key td { border: 1px solid #999; padding: 4pt; text-align: center; }
-    </style>
-    </head><body>`;
+    const paragraphs: string[] = [];
+    const paragraph = (
+      runs: string,
+      options: { style?: string; align?: 'center' | 'left'; indent?: number; keepNext?: boolean; keepLines?: boolean; italic?: boolean } = {}
+    ): string => {
+      const properties = [
+        options.style ? `<w:pStyle w:val="${options.style}"/>` : '',
+        options.align ? `<w:jc w:val="${options.align}"/>` : '',
+        options.indent ? `<w:ind w:left="${options.indent}"/>` : '',
+        options.keepNext ? '<w:keepNext/>' : '',
+        options.keepLines ? '<w:keepLines/>' : '',
+        '<w:spacing w:after="100" w:line="300" w:lineRule="auto"/>',
+      ].join('');
+      return `<w:p><w:pPr>${properties}</w:pPr>${runs}</w:p>`;
+    };
+    const addHeading = (value: string) => paragraphs.push(paragraph(docxTextRun(value, { bold: true }), { style: 'Heading1', keepNext: true }));
+    const addLocalized = (
+      vi: string | undefined,
+      en: string | undefined,
+      prefixVi = '',
+      prefixEn = '',
+      options: { indent?: number; keepLines?: boolean } = {}
+    ) => {
+      if (isEnglishExport) {
+        paragraphs.push(paragraph(`${docxTextRun(prefixEn || prefixVi, { bold: !!(prefixEn || prefixVi) })}${renderDocxRichText(en || vi || '')}`, options));
+      } else if (isBilingualExport) {
+        paragraphs.push(paragraph(`${docxTextRun(prefixVi, { bold: !!prefixVi })}${renderDocxRichText(vi || en || '')}`, options));
+        if (en) paragraphs.push(paragraph(`${docxTextRun(prefixEn, { bold: !!prefixEn, italic: true, color: '0F766E' })}${renderDocxRichText(en)}`, options));
+      } else {
+        paragraphs.push(paragraph(`${docxTextRun(prefixVi || prefixEn, { bold: !!(prefixVi || prefixEn) })}${renderDocxRichText(vi || en || '')}`, options));
+      }
+    };
 
-    docContent += `<div class='school'>TRƯỜNG THPT CHÂU THÀNH A</div>`;
-    docContent += `<div class='school'>${isEnglishExport ? 'MATHEMATICS DEPARTMENT' : 'TỔ TOÁN'}</div>`;
-    docContent += `<h2>${escapeWordHtml(localizedDocumentTitle)}</h2>`;
-    if (activeLesson) {
-      docContent += `<h2>${wordLocalized(activeLesson.title_vi, activeLesson.title_en)}</h2>`;
-    }
+    paragraphs.push(paragraph(docxTextRun('TRƯỜNG THPT CHÂU THÀNH A', { bold: true }), { align: 'center', keepNext: true }));
+    paragraphs.push(paragraph(docxTextRun(isEnglishExport ? 'MATHEMATICS DEPARTMENT' : 'TỔ TOÁN', { bold: true }), { align: 'center', keepNext: true }));
+    paragraphs.push(paragraph(docxTextRun(localizedDocumentTitle, { bold: true }), { style: 'Title', align: 'center', keepNext: true }));
+    if (activeLesson) addLocalized(activeLesson.title_vi, activeLesson.title_en, '', '', { keepLines: true });
 
     if (includeTheory && activeLesson) {
-      docContent += `<h3>${isEnglishExport ? 'A. THEORY SUMMARY' : isBilingualExport ? 'A. TÓM TẮT LÝ THUYẾT / THEORY SUMMARY' : 'A. TÓM TẮT LÝ THUYẾT'}</h3>`;
-      docContent += `<div>${wordLocalized(activeLesson.key_concepts_vi, activeLesson.key_concepts_en)}</div>`;
+      addHeading(isEnglishExport ? 'A. THEORY SUMMARY' : isBilingualExport ? 'A. TÓM TẮT LÝ THUYẾT / THEORY SUMMARY' : 'A. TÓM TẮT LÝ THUYẾT');
+      addLocalized(activeLesson.key_concepts_vi, activeLesson.key_concepts_en);
       if (activeLesson.formulas?.length) {
-        docContent += `<p><strong>${isEnglishExport ? 'Key formulas' : isBilingualExport ? 'Công thức trọng tâm / Key formulas' : 'Công thức trọng tâm'}:</strong></p>`;
-        docContent += activeLesson.formulas.map((f) => `<div>${renderWordRichText(f, true)}</div>`).join('');
+        paragraphs.push(paragraph(docxTextRun(isEnglishExport ? 'Key formulas:' : isBilingualExport ? 'Công thức trọng tâm / Key formulas:' : 'Công thức trọng tâm:', { bold: true }), { keepNext: true }));
+        activeLesson.formulas.forEach((formula) => paragraphs.push(paragraph(renderDocxRichText(formula, true), { align: 'center', keepLines: true })));
       }
     }
 
     if (includeWorkedExamples && displayedExamples.length > 0) {
-      docContent += `<h3>${isEnglishExport ? 'B. WORKED EXAMPLES' : isBilingualExport ? 'B. BÀI TẬP MẪU / WORKED EXAMPLES' : 'B. BÀI TẬP MẪU'}</h3>`;
-      displayedExamples.forEach((we, index) => {
-        docContent += `<div class="worked-example"><p><strong>${isEnglishExport ? `Example ${index + 1}` : we.type_code || `Ví dụ ${index + 1}`}:</strong> ${wordLocalized(we.problem_vi, we.problem_en)}</p>`;
-        docContent += `<p><em>${isEnglishExport ? 'Solution' : isBilingualExport ? 'Lời giải / Solution' : 'Lời giải'}:</em> ${wordLocalized(we.solution_vi, we.solution_en)}</p></div>`;
+      addHeading(isEnglishExport ? 'B. WORKED EXAMPLES' : isBilingualExport ? 'B. BÀI TẬP MẪU / WORKED EXAMPLES' : 'B. BÀI TẬP MẪU');
+      displayedExamples.forEach((example, index) => {
+        const viPrefix = `${example.type_code || `Ví dụ ${index + 1}`}: `;
+        const enPrefix = `Example ${index + 1}: `;
+        addLocalized(example.problem_vi, example.problem_en, viPrefix, enPrefix, { keepLines: true });
+        addLocalized(example.solution_vi, example.solution_en, 'Lời giải: ', 'Solution: ', { indent: 360, keepLines: true });
       });
     }
 
-    docContent += `<h3>${isEnglishExport ? 'C. PRACTICE EXERCISES' : isBilingualExport ? 'C. BÀI TẬP TỰ LUYỆN / PRACTICE EXERCISES' : 'C. BÀI TẬP TỰ LUYỆN'}</h3>`;
-    displayedQuestions.forEach((q, idx) => {
-      docContent += `<div class="question"><p><strong>${isEnglishExport ? 'Question' : 'Câu'} ${idx + 1}:</strong> ${wordLocalized(q.question_vi, q.question_en)}</p>`;
-      if (q.options) {
-        q.options.forEach((opt) => {
-          docContent += `<div class="option"><strong>${escapeWordHtml(opt.option_key)}.</strong> ${wordLocalized(opt.content_vi, opt.content_en)}</div>`;
-        });
+    addHeading(isEnglishExport ? 'C. PRACTICE EXERCISES' : isBilingualExport ? 'C. BÀI TẬP TỰ LUYỆN / PRACTICE EXERCISES' : 'C. BÀI TẬP TỰ LUYỆN');
+    displayedQuestions.forEach((question, index) => {
+      addLocalized(question.question_vi, question.question_en, `Câu ${index + 1}: `, `Question ${index + 1}: `, { keepLines: true });
+      question.options?.forEach((option) => {
+        addLocalized(option.content_vi, option.content_en, `${option.option_key}. `, `${option.option_key}. `, { indent: 420, keepLines: true });
+      });
+      if (question.format_type === 'TLN' || question.question_type === 'SHORT' || question.question_type === 'NUMERIC') {
+        paragraphs.push(paragraph(docxTextRun(`${isEnglishExport ? 'Answer' : 'Đáp số'}: [ ____________________ ]`), { indent: 420 }));
       }
-      docContent += `</div>`;
     });
 
     if (includeAnswerKey && displayedQuestions.length > 0) {
-      docContent += `<h3>${isEnglishExport ? 'D. ANSWER KEY' : isBilingualExport ? 'D. BẢNG ĐÁP SỐ / ANSWER KEY' : 'D. BẢNG ĐÁP SỐ'}</h3><table class="answer-key"><tr>`;
-      displayedQuestions.forEach((q, idx) => {
-        docContent += `<td><strong>${idx + 1}</strong><br/>${renderWordRichText(q.correct_answer || '—')}</td>`;
-        if ((idx + 1) % 6 === 0 && idx + 1 < displayedQuestions.length) docContent += `</tr><tr>`;
+      addHeading(isEnglishExport ? 'D. ANSWER KEY' : isBilingualExport ? 'D. BẢNG ĐÁP SỐ / ANSWER KEY' : 'D. BẢNG ĐÁP SỐ');
+      displayedQuestions.forEach((question, index) => {
+        paragraphs.push(paragraph(`${docxTextRun(`${index + 1}. `, { bold: true })}${renderDocxRichText(question.correct_answer || '—')}`));
       });
-      docContent += `</tr></table>`;
     }
 
     if (includeDetailedSolutions && displayedQuestions.length > 0) {
-      docContent += `<h3>${isEnglishExport ? 'E. DETAILED SOLUTIONS' : isBilingualExport ? 'E. LỜI GIẢI CHI TIẾT / DETAILED SOLUTIONS' : 'E. LỜI GIẢI CHI TIẾT'}</h3>`;
-      displayedQuestions.forEach((q, idx) => {
-        docContent += `<div class="solution-item"><p><strong>${isEnglishExport ? 'Question' : 'Câu'} ${idx + 1}:</strong> ${wordLocalized(q.solution_vi, q.solution_en)}</p></div>`;
+      addHeading(isEnglishExport ? 'E. DETAILED SOLUTIONS' : isBilingualExport ? 'E. LỜI GIẢI CHI TIẾT / DETAILED SOLUTIONS' : 'E. LỜI GIẢI CHI TIẾT');
+      displayedQuestions.forEach((question, index) => {
+        addLocalized(question.solution_vi, question.solution_en, `Câu ${index + 1}: `, `Question ${index + 1}: `, { keepLines: true });
       });
     }
 
-    docContent += `</body></html>`;
-
-    const blob = new Blob(['\ufeff' + docContent], { type: 'application/msword' });
+    const now = new Date().toISOString();
+    const documentXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+      <w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math">
+        <w:body>${paragraphs.join('')}
+          <w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="850" w:right="907" w:bottom="850" w:left="907" w:header="425" w:footer="425" w:gutter="0"/></w:sectPr>
+        </w:body>
+      </w:document>`;
+    const stylesXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+      <w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+        <w:docDefaults><w:rPrDefault><w:rPr><w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman"/><w:sz w:val="24"/><w:szCs w:val="24"/></w:rPr></w:rPrDefault></w:docDefaults>
+        <w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/><w:qFormat/></w:style>
+        <w:style w:type="paragraph" w:styleId="Title"><w:name w:val="Title"/><w:basedOn w:val="Normal"/><w:next w:val="Normal"/><w:qFormat/><w:rPr><w:b/><w:sz w:val="34"/></w:rPr></w:style>
+        <w:style w:type="paragraph" w:styleId="Heading1"><w:name w:val="heading 1"/><w:basedOn w:val="Normal"/><w:next w:val="Normal"/><w:qFormat/><w:pPr><w:keepNext/><w:spacing w:before="240" w:after="120"/></w:pPr><w:rPr><w:b/><w:sz w:val="28"/></w:rPr></w:style>
+      </w:styles>`;
+    const blob = createStoredZip([
+      { name: '[Content_Types].xml', content: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/><Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/><Override PartName="/docProps/core.xml" ContentType="application/vnd.openxmlformats-package.core-properties+xml"/><Override PartName="/docProps/app.xml" ContentType="application/vnd.openxmlformats-officedocument.extended-properties+xml"/></Types>` },
+      { name: '_rels/.rels', content: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties" Target="docProps/core.xml"/><Relationship Id="rId3" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/extended-properties" Target="docProps/app.xml"/></Relationships>` },
+      { name: 'word/document.xml', content: documentXml },
+      { name: 'word/styles.xml', content: stylesXml },
+      { name: 'word/_rels/document.xml.rels', content: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rIdStyles" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>` },
+      { name: 'docProps/core.xml', content: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><dc:title>${escapeWordHtml(localizedDocumentTitle)}</dc:title><dc:creator>AI Math Bridge Teacher</dc:creator><dcterms:created xsi:type="dcterms:W3CDTF">${now}</dcterms:created><dcterms:modified xsi:type="dcterms:W3CDTF">${now}</dcterms:modified></cp:coreProperties>` },
+      { name: 'docProps/app.xml', content: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Properties xmlns="http://schemas.openxmlformats.org/officeDocument/2006/extended-properties" xmlns:vt="http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes"><Application>AI Math Bridge Teacher</Application></Properties>` },
+    ]);
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `${localizedDocumentTitle.replace(/\s+/g, '_')}.doc`;
+    a.download = `${localizedDocumentTitle.replace(/\s+/g, '_')}.docx`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     window.setTimeout(() => URL.revokeObjectURL(url), 1000);
-    showNotification('📥 Đã tải file Microsoft Word (.doc) về máy tính!');
+    showNotification('📥 Đã tải file Word (.docx) với công thức Office Equation có thể chỉnh sửa!');
   };
 
 
