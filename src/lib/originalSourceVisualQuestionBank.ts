@@ -558,7 +558,7 @@ export const ORIGINAL_SOURCE_VISUAL_QUESTION_BANK: Question[] = [
         "is_correct": false
       }
     ],
-    "solution_vi": "Từ đồ thị: tiệm cận ngang $y=-1$ nên $a/c=-1$; tiệm cận đứng $x=1$ nên $c=1$, do đó $a=-1$. Đồ thị cắt $Ox$ tại $x=2$ nên $2a+b=0$, suy ra $b=2$. Vậy $S=2$.",
+    "solution_vi": "Từ đồ thị: tiệm cận ngang $y=-1$ nên $\\dfrac{a}{c}=-1$; tiệm cận đứng $x=1$ nên $c=1$, do đó $a=-1$. Đồ thị cắt $Ox$ tại $x=2$ nên $2a+b=0$, suy ra $b=2$. Vậy $S=2$.",
     "solution_en": "From the graph, the horizontal asymptote is $y=-1$ and the vertical asymptote is $x=1$, so $c=1,a=-1$. The x-intercept is $2$, hence $2a+b=0$ and $b=2$. Thus $S=2$.",
     "correct_answer": "C",
     "assets": [
@@ -2667,7 +2667,7 @@ export const ORIGINAL_SOURCE_VISUAL_QUESTION_BANK: Question[] = [
     }
   ],
   "solution_vi": "Hệ số góc là $a=\\dfrac{5-1{,}5}{7}=0{,}5$ và tung độ gốc là $1{,}5$, nên $y=0{,}5x+1{,}5$.",
-  "solution_en": "The slope is $a=(5-1.5)/7=0.5$ and the intercept is $1.5$, hence $y=0.5x+1.5$.",
+  "solution_en": "The slope is $a=\\dfrac{5-1.5}{7}=0.5$ and the intercept is $1.5$, hence $y=0.5x+1.5$.",
   "correct_answer": "A",
   "assets": [
     {
@@ -2699,7 +2699,7 @@ export const ORIGINAL_SOURCE_VISUAL_QUESTION_BANK: Question[] = [
   "difficulty": "MEDIUM",
   "language_level": 2,
   "question_vi": "Đồ thị trong hình đi qua $O$, đạt cực đại tại $x=\\dfrac{\\pi}{2}$ và cực tiểu tại $x=-\\dfrac{\\pi}{2}$. Đó là đồ thị của hàm số nào?",
-  "question_en": "The graph passes through the origin, has a maximum at $x=\\pi/2$ and a minimum at $x=-\\pi/2$. Which function is it?",
+  "question_en": "The graph passes through the origin, has a maximum at $x=\\dfrac{\\pi}{2}$ and a minimum at $x=-\\dfrac{\\pi}{2}$. Which function is it?",
   "options": [
     {
       "option_key": "A",
@@ -2726,8 +2726,8 @@ export const ORIGINAL_SOURCE_VISUAL_QUESTION_BANK: Question[] = [
       "is_correct": false
     }
   ],
-  "solution_vi": "Các điểm đặc trưng $\\sin0=0$, $\\sin(\\pi/2)=1$, $\\sin(-\\pi/2)=-1$ khớp với hình.",
-  "solution_en": "The key values $\\sin0=0$, $\\sin(\\pi/2)=1$, and $\\sin(-\\pi/2)=-1$ match the graph.",
+  "solution_vi": "Các điểm đặc trưng $\\sin0=0$, $\\sin(\\dfrac{\\pi}{2})=1$, $\\sin(-\\dfrac{\\pi}{2})=-1$ khớp với hình.",
+  "solution_en": "The key values $\\sin0=0$, $\\sin(\\dfrac{\\pi}{2})=1$, and $\\sin(-\\dfrac{\\pi}{2})=-1$ match the graph.",
   "correct_answer": "A",
   "assets": [
     {
@@ -3285,9 +3285,9 @@ export const ORIGINAL_SOURCE_VISUAL_QUESTION_BANK: Question[] = [
   "difficulty": "HARD",
   "language_level": 2,
   "question_vi": "Tấm tôn được cắt theo đường hình sin như hình; khi chọn đơn vị trên trục là 10 cm, đường cắt có phương trình $y=\\sin x+2$ trên $0\\le x\\le\\frac{55\\pi}{30}$. Quay miếng tôn lớn quanh trục $AD$. Tính thể tích khối tròn xoay (lít), làm tròn đến hàng phần mười.",
-  "question_en": "A metal sheet is cut along the sine curve shown. With 10 cm as one coordinate unit, the cut is $y=\\sin x+2$ for $0\\le x\\le55\\pi/30$. Rotating the larger piece about $AD$, find the volume in liters to one decimal place.",
-  "solution_vi": "Theo phương pháp đĩa, sau khi quy đổi đơn vị, $V=\\pi\\int_0^{55\\pi/30}(\\sin x+2)^2\\,dx\\approx83.8$ lít.",
-  "solution_en": "Using the disk method and converting units, $V=\\pi\\int_0^{55\\pi/30}(\\sin x+2)^2\\,dx\\approx83.8$ L.",
+  "question_en": "A metal sheet is cut along the sine curve shown. With 10 cm as one coordinate unit, the cut is $y=\\sin x+2$ for $0\\le x\\le\\dfrac{55\\pi}{30}$. Rotating the larger piece about $AD$, find the volume in liters to one decimal place.",
+  "solution_vi": "Theo phương pháp đĩa, sau khi quy đổi đơn vị, $V=\\pi\\int_0^{\\dfrac{55\\pi}{30}}(\\sin x+2)^2\\,dx\\approx83.8$ lít.",
+  "solution_en": "Using the disk method and converting units, $V=\\pi\\int_0^{\\dfrac{55\\pi}{30}}(\\sin x+2)^2\\,dx\\approx83.8$ L.",
   "correct_answer": "83.8",
   "assets": [{"kind":"image","src":"/question-assets/source/pnl-12-c4-extra/sine-sheet.png","alt_vi":"Tấm tôn cắt theo đường hình sin.","alt_en":"Metal sheet cut along a sine curve.","title_vi":"","title_en":"","source_name":"Phan Nhật Linh - Toán 12 KNTT Chương 4","source_sha256":"2e1ed8ba10d6a80b1a4ec440a593f39aee49b890395450b5eb3b063afcd6b71a"}],
   "math_skill": "Ứng dụng tích phân tính thể tích khối tròn xoay thực tế",
@@ -3387,7 +3387,7 @@ export const ORIGINAL_SOURCE_VISUAL_QUESTION_BANK: Question[] = [
   "question_vi": "Để đo hiệu suất tim, bơm $A=8$ mg chất chỉ thị màu vào tâm nhĩ phải. Nếu nồng độ tại thời điểm $t$ là $c(t)=\\frac14t(12-t)$ mg/L với $0\\le t\\le12$, hiệu suất được tính bởi $F=\\dfrac{A}{\\int_0^{12}c(t)\\,dt}$ (L/s). Tính $F$, làm tròn đến hai chữ số thập phân.",
   "question_en": "To estimate cardiac output, $A=8$ mg of indicator is injected. If $c(t)=\\frac14t(12-t)$ mg/L for $0\\le t\\le12$ and $F=\\dfrac{A}{\\int_0^{12}c(t)\\,dt}$ L/s, find $F$ to two decimal places.",
   "solution_vi": "$\\int_0^{12}\\frac14t(12-t)\\,dt=72$. Vì thế $F=\\frac8{72}=\\frac19\\approx0.11$ L/s.",
-  "solution_en": "$\\int_0^{12}\\frac14t(12-t)\\,dt=72$, so $F=8/72=1/9\\approx0.11$ L/s.",
+  "solution_en": "$\\int_0^{12}\\frac14t(12-t)\\,dt=72$, so $F=\\dfrac{8}{72}=\\dfrac{1}{9}\\approx0.11$ L/s.",
   "correct_answer": "0.11",
   "assets": [{"kind":"image","src":"/question-assets/source/pnl-12-c4-extra2/heart-output.jpeg","alt_vi":"Sơ đồ tim và hệ mạch liên quan bài toán hiệu suất tim.","alt_en":"Heart diagram for the cardiac-output application.","title_vi":"","title_en":"","source_name":"Phan Nhật Linh - Toán 12 KNTT Chương 4","source_sha256":"7f28c6a5fc845738bfc5e309d3a2628497cf3db8ac8c748cc68ea35dc99d2926"}],
   "math_skill": "Ứng dụng tích phân trong mô hình hiệu suất tim",
@@ -3419,7 +3419,7 @@ export const ORIGINAL_SOURCE_VISUAL_QUESTION_BANK: Question[] = [
     {"option_key":"D","content_vi":"$1800\\text{ cm}^2$","content_en":"$1800\\text{ cm}^2$","is_correct":false}
   ],
   "solution_vi": "Chọn một đơn vị tọa độ bằng 10 cm. Trong góc phần tư thứ nhất, một cánh hoa được giới hạn bởi $y=\\sqrt{3x}$ và $y=\\frac{x^2}{3}$ trên $[0,3]$. Do đó $S_1=\\int_0^3\\left(\\sqrt{3x}-\\frac{x^2}{3}\\right)dx=3\\text{ dm}^2=300\\text{ cm}^2$. Có bốn cánh nên $S=1200\\text{ cm}^2$.",
-  "solution_en": "Take one coordinate unit as 10 cm. In the first quadrant, one petal lies between $y=\\sqrt{3x}$ and $y=x^2/3$ for $0\\le x\\le3$. Thus one petal has area $3\\text{ dm}^2=300\\text{ cm}^2$, so the four petals total $1200\\text{ cm}^2$.",
+  "solution_en": "Take one coordinate unit as 10 cm. In the first quadrant, one petal lies between $y=\\sqrt{3x}$ and $y=\\dfrac{x^2}{3}$ for $0\\le x\\le3$. Thus one petal has area $3\\text{ dm}^2=300\\text{ cm}^2$, so the four petals total $1200\\text{ cm}^2$.",
   "correct_answer": "A",
   "assets": [{"kind":"image","src":"/question-assets/source/pnl-12-c4-extra3/petal-tile.png","alt_vi":"Bốn cánh hoa parabol trong viên gạch hình vuông.","alt_en":"Four parabolic petals inside a square tile.","title_vi":"","title_en":"","source_name":"Phan Nhật Linh - Toán 12 KNTT Chương 4 (bản GV)","source_sha256":"824eea359f561d19ca0f90adee2ea51467417c4ce09d8d610b717088f67c2d33"}],
   "math_skill": "Ứng dụng tích phân tính diện tích hình phẳng thực tế",

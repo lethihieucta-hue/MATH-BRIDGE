@@ -1,4 +1,5 @@
 import katex from 'katex';
+import { normalizeLatexFractions, normalizeMathFractionsInText } from './mathFormatting';
 
 const MATH_TOKEN_REGEX = /(\$\$[\s\S]*?\$\$|\$[^$\n]+?\$|\\\[[\s\S]*?\\\]|\\\([\s\S]*?\\\))/g;
 
@@ -60,7 +61,7 @@ const mathMlNodeToOmml = (node: Element): string => {
 
 const latexToOmml = (latex: string): string | null => {
   try {
-    const cleaned = latex.trim().replace(/(?<!\\)\\\\([a-zA-Z]+)/g, '\\$1');
+    const cleaned = normalizeLatexFractions(latex).trim().replace(/(?<!\\)\\\\([a-zA-Z]+)/g, '\\$1');
     const mathMl = katex.renderToString(cleaned, { displayMode: false, output: 'mathml', throwOnError: true, strict: 'ignore' });
     const parsed = new DOMParser().parseFromString(mathMl, 'text/html');
     const math = parsed.querySelector('math');
@@ -86,7 +87,7 @@ export const wordTextRun = (
 
 /** MathType-ready Word content: native Office Equation with the original LaTeX retained on failure. */
 export const wordMathRichText = (value: string, forceMath = false): string => {
-  const source = (value || '').normalize('NFC');
+  const source = normalizeMathFractionsInText(value || '').normalize('NFC');
   if (!source.trim()) return '';
   const equation = (latex: string) => {
     const omml = latexToOmml(latex);

@@ -17,6 +17,7 @@ import {
 import { getAllowedVariantTags } from '../../lib/questionBlueprintData';
 import { printElementAsA4 } from '../../lib/officeExport';
 import { isCleanEnglishText, isQuestionEnglishReady } from '../../lib/englishQuality';
+import { normalizeLatexFractions, normalizeMathFractionsInText } from '../../lib/mathFormatting';
 import {
   BookOpen,
   Search,
@@ -143,7 +144,7 @@ const mathMlNodeToOmml = (node: Element): string => {
 
 const latexToOmml = (latex: string): string | null => {
   try {
-    const cleaned = latex.trim().replace(/(?<!\\)\\\\([a-zA-Z]+)/g, '\\$1');
+    const cleaned = normalizeLatexFractions(latex).trim().replace(/(?<!\\)\\\\([a-zA-Z]+)/g, '\\$1');
     const mathMl = katex.renderToString(cleaned, {
       displayMode: false,
       output: 'mathml',
@@ -172,7 +173,7 @@ const docxTextRun = (value: string, options: { bold?: boolean; italic?: boolean;
 
 /** Return WordprocessingML runs with native Office Equation nodes and LaTeX fallback runs. */
 const renderDocxRichText = (value: string, forceMath = false): string => {
-  const source = (value || '').normalize('NFC');
+  const source = normalizeMathFractionsInText(value || '').normalize('NFC');
   if (!source.trim()) return '';
 
   const renderMath = (latex: string): string => {

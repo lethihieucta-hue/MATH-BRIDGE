@@ -86,26 +86,26 @@ function semanticExactTypeSample(type: MathType, variant: number): Sample | null
   // ---- Grade 10: trigonometric values ----
   if (tid === 'type-kntt-10-05-01') {
     const r=[
-      ['$\\sin30^\\circ$ bằng','$\\sin30^\\circ$ equals','$1/2$',['$\\sqrt3/2$','1','0']],
-      ['$\\cos120^\\circ$ bằng','$\\cos120^\\circ$ equals','$-1/2$',['$1/2$','$-\\sqrt3/2$','$\\sqrt3/2$']],
+      ['$\\sin30^\\circ$ bằng','$\\sin30^\\circ$ equals','$\\dfrac{1}{2}$',['$\\dfrac{\\sqrt3}{2}$','1','0']],
+      ['$\\cos120^\\circ$ bằng','$\\cos120^\\circ$ equals','$-\\dfrac{1}{2}$',['$\\dfrac{1}{2}$','$-\\dfrac{\\sqrt3}{2}$','$\\dfrac{\\sqrt3}{2}$']],
       ['Dấu của $\\sin150^\\circ$ là','The sign of $\\sin150^\\circ$ is','Dương',['Âm','Bằng 0','Không xác định']],
       ['$\\tan135^\\circ$ bằng','$\\tan135^\\circ$ equals','-1',['1','$\\sqrt3$','0']],
     ][v]; return mk(r[0] as string,r[1] as string,r[2] as string,'Dùng giá trị lượng giác của góc đặc biệt và dấu theo góc phần tư.',r[3] as string[]);
   }
   if (tid === 'type-kntt-10-05-02') {
     const r=[
-      ['Nếu $\\sin\\alpha=3/5$ và $\\alpha$ nhọn thì $\\cos\\alpha$ bằng','If $\\sin\\alpha=3/5$ and $\\alpha$ is acute, $\\cos\\alpha$ is','$4/5$',['$3/5$','$-4/5$','$5/4$']],
+      ['Nếu $\\sin\\alpha=\\dfrac{3}{5}$ và $\\alpha$ nhọn thì $\\cos\\alpha$ bằng','If $\\sin\\alpha=\\dfrac{3}{5}$ and $\\alpha$ is acute, $\\cos\\alpha$ is','$\\dfrac{4}{5}$',['$\\dfrac{3}{5}$','$-\\dfrac{4}{5}$','$\\dfrac{5}{4}$']],
       ['Biểu thức $\\sin^2\\alpha+\\cos^2\\alpha$ bằng','$\\sin^2\\alpha+\\cos^2\\alpha$ equals','1',['0','2','$\\sin\\alpha$']],
-      ['Nếu $\\cos\\alpha\\ne0$ thì $\\tan\\alpha$ bằng','If $\\cos\\alpha\\ne0$, $\\tan\\alpha$ equals','$\\dfrac{\\sin\\alpha}{\\cos\\alpha}$',['$\\dfrac{\\cos\\alpha}{\\sin\\alpha}$','$\\sin\\alpha\\cos\\alpha$','$1/\\cos\\alpha$']],
+      ['Nếu $\\cos\\alpha\\ne0$ thì $\\tan\\alpha$ bằng','If $\\cos\\alpha\\ne0$, $\\tan\\alpha$ equals','$\\dfrac{\\sin\\alpha}{\\cos\\alpha}$',['$\\dfrac{\\cos\\alpha}{\\sin\\alpha}$','$\\sin\\alpha\\cos\\alpha$','$\\dfrac{1}{\\cos\\alpha}$']],
       ['Với $\\sin\\alpha\\ne0$, $\\tan\\alpha\\cdot\\cot\\alpha$ bằng','If $\\sin\\alpha\\ne0$, $\\tan\\alpha\\cdot\\cot\\alpha$ equals','1',['0','$\\sin\\alpha$','$\\cos\\alpha$']],
     ][v]; return mk(r[0] as string,r[1] as string,r[2] as string,'Vận dụng các hệ thức lượng giác cơ bản.',r[3] as string[]);
   }
   if (tid === 'type-kntt-10-05-03') {
     const r=[
-      ['Cho $\\sin\\alpha=3/5$, $\\alpha$ nhọn. Giá trị $2\\sin\\alpha+\\cos\\alpha$ bằng','Given $\\sin\\alpha=3/5$ and acute $\\alpha$, find $2\\sin\\alpha+\\cos\\alpha$.','2',['$7/5$','$6/5$','$8/5$']],
-      ['Cho $\\cos\\alpha=1/2$, $\\alpha$ nhọn. $1+\\tan^2\\alpha$ bằng','Given $\\cos\\alpha=1/2$ and acute $\\alpha$, find $1+\\tan^2\\alpha$.','4',['2','3','$1/4$']],
-      ['Cho $\\tan\\alpha=1$. Giá trị $\\dfrac{1-\\tan^2\\alpha}{1+\\tan^2\\alpha}$ bằng','Given $\\tan\\alpha=1$, evaluate $\\dfrac{1-\\tan^2\\alpha}{1+\\tan^2\\alpha}$.','0',['1','-1','$1/2$']],
-      ['Cho $\\sin\\alpha=4/5$, $\\alpha$ nhọn. $\\sin\\alpha\\cos\\alpha$ bằng','Given $\\sin\\alpha=4/5$ and acute $\\alpha$, find $\\sin\\alpha\\cos\\alpha$.','$12/25$',['$16/25$','$3/5$','$7/25$']],
+      ['Cho $\\sin\\alpha=\\dfrac{3}{5}$, $\\alpha$ nhọn. Giá trị $2\\sin\\alpha+\\cos\\alpha$ bằng','Given $\\sin\\alpha=\\dfrac{3}{5}$ and acute $\\alpha$, find $2\\sin\\alpha+\\cos\\alpha$.','2',['$\\dfrac{7}{5}$','$\\dfrac{6}{5}$','$\\dfrac{8}{5}$']],
+      ['Cho $\\cos\\alpha=\\dfrac{1}{2}$, $\\alpha$ nhọn. $1+\\tan^2\\alpha$ bằng','Given $\\cos\\alpha=\\dfrac{1}{2}$ and acute $\\alpha$, find $1+\\tan^2\\alpha$.','4',['2','3','$\\dfrac{1}{4}$']],
+      ['Cho $\\tan\\alpha=1$. Giá trị $\\dfrac{1-\\tan^2\\alpha}{1+\\tan^2\\alpha}$ bằng','Given $\\tan\\alpha=1$, evaluate $\\dfrac{1-\\tan^2\\alpha}{1+\\tan^2\\alpha}$.','0',['1','-1','$\\dfrac{1}{2}$']],
+      ['Cho $\\sin\\alpha=\\dfrac{4}{5}$, $\\alpha$ nhọn. $\\sin\\alpha\\cos\\alpha$ bằng','Given $\\sin\\alpha=\\dfrac{4}{5}$ and acute $\\alpha$, find $\\sin\\alpha\\cos\\alpha$.','$\\dfrac{12}{25}$',['$\\dfrac{16}{25}$','$\\dfrac{3}{5}$','$\\dfrac{7}{25}$']],
     ][v]; return mk(r[0] as string,r[1] as string,r[2] as string,'Suy ra các giá trị còn lại rồi thay vào biểu thức.',r[3] as string[]);
   }
 
@@ -171,7 +171,7 @@ function semanticExactTypeSample(type: MathType, variant: number): Sample | null
   }
   if (tid === 'type-kntt-10-20-03') {
     const r=[
-      ['$M(0,0)$','$3x+4y-10=0$','2',['10','$5/2$','4']],
+      ['$M(0,0)$','$3x+4y-10=0$','2',['10','$\\dfrac{5}{2}$','4']],
       ['$M(1,2)$','$x-2=0$','1',['2','3','0']],
       ['$M(2,0)$','$y-3=0$','3',['1','2','5']],
       ['$M(1,1)$','$x+y-4=0$','$\\sqrt2$',['2','$2\\sqrt2$','1']],
@@ -220,23 +220,23 @@ function semanticExactTypeSample(type: MathType, variant: number): Sample | null
     const r=[['Gieo xúc xắc, $A=$ “ra số chẵn”. Biến cố đối $\\overline A$ là','Roll a die, $A=$ “even”. The complement is','Ra số lẻ',['Ra số chẵn','Ra số lớn hơn 3','Ra số 6']],['Tung đồng xu, $A=$ “ngửa”. $\\overline A$ là','Flip a coin, $A=$ “heads”. The complement is','Sấp',['Ngửa','Không xảy ra','Cả ngửa và sấp']],['Rút thẻ 1–5, $A=\\{1,2\\}$. Biến cố đối là','Draw from cards 1–5, $A=\\{1,2\\}$. Complement is','$\\{3,4,5\\}$',['$\\{1,2\\}$','$\\{2,3\\}$','$\\{1,2,3,4,5\\}$']],['Gieo xúc xắc, biến cố “không ra 6” là đối của','On a die, “not 6” is the complement of','Ra 6',['Ra số chẵn','Ra số lẻ','Ra số nhỏ hơn 6']]][v]; return mk(r[0] as string,r[1] as string,r[2] as string,'Biến cố đối gồm tất cả kết quả trong $\\Omega$ không thuộc $A$.',r[3] as string[]);
   }
   if (tid === 'type-kntt-10-26-03') {
-    const r=[['Gieo xúc xắc cân đối. Xác suất ra số chẵn là','Roll a fair die. Probability of an even number is','$1/2$',['$1/3$','$2/3$','$1/6$']],['Rút một thẻ từ 1 đến 5. Xác suất rút số lớn hơn 3 là','Draw one card from 1 to 5. Probability it is greater than 3:','$2/5$',['$1/5$','$3/5$','$1/2$']],['Tung đồng xu cân đối. Xác suất ngửa là','Flip a fair coin. Probability of heads:','$1/2$',['1','0','$1/4$']],['Chọn ngẫu nhiên một số từ 1,2,3,4. Xác suất chọn số nguyên tố là','Choose uniformly from 1,2,3,4. Probability of prime:','$1/2$',['$1/4$','$3/4$','1']]][v]; return mk(r[0] as string,r[1] as string,r[2] as string,'Dùng $P(A)=n(A)/n(\\Omega)$ với các kết quả đồng khả năng.',r[3] as string[]);
+    const r=[['Gieo xúc xắc cân đối. Xác suất ra số chẵn là','Roll a fair die. Probability of an even number is','$\\dfrac{1}{2}$',['$\\dfrac{1}{3}$','$\\dfrac{2}{3}$','$\\dfrac{1}{6}$']],['Rút một thẻ từ 1 đến 5. Xác suất rút số lớn hơn 3 là','Draw one card from 1 to 5. Probability it is greater than 3:','$\\dfrac{2}{5}$',['$\\dfrac{1}{5}$','$\\dfrac{3}{5}$','$\\dfrac{1}{2}$']],['Tung đồng xu cân đối. Xác suất ngửa là','Flip a fair coin. Probability of heads:','$\\dfrac{1}{2}$',['1','0','$\\dfrac{1}{4}$']],['Chọn ngẫu nhiên một số từ 1,2,3,4. Xác suất chọn số nguyên tố là','Choose uniformly from 1,2,3,4. Probability of prime:','$\\dfrac{1}{2}$',['$\\dfrac{1}{4}$','$\\dfrac{3}{4}$','1']]][v]; return mk(r[0] as string,r[1] as string,r[2] as string,'Dùng $P(A)=\\dfrac{n(A)}{n(\\Omega)}$ với các kết quả đồng khả năng.',r[3] as string[]);
   }
   if (tid === 'type-kntt-10-26-04') {
-    const r=[['Một biến cố có xác suất $0.001$. Nhận định hợp lí nhất là','An event has probability 0.001. Best description:','Rất khó xảy ra',['Chắc chắn xảy ra','Rất dễ xảy ra','Xác suất bằng 1']],['Biến cố có xác suất $0.98$ được xem là','An event with probability 0.98 is','Rất có khả năng xảy ra',['Không thể','Rất khó xảy ra','Xác suất bằng 0']],['Hai biến cố có xác suất $0.02$ và $0.8$. Biến cố ít khả năng hơn là','Events have probabilities 0.02 and 0.8. Less likely is','Biến cố có xác suất 0.02',['Biến cố có xác suất 0.8','Như nhau','Không so sánh được']],['Một lỗi sản phẩm có xác suất $10^{-5}$. Theo nguyên lí xác suất bé, lỗi này','A defect has probability $10^{-5}$. By the small-probability principle it is','Hiếm gặp',['Chắc chắn','Phổ biến','Có xác suất 1/2']]][v]; return mk(r[0] as string,r[1] as string,r[2] as string,'So sánh xác suất với 0 và 1 để đánh giá mức độ có khả năng xảy ra.',r[3] as string[]);
+    const r=[['Một biến cố có xác suất $0.001$. Nhận định hợp lí nhất là','An event has probability 0.001. Best description:','Rất khó xảy ra',['Chắc chắn xảy ra','Rất dễ xảy ra','Xác suất bằng 1']],['Biến cố có xác suất $0.98$ được xem là','An event with probability 0.98 is','Rất có khả năng xảy ra',['Không thể','Rất khó xảy ra','Xác suất bằng 0']],['Hai biến cố có xác suất $0.02$ và $0.8$. Biến cố ít khả năng hơn là','Events have probabilities 0.02 and 0.8. Less likely is','Biến cố có xác suất 0.02',['Biến cố có xác suất 0.8','Như nhau','Không so sánh được']],['Một lỗi sản phẩm có xác suất $10^{-5}$. Theo nguyên lí xác suất bé, lỗi này','A defect has probability $10^{-5}$. By the small-probability principle it is','Hiếm gặp',['Chắc chắn','Phổ biến','Có xác suất $\\dfrac{1}{2}$']]][v]; return mk(r[0] as string,r[1] as string,r[2] as string,'So sánh xác suất với 0 và 1 để đánh giá mức độ có khả năng xảy ra.',r[3] as string[]);
   }
   if (tid.startsWith('type-kntt-10-27-')) {
     const subtype=tid.slice(-2);
-    if (subtype==='01') { const r=[['Chọn ngẫu nhiên 2 số từ $\\{1,2,3,4\\}$. Xác suất cả hai chẵn là','Choose 2 numbers from $\\{1,2,3,4\\}$. Probability both are even:','$1/6$',['$1/2$','$1/3$','$2/3$']],['Chọn 1 thẻ từ 1–6. Xác suất thẻ chia hết cho 3 là','Choose one card 1–6. Probability divisible by 3:','$1/3$',['$1/6$','$1/2$','$2/3$']],['Tung 2 đồng xu. Xác suất đúng 1 mặt ngửa là','Flip 2 coins. Probability of exactly one head:','$1/2$',['$1/4$','$3/4$','1']],['Gieo xúc xắc. Xác suất số chấm nhỏ hơn 5 là','Roll a die. Probability result is less than 5:','$2/3$',['$1/3$','$1/2$','$5/6$']]][v]; return mk(r[0] as string,r[1] as string,r[2] as string,'Đếm kết quả thuận lợi và toàn bộ kết quả.',r[3] as string[]); }
-    if (subtype==='02') { const r=[['Chọn 2 học sinh từ 5. Xác suất một cặp cụ thể được chọn là','Choose 2 of 5 students. Probability a specified pair is chosen:','$1/10$',['$1/5$','$2/5$','$1/20$']],['Xếp ngẫu nhiên 4 người. Xác suất A đứng đầu là','Randomly order 4 people. Probability A is first:','$1/4$',['$1/2$','$1/3$','$1/6$']],['Chọn 3 người từ 6, có 2 nữ. Xác suất chọn cả 2 nữ là','Choose 3 of 6 people, including both of the 2 women. Probability:','$1/5$',['$2/5$','$1/2$','$3/5$']],['Xếp ngẫu nhiên 5 người. Xác suất A và B đứng cạnh nhau là','Randomly order 5 people. Probability A and B are adjacent:','$2/5$',['$1/5$','$1/2$','$4/5$']]][v]; return mk(r[0] as string,r[1] as string,r[2] as string,'Dùng hoán vị/tổ hợp để đếm số trường hợp thuận lợi và tổng số trường hợp.',r[3] as string[]); }
-    if (subtype==='03') { const r=[['Gieo hai xúc xắc. Xác suất tổng bằng 7 là','Roll two dice. Probability sum is 7:','$1/6$',['$1/12$','$5/36$','$1/3$']],['Tung 3 đồng xu. Xác suất cả 3 ngửa là','Flip 3 coins. Probability all heads:','$1/8$',['$1/4$','$3/8$','$1/2$']],['Rút một thẻ từ 1–10. Xác suất rút bội của 3 là','Draw one card 1–10. Probability of a multiple of 3:','$3/10$',['$1/10$','$1/3$','$2/5$']],['Gieo xúc xắc. Xác suất ra số nguyên tố là','Roll a die. Probability result is prime:','$1/2$',['$1/3$','$2/3$','$1/6$']]][v]; return mk(r[0] as string,r[1] as string,r[2] as string,'Liệt kê/đếm các kết quả trong mô hình đồng xu, xúc xắc hoặc thẻ.',r[3] as string[]); }
-    if (subtype==='04') { const r=[['Xếp ngẫu nhiên 4 người A,B,C,D. Xác suất A và B đứng cạnh nhau là','Randomly order A,B,C,D. Probability A and B are adjacent:','$1/2$',['$1/4$','$1/3$','$2/3$']],['Chia ngẫu nhiên 4 người thành 2 cặp. Xác suất A ghép với B là','Randomly pair 4 people. Probability A is paired with B:','$1/3$',['$1/2$','$1/4$','$2/3$']],['Xếp 5 người quanh hàng ghế thẳng. Xác suất A ở một trong hai đầu là','Randomly seat 5 in a row. Probability A is at an end:','$2/5$',['$1/5$','$1/2$','$4/5$']],['Chọn ngẫu nhiên 2 người từ 6. Xác suất chọn đúng một cặp đã chỉ định là','Choose 2 of 6. Probability selecting one specified pair:','$1/15$',['$1/6$','$2/15$','$1/30$']]][v]; return mk(r[0] as string,r[1] as string,r[2] as string,'Đếm cấu hình sắp xếp/phân nhóm thuận lợi và toàn bộ.',r[3] as string[]); }
-    if (subtype==='05') { const r=[['Một hộp có 3 bi đỏ, 2 bi xanh. Rút ngẫu nhiên 1 bi. Xác suất đỏ là','A box has 3 red and 2 blue balls. Draw one. Probability red:','$3/5$',['$2/5$','$1/2$','$1/5$']],['Một lớp có 12 nữ, 18 nam. Chọn ngẫu nhiên 1 học sinh. Xác suất chọn nữ là','A class has 12 girls and 18 boys. Choose one. Probability girl:','$2/5$',['$3/5$','$1/3$','$1/2$']],['Một lô có 2 sản phẩm lỗi trong 20. Chọn ngẫu nhiên 1 sản phẩm. Xác suất lỗi là','A lot has 2 defective out of 20. Choose one. Probability defective:','$1/10$',['$1/20$','$1/5$','$9/10$']],['Một vòng quay có 8 phần bằng nhau, 3 phần trúng thưởng. Xác suất trúng là','A spinner has 8 equal sectors, 3 winning. Probability win:','$3/8$',['$5/8$','$1/3$','$3/5$']]][v]; return mk(r[0] as string,r[1] as string,r[2] as string,'Mô hình hóa tình huống thực tế bằng các kết quả đồng khả năng.',r[3] as string[]); }
+    if (subtype==='01') { const r=[['Chọn ngẫu nhiên 2 số từ $\\{1,2,3,4\\}$. Xác suất cả hai chẵn là','Choose 2 numbers from $\\{1,2,3,4\\}$. Probability both are even:','$\\dfrac{1}{6}$',['$\\dfrac{1}{2}$','$\\dfrac{1}{3}$','$\\dfrac{2}{3}$']],['Chọn 1 thẻ từ 1–6. Xác suất thẻ chia hết cho 3 là','Choose one card 1–6. Probability divisible by 3:','$\\dfrac{1}{3}$',['$\\dfrac{1}{6}$','$\\dfrac{1}{2}$','$\\dfrac{2}{3}$']],['Tung 2 đồng xu. Xác suất đúng 1 mặt ngửa là','Flip 2 coins. Probability of exactly one head:','$\\dfrac{1}{2}$',['$\\dfrac{1}{4}$','$\\dfrac{3}{4}$','1']],['Gieo xúc xắc. Xác suất số chấm nhỏ hơn 5 là','Roll a die. Probability result is less than 5:','$\\dfrac{2}{3}$',['$\\dfrac{1}{3}$','$\\dfrac{1}{2}$','$\\dfrac{5}{6}$']]][v]; return mk(r[0] as string,r[1] as string,r[2] as string,'Đếm kết quả thuận lợi và toàn bộ kết quả.',r[3] as string[]); }
+    if (subtype==='02') { const r=[['Chọn 2 học sinh từ 5. Xác suất một cặp cụ thể được chọn là','Choose 2 of 5 students. Probability a specified pair is chosen:','$\\dfrac{1}{10}$',['$\\dfrac{1}{5}$','$\\dfrac{2}{5}$','$\\dfrac{1}{20}$']],['Xếp ngẫu nhiên 4 người. Xác suất A đứng đầu là','Randomly order 4 people. Probability A is first:','$\\dfrac{1}{4}$',['$\\dfrac{1}{2}$','$\\dfrac{1}{3}$','$\\dfrac{1}{6}$']],['Chọn 3 người từ 6, có 2 nữ. Xác suất chọn cả 2 nữ là','Choose 3 of 6 people, including both of the 2 women. Probability:','$\\dfrac{1}{5}$',['$\\dfrac{2}{5}$','$\\dfrac{1}{2}$','$\\dfrac{3}{5}$']],['Xếp ngẫu nhiên 5 người. Xác suất A và B đứng cạnh nhau là','Randomly order 5 people. Probability A and B are adjacent:','$\\dfrac{2}{5}$',['$\\dfrac{1}{5}$','$\\dfrac{1}{2}$','$\\dfrac{4}{5}$']]][v]; return mk(r[0] as string,r[1] as string,r[2] as string,'Dùng hoán vị/tổ hợp để đếm số trường hợp thuận lợi và tổng số trường hợp.',r[3] as string[]); }
+    if (subtype==='03') { const r=[['Gieo hai xúc xắc. Xác suất tổng bằng 7 là','Roll two dice. Probability sum is 7:','$\\dfrac{1}{6}$',['$\\dfrac{1}{12}$','$\\dfrac{5}{36}$','$\\dfrac{1}{3}$']],['Tung 3 đồng xu. Xác suất cả 3 ngửa là','Flip 3 coins. Probability all heads:','$\\dfrac{1}{8}$',['$\\dfrac{1}{4}$','$\\dfrac{3}{8}$','$\\dfrac{1}{2}$']],['Rút một thẻ từ 1–10. Xác suất rút bội của 3 là','Draw one card 1–10. Probability of a multiple of 3:','$\\dfrac{3}{10}$',['$\\dfrac{1}{10}$','$\\dfrac{1}{3}$','$\\dfrac{2}{5}$']],['Gieo xúc xắc. Xác suất ra số nguyên tố là','Roll a die. Probability result is prime:','$\\dfrac{1}{2}$',['$\\dfrac{1}{3}$','$\\dfrac{2}{3}$','$\\dfrac{1}{6}$']]][v]; return mk(r[0] as string,r[1] as string,r[2] as string,'Liệt kê/đếm các kết quả trong mô hình đồng xu, xúc xắc hoặc thẻ.',r[3] as string[]); }
+    if (subtype==='04') { const r=[['Xếp ngẫu nhiên 4 người A,B,C,D. Xác suất A và B đứng cạnh nhau là','Randomly order A,B,C,D. Probability A and B are adjacent:','$\\dfrac{1}{2}$',['$\\dfrac{1}{4}$','$\\dfrac{1}{3}$','$\\dfrac{2}{3}$']],['Chia ngẫu nhiên 4 người thành 2 cặp. Xác suất A ghép với B là','Randomly pair 4 people. Probability A is paired with B:','$\\dfrac{1}{3}$',['$\\dfrac{1}{2}$','$\\dfrac{1}{4}$','$\\dfrac{2}{3}$']],['Xếp 5 người quanh hàng ghế thẳng. Xác suất A ở một trong hai đầu là','Randomly seat 5 in a row. Probability A is at an end:','$\\dfrac{2}{5}$',['$\\dfrac{1}{5}$','$\\dfrac{1}{2}$','$\\dfrac{4}{5}$']],['Chọn ngẫu nhiên 2 người từ 6. Xác suất chọn đúng một cặp đã chỉ định là','Choose 2 of 6. Probability selecting one specified pair:','$\\dfrac{1}{15}$',['$\\dfrac{1}{6}$','$\\dfrac{2}{15}$','$\\dfrac{1}{30}$']]][v]; return mk(r[0] as string,r[1] as string,r[2] as string,'Đếm cấu hình sắp xếp/phân nhóm thuận lợi và toàn bộ.',r[3] as string[]); }
+    if (subtype==='05') { const r=[['Một hộp có 3 bi đỏ, 2 bi xanh. Rút ngẫu nhiên 1 bi. Xác suất đỏ là','A box has 3 red and 2 blue balls. Draw one. Probability red:','$\\dfrac{3}{5}$',['$\\dfrac{2}{5}$','$\\dfrac{1}{2}$','$\\dfrac{1}{5}$']],['Một lớp có 12 nữ, 18 nam. Chọn ngẫu nhiên 1 học sinh. Xác suất chọn nữ là','A class has 12 girls and 18 boys. Choose one. Probability girl:','$\\dfrac{2}{5}$',['$\\dfrac{3}{5}$','$\\dfrac{1}{3}$','$\\dfrac{1}{2}$']],['Một lô có 2 sản phẩm lỗi trong 20. Chọn ngẫu nhiên 1 sản phẩm. Xác suất lỗi là','A lot has 2 defective out of 20. Choose one. Probability defective:','$\\dfrac{1}{10}$',['$\\dfrac{1}{20}$','$\\dfrac{1}{5}$','$\\dfrac{9}{10}$']],['Một vòng quay có 8 phần bằng nhau, 3 phần trúng thưởng. Xác suất trúng là','A spinner has 8 equal sectors, 3 winning. Probability win:','$\\dfrac{3}{8}$',['$\\dfrac{5}{8}$','$\\dfrac{1}{3}$','$\\dfrac{3}{5}$']]][v]; return mk(r[0] as string,r[1] as string,r[2] as string,'Mô hình hóa tình huống thực tế bằng các kết quả đồng khả năng.',r[3] as string[]); }
   }
 
   // ---- Grade 11 trigonometric transformations ----
   if (tid === 'type-kntt-11-02-02') {
-    const r=[['$\\sin2x$ bằng','$\\sin2x$ equals','$2\\sin x\\cos x$',['$\\sin^2x-\\cos^2x$','$2\\sin x$','$2\\cos x$']],['$\\cos2x$ bằng','$\\cos2x$ equals','$\\cos^2x-\\sin^2x$',['$2\\sin x\\cos x$','$\\sin^2x+\\cos^2x$','$2\\cos x$']],['$\\sin^2x$ bằng','$\\sin^2x$ equals','$\\dfrac{1-\\cos2x}{2}$',['$\\dfrac{1+\\cos2x}{2}$','$1-\\cos2x$','$\\cos2x/2$']],['$\\cos^2x$ bằng','$\\cos^2x$ equals','$\\dfrac{1+\\cos2x}{2}$',['$\\dfrac{1-\\cos2x}{2}$','$1+\\sin2x$','$\\sin2x/2$']]][v]; return mk(r[0] as string,r[1] as string,r[2] as string,'Dùng công thức nhân đôi và hạ bậc.',r[3] as string[]);
+    const r=[['$\\sin2x$ bằng','$\\sin2x$ equals','$2\\sin x\\cos x$',['$\\sin^2x-\\cos^2x$','$2\\sin x$','$2\\cos x$']],['$\\cos2x$ bằng','$\\cos2x$ equals','$\\cos^2x-\\sin^2x$',['$2\\sin x\\cos x$','$\\sin^2x+\\cos^2x$','$2\\cos x$']],['$\\sin^2x$ bằng','$\\sin^2x$ equals','$\\dfrac{1-\\cos2x}{2}$',['$\\dfrac{1+\\cos2x}{2}$','$1-\\cos2x$','$\\dfrac{\\cos2x}{2}$']],['$\\cos^2x$ bằng','$\\cos^2x$ equals','$\\dfrac{1+\\cos2x}{2}$',['$\\dfrac{1-\\cos2x}{2}$','$1+\\sin2x$','$\\dfrac{\\sin2x}{2}$']]][v]; return mk(r[0] as string,r[1] as string,r[2] as string,'Dùng công thức nhân đôi và hạ bậc.',r[3] as string[]);
   }
   if (tid === 'type-kntt-11-02-03') {
     const r=[['$\\sin a+\\sin b$ bằng','$\\sin a+\\sin b$ equals','$2\\sin\\dfrac{a+b}{2}\\cos\\dfrac{a-b}{2}$',['$2\\cos\\dfrac{a+b}{2}\\sin\\dfrac{a-b}{2}$','$\\sin(a+b)$','$2\\sin a\\sin b$']],['$\\cos a+\\cos b$ bằng','$\\cos a+\\cos b$ equals','$2\\cos\\dfrac{a+b}{2}\\cos\\dfrac{a-b}{2}$',['$2\\sin\\dfrac{a+b}{2}\\sin\\dfrac{a-b}{2}$','$\\cos(a+b)$','$2\\cos a\\cos b$']],['$2\\sin a\\cos b$ bằng','$2\\sin a\\cos b$ equals','$\\sin(a+b)+\\sin(a-b)$',['$\\cos(a+b)+\\cos(a-b)$','$\\sin(a+b)-\\sin(a-b)$','$2\\sin(a+b)$']],['$2\\cos a\\cos b$ bằng','$2\\cos a\\cos b$ equals','$\\cos(a+b)+\\cos(a-b)$',['$\\sin(a+b)+\\sin(a-b)$','$\\cos(a+b)-\\cos(a-b)$','$2\\cos(a+b)$']]][v]; return mk(r[0] as string,r[1] as string,r[2] as string,'Dùng công thức biến đổi tổng–tích và tích–tổng.',r[3] as string[]);
@@ -322,7 +322,7 @@ function semanticExactTypeSample(type: MathType, variant: number): Sample | null
         ['Trong hình chóp, nếu một đường trong mặt bên song song đáy thì nó thường giúp xác định','In a pyramid, a line in a lateral face parallel to the base helps determine','Phương của giao tuyến với mặt phẳng đáy song song',['Tâm mặt cầu','Đạo hàm','Xác suất']]],
       '12-03':[
         ['Trong tam giác $SAB$, nếu $M,N$ là trung điểm $SA,SB$ thì $MN$ song song với','In triangle $SAB$, if $M,N$ are midpoints of $SA,SB$, then $MN$ is parallel to','$AB$',['$SA$','$SB$','$MN$ không song song cạnh nào']],
-        ['Trong hình chóp, mặt phẳng qua các trung điểm của ba cạnh bên gần đỉnh tạo thiết diện','In a pyramid, a plane through midpoints of three lateral edges creates a section','Đồng dạng với đáy theo tỉ số $1/2$',['Bằng đáy','Vuông góc mọi cạnh','Không xác định']],
+        ['Trong hình chóp, mặt phẳng qua các trung điểm của ba cạnh bên gần đỉnh tạo thiết diện','In a pyramid, a plane through midpoints of three lateral edges creates a section','Đồng dạng với đáy theo tỉ số $\\dfrac{1}{2}$',['Bằng đáy','Vuông góc mọi cạnh','Không xác định']],
         ['Nếu hai tam giác đồng dạng theo tỉ số $k$, tỉ số các cạnh tương ứng là','If two triangles are similar with scale factor $k$, corresponding side ratio is','$k$',['$k^2$','$k^3$','$1$']],
         ['Quan hệ song song trong hình chóp thường dùng định lí','Parallel relations in a pyramid often use','Đường trung bình của tam giác',['Pythagore bắt buộc','Bayes','Đạo hàm']]],
       '13-01':[
@@ -394,7 +394,7 @@ function semanticExactTypeSample(type: MathType, variant: number): Sample | null
         ['Hai đường thẳng chéo nhau có một đoạn vuông góc chung dài 4 cm. Khoảng cách giữa chúng là','Two skew lines have a common perpendicular of length 4 cm. Their distance is','4 cm',['2 cm','8 cm','16 cm']],
         ['Khoảng cách giữa hai đường chéo nhau được xác định bởi','Distance between skew lines is determined by','Độ dài đoạn vuông góc chung',['Góc giữa chúng','Tổng độ dài','Một giao điểm']],
         ['Trong hình hộp chữ nhật, khoảng cách giữa hai cạnh chéo nhau có thể tính bằng','In a rectangular box, distance between suitable skew edges can be computed via','Một đoạn vuông góc chung',['Chu vi đáy','Đạo hàm','Xác suất']],
-        ['Một đoạn $MN$ vuông góc với cả hai đường thẳng chéo nhau $a,b$, với $M\\in a,N\\in b$. Khi $MN$ là đoạn vuông góc chung, khoảng cách giữa $a,b$ bằng','A segment $MN$ is perpendicular to skew lines $a,b$, with $M\\in a,N\\in b$. If it is their common perpendicular, the distance equals','$MN$',['$2MN$','$MN/2$','0']]],
+        ['Một đoạn $MN$ vuông góc với cả hai đường thẳng chéo nhau $a,b$, với $M\\in a,N\\in b$. Khi $MN$ là đoạn vuông góc chung, khoảng cách giữa $a,b$ bằng','A segment $MN$ is perpendicular to skew lines $a,b$, with $M\\in a,N\\in b$. If it is their common perpendicular, the distance equals','$MN$',['$2MN$','$\\dfrac{MN}{2}$','0']]],
       '26-04':[
         ['Hai tầng sàn song song cách nhau 3.2 m. Khoảng cách giữa hai mặt phẳng sàn là','Two parallel floors are 3.2 m apart. Plane distance is','3.2 m',['1.6 m','6.4 m','10.24 m']],
         ['Một dây cáp vuông góc nối hai mặt phẳng song song dài 12 m. Khoảng cách hai mặt phẳng là','A perpendicular cable connecting parallel planes is 12 m. Their distance is','12 m',['6 m','24 m','144 m']],
@@ -406,13 +406,13 @@ function semanticExactTypeSample(type: MathType, variant: number): Sample | null
 
   // ---- Grade 11 limits ----
   if (tid === 'type-kntt-11-16-01') {
-    const r=[['$\\lim_{x\\to2}(x^2+1)$ bằng','$\\lim_{x\\to2}(x^2+1)$ equals','5',['3','4','6']],['$\\lim_{x\\to1}\\dfrac{x+1}{x+2}$ bằng','Find $\\lim_{x\\to1}\\dfrac{x+1}{x+2}$.','$2/3$',['$1/2$','1','$3/2$']],['$\\lim_{x\\to0}(3x+4)$ bằng','Find $\\lim_{x\\to0}(3x+4)$.','4',['0','3','7']],['$\\lim_{x\\to-1}(x^2-2x)$ bằng','Find $\\lim_{x\\to-1}(x^2-2x)$.','3',['-1','1','-3']]][v]; return mk(r[0] as string,r[1] as string,r[2] as string,'Hàm liên tục tại điểm xét nên thay trực tiếp.',r[3] as string[]);
+    const r=[['$\\lim_{x\\to2}(x^2+1)$ bằng','$\\lim_{x\\to2}(x^2+1)$ equals','5',['3','4','6']],['$\\lim_{x\\to1}\\dfrac{x+1}{x+2}$ bằng','Find $\\lim_{x\\to1}\\dfrac{x+1}{x+2}$.','$\\dfrac{2}{3}$',['$\\dfrac{1}{2}$','1','$\\dfrac{3}{2}$']],['$\\lim_{x\\to0}(3x+4)$ bằng','Find $\\lim_{x\\to0}(3x+4)$.','4',['0','3','7']],['$\\lim_{x\\to-1}(x^2-2x)$ bằng','Find $\\lim_{x\\to-1}(x^2-2x)$.','3',['-1','1','-3']]][v]; return mk(r[0] as string,r[1] as string,r[2] as string,'Hàm liên tục tại điểm xét nên thay trực tiếp.',r[3] as string[]);
   }
   if (tid === 'type-kntt-11-16-02') {
-    const r=[['$\\lim_{x\\to2}\\dfrac{x^2-4}{x-2}$ bằng','Find $\\lim_{x\\to2}\\dfrac{x^2-4}{x-2}$.','4',['2','0','Không tồn tại']],['$\\lim_{x\\to1}\\dfrac{x^2-1}{x-1}$ bằng','Find $\\lim_{x\\to1}\\dfrac{x^2-1}{x-1}$.','2',['1','0','Không tồn tại']],['$\\lim_{x\\to0}\\dfrac{\\sqrt{1+x}-1}{x}$ bằng','Find $\\lim_{x\\to0}\\dfrac{\\sqrt{1+x}-1}{x}$.','$1/2$',['1','0','2']],['$\\lim_{x\\to3}\\dfrac{x^2-9}{x-3}$ bằng','Find $\\lim_{x\\to3}\\dfrac{x^2-9}{x-3}$.','6',['3','0','9']]][v]; return mk(r[0] as string,r[1] as string,r[2] as string,'Phân tích nhân tử hoặc nhân liên hợp để khử dạng $0/0$.',r[3] as string[]);
+    const r=[['$\\lim_{x\\to2}\\dfrac{x^2-4}{x-2}$ bằng','Find $\\lim_{x\\to2}\\dfrac{x^2-4}{x-2}$.','4',['2','0','Không tồn tại']],['$\\lim_{x\\to1}\\dfrac{x^2-1}{x-1}$ bằng','Find $\\lim_{x\\to1}\\dfrac{x^2-1}{x-1}$.','2',['1','0','Không tồn tại']],['$\\lim_{x\\to0}\\dfrac{\\sqrt{1+x}-1}{x}$ bằng','Find $\\lim_{x\\to0}\\dfrac{\\sqrt{1+x}-1}{x}$.','$\\dfrac{1}{2}$',['1','0','2']],['$\\lim_{x\\to3}\\dfrac{x^2-9}{x-3}$ bằng','Find $\\lim_{x\\to3}\\dfrac{x^2-9}{x-3}$.','6',['3','0','9']]][v]; return mk(r[0] as string,r[1] as string,r[2] as string,'Phân tích nhân tử hoặc nhân liên hợp để khử dạng $\\dfrac{0}{0}$.',r[3] as string[]);
   }
   if (tid === 'type-kntt-11-16-03') {
-    const r=[['$\\lim_{x\\to+\\infty}\\dfrac{2x+1}{x-3}$ bằng','Find $\\lim_{x\\to+\\infty}\\dfrac{2x+1}{x-3}$.','2',['1','0','$+\\infty$']],['$\\lim_{x\\to0^+}\\dfrac1x$ bằng','Find $\\lim_{x\\to0^+}1/x$.','$+\\infty$',['$-\\infty$','0','1']],['$\\lim_{x\\to0^-}\\dfrac1x$ bằng','Find $\\lim_{x\\to0^-}1/x$.','$-\\infty$',['$+\\infty$','0','-1']],['$\\lim_{x\\to-\\infty}\\dfrac{3x-2}{x+1}$ bằng','Find $\\lim_{x\\to-\\infty}\\dfrac{3x-2}{x+1}$.','3',['-3','0','$-\\infty$']]][v]; return mk(r[0] as string,r[1] as string,r[2] as string,'Dùng giới hạn một phía hoặc chia cho lũy thừa bậc cao nhất.',r[3] as string[]);
+    const r=[['$\\lim_{x\\to+\\infty}\\dfrac{2x+1}{x-3}$ bằng','Find $\\lim_{x\\to+\\infty}\\dfrac{2x+1}{x-3}$.','2',['1','0','$+\\infty$']],['$\\lim_{x\\to0^+}\\dfrac1x$ bằng','Find $\\dfrac{\\lim_{x\\to0^+}1}{x}$.','$+\\infty$',['$-\\infty$','0','1']],['$\\lim_{x\\to0^-}\\dfrac1x$ bằng','Find $\\dfrac{\\lim_{x\\to0^-}1}{x}$.','$-\\infty$',['$+\\infty$','0','-1']],['$\\lim_{x\\to-\\infty}\\dfrac{3x-2}{x+1}$ bằng','Find $\\lim_{x\\to-\\infty}\\dfrac{3x-2}{x+1}$.','3',['-3','0','$-\\infty$']]][v]; return mk(r[0] as string,r[1] as string,r[2] as string,'Dùng giới hạn một phía hoặc chia cho lũy thừa bậc cao nhất.',r[3] as string[]);
   }
 
   // ---- Grade 11 probability addition / multiplication ----
@@ -426,19 +426,19 @@ function semanticExactTypeSample(type: MathType, variant: number): Sample | null
   if (tid.startsWith('type-kntt-11-30-')) {
     const sub=tid.slice(-2);
     if(sub==='01'){const r=[['$P(A)=0.4,P(B)=0.5$, độc lập. $P(A\\cap B)=$','Independent A,B with 0.4,0.5. Intersection:','0.2',['0.9','0.1','0.45']],['Hai biến cố độc lập có xác suất 0.3 và 0.2. Xác suất cùng xảy ra là','Independent events probabilities 0.3 and 0.2. Both occur:','0.06',['0.5','0.1','0.25']],['$P(A)=0.8,P(B)=0.5$ độc lập. Giao bằng','Independent A,B probabilities 0.8,0.5. Intersection:','0.4',['0.3','1.3','0.8']],['$P(A)=0.25,P(B)=0.4$ độc lập. Giao bằng','Independent A,B probabilities 0.25,0.4. Intersection:','0.1',['0.65','0.15','0.25']]][v];return mk(r[0] as string,r[1] as string,r[2] as string,'Độc lập: $P(A\\cap B)=P(A)P(B)$.',r[3] as string[]);}
-    if(sub==='02'){const r=[['Tung 3 đồng xu độc lập. Xác suất cả 3 ngửa là','Flip 3 independent coins. Probability all heads:','$1/8$',['$1/4$','$3/8$','$1/2$']],['Một máy thành công mỗi lần với xác suất 0.9. Hai lần độc lập đều thành công có xác suất','Success probability 0.9 each. Two independent successes:','0.81',['0.9','0.18','0.99']],['Gieo 3 xúc xắc độc lập. Xác suất cả 3 đều ra 6 là','Roll 3 dice independently. Probability all are 6:','$1/216$',['$1/36$','$1/18$','$1/6$']],['Một biến cố xác suất 0.8 lặp độc lập 3 lần. Cả 3 xảy ra có xác suất','An event with probability 0.8 repeats independently 3 times. All occur:','0.512',['0.64','0.8','0.24']]][v];return mk(r[0] as string,r[1] as string,r[2] as string,'Nhân các xác suất của chuỗi phép thử độc lập.',r[3] as string[]);}
+    if(sub==='02'){const r=[['Tung 3 đồng xu độc lập. Xác suất cả 3 ngửa là','Flip 3 independent coins. Probability all heads:','$\\dfrac{1}{8}$',['$\\dfrac{1}{4}$','$\\dfrac{3}{8}$','$\\dfrac{1}{2}$']],['Một máy thành công mỗi lần với xác suất 0.9. Hai lần độc lập đều thành công có xác suất','Success probability 0.9 each. Two independent successes:','0.81',['0.9','0.18','0.99']],['Gieo 3 xúc xắc độc lập. Xác suất cả 3 đều ra 6 là','Roll 3 dice independently. Probability all are 6:','$\\dfrac{1}{216}$',['$\\dfrac{1}{36}$','$\\dfrac{1}{18}$','$\\dfrac{1}{6}$']],['Một biến cố xác suất 0.8 lặp độc lập 3 lần. Cả 3 xảy ra có xác suất','An event with probability 0.8 repeats independently 3 times. All occur:','0.512',['0.64','0.8','0.24']]][v];return mk(r[0] as string,r[1] as string,r[2] as string,'Nhân các xác suất của chuỗi phép thử độc lập.',r[3] as string[]);}
     if(sub==='04'){const r=[['Hai thiết bị độc lập hoạt động tốt với xác suất 0.9 và 0.8. Xác suất cả hai tốt là','Independent devices work with probabilities 0.9 and 0.8. Both work:','0.72',['0.98','0.17','0.85']],['Hai chuyến bay độc lập đúng giờ với xác suất 0.8 và 0.7. Cả hai đúng giờ là','Independent flights on time 0.8,0.7. Both on time:','0.56',['0.75','0.15','0.94']],['Hai cảm biến độc lập phát hiện với xác suất 0.95 và 0.9. Cả hai phát hiện là','Independent sensors detect with 0.95 and 0.9. Both detect:','0.855',['0.95','0.05','0.995']],['Một khách mua hàng với xác suất 0.2; hai khách độc lập đều mua là','A customer buys with 0.2; two independent customers both buy:','0.04',['0.4','0.2','0.8']]][v];return mk(r[0] as string,r[1] as string,r[2] as string,'Mô hình thực tế với biến cố độc lập dùng quy tắc nhân.',r[3] as string[]);}
   }
 
   // ---- Grade 11 derivative rules ----
   if (tid === 'type-kntt-11-32-01') {
-    const r=[['Đạo hàm của $x^4-3x^2+5$ là','Derivative of $x^4-3x^2+5$ is','$4x^3-6x$',['$4x^3-3x$','$x^3-6x$','$4x^3+6x$']],['Đạo hàm của $\\dfrac1x$ là','Derivative of $1/x$ is','$-1/x^2$',['$1/x^2$','$-1/x$','$x^{-1}$']],['Đạo hàm của $\\sqrt x$ là','Derivative of $\\sqrt x$ is','$1/(2\\sqrt x)$',['$2\\sqrt x$','$1/\\sqrt x$','$\\sqrt x/2$']],['Đạo hàm của $\\dfrac{x+1}{x-1}$ là','Derivative of $(x+1)/(x-1)$ is','$-2/(x-1)^2$',['$2/(x-1)^2$','$1$','$2/(x+1)^2$']]][v];return mk(r[0] as string,r[1] as string,r[2] as string,'Áp dụng quy tắc đạo hàm đa thức, thương hoặc căn.',r[3] as string[]);
+    const r=[['Đạo hàm của $x^4-3x^2+5$ là','Derivative of $x^4-3x^2+5$ is','$4x^3-6x$',['$4x^3-3x$','$x^3-6x$','$4x^3+6x$']],['Đạo hàm của $\\dfrac1x$ là','Derivative of $\\dfrac{1}{x}$ is','$-\\dfrac{1}{x^2}$',['$\\dfrac{1}{x^2}$','$-\\dfrac{1}{x}$','$x^{-1}$']],['Đạo hàm của $\\sqrt x$ là','Derivative of $\\sqrt x$ is','$\\dfrac{1}{2\\sqrt x}$',['$2\\sqrt x$','$\\dfrac{1}{\\sqrt x}$','$\\dfrac{\\sqrt x}{2}$']],['Đạo hàm của $\\dfrac{x+1}{x-1}$ là','Derivative of $\\dfrac{x+1}{x-1}$ is','$-\\dfrac{2}{(x-1)^2}$',['$\\dfrac{2}{(x-1)^2}$','$1$','$\\dfrac{2}{(x+1)^2}$']]][v];return mk(r[0] as string,r[1] as string,r[2] as string,'Áp dụng quy tắc đạo hàm đa thức, thương hoặc căn.',r[3] as string[]);
   }
   if (tid === 'type-kntt-11-32-02') {
-    const r=[['Đạo hàm của $\\sin x$ là','Derivative of $\\sin x$ is','$\\cos x$',['$-\\cos x$','$\\sin x$','$-\\sin x$']],['Đạo hàm của $\\cos x$ là','Derivative of $\\cos x$ is','$-\\sin x$',['$\\sin x$','$\\cos x$','$-\\cos x$']],['Đạo hàm của $\\tan x$ là','Derivative of $\\tan x$ is','$1/\\cos^2x$',['$1/\\sin^2x$','$\\cos^2x$','$-1/\\cos^2x$']],['Đạo hàm của $2\\sin x-3\\cos x$ là','Derivative of $2\\sin x-3\\cos x$ is','$2\\cos x+3\\sin x$',['$2\\cos x-3\\sin x$','$-2\\sin x+3\\cos x$','$2\\sin x+3\\cos x$']]][v];return mk(r[0] as string,r[1] as string,r[2] as string,'Dùng bảng đạo hàm các hàm lượng giác.',r[3] as string[]);
+    const r=[['Đạo hàm của $\\sin x$ là','Derivative of $\\sin x$ is','$\\cos x$',['$-\\cos x$','$\\sin x$','$-\\sin x$']],['Đạo hàm của $\\cos x$ là','Derivative of $\\cos x$ is','$-\\sin x$',['$\\sin x$','$\\cos x$','$-\\cos x$']],['Đạo hàm của $\\tan x$ là','Derivative of $\\tan x$ is','$\\dfrac{1}{\\cos^2x}$',['$\\dfrac{1}{\\sin^2x}$','$\\cos^2x$','$-\\dfrac{1}{\\cos^2x}$']],['Đạo hàm của $2\\sin x-3\\cos x$ là','Derivative of $2\\sin x-3\\cos x$ is','$2\\cos x+3\\sin x$',['$2\\cos x-3\\sin x$','$-2\\sin x+3\\cos x$','$2\\sin x+3\\cos x$']]][v];return mk(r[0] as string,r[1] as string,r[2] as string,'Dùng bảng đạo hàm các hàm lượng giác.',r[3] as string[]);
   }
   if (tid === 'type-kntt-11-32-03') {
-    const r=[['Đạo hàm của $(2x+1)^3$ là','Derivative of $(2x+1)^3$ is','$6(2x+1)^2$',['$3(2x+1)^2$','$6(2x+1)$','$2(2x+1)^3$']],['Đạo hàm của $\\sin(3x)$ là','Derivative of $\\sin(3x)$ is','$3\\cos(3x)$',['$\\cos(3x)$','$-3\\sin(3x)$','$3\\sin(3x)$']],['Đạo hàm của $\\sqrt{x^2+1}$ là','Derivative of $\\sqrt{x^2+1}$ is','$x/\\sqrt{x^2+1}$',['$1/(2\\sqrt{x^2+1})$','$2x/\\sqrt{x^2+1}$','$\\sqrt{x^2+1}$']],['Đạo hàm của $\\cos(x^2)$ là','Derivative of $\\cos(x^2)$ is','$-2x\\sin(x^2)$',['$-\\sin(x^2)$','$2x\\cos(x^2)$','$2x\\sin(x^2)$']]][v];return mk(r[0] as string,r[1] as string,r[2] as string,'Dùng quy tắc dây chuyền $[f(u)]\\prime=f\\prime(u)u\\prime$.',r[3] as string[]);
+    const r=[['Đạo hàm của $(2x+1)^3$ là','Derivative of $(2x+1)^3$ is','$6(2x+1)^2$',['$3(2x+1)^2$','$6(2x+1)$','$2(2x+1)^3$']],['Đạo hàm của $\\sin(3x)$ là','Derivative of $\\sin(3x)$ is','$3\\cos(3x)$',['$\\cos(3x)$','$-3\\sin(3x)$','$3\\sin(3x)$']],['Đạo hàm của $\\sqrt{x^2+1}$ là','Derivative of $\\sqrt{x^2+1}$ is','$\\dfrac{x}{\\sqrt{x^2+1}}$',['$\\dfrac{1}{2\\sqrt{x^2+1}}$','$\\dfrac{2x}{\\sqrt{x^2+1}}$','$\\sqrt{x^2+1}$']],['Đạo hàm của $\\cos(x^2)$ là','Derivative of $\\cos(x^2)$ is','$-2x\\sin(x^2)$',['$-\\sin(x^2)$','$2x\\cos(x^2)$','$2x\\sin(x^2)$']]][v];return mk(r[0] as string,r[1] as string,r[2] as string,'Dùng quy tắc dây chuyền $[f(u)]\\prime=f\\prime(u)u\\prime$.',r[3] as string[]);
   }
 
   // ---- Grade 12 function analysis ----
@@ -457,10 +457,10 @@ function semanticExactTypeSample(type: MathType, variant: number): Sample | null
     const r=[['Hàm $y=x^3-3x$ có bao nhiêu điểm cực trị?','How many local extrema does $y=x^3-3x$ have?','2',['0','1','3']],['Đồ thị $y=x^3$ có tâm đối xứng tại','Graph $y=x^3$ has center of symmetry at','O(0,0)',['(1,0)','(0,1)','Không có']],['Với $y=x^3-3x^2$, đạo hàm bằng','For $y=x^3-3x^2$, derivative is','$3x(x-2)$',['$3x(x-1)$','$x^2-6x$','$3x^2-3$']],['Đồ thị hàm bậc ba có hệ số bậc ba dương thì khi $x\\to+\\infty$, $y$','For a cubic with positive leading coefficient, as $x\\to+\\infty$, $y$ tends to','$+\\infty$',['$-\\infty$','0','Một hằng số']]][v];return mk(r[0] as string,r[1] as string,r[2] as string,'Khảo sát đạo hàm, giới hạn và các điểm đặc trưng của hàm bậc ba.',r[3] as string[]);
   }
   if (tid === 'type-kntt-12-04-02') {
-    const r=[['Hàm $y=\\dfrac{x+1}{x-2}$ có tiệm cận đứng','For $y=(x+1)/(x-2)$, vertical asymptote is','$x=2$',['$x=-1$','$y=1$','$y=2$']],['Hàm $y=\\dfrac{2x-1}{x+3}$ có tiệm cận ngang','For $y=(2x-1)/(x+3)$, horizontal asymptote is','$y=2$',['$x=-3$','$y=-1$','$y=3$']],['Tập xác định của $y=\\dfrac{x}{x-1}$ là','Domain of $y=x/(x-1)$ is','$\\mathbb R\\setminus\\{1\\}$',['$\\mathbb R$','$(1,+\\infty)$','$(-\\infty,1)$']],['Hàm $y=\\dfrac{x+2}{x-1}$ có giao điểm với trục $Ox$ tại','For $y=(x+2)/(x-1)$, x-intercept is','$x=-2$',['$x=1$','$x=2$','$x=0$']]][v];return mk(r[0] as string,r[1] as string,r[2] as string,'Khảo sát miền xác định, đạo hàm, giao điểm và tiệm cận của phân thức bậc nhất/bậc nhất.',r[3] as string[]);
+    const r=[['Hàm $y=\\dfrac{x+1}{x-2}$ có tiệm cận đứng','For $y=\\dfrac{x+1}{x-2}$, vertical asymptote is','$x=2$',['$x=-1$','$y=1$','$y=2$']],['Hàm $y=\\dfrac{2x-1}{x+3}$ có tiệm cận ngang','For $y=\\dfrac{2x-1}{x+3}$, horizontal asymptote is','$y=2$',['$x=-3$','$y=-1$','$y=3$']],['Tập xác định của $y=\\dfrac{x}{x-1}$ là','Domain of $y=\\dfrac{x}{x-1}$ is','$\\mathbb R\\setminus\\{1\\}$',['$\\mathbb R$','$(1,+\\infty)$','$(-\\infty,1)$']],['Hàm $y=\\dfrac{x+2}{x-1}$ có giao điểm với trục $Ox$ tại','For $y=\\dfrac{x+2}{x-1}$, x-intercept is','$x=-2$',['$x=1$','$x=2$','$x=0$']]][v];return mk(r[0] as string,r[1] as string,r[2] as string,'Khảo sát miền xác định, đạo hàm, giao điểm và tiệm cận của phân thức bậc nhất/bậc nhất.',r[3] as string[]);
   }
   if (tid === 'type-kntt-12-04-03') {
-    const r=[['Chia đa thức $\\dfrac{x^2+1}{x-1}$ cho biết tiệm cận xiên là','For $(x^2+1)/(x-1)$, polynomial division gives oblique asymptote','$y=x+1$',['$y=x-1$','$x=1$','$y=1$']],['Hàm $y=\\dfrac{x^2}{x+1}$ có tiệm cận đứng','For $y=x^2/(x+1)$, vertical asymptote is','$x=-1$',['$x=0$','$y=0$','$y=x-1$']],['Với $y=\\dfrac{x^2+2x+3}{x+1}$, tiệm cận xiên là','For $y=(x^2+2x+3)/(x+1)$, oblique asymptote is','$y=x+1$',['$y=x+2$','$x=-1$','$y=1$']],['Khảo sát phân thức bậc hai trên bậc nhất cần thực hiện phép','To survey quadratic-over-linear rational functions, one often uses','Chia đa thức để tìm tiệm cận xiên',['Khai căn','Tổ hợp','Bayes']]][v];return mk(r[0] as string,r[1] as string,r[2] as string,'Dùng chia đa thức, đạo hàm và giới hạn để khảo sát.',r[3] as string[]);
+    const r=[['Chia đa thức $\\dfrac{x^2+1}{x-1}$ cho biết tiệm cận xiên là','For $\\dfrac{x^2+1}{x-1}$, polynomial division gives oblique asymptote','$y=x+1$',['$y=x-1$','$x=1$','$y=1$']],['Hàm $y=\\dfrac{x^2}{x+1}$ có tiệm cận đứng','For $y=\\dfrac{x^2}{x+1}$, vertical asymptote is','$x=-1$',['$x=0$','$y=0$','$y=x-1$']],['Với $y=\\dfrac{x^2+2x+3}{x+1}$, tiệm cận xiên là','For $y=\\dfrac{x^2+2x+3}{x+1}$, oblique asymptote is','$y=x+1$',['$y=x+2$','$x=-1$','$y=1$']],['Khảo sát phân thức bậc hai trên bậc nhất cần thực hiện phép','To survey quadratic-over-linear rational functions, one often uses','Chia đa thức để tìm tiệm cận xiên',['Khai căn','Tổ hợp','Bayes']]][v];return mk(r[0] as string,r[1] as string,r[2] as string,'Dùng chia đa thức, đạo hàm và giới hạn để khảo sát.',r[3] as string[]);
   }
 
   // ---- Grade 12 optimization ----
@@ -468,7 +468,7 @@ function semanticExactTypeSample(type: MathType, variant: number): Sample | null
     const r=[['Hình chữ nhật có chu vi 20. Diện tích lớn nhất là','Rectangle perimeter 20. Maximum area is','25',['20','50','100']],['Một hộp không nắp từ tấm vuông cạnh 12 cắt góc $x$. Thể tích được mô hình bởi','Open box from a 12-square sheet cutting corners x has volume','$V=x(12-2x)^2$',['$V=12x^2$','$V=(12-x)^3$','$V=x(12-x)$']],['Trong các hình chữ nhật có diện tích cố định, hình có chu vi nhỏ nhất là','Among rectangles with fixed area, minimum perimeter occurs for','Hình vuông',['Hình rất dài','Mọi hình như nhau','Tam giác']],['Tối ưu hình học bằng đạo hàm cần trước hết','Geometric optimization with derivatives first requires','Lập hàm mục tiêu theo một biến',['Lấy đạo hàm khi chưa có hàm','Dùng Bayes','Dùng tổ hợp']]][v];return mk(r[0] as string,r[1] as string,r[2] as string,'Lập hàm mục tiêu hình học rồi xét đạo hàm trên miền khả thi.',r[3] as string[]);
   }
   if (tid === 'type-kntt-12-05-02') {
-    const r=[['Doanh thu $R(x)=100x-x^2$. Doanh thu lớn nhất đạt tại $x=$','Revenue $R(x)=100x-x^2$. Maximum occurs at x=','50',['25','100','0']],['Lợi nhuận $P(x)=-2x^2+80x-100$. Sản lượng tối ưu là','Profit $P(x)=-2x^2+80x-100$. Optimal output:','20',['40','10','80']],['Chi phí trung bình được mô hình bởi $C(x)=x+100/x$, $x>0$. Điểm cực tiểu thỏa','Average cost $C=x+100/x$. Minimum occurs at','$x=10$',['$x=100$','$x=1$','$x=20$']],['Tối ưu doanh thu/lợi nhuận thường tìm bằng','Revenue/profit optimization typically uses','Điểm tới hạn của hàm kinh tế trên miền cho phép',['Trung vị','Tổ hợp','Định lí sin']]][v];return mk(r[0] as string,r[1] as string,r[2] as string,'Lấy đạo hàm hàm chi phí/doanh thu/lợi nhuận và so sánh các điểm cần xét.',r[3] as string[]);
+    const r=[['Doanh thu $R(x)=100x-x^2$. Doanh thu lớn nhất đạt tại $x=$','Revenue $R(x)=100x-x^2$. Maximum occurs at x=','50',['25','100','0']],['Lợi nhuận $P(x)=-2x^2+80x-100$. Sản lượng tối ưu là','Profit $P(x)=-2x^2+80x-100$. Optimal output:','20',['40','10','80']],['Chi phí trung bình được mô hình bởi $C(x)=x+\\dfrac{100}{x}$, $x>0$. Điểm cực tiểu thỏa','Average cost $C=x+\\dfrac{100}{x}$. Minimum occurs at','$x=10$',['$x=100$','$x=1$','$x=20$']],['Tối ưu doanh thu/lợi nhuận thường tìm bằng','Revenue/profit optimization typically uses','Điểm tới hạn của hàm kinh tế trên miền cho phép',['Trung vị','Tổ hợp','Định lí sin']]][v];return mk(r[0] as string,r[1] as string,r[2] as string,'Lấy đạo hàm hàm chi phí/doanh thu/lợi nhuận và so sánh các điểm cần xét.',r[3] as string[]);
   }
   if (tid === 'type-kntt-12-05-03') {
     const r=[['Quãng đường $s(t)=t^3-6t^2+9t$. Vận tốc là','Position $s(t)=t^3-6t^2+9t$. Velocity is','$v(t)=3t^2-12t+9$',['$v=t^2-6t+9$','$v=3t^2-6t+9$','$v=t^3-12t$']],['Thời gian tối ưu của một hàm $T(x)$ nội miền thường thỏa','An interior optimum of time function $T(x)$ usually satisfies','$T\\prime(x)=0$',['$T(x)=0$','$T\\prime(x)=1$','$T(x)=1$']],['Nếu vận tốc $v(t)$ đạt cực đại tại $t_0$ trong miền trong thì thường','If velocity $v(t)$ has an interior maximum at $t_0$, then typically','$v\\prime(t_0)=0$',['$v(t_0)=0$','$t_0=0$','$v\\prime(t_0)=1$']],['Bài toán đường đi nhanh nhất cần tối thiểu hóa','A fastest-route problem minimizes','Hàm thời gian tổng cộng',['Quãng đường bất kì','Xác suất','Số tổ hợp']]][v];return mk(r[0] as string,r[1] as string,r[2] as string,'Mô hình chuyển động/thời gian theo một biến rồi dùng đạo hàm để tối ưu.',r[3] as string[]);
@@ -490,13 +490,13 @@ function semanticExactTypeSample(type: MathType, variant: number): Sample | null
 
   // ---- Grade 12 antiderivatives / integrals ----
   if (tid === 'type-kntt-12-11-01') {
-    const r=[['Một nguyên hàm của $3x^2$ là','An antiderivative of $3x^2$ is','$x^3$',['$3x^3$','$x^2$','$6x$']],['Một nguyên hàm của $2x+1$ là','An antiderivative of $2x+1$ is','$x^2+x$',['$2x^2+x$','$x^2+1$','$2$']],['Một nguyên hàm của $\\cos x$ là','An antiderivative of $\\cos x$ is','$\\sin x$',['$-\\sin x$','$\\cos x$','$-\\cos x$']],['Một nguyên hàm của $1/x$ trên $(0,+\\infty)$ là','An antiderivative of $1/x$ on positive reals is','$\\ln x$',['$1/x^2$','$x^2/2$','$e^x$']]][v];return mk(r[0] as string,r[1] as string,r[2] as string,'Dùng bảng nguyên hàm cơ bản và tính tuyến tính.',r[3] as string[]);
+    const r=[['Một nguyên hàm của $3x^2$ là','An antiderivative of $3x^2$ is','$x^3$',['$3x^3$','$x^2$','$6x$']],['Một nguyên hàm của $2x+1$ là','An antiderivative of $2x+1$ is','$x^2+x$',['$2x^2+x$','$x^2+1$','$2$']],['Một nguyên hàm của $\\cos x$ là','An antiderivative of $\\cos x$ is','$\\sin x$',['$-\\sin x$','$\\cos x$','$-\\cos x$']],['Một nguyên hàm của $\\dfrac{1}{x}$ trên $(0,+\\infty)$ là','An antiderivative of $\\dfrac{1}{x}$ on positive reals is','$\\ln x$',['$\\dfrac{1}{x^2}$','$\\dfrac{x^2}{2}$','$e^x$']]][v];return mk(r[0] as string,r[1] as string,r[2] as string,'Dùng bảng nguyên hàm cơ bản và tính tuyến tính.',r[3] as string[]);
   }
   if (tid === 'type-kntt-12-11-05') {
     const r=[['Biết $F\\prime(x)=2x$, $F(0)=3$. Khi đó $F(x)=$','Given $F\\prime(x)=2x$, $F(0)=3$. Then F=','$x^2+3$',['$x^2$','$2x+3$','$x^2-3$']],['$F\\prime(x)=3x^2$, $F(1)=2$. $F(x)=$','Given $F\\prime=3x^2$, $F(1)=2$.','$x^3+1$',['$x^3+2$','$3x^2+1$','$x^3-1$']],['$F\\prime(x)=\\cos x$, $F(0)=1$. $F(x)=$','Given $F\\prime=\\cos x$, F(0)=1.','$\\sin x+1$',['$\\cos x$','$\\sin x$','$-\\sin x+1$']],['$F\\prime(x)=1$, $F(2)=5$. $F(x)=$','Given F prime=1, F(2)=5.','$x+3$',['$x+5$','$x-3$','5']]][v];return mk(r[0] as string,r[1] as string,r[2] as string,'Tìm họ nguyên hàm rồi dùng điều kiện ban đầu để xác định hằng số $C$.',r[3] as string[]);
   }
   if (tid === 'type-kntt-12-12-01') {
-    const r=[['$\\int_0^1 2x\\,dx$ bằng','Evaluate $\\int_0^1 2x\\,dx$.','1',['2','$1/2$','0']],['$\\int_0^2 3\\,dx$ bằng','Evaluate $\\int_0^2 3\\,dx$.','6',['3','5','9']],['$\\int_0^1 x^2\\,dx$ bằng','Evaluate $\\int_0^1 x^2\\,dx$.','$1/3$',['$1/2$','1','$2/3$']],['$\\int_0^\\pi \\sin x\\,dx$ bằng','Evaluate $\\int_0^\\pi \\sin x\\,dx$.','2',['0','1','$\\pi$']]][v];return mk(r[0] as string,r[1] as string,r[2] as string,'Tìm nguyên hàm rồi áp dụng định lí Newton–Leibniz.',r[3] as string[]);
+    const r=[['$\\int_0^1 2x\\,dx$ bằng','Evaluate $\\int_0^1 2x\\,dx$.','1',['2','$\\dfrac{1}{2}$','0']],['$\\int_0^2 3\\,dx$ bằng','Evaluate $\\int_0^2 3\\,dx$.','6',['3','5','9']],['$\\int_0^1 x^2\\,dx$ bằng','Evaluate $\\int_0^1 x^2\\,dx$.','$\\dfrac{1}{3}$',['$\\dfrac{1}{2}$','1','$\\dfrac{2}{3}$']],['$\\int_0^\\pi \\sin x\\,dx$ bằng','Evaluate $\\int_0^\\pi \\sin x\\,dx$.','2',['0','1','$\\pi$']]][v];return mk(r[0] as string,r[1] as string,r[2] as string,'Tìm nguyên hàm rồi áp dụng định lí Newton–Leibniz.',r[3] as string[]);
   }
   if (tid === 'type-kntt-12-12-04') {
     const r=[['Nếu $f$ lẻ và khả tích trên $[-2,2]$ thì $\\int_{-2}^2f(x)dx$ bằng','If f is odd on [-2,2], its integral is','0',['2','4','Không xác định']],['Nếu $f$ chẵn thì $\\int_{-a}^a f(x)dx$ bằng','If f is even, integral from -a to a equals','$2\\int_0^a f(x)dx$',['0','$\\int_0^a f$','$-2\\int_0^a f$']],['$\\int_0^2 f=5$ và $\\int_2^3 f=4$. $\\int_0^3 f$ bằng','If integrals 0–2=5 and 2–3=4, integral 0–3 is','9',['1','20','5']],['Nếu $\\int_0^1 f(x)dx=m$ và biết giá trị tích phân bằng 3 thì','If integral 0–1 equals m and computed value is 3, then','$m=3$',['$m=0$','$m=1$','$m=-3$']]][v];return mk(r[0] as string,r[1] as string,r[2] as string,'Dùng tính đối xứng, tính cộng theo khoảng và điều kiện tham số.',r[3] as string[]);
@@ -507,18 +507,18 @@ function semanticExactTypeSample(type: MathType, variant: number): Sample | null
 
   // ---- Grade 12 conditional probability / Bayes ----
   if (tid === 'type-kntt-12-18-01') {
-    const r=[['$P(A\\cap B)=0.2,P(B)=0.5$. $P(A|B)=$','Given intersection 0.2 and P(B)=0.5. Conditional probability:','0.4',['0.1','0.7','2.5']],['$P(A\\cap B)=0.18,P(B)=0.6$. $P(A|B)=$','Given 0.18 intersection and P(B)=0.6.','0.3',['0.12','0.78','0.6']],['$P(A\\cap B)=0.1,P(B)=0.25$. $P(A|B)=$','Given 0.1 intersection and P(B)=0.25.','0.4',['0.025','0.35','2.5']],['$P(A\\cap B)=0.12,P(B)=0.4$. $P(A|B)=$','Given 0.12 intersection and P(B)=0.4.','0.3',['0.48','0.28','0.4']]][v];return mk(r[0] as string,r[1] as string,r[2] as string,'Dùng $P(A|B)=P(A\\cap B)/P(B)$.',r[3] as string[]);
+    const r=[['$P(A\\cap B)=0.2,P(B)=0.5$. $P(A|B)=$','Given intersection 0.2 and P(B)=0.5. Conditional probability:','0.4',['0.1','0.7','2.5']],['$P(A\\cap B)=0.18,P(B)=0.6$. $P(A|B)=$','Given 0.18 intersection and P(B)=0.6.','0.3',['0.12','0.78','0.6']],['$P(A\\cap B)=0.1,P(B)=0.25$. $P(A|B)=$','Given 0.1 intersection and P(B)=0.25.','0.4',['0.025','0.35','2.5']],['$P(A\\cap B)=0.12,P(B)=0.4$. $P(A|B)=$','Given 0.12 intersection and P(B)=0.4.','0.3',['0.48','0.28','0.4']]][v];return mk(r[0] as string,r[1] as string,r[2] as string,'Dùng $P(A|B)=\\dfrac{P(A\\cap B)}{P(B)}$.',r[3] as string[]);
   }
   if (tid === 'type-kntt-12-18-02') {
-    const r=[['Trong 100 người có 40 nữ, 10 nữ thuận tay trái. Chọn một người biết rằng là nữ. Xác suất thuận tay trái là','Among 100 people, 40 are women and 10 of those are left-handed. Given woman, probability left-handed:','$1/4$',['$1/10$','$2/5$','$1/2$']],['Bảng có 60 nam, trong đó 12 thích A. Biết chọn nam, xác suất thích A là','There are 60 men, 12 like A. Given male, probability likes A:','$1/5$',['$1/12$','$12/100$','$3/5$']],['Trong 80 học sinh, 20 học lớp X và 8 trong số đó đạt giỏi. Biết thuộc lớp X, xác suất giỏi là','80 students, 20 in class X and 8 of those are excellent. Given class X:','$2/5$',['$1/10$','$1/4$','$3/5$']],['Có 50 sản phẩm loại B, 5 lỗi. Biết sản phẩm là loại B, xác suất lỗi là','50 type-B products, 5 defective. Given type B, probability defective:','$1/10$',['$1/5$','$5/100$','$9/10$']]][v];return mk(r[0] as string,r[1] as string,r[2] as string,'Đọc hàng/cột điều kiện trong bảng: số trường hợp vừa thỏa chia tổng số trong nhóm điều kiện.',r[3] as string[]);
+    const r=[['Trong 100 người có 40 nữ, 10 nữ thuận tay trái. Chọn một người biết rằng là nữ. Xác suất thuận tay trái là','Among 100 people, 40 are women and 10 of those are left-handed. Given woman, probability left-handed:','$\\dfrac{1}{4}$',['$\\dfrac{1}{10}$','$\\dfrac{2}{5}$','$\\dfrac{1}{2}$']],['Bảng có 60 nam, trong đó 12 thích A. Biết chọn nam, xác suất thích A là','There are 60 men, 12 like A. Given male, probability likes A:','$\\dfrac{1}{5}$',['$\\dfrac{1}{12}$','$\\dfrac{12}{100}$','$\\dfrac{3}{5}$']],['Trong 80 học sinh, 20 học lớp X và 8 trong số đó đạt giỏi. Biết thuộc lớp X, xác suất giỏi là','80 students, 20 in class X and 8 of those are excellent. Given class X:','$\\dfrac{2}{5}$',['$\\dfrac{1}{10}$','$\\dfrac{1}{4}$','$\\dfrac{3}{5}$']],['Có 50 sản phẩm loại B, 5 lỗi. Biết sản phẩm là loại B, xác suất lỗi là','50 type-B products, 5 defective. Given type B, probability defective:','$\\dfrac{1}{10}$',['$\\dfrac{1}{5}$','$\\dfrac{5}{100}$','$\\dfrac{9}{10}$']]][v];return mk(r[0] as string,r[1] as string,r[2] as string,'Đọc hàng/cột điều kiện trong bảng: số trường hợp vừa thỏa chia tổng số trong nhóm điều kiện.',r[3] as string[]);
   }
   if (tid === 'type-kntt-12-18-04') {
-    const r=[['Một lớp có 30 nữ, 20 nam; 12 nữ và 4 nam tham gia CLB. Biết người được chọn tham gia CLB, xác suất là nữ bằng','Class: 30 women,20 men; 12 women,4 men in club. Given club member, probability female:','$3/4$',['$2/5$','$12/50$','$1/2$']],['Một bệnh viện: 100 ca, 60 nội trú; 18 nội trú tái khám. Biết ca nội trú, xác suất tái khám là','100 cases, 60 inpatient, 18 revisit. Given inpatient, revisit probability:','0.3',['0.18','0.6','0.42']],['Một website: 200 khách mobile, 50 mua hàng. Biết khách mobile, xác suất mua là','Website: 200 mobile visitors,50 purchase. Given mobile, probability purchase:','0.25',['0.5','0.2','0.75']],['Một nhà máy: 80 sản phẩm ca đêm, 8 lỗi. Biết sản phẩm ca đêm, xác suất lỗi là','Factory:80 night-shift products,8 defective. Given night shift, probability defect:','0.1',['0.8','0.08','0.9']]][v];return mk(r[0] as string,r[1] as string,r[2] as string,'Xác định đúng biến cố điều kiện trong tình huống thực tế.',r[3] as string[]);
+    const r=[['Một lớp có 30 nữ, 20 nam; 12 nữ và 4 nam tham gia CLB. Biết người được chọn tham gia CLB, xác suất là nữ bằng','Class: 30 women,20 men; 12 women,4 men in club. Given club member, probability female:','$\\dfrac{3}{4}$',['$\\dfrac{2}{5}$','$\\dfrac{12}{50}$','$\\dfrac{1}{2}$']],['Một bệnh viện: 100 ca, 60 nội trú; 18 nội trú tái khám. Biết ca nội trú, xác suất tái khám là','100 cases, 60 inpatient, 18 revisit. Given inpatient, revisit probability:','0.3',['0.18','0.6','0.42']],['Một website: 200 khách mobile, 50 mua hàng. Biết khách mobile, xác suất mua là','Website: 200 mobile visitors,50 purchase. Given mobile, probability purchase:','0.25',['0.5','0.2','0.75']],['Một nhà máy: 80 sản phẩm ca đêm, 8 lỗi. Biết sản phẩm ca đêm, xác suất lỗi là','Factory:80 night-shift products,8 defective. Given night shift, probability defect:','0.1',['0.8','0.08','0.9']]][v];return mk(r[0] as string,r[1] as string,r[2] as string,'Xác định đúng biến cố điều kiện trong tình huống thực tế.',r[3] as string[]);
   }
   if (tid.startsWith('type-kntt-12-19-')) {
     const sub=tid.slice(-2);
-    if(sub==='02'){const r=[['Máy A làm 60% sản phẩm, lỗi 1%; B làm 40%, lỗi 4%. Biết sản phẩm lỗi, xác suất do B gần nhất là','Machine A 60% with 1% defect, B 40% with 4%. Given defective, probability from B:','$8/11$',['$4/11$','$6/11$','$3/4$']],['Bệnh có tỉ lệ 1%, test nhạy 90%, dương giả 5%. Xác suất bệnh khi dương gần','Disease prevalence 1%, sensitivity 90%, false positive 5%. Probability disease given positive approx','15.4%',['1%','90%','5%']],['Hộp A chọn với 0.7 có 2 đỏ/3; hộp B chọn 0.3 có 1 đỏ/4. Biết rút đỏ, xác suất từ A là','Choose box A with 0.7 (2/3 red), B 0.3 (1/4 red). Given red, probability A:','$56/65$',['$9/65$','$2/3$','0.7']],['Nguồn X 40% tin, chính xác 95%; Y 60%, chính xác 80%. Biết tin đúng, xác suất từ X là','Source X 40% accurate95%, Y60% accurate80%. Given correct, probability X:','$19/43$',['$24/43$','0.4','0.95']]][v];return mk(r[0] as string,r[1] as string,r[2] as string,'Dùng công thức Bayes để đảo điều kiện.',r[3] as string[]);}
-    if(sub==='03'){const r=[['Sơ đồ cây có nhánh $P(A)=0.6$, $P(B|A)=0.2$. Xác suất đường đi $A\\cap B$ là','Tree branch P(A)=0.6, P(B|A)=0.2. Path probability A∩B:','0.12',['0.8','0.4','0.2']],['Bảng: nhóm X có 30 người, 6 dương; Y có 70 người, 7 dương. Biết dương, xác suất thuộc X là','Table: X 30 with 6 positive; Y 70 with 7 positive. Given positive, probability X:','$6/13$',['$7/13$','$3/10$','$6/100$']],['Cây xác suất: $P(A)=0.4,P(B|A)=0.5,P(B|\\bar A)=0.2$. $P(B)=$','Tree: P(A)=0.4,P(B|A)=0.5,P(B|not A)=0.2. P(B)=','0.32',['0.2','0.5','0.7']],['Bảng chéo có 20 ca loại A (4 lỗi) và 30 loại B (3 lỗi). Biết lỗi, xác suất loại A là','Cross-table: 20 type A (4 defective),30 B (3 defective). Given defective, probability A:','$4/7$',['$3/7$','$1/5$','$2/5$']]][v];return mk(r[0] as string,r[1] as string,r[2] as string,'Đọc sơ đồ cây/bảng, nhân theo nhánh và chuẩn hóa theo tổng xác suất điều kiện.',r[3] as string[]);}
+    if(sub==='02'){const r=[['Máy A làm 60% sản phẩm, lỗi 1%; B làm 40%, lỗi 4%. Biết sản phẩm lỗi, xác suất do B gần nhất là','Machine A 60% with 1% defect, B 40% with 4%. Given defective, probability from B:','$\\dfrac{8}{11}$',['$\\dfrac{4}{11}$','$\\dfrac{6}{11}$','$\\dfrac{3}{4}$']],['Bệnh có tỉ lệ 1%, test nhạy 90%, dương giả 5%. Xác suất bệnh khi dương gần','Disease prevalence 1%, sensitivity 90%, false positive 5%. Probability disease given positive approx','15.4%',['1%','90%','5%']],['Hộp A chọn với 0.7 có tỉ lệ bi đỏ $\\dfrac{2}{3}$; hộp B chọn 0.3 có tỉ lệ bi đỏ $\\dfrac{1}{4}$. Biết rút đỏ, xác suất từ A là','Choose box A with 0.7 ($\\dfrac{2}{3}$ red), B 0.3 ($\\dfrac{1}{4}$ red). Given red, probability A:','$\\dfrac{56}{65}$',['$\\dfrac{9}{65}$','$\\dfrac{2}{3}$','0.7']],['Nguồn X 40% tin, chính xác 95%; Y 60%, chính xác 80%. Biết tin đúng, xác suất từ X là','Source X 40% accurate95%, Y60% accurate80%. Given correct, probability X:','$\\dfrac{19}{43}$',['$\\dfrac{24}{43}$','0.4','0.95']]][v];return mk(r[0] as string,r[1] as string,r[2] as string,'Dùng công thức Bayes để đảo điều kiện.',r[3] as string[]);}
+    if(sub==='03'){const r=[['Sơ đồ cây có nhánh $P(A)=0.6$, $P(B|A)=0.2$. Xác suất đường đi $A\\cap B$ là','Tree branch P(A)=0.6, P(B|A)=0.2. Path probability A∩B:','0.12',['0.8','0.4','0.2']],['Bảng: nhóm X có 30 người, 6 dương; Y có 70 người, 7 dương. Biết dương, xác suất thuộc X là','Table: X 30 with 6 positive; Y 70 with 7 positive. Given positive, probability X:','$\\dfrac{6}{13}$',['$\\dfrac{7}{13}$','$\\dfrac{3}{10}$','$\\dfrac{6}{100}$']],['Cây xác suất: $P(A)=0.4,P(B|A)=0.5,P(B|\\bar A)=0.2$. $P(B)=$','Tree: P(A)=0.4,P(B|A)=0.5,P(B|not A)=0.2. P(B)=','0.32',['0.2','0.5','0.7']],['Bảng chéo có 20 ca loại A (4 lỗi) và 30 loại B (3 lỗi). Biết lỗi, xác suất loại A là','Cross-table: 20 type A (4 defective),30 B (3 defective). Given defective, probability A:','$\\dfrac{4}{7}$',['$\\dfrac{3}{7}$','$\\dfrac{1}{5}$','$\\dfrac{2}{5}$']]][v];return mk(r[0] as string,r[1] as string,r[2] as string,'Đọc sơ đồ cây/bảng, nhân theo nhánh và chuẩn hóa theo tổng xác suất điều kiện.',r[3] as string[]);}
     if(sub==='04'){const r=[['Một xét nghiệm sàng lọc dùng Bayes để tính xác suất bệnh sau khi dương tính. Đại lượng cần là','A screening test uses Bayes after a positive result. Needed quantity is','$P(\\text{bệnh}|\\text{dương})$',['$P(\\text{dương}|\\text{bệnh})$','$P(\\text{bệnh})$','$P(\\text{âm})$']],['Bộ lọc thư rác phân loại email. Biết email bị gắn spam, xác suất thực sự spam là một','Spam filter: given flagged spam, probability truly spam is a','Xác suất hậu nghiệm',['Xác suất tiên nghiệm','Trung bình','Phương sai']],['Trong kiểm định, Bayes kết hợp tỉ lệ nền và độ nhạy để','In testing, Bayes combines base rate and sensitivity to','Cập nhật xác suất sau bằng chứng',['Tính đạo hàm','Tính trung vị','Tính khoảng cách']],['Ứng dụng phân loại có nhiều nguồn/lớp dùng Bayes để so sánh','A classification application uses Bayes to compare','Xác suất hậu nghiệm của các lớp',['Chu vi các lớp','Đạo hàm lớp','Số phần tử']]][v];return mk(r[0] as string,r[1] as string,r[2] as string,'Xác định tiên nghiệm, khả năng có điều kiện và hậu nghiệm trong mô hình Bayes.',r[3] as string[]);}
   }
 
@@ -596,9 +596,9 @@ function remainingDuplicateFixSample(tid: string, variant: number): Sample | nul
       ['6','$30^\\circ$','$90^\\circ$','12',['6','3','$6\\sqrt3$']],
       ['5','$30^\\circ$','$90^\\circ$','10',['5','$5\\sqrt3$','$10\\sqrt3$']],
       ['$4\\sqrt2$','$45^\\circ$','$90^\\circ$','8',['4','$4\\sqrt2$','$8\\sqrt2$']],
-      ['7','$30^\\circ$','$150^\\circ$','7',['14','$7\\sqrt3$','$7/2$']],
+      ['7','$30^\\circ$','$150^\\circ$','7',['14','$7\\sqrt3$','$\\dfrac{7}{2}$']],
     ][v];
-    return mk(`Trong tam giác, $a=${bareMath(String(r[0]))}$, $A=${bareMath(String(r[1]))}$, $B=${bareMath(String(r[2]))}$. Cạnh $b$ bằng`,`In a triangle, $a=${bareMath(String(r[0]))}$, $A=${bareMath(String(r[1]))}$, $B=${bareMath(String(r[2]))}$. Find $b$.`,r[3] as string,'Dùng định lí sin $a/\\sin A=b/\\sin B$.',r[4] as string[]);
+    return mk(`Trong tam giác, $a=${bareMath(String(r[0]))}$, $A=${bareMath(String(r[1]))}$, $B=${bareMath(String(r[2]))}$. Cạnh $b$ bằng`,`In a triangle, $a=${bareMath(String(r[0]))}$, $A=${bareMath(String(r[1]))}$, $B=${bareMath(String(r[2]))}$. Find $b$.`,r[3] as string,'Dùng định lí sin $\\dfrac{a}{\\sin A}=\\dfrac{b}{\\sin B}$.',r[4] as string[]);
   }
   if (tid === 'type-kntt-10-06-04') {
     const r=[
@@ -655,7 +655,7 @@ function remainingDuplicateFixSample(tid: string, variant: number): Sample | nul
       ['$y=2x^2-8x+5$','$(2,-3)$',['$(-2,-3)$','$(2,3)$','$(4,5)$']],
     ][v];
     const wording=tid.endsWith('01')?'Đỉnh của parabol':'Từ đồ thị parabol, tọa độ đỉnh là';
-    return mk(`${wording} ${r[0]} là`,`The vertex of the parabola ${r[0]} is`,r[1] as string,'Dùng $x_I=-b/(2a)$ rồi tính $y_I$.',r[2] as string[]);
+    return mk(`${wording} ${r[0]} là`,`The vertex of the parabola ${r[0]} is`,r[1] as string,'Dùng $x_I=-\\dfrac{b}{2a}$ rồi tính $y_I$.',r[2] as string[]);
   }
   if (tid === 'type-kntt-10-16-03') {
     const r=[
@@ -690,7 +690,7 @@ function remainingDuplicateFixSample(tid: string, variant: number): Sample | nul
     const r=[
       ['$x^2+2mx+4>0$ với mọi $x$','$|m|<2$',['$|m|>2$','$m=2$','$m>0$']],
       ['$x^2+2mx+9>0$ với mọi $x$','$|m|<3$',['$|m|>3$','$m=3$','$m>0$']],
-      ['$x^2-4mx+9>0$ với mọi $x$','$|m|<\\dfrac32$',['$|m|>\\dfrac32$','$m=3/2$','$m<0$']],
+      ['$x^2-4mx+9>0$ với mọi $x$','$|m|<\\dfrac32$',['$|m|>\\dfrac32$','$m=\\dfrac{3}{2}$','$m<0$']],
       ['$2x^2+2mx+2>0$ với mọi $x$','$|m|<2$',['$|m|>2$','$m=2$','$m>1$']],
     ][v];
     return mk(`Điều kiện của $m$ để ${r[0]} là`,`The condition on $m$ so that ${r[0]} is`,r[1] as string,'Vì hệ số bậc hai dương, cần biệt thức $\\Delta<0$.',r[2] as string[]);
@@ -875,26 +875,26 @@ function remainingDuplicateFixSample(tid: string, variant: number): Sample | nul
     const r=[
       ['$y=3\\sin(2x)$','Biên độ 3, chu kì $\\pi$',['Biên độ 2, chu kì $3\\pi$','Biên độ 3, chu kì $2\\pi$','Biên độ 1, chu kì $\\pi$']],
       ['$y=2\\cos(4x)$','Biên độ 2, chu kì $\\dfrac\\pi2$',['Biên độ 4, chu kì $2\\pi$','Biên độ 2, chu kì $4\\pi$','Biên độ 1, chu kì $\\pi$']],
-      ['$y=\\sin(x-\\pi/3)$','Đồ thị $y=\\sin x$ tịnh tiến sang phải $\\pi/3$',['Sang trái $\\pi/3$','Lên $\\pi/3$','Co ngang 3 lần']],
+      ['$y=\\sin(x-\\dfrac{\\pi}{3})$','Đồ thị $y=\\sin x$ tịnh tiến sang phải $\\dfrac{\\pi}{3}$',['Sang trái $\\dfrac{\\pi}{3}$','Lên $\\dfrac{\\pi}{3}$','Co ngang 3 lần']],
       ['$y=1+2\\sin x$','Đường trung bình là $y=1$',['Đường trung bình $y=2$','Biên độ 1','Chu kì $\\pi$']],
     ][v];
     return mk(`Với ${r[0]}, mô tả đúng là`,`For ${r[0]}, the correct description is`,r[1] as string,'Dùng dạng $y=A\\sin(\\omega x+\\varphi)+d$ hoặc tương tự.',r[2] as string[]);
   }
   if (tid === 'type-kntt-11-03-04') {
     const r=[
-      ['$h(t)=2+\\sin(\\pi t/6)$','12 giờ',['6 giờ','24 giờ','3 giờ']],
-      ['$T(t)=25+5\\cos(\\pi t/12)$','24 giờ',['12 giờ','6 giờ','48 giờ']],
+      ['$h(t)=2+\\sin(\\dfrac{\\pi t}{6})$','12 giờ',['6 giờ','24 giờ','3 giờ']],
+      ['$T(t)=25+5\\cos(\\dfrac{\\pi t}{12})$','24 giờ',['12 giờ','6 giờ','48 giờ']],
       ['$y(t)=3\\sin(2\\pi t)$','1 giây',['2 giây','$2\\pi$ giây','0,5 giây']],
-      ['$H(t)=10+2\\cos(\\pi t/4)$','8 giờ',['4 giờ','16 giờ','2 giờ']],
+      ['$H(t)=10+2\\cos(\\dfrac{\\pi t}{4})$','8 giờ',['4 giờ','16 giờ','2 giờ']],
     ][v];
-    return mk(`Một hiện tượng tuần hoàn được mô hình bởi ${r[0]}. Chu kì là`,`A periodic phenomenon is modeled by ${r[0]}. Its period is`,r[1] as string,'Với $\\sin(\\omega t)$ hoặc $\\cos(\\omega t)$, chu kì $T=2\\pi/|\\omega|$.',r[2] as string[]);
+    return mk(`Một hiện tượng tuần hoàn được mô hình bởi ${r[0]}. Chu kì là`,`A periodic phenomenon is modeled by ${r[0]}. Its period is`,r[1] as string,'Với $\\sin(\\omega t)$ hoặc $\\cos(\\omega t)$, chu kì $T=\\dfrac{2\\pi}{|\\omega|}$.',r[2] as string[]);
   }
 
   if (tid === 'type-kntt-11-07-01') {
     const r=[
       [2,3,4,'54',['18','27','81']],
       [5,2,5,'80',['40','160','20']],
-      [81,'$1/3$',4,'3',['9','1','27']],
+      [81,'$\\dfrac{1}{3}$',4,'3',['9','1','27']],
       [3,-2,4,'-24',['24','-12','-48']],
     ][v];
     return mk(`Cấp số nhân có $u_1=${bareMath(String(r[0]))}$, công bội $q=${bareMath(String(r[1]))}$. $u_${bareMath(String(r[2]))}$ bằng`,`A geometric progression has $u_1=${bareMath(String(r[0]))}$, ratio $q=${bareMath(String(r[1]))}$. Find $u_${bareMath(String(r[2]))}$.`,r[3] as string,'Dùng $u_n=u_1q^{n-1}$.',r[4] as string[]);
@@ -904,7 +904,7 @@ function remainingDuplicateFixSample(tid: string, variant: number): Sample | nul
       [1,2,5,'31',['16','32','63']],
       [3,2,4,'45',['24','48','21']],
       [2,3,4,'80',['54','81','40']],
-      [5,'$1/2$',3,'$35/4$',['$15/2$','10','$35/2$']],
+      [5,'$\\dfrac{1}{2}$',3,'$\\dfrac{35}{4}$',['$\\dfrac{15}{2}$','10','$\\dfrac{35}{2}$']],
     ][v];
     return mk(`Cấp số nhân có $u_1=${bareMath(String(r[0]))}$, $q=${bareMath(String(r[1]))}$. Tổng $S_${bareMath(String(r[2]))}$ bằng`,`A geometric progression has $u_1=${bareMath(String(r[0]))}$, $q=${bareMath(String(r[1]))}$. Find $S_${bareMath(String(r[2]))}$.`,r[3] as string,'Dùng $S_n=u_1\\dfrac{q^n-1}{q-1}$ khi $q\\ne1$.',r[4] as string[]);
   }
@@ -912,7 +912,7 @@ function remainingDuplicateFixSample(tid: string, variant: number): Sample | nul
     const r=[
       ['$u_2=6,\\ u_4=54$','$(u_1,q)=(2,3)$',['$(3,2)$','$(2,2)$','$(6,3)$']],
       ['$u_2=10,\\ u_5=80$','$(u_1,q)=(5,2)$',['$(2,5)$','$(5,3)$','$(10,2)$']],
-      ['$u_1=81,\\ u_3=9$','$q=\\pm\\dfrac13$',['$q=3$','$q=\\pm3$','$q=1/9$']],
+      ['$u_1=81,\\ u_3=9$','$q=\\pm\\dfrac13$',['$q=3$','$q=\\pm3$','$q=\\dfrac{1}{9}$']],
       ['$u_2=-6,\\ u_4=-24$','$(u_1,q)=(-3,2)$ hoặc $(3,-2)$',['Chỉ $(-3,2)$','Chỉ $(3,-2)$','$(6,-1)$']],
     ][v];
     return mk(`Cho cấp số nhân thỏa ${r[0]}. Kết luận đúng là`,`A geometric progression satisfies ${r[0]}. The correct conclusion is`,r[1] as string,'Dùng $u_n=u_1q^{n-1}$ và chia các điều kiện để tìm $q$.',r[2] as string[]);
@@ -958,7 +958,7 @@ function remainingDuplicateFixSample(tid: string, variant: number): Sample | nul
   if (tid === 'type-kntt-11-19-03') {
     const r=[
       ['$\\dfrac{\\log 8}{\\log2}$','3',['2','4','8']],
-      ['$\\dfrac{\\ln25}{\\ln5}$','2',['5','25','1/2']],
+      ['$\\dfrac{\\ln25}{\\ln5}$','2',['5','25','$\\dfrac{1}{2}$']],
       ['$\\log_2 3\\cdot\\log_3 4$','2',['1','4','6']],
       ['$\\log_5 2\\cdot\\log_2 25$','2',['5','10','1']],
     ][v];
@@ -968,7 +968,7 @@ function remainingDuplicateFixSample(tid: string, variant: number): Sample | nul
   if (tid === 'type-kntt-11-20-01') {
     const r=[
       ['$y=2^x$','Đồng biến trên $\\mathbb R$',['Nghịch biến','Tập giá trị $\\mathbb R$','Không xác định tại 0']],
-      ['$y=(1/2)^x$','Nghịch biến trên $\\mathbb R$',['Đồng biến','Tập giá trị $(-\\infty,0)$','Không có tiệm cận']],
+      ['$y=(\\dfrac{1}{2})^x$','Nghịch biến trên $\\mathbb R$',['Đồng biến','Tập giá trị $(-\\infty,0)$','Không có tiệm cận']],
       ['$y=3^x$','Tập giá trị $(0,+\\infty)$',['Tập giá trị $\\mathbb R$','Tập xác định $(0,+\\infty)$','Nghịch biến']],
       ['$y=5^x$','Đi qua điểm $(0,1)$',['Đi qua $(0,0)$','Nghịch biến','Có nghiệm $x=0$']],
     ][v];
@@ -977,7 +977,7 @@ function remainingDuplicateFixSample(tid: string, variant: number): Sample | nul
   if (tid === 'type-kntt-11-20-02') {
     const r=[
       ['$y=\\log_2x$','Đồng biến trên $(0,+\\infty)$',['Nghịch biến','Tập xác định $\\mathbb R$','Tập giá trị $(0,+\\infty)$']],
-      ['$y=\\log_{1/2}x$','Nghịch biến trên $(0,+\\infty)$',['Đồng biến','Tập xác định $\\mathbb R$','Không có tiệm cận']],
+      ['$y=\\log_{\\dfrac{1}{2}}x$','Nghịch biến trên $(0,+\\infty)$',['Đồng biến','Tập xác định $\\mathbb R$','Không có tiệm cận']],
       ['$y=\\log_3x$','Tập giá trị là $\\mathbb R$',['Tập giá trị $(0,+\\infty)$','Tập xác định $\\mathbb R$','Nghịch biến']],
       ['$y=\\log_5x$','Đi qua $(1,0)$',['Đi qua $(0,1)$','Không có nghiệm','Nghịch biến']],
     ][v];
@@ -1006,8 +1006,8 @@ function remainingDuplicateFixSample(tid: string, variant: number): Sample | nul
     const r=[
       ['$2^{x+1}=16$','$x=3$',['$x=4$','$x=2$','$x=8$']],
       ['$3^{x-1}=9$','$x=3$',['$x=2$','$x=1$','$x=4$']],
-      ['$5^{2x}=125$','$x=3/2$',['$x=3$','$x=1$','$x=5/2$']],
-      ['$4^x=8$','$x=3/2$',['$x=2$','$x=1/2$','$x=3$']],
+      ['$5^{2x}=125$','$x=\\dfrac{3}{2}$',['$x=3$','$x=1$','$x=\\dfrac{5}{2}$']],
+      ['$4^x=8$','$x=\\dfrac{3}{2}$',['$x=2$','$x=\\dfrac{1}{2}$','$x=3$']],
     ][v];
     return mk(`Nghiệm của ${r[0]} là`,`Solve ${r[0]}.`,r[1] as string,'Quy về cùng cơ số rồi so sánh số mũ.',r[2] as string[]);
   }
@@ -1024,7 +1024,7 @@ function remainingDuplicateFixSample(tid: string, variant: number): Sample | nul
     const r=[
       ['$2^x>8$','$x>3$',['$x<3$','$x>8$','$x<8$']],
       ['$3^{x-1}\\le9$','$x\\le3$',['$x\\ge3$','$x\\le2$','$x>3$']],
-      ['$(1/2)^x>4$','$x<-2$',['$x>-2$','$x<2$','$x>2$']],
+      ['$(\\dfrac{1}{2})^x>4$','$x<-2$',['$x>-2$','$x<2$','$x>2$']],
       ['$5^{2x}<25$','$x<1$',['$x>1$','$x<2$','$x>2$']],
     ][v];
     return mk(`Tập nghiệm của ${r[0]} là`,`Solve ${r[0]}.`,r[1] as string,'Quy về cùng cơ số; chú ý chiều bất phương trình khi cơ số nằm giữa 0 và 1.',r[2] as string[]);
@@ -1033,7 +1033,7 @@ function remainingDuplicateFixSample(tid: string, variant: number): Sample | nul
     const r=[
       ['$\\log_2x>3$','$x>8$',['$0<x<8$','$x>3$','$x<8$']],
       ['$\\log_3(x-1)\\le2$','$1<x\\le10$',['$x\\le10$','$x>10$','$0<x\\le9$']],
-      ['$\\log_{1/2}x>1$','$0<x<1/2$',['$x>1/2$','$0<x<2$','$x<0$']],
+      ['$\\log_{\\dfrac{1}{2}}x>1$','$0<x<\\dfrac{1}{2}$',['$x>\\dfrac{1}{2}$','$0<x<2$','$x<0$']],
       ['$\\ln x\\ge0$','$x\\ge1$',['$0<x\\le1$','$x>0$','$x\\le0$']],
     ][v];
     return mk(`Tập nghiệm của ${r[0]} là`,`Solve ${r[0]}.`,r[1] as string,'Kết hợp điều kiện xác định với tính đơn điệu của hàm lôgarit.',r[2] as string[]);
@@ -1050,7 +1050,7 @@ function remainingDuplicateFixSample(tid: string, variant: number): Sample | nul
 
   if (tid === 'type-kntt-11-24-03') {
     const r=[
-      ['Một con dốc cao 3 m trên đoạn chiếu ngang 4 m. $\\tan\\alpha$ của góc dốc bằng','$3/4$',['$4/3$','$3/5$','$4/5$']],
+      ['Một con dốc cao 3 m trên đoạn chiếu ngang 4 m. $\\tan\\alpha$ của góc dốc bằng','$\\dfrac{3}{4}$',['$\\dfrac{4}{3}$','$\\dfrac{3}{5}$','$\\dfrac{4}{5}$']],
       ['Một mái dốc cao 5 m, hình chiếu ngang 5 m. Góc dốc bằng','$45^\\circ$',['$30^\\circ$','$60^\\circ$','$90^\\circ$']],
       ['Một đường dốc có góc $30^\\circ$ và hình chiếu ngang $6\\sqrt3$ m. Độ cao bằng','6',['3','$6\\sqrt3$','12']],
       ['Một dây cáp dài 10 m tạo góc $60^\\circ$ với mặt đất. Hình chiếu ngang dài','5',['$5\\sqrt3$','10','$10\\sqrt3$']],
@@ -1077,7 +1077,7 @@ function remainingDuplicateFixSample(tid: string, variant: number): Sample | nul
   }
   if (tid === 'type-kntt-11-27-02') {
     const r=[
-      [10,7,'70',['35','17','$70/3$']],
+      [10,7,'70',['35','17','$\\dfrac{70}{3}$']],
       [12,5,'60',['30','17','20']],
       [8,9,'72',['36','17','24']],
       [15,4,'60',['30','19','20']],
@@ -1151,7 +1151,7 @@ function remainingDuplicateFixSample(tid: string, variant: number): Sample | nul
   }
   if (tid === 'type-kntt-12-14-03') {
     const r=[
-      ['$M(1,2,3)$ và $(P):x+2y+2z-3=0$','Khoảng cách bằng $8/3$',['Điểm thuộc mặt phẳng','Khoảng cách bằng 8','Khoảng cách bằng 3']],
+      ['$M(1,2,3)$ và $(P):x+2y+2z-3=0$','Khoảng cách bằng $\\dfrac{8}{3}$',['Điểm thuộc mặt phẳng','Khoảng cách bằng 8','Khoảng cách bằng 3']],
       ['$(P):x+y+z=0$ và $(Q):2x+2y+2z-3=0$','Hai mặt phẳng song song',['Hai mặt phẳng cắt nhau','Hai mặt phẳng trùng nhau','Hai mặt phẳng vuông góc']],
       ['$(P):x+y+z=0$ và $(Q):x-y=0$','Hai mặt phẳng cắt nhau',['Song song','Trùng nhau','Không xác định']],
       ['$M(0,0,0)$ và $(P):2x-y+2z-6=0$','Khoảng cách bằng 2',['Khoảng cách bằng 6','Điểm thuộc mặt phẳng','Khoảng cách bằng 3']],
@@ -1194,10 +1194,10 @@ function remainingDuplicateFixSample(tid: string, variant: number): Sample | nul
   }
   if (tid === 'type-kntt-11-27-03') {
     const r: any=[
-      ['Trong hình chóp $S.ABCD$, mặt phẳng qua $M\\in SA$ song song đáy và $SM/SA=1/2$. Tỉ số thể tích khối chóp nhỏ và khối chóp ban đầu là','In pyramid $S.ABCD$, a plane through $M\\in SA$ is parallel to the base and $SM/SA=1/2$. The volume ratio is','$1/8$',['$1/2$','$1/4$','$1/6$'],'Hai khối chóp đồng dạng với tỉ số dài $1/2$, nên tỉ số thể tích là $(1/2)^3$.'],
-      ['Hai hình chóp đồng dạng có tỉ số các cạnh tương ứng bằng $2/3$. Tỉ số thể tích của chúng bằng','Two similar pyramids have corresponding side ratio $2/3$. Their volume ratio is','$8/27$',['$4/9$','$2/3$','$6/9$'],'Tỉ số thể tích bằng lập phương tỉ số đồng dạng.'],
-      ['Trong hình chóp $S.ABC$, $M,N,P$ lần lượt là trung điểm của $SA,SB,SC$. Tỉ số $V_{SMNP}/V_{SABC}$ bằng','In pyramid $S.ABC$, $M,N,P$ are midpoints of $SA,SB,SC$. Find $V_{SMNP}/V_{SABC}$.','$1/8$',['$1/2$','$1/4$','$3/8$'],'Khối $SMNP$ đồng dạng với $SABC$ theo tỉ số $1/2$.'],
-      ['Hai khối chóp có cùng chiều cao, diện tích hai đáy theo tỉ số $3:5$. Tỉ số thể tích tương ứng là','Two pyramids have the same height and base areas in ratio $3:5$. Their volume ratio is','$3/5$',['$9/25$','$5/3$','$3/8$'],'Với cùng chiều cao, thể tích tỉ lệ thuận với diện tích đáy.'],
+      ['Trong hình chóp $S.ABCD$, mặt phẳng qua $M\\in SA$ song song đáy và $\\dfrac{SM}{SA}=\\dfrac{1}{2}$. Tỉ số thể tích khối chóp nhỏ và khối chóp ban đầu là','In pyramid $S.ABCD$, a plane through $M\\in SA$ is parallel to the base and $\\dfrac{SM}{SA}=\\dfrac{1}{2}$. The volume ratio is','$\\dfrac{1}{8}$',['$\\dfrac{1}{2}$','$\\dfrac{1}{4}$','$\\dfrac{1}{6}$'],'Hai khối chóp đồng dạng với tỉ số dài $\\dfrac{1}{2}$, nên tỉ số thể tích là $(\\dfrac{1}{2})^3$.'],
+      ['Hai hình chóp đồng dạng có tỉ số các cạnh tương ứng bằng $\\dfrac{2}{3}$. Tỉ số thể tích của chúng bằng','Two similar pyramids have corresponding side ratio $\\dfrac{2}{3}$. Their volume ratio is','$\\dfrac{8}{27}$',['$\\dfrac{4}{9}$','$\\dfrac{2}{3}$','$\\dfrac{6}{9}$'],'Tỉ số thể tích bằng lập phương tỉ số đồng dạng.'],
+      ['Trong hình chóp $S.ABC$, $M,N,P$ lần lượt là trung điểm của $SA,SB,SC$. Tỉ số $\\dfrac{V_{SMNP}}{V_{SABC}}$ bằng','In pyramid $S.ABC$, $M,N,P$ are midpoints of $SA,SB,SC$. Find $\\dfrac{V_{SMNP}}{V_{SABC}}$.','$\\dfrac{1}{8}$',['$\\dfrac{1}{2}$','$\\dfrac{1}{4}$','$\\dfrac{3}{8}$'],'Khối $SMNP$ đồng dạng với $SABC$ theo tỉ số $\\dfrac{1}{2}$.'],
+      ['Hai khối chóp có cùng chiều cao, diện tích hai đáy theo tỉ số $3:5$. Tỉ số thể tích tương ứng là','Two pyramids have the same height and base areas in ratio $3:5$. Their volume ratio is','$\\dfrac{3}{5}$',['$\\dfrac{9}{25}$','$\\dfrac{5}{3}$','$\\dfrac{3}{8}$'],'Với cùng chiều cao, thể tích tỉ lệ thuận với diện tích đáy.'],
     ][v]; return mk(r[0],r[1],r[2],r[4],r[3]);
   }
   if (tid === 'type-kntt-12-14-04') {
@@ -1245,7 +1245,7 @@ function remainingDuplicateFixSample(tid: string, variant: number): Sample | nul
   if (tid === 'type-kntt-10-13-02') {
     const r: any=[
       ['Trung vị của mẫu $1,2,3,4,5$ bằng','The median of $1,2,3,4,5$ is','3',['2','4','5'],'Mẫu đã sắp tăng; giá trị giữa là 3.'],
-      ['Trung vị của mẫu $2,4,6,8,10,12$ bằng','The median of $2,4,6,8,10,12$ is','7',['6','8','9'],'Lấy trung bình hai giá trị giữa: $(6+8)/2=7$.'],
+      ['Trung vị của mẫu $2,4,6,8,10,12$ bằng','The median of $2,4,6,8,10,12$ is','7',['6','8','9'],'Lấy trung bình hai giá trị giữa: $\\dfrac{6+8}{2}=7$.'],
       ['Với mẫu đã sắp $1,2,3,4,5,6,7$, tứ phân vị thứ hai $Q_2$ bằng','For sorted data $1,2,3,4,5,6,7$, the second quartile $Q_2$ is','4',['3','5','2'],'$Q_2$ chính là trung vị của mẫu.'],
       ['Với mẫu đã sắp $1,2,3,4,5,6,7$, tứ phân vị thứ nhất $Q_1$ bằng','For sorted data $1,2,3,4,5,6,7$, the first quartile $Q_1$ is','2',['1','3','4'],'Nửa dưới là $1,2,3$ nên trung vị của nửa dưới bằng 2.'],
     ][v]; return mk(r[0],r[1],r[2],r[4],r[3]);
@@ -1260,10 +1260,10 @@ function remainingDuplicateFixSample(tid: string, variant: number): Sample | nul
   }
   if (tid === 'type-kntt-11-09-02') {
     const r: any=[
-      ['Cho bảng $$\\begin{array}{c|cccc}\\text{Khoảng lớp}&[0;10)&[10;20)&[20;30)&[30;40)\\\\\\hline\\text{Tần số}&5&5&5&5\\end{array}$$ Trung vị $Q_2$ của mẫu ghép nhóm bằng','Given the grouped table $$\\begin{array}{c|cccc}\\text{Class}&[0,10)&[10,20)&[20,30)&[30,40)\\\\\\hline\\text{Frequency}&5&5&5&5\\end{array}$$ The grouped median $Q_2$ is','20',['10','15','25'],'Nội suy vị trí $n/2=10$ trong lớp trung vị, được $Q_2=20$.'],
-      ['Cho bảng $$\\begin{array}{c|cccc}\\text{Khoảng lớp}&[0;10)&[10;20)&[20;30)&[30;40)\\\\\\hline\\text{Tần số}&4&4&4&4\\end{array}$$ Giá trị $Q_1$ bằng','Given the grouped table $$\\begin{array}{c|cccc}\\text{Class}&[0,10)&[10,20)&[20,30)&[30,40)\\\\\\hline\\text{Frequency}&4&4&4&4\\end{array}$$ Find $Q_1$.','10',['5','15','20'],'Vị trí $n/4=4$ nằm ở cuối lớp đầu; nội suy được $Q_1=10$.'],
-      ['Cho bảng $$\\begin{array}{c|cccc}\\text{Khoảng lớp}&[10;20)&[20;30)&[30;40)&[40;50)\\\\\\hline\\text{Tần số}&6&6&6&6\\end{array}$$ Giá trị $Q_3$ bằng','Given the grouped table $$\\begin{array}{c|cccc}\\text{Class}&[10,20)&[20,30)&[30,40)&[40,50)\\\\\\hline\\text{Frequency}&6&6&6&6\\end{array}$$ Find $Q_3$.','40',['30','35','45'],'Vị trí $3n/4=18$ ở cuối lớp thứ ba; nội suy được $Q_3=40$.'],
-      ['Cho bảng $$\\begin{array}{c|cccc}\\text{Khoảng lớp}&[0;10)&[10;20)&[20;30)&[30;40)\\\\\\hline\\text{Tần số}&2&6&6&2\\end{array}$$ Trung vị bằng','Given the grouped table $$\\begin{array}{c|cccc}\\text{Class}&[0,10)&[10,20)&[20,30)&[30,40)\\\\\\hline\\text{Frequency}&2&6&6&2\\end{array}$$ The median is','20',['15','25','10'],'Vị trí $n/2=8$ ở cuối lớp $[10;20)$, nên trung vị bằng 20.'],
+      ['Cho bảng $$\\begin{array}{c|cccc}\\text{Khoảng lớp}&[0;10)&[10;20)&[20;30)&[30;40)\\\\\\hline\\text{Tần số}&5&5&5&5\\end{array}$$ Trung vị $Q_2$ của mẫu ghép nhóm bằng','Given the grouped table $$\\begin{array}{c|cccc}\\text{Class}&[0,10)&[10,20)&[20,30)&[30,40)\\\\\\hline\\text{Frequency}&5&5&5&5\\end{array}$$ The grouped median $Q_2$ is','20',['10','15','25'],'Nội suy vị trí $\\dfrac{n}{2}=10$ trong lớp trung vị, được $Q_2=20$.'],
+      ['Cho bảng $$\\begin{array}{c|cccc}\\text{Khoảng lớp}&[0;10)&[10;20)&[20;30)&[30;40)\\\\\\hline\\text{Tần số}&4&4&4&4\\end{array}$$ Giá trị $Q_1$ bằng','Given the grouped table $$\\begin{array}{c|cccc}\\text{Class}&[0,10)&[10,20)&[20,30)&[30,40)\\\\\\hline\\text{Frequency}&4&4&4&4\\end{array}$$ Find $Q_1$.','10',['5','15','20'],'Vị trí $\\dfrac{n}{4}=4$ nằm ở cuối lớp đầu; nội suy được $Q_1=10$.'],
+      ['Cho bảng $$\\begin{array}{c|cccc}\\text{Khoảng lớp}&[10;20)&[20;30)&[30;40)&[40;50)\\\\\\hline\\text{Tần số}&6&6&6&6\\end{array}$$ Giá trị $Q_3$ bằng','Given the grouped table $$\\begin{array}{c|cccc}\\text{Class}&[10,20)&[20,30)&[30,40)&[40,50)\\\\\\hline\\text{Frequency}&6&6&6&6\\end{array}$$ Find $Q_3$.','40',['30','35','45'],'Vị trí $\\dfrac{3n}{4}=18$ ở cuối lớp thứ ba; nội suy được $Q_3=40$.'],
+      ['Cho bảng $$\\begin{array}{c|cccc}\\text{Khoảng lớp}&[0;10)&[10;20)&[20;30)&[30;40)\\\\\\hline\\text{Tần số}&2&6&6&2\\end{array}$$ Trung vị bằng','Given the grouped table $$\\begin{array}{c|cccc}\\text{Class}&[0,10)&[10,20)&[20,30)&[30,40)\\\\\\hline\\text{Frequency}&2&6&6&2\\end{array}$$ The median is','20',['15','25','10'],'Vị trí $\\dfrac{n}{2}=8$ ở cuối lớp $[10;20)$, nên trung vị bằng 20.'],
     ][v]; return mk(r[0],r[1],r[2],r[4],r[3]);
   }
   if (tid === 'type-kntt-12-09-02') {
@@ -1302,10 +1302,10 @@ function remainingDuplicateFixSample(tid: string, variant: number): Sample | nul
 
   if (tid === 'type-kntt-11-04-04') {
     const r: any=[
-      ['Nghiệm của phương trình $\\sin x=0$ là','Solutions of $\\sin x=0$ are','$x=k\\pi,\\ k\\in\\mathbb Z$',['$x=\\pi/2+k\\pi$','$x=2k\\pi+\\pi/4$','$x=k$'],'Dùng nghiệm cơ bản của phương trình $\\sin x=0$.'],
-      ['Phương trình $2\\cos x-2=0$ được đưa về phương trình cơ bản và có nghiệm','The equation $2\\cos x-2=0$ reduces to a basic equation with solutions','$x=2k\\pi,\\ k\\in\\mathbb Z$',['$x=k\\pi$','$x=\\pi/2+k\\pi$','$x=\\pi+2k\\pi$'],'Rút gọn thành $\\cos x=1$, rồi dùng nghiệm cơ bản.'],
-      ['Phương trình $\\tan x=1$ có nghiệm','The equation $\\tan x=1$ has solutions','$x=\\dfrac\\pi4+k\\pi$',['$x=k\\pi$','$x=\\dfrac\\pi2+k\\pi$','$x=\\dfrac\\pi4+2k\\pi$'],'$\\tan x=\\tan(\\pi/4)$ nên $x=\\pi/4+k\\pi$.'],
-      ['Nghiệm của $\\cos 2x=0$ là','Solutions of $\\cos 2x=0$ are','$x=\\dfrac\\pi4+k\\dfrac\\pi2$',['$x=k\\pi$','$x=\\dfrac\\pi2+k\\pi$','$x=\\dfrac\\pi4+k\\pi$'],'$2x=\\pi/2+k\\pi$, chia hai vế cho 2.'],
+      ['Nghiệm của phương trình $\\sin x=0$ là','Solutions of $\\sin x=0$ are','$x=k\\pi,\\ k\\in\\mathbb Z$',['$x=\\dfrac{\\pi}{2}+k\\pi$','$x=2k\\pi+\\dfrac{\\pi}{4}$','$x=k$'],'Dùng nghiệm cơ bản của phương trình $\\sin x=0$.'],
+      ['Phương trình $2\\cos x-2=0$ được đưa về phương trình cơ bản và có nghiệm','The equation $2\\cos x-2=0$ reduces to a basic equation with solutions','$x=2k\\pi,\\ k\\in\\mathbb Z$',['$x=k\\pi$','$x=\\dfrac{\\pi}{2}+k\\pi$','$x=\\pi+2k\\pi$'],'Rút gọn thành $\\cos x=1$, rồi dùng nghiệm cơ bản.'],
+      ['Phương trình $\\tan x=1$ có nghiệm','The equation $\\tan x=1$ has solutions','$x=\\dfrac\\pi4+k\\pi$',['$x=k\\pi$','$x=\\dfrac\\pi2+k\\pi$','$x=\\dfrac\\pi4+2k\\pi$'],'$\\tan x=\\tan(\\dfrac{\\pi}{4})$ nên $x=\\dfrac{\\pi}{4}+k\\pi$.'],
+      ['Nghiệm của $\\cos 2x=0$ là','Solutions of $\\cos 2x=0$ are','$x=\\dfrac\\pi4+k\\dfrac\\pi2$',['$x=k\\pi$','$x=\\dfrac\\pi2+k\\pi$','$x=\\dfrac\\pi4+k\\pi$'],'$2x=\\dfrac{\\pi}{2}+k\\pi$, chia hai vế cho 2.'],
     ][v]; return mk(r[0],r[1],r[2],r[4],r[3]);
   }
   if (tid === 'type-kntt-11-24-02') {
@@ -1318,17 +1318,17 @@ function remainingDuplicateFixSample(tid: string, variant: number): Sample | nul
   }
   if (tid === 'type-kntt-12-16-02') {
     const r: any=[
-      ['Trong $Oxyz$, đường thẳng có vectơ chỉ phương $\\vec u=(1,0,1)$ và mặt phẳng có pháp tuyến $\\vec n=(0,0,1)$. Góc giữa đường thẳng và mặt phẳng bằng','In $Oxyz$, a line has direction $\\vec u=(1,0,1)$ and a plane has normal $\\vec n=(0,0,1)$. The line-plane angle is','$45^\\circ$',['$0^\\circ$','$30^\\circ$','$90^\\circ$'],'Dùng $\\sin\\varphi=|\\vec u\\cdot\\vec n|/(|\\vec u||\\vec n|)=1/\\sqrt2$.'],
+      ['Trong $Oxyz$, đường thẳng có vectơ chỉ phương $\\vec u=(1,0,1)$ và mặt phẳng có pháp tuyến $\\vec n=(0,0,1)$. Góc giữa đường thẳng và mặt phẳng bằng','In $Oxyz$, a line has direction $\\vec u=(1,0,1)$ and a plane has normal $\\vec n=(0,0,1)$. The line-plane angle is','$45^\\circ$',['$0^\\circ$','$30^\\circ$','$90^\\circ$'],'Dùng $\\sin\\varphi=\\dfrac{|\\vec u\\cdot\\vec n|}{|\\vec u||\\vec n|}=\\dfrac{1}{\\sqrt2}$.'],
       ['Đường thẳng có vectơ chỉ phương $(1,0,0)$, mặt phẳng có pháp tuyến $(0,0,1)$. Góc giữa chúng là','A line has direction $(1,0,0)$ and a plane has normal $(0,0,1)$. Their angle is','$0^\\circ$',['$30^\\circ$','$45^\\circ$','$90^\\circ$'],'Tích vô hướng bằng 0 nên đường thẳng song song với mặt phẳng.'],
       ['Đường thẳng có vectơ chỉ phương $(0,0,1)$ và mặt phẳng có pháp tuyến $(0,0,1)$. Góc giữa đường thẳng và mặt phẳng là','A line and a plane have direction/normal vectors both $(0,0,1)$. The line-plane angle is','$90^\\circ$',['$0^\\circ$','$45^\\circ$','$60^\\circ$'],'Vectơ chỉ phương song song pháp tuyến nên đường thẳng vuông góc mặt phẳng.'],
-      ['Cho $\\vec u=(\\sqrt3,0,1)$ là vectơ chỉ phương và $\\vec n=(0,0,1)$ là pháp tuyến mặt phẳng. Góc giữa đường thẳng và mặt phẳng bằng','Let $\\vec u=(\\sqrt3,0,1)$ be a line direction and $\\vec n=(0,0,1)$ a plane normal. The line-plane angle is','$30^\\circ$',['$45^\\circ$','$60^\\circ$','$90^\\circ$'],'$\\sin\\varphi=1/2$, suy ra $\\varphi=30^\\circ$.'],
+      ['Cho $\\vec u=(\\sqrt3,0,1)$ là vectơ chỉ phương và $\\vec n=(0,0,1)$ là pháp tuyến mặt phẳng. Góc giữa đường thẳng và mặt phẳng bằng','Let $\\vec u=(\\sqrt3,0,1)$ be a line direction and $\\vec n=(0,0,1)$ a plane normal. The line-plane angle is','$30^\\circ$',['$45^\\circ$','$60^\\circ$','$90^\\circ$'],'$\\sin\\varphi=\\dfrac{1}{2}$, suy ra $\\varphi=30^\\circ$.'],
     ][v]; return mk(r[0],r[1],r[2],r[4],r[3]);
   }
   if (tid === 'type-kntt-11-30-03') {
     const r: any=[
-      ['Hai biến cố độc lập có $P(A)=1/2,P(B)=1/3$. Xác suất đúng một trong hai biến cố xảy ra bằng','Independent events have $P(A)=1/2,P(B)=1/3$. Probability exactly one occurs is','$1/2$',['$1/6$','$2/3$','$5/6$'],'Tính $P(A\\cap\\bar B)+P(\\bar A\\cap B)=\\frac12\\frac23+\\frac12\\frac13$.'],
-      ['Tung hai đồng xu cân đối độc lập. Xác suất xuất hiện đúng một mặt ngửa là','Toss two fair independent coins. Probability of exactly one head is','$1/2$',['$1/4$','$3/4$','1'],'Hai kết quả thuận lợi HT, TH trong 4 kết quả đồng khả năng.'],
-      ['Gieo một xúc xắc rồi tung một đồng xu. Xác suất “xúc xắc chẵn và xu ngửa” bằng','Roll a die then toss a coin. Probability of “even die and head” is','$1/4$',['$1/2$','$1/6$','$3/4$'],'Hai phép thử độc lập: $P=3/6\\cdot1/2=1/4$.'],
+      ['Hai biến cố độc lập có $P(A)=\\dfrac{1}{2},P(B)=\\dfrac{1}{3}$. Xác suất đúng một trong hai biến cố xảy ra bằng','Independent events have $P(A)=\\dfrac{1}{2},P(B)=\\dfrac{1}{3}$. Probability exactly one occurs is','$\\dfrac{1}{2}$',['$\\dfrac{1}{6}$','$\\dfrac{2}{3}$','$\\dfrac{5}{6}$'],'Tính $P(A\\cap\\bar B)+P(\\bar A\\cap B)=\\frac12\\frac23+\\frac12\\frac13$.'],
+      ['Tung hai đồng xu cân đối độc lập. Xác suất xuất hiện đúng một mặt ngửa là','Toss two fair independent coins. Probability of exactly one head is','$\\dfrac{1}{2}$',['$\\dfrac{1}{4}$','$\\dfrac{3}{4}$','1'],'Hai kết quả thuận lợi HT, TH trong 4 kết quả đồng khả năng.'],
+      ['Gieo một xúc xắc rồi tung một đồng xu. Xác suất “xúc xắc chẵn và xu ngửa” bằng','Roll a die then toss a coin. Probability of “even die and head” is','$\\dfrac{1}{4}$',['$\\dfrac{1}{2}$','$\\dfrac{1}{6}$','$\\dfrac{3}{4}$'],'Hai phép thử độc lập: $P=\\dfrac{3}{6}\\cdot\\dfrac{1}{2}=\\dfrac{1}{4}$.'],
       ['Hai biến cố độc lập có $P(A)=0.4,P(B)=0.5$. Xác suất ít nhất một biến cố xảy ra là','Independent events have $P(A)=0.4,P(B)=0.5$. Probability at least one occurs is','0.7',['0.2','0.5','0.9'],'$P(A\\cup B)=P(A)+P(B)-P(A)P(B)=0.7$.'],
     ][v]; return mk(r[0],r[1],r[2],r[4],r[3]);
   }
@@ -1345,15 +1345,15 @@ function remainingDuplicateFixSample(tid: string, variant: number): Sample | nul
       ['Tiếp tuyến của đồ thị $y=x^2$ tại điểm có hoành độ $x_0=1$ là','The tangent to $y=x^2$ at $x_0=1$ is','$y=2x-1$',['$y=x+1$','$y=2x+1$','$y=x-1$'],'$f(1)=1,f^\\prime(1)=2$, dùng $y-y_0=f^\\prime(x_0)(x-x_0)$.'],
       ['Tiếp tuyến của $y=x^3$ tại $x_0=1$ có phương trình','The tangent to $y=x^3$ at $x_0=1$ is','$y=3x-2$',['$y=x$','$y=3x+2$','$y=x-2$'],'$f(1)=1,f^\\prime(1)=3$.'],
       ['Tiếp tuyến của $y=\\sin x$ tại $x_0=0$ là','The tangent to $y=\\sin x$ at $x_0=0$ is','$y=x$',['$y=0$','$y=-x$','$y=x+1$'],'$f(0)=0,f^\\prime(0)=\\cos0=1$.'],
-      ['Tiếp tuyến của $y=1/x$ tại $x_0=1$ là','The tangent to $y=1/x$ at $x_0=1$ is','$y=-x+2$',['$y=x$','$y=-x$','$y=x+2$'],'$f(1)=1,f^\\prime(1)=-1$.'],
+      ['Tiếp tuyến của $y=\\dfrac{1}{x}$ tại $x_0=1$ là','The tangent to $y=\\dfrac{1}{x}$ at $x_0=1$ is','$y=-x+2$',['$y=x$','$y=-x$','$y=x+2$'],'$f(1)=1,f^\\prime(1)=-1$.'],
     ][v]; return mk(r[0],r[1],r[2],r[4],r[3]);
   }
   if (tid === 'type-kntt-10-25-03') {
     const r: any=[
-      ['Hệ số của số hạng không chứa $x$ trong $(x+1/x)^4$ là','The coefficient of the constant term in $(x+1/x)^4$ is','6',['4','8','12'],'Số mũ của $x$ là $4-2k=0$, nên $k=2$ và hệ số là $\\binom42=6$.'],
-      ['Hệ số của số hạng không chứa $x$ trong $(x^2+1/x)^3$ là','The coefficient of the constant term in $(x^2+1/x)^3$ is','3',['1','6','9'],'Số mũ là $6-3k=0$, nên $k=2$ và hệ số $\\binom32=3$.'],
-      ['Hệ số của số hạng không chứa $x$ trong $(2x+1/x)^4$ là','The coefficient of the constant term in $(2x+1/x)^4$ is','24',['6','16','32'],'Với $k=2$, hệ số là $\\binom42 2^{2}=24$.'],
-      ['Hệ số của $x$ trong khai triển $(x+1/x)^5$ là','The coefficient of $x$ in $(x+1/x)^5$ is','10',['5','20','1'],'Số mũ $5-2k=1$ cho $k=2$, hệ số $\\binom52=10$.'],
+      ['Hệ số của số hạng không chứa $x$ trong $(x+\\dfrac{1}{x})^4$ là','The coefficient of the constant term in $(x+\\dfrac{1}{x})^4$ is','6',['4','8','12'],'Số mũ của $x$ là $4-2k=0$, nên $k=2$ và hệ số là $\\binom42=6$.'],
+      ['Hệ số của số hạng không chứa $x$ trong $(x^2+\\dfrac{1}{x})^3$ là','The coefficient of the constant term in $(x^2+\\dfrac{1}{x})^3$ is','3',['1','6','9'],'Số mũ là $6-3k=0$, nên $k=2$ và hệ số $\\binom32=3$.'],
+      ['Hệ số của số hạng không chứa $x$ trong $(2x+\\dfrac{1}{x})^4$ là','The coefficient of the constant term in $(2x+\\dfrac{1}{x})^4$ is','24',['6','16','32'],'Với $k=2$, hệ số là $\\binom42 2^{2}=24$.'],
+      ['Hệ số của $x$ trong khai triển $(x+\\dfrac{1}{x})^5$ là','The coefficient of $x$ in $(x+\\dfrac{1}{x})^5$ is','10',['5','20','1'],'Số mũ $5-2k=1$ cho $k=2$, hệ số $\\binom52=10$.'],
     ][v]; return mk(r[0],r[1],r[2],r[4],r[3]);
   }
 
@@ -1370,8 +1370,8 @@ function remainingDuplicateFixSample(tid: string, variant: number): Sample | nul
   if (tid === 'type-kntt-11-26-01') {
     const r = [
       {vi:'Cho hình chóp $S.ABC$ có $SA\\perp(ABC)$ và $SA=6$. Khoảng cách từ $S$ đến mặt phẳng $(ABC)$ bằng', en:'In pyramid $S.ABC$, $SA\\perp(ABC)$ and $SA=6$. The distance from $S$ to plane $(ABC)$ is', ans:'6', w:['3','12','$6\\sqrt2$'], sol:'Vì $SA\\perp(ABC)$ và $A\\in(ABC)$ nên $SA$ chính là đoạn vuông góc từ $S$ đến $(ABC)$.'},
-      {vi:'Cho hình lập phương $ABCD.A\\prime B\\prime C\\prime D\\prime$ cạnh $a$. Khoảng cách từ $A\\prime$ đến mặt phẳng $(ABCD)$ bằng', en:'A cube $ABCD.A\\prime B\\prime C\\prime D\\prime$ has side $a$. The distance from $A\\prime$ to plane $(ABCD)$ is', ans:'$a$', w:['$a\\sqrt2$','$a\\sqrt3$','$a/2$'], sol:'Cạnh $AA\\prime$ vuông góc với mặt đáy $(ABCD)$, do đó khoảng cách bằng $AA\\prime=a$.'},
-      {vi:'Cho lăng trụ đứng $ABC.A\\prime B\\prime C\\prime$ có cạnh bên $AA\\prime=5$. Khoảng cách từ $A\\prime$ đến mặt phẳng $(ABC)$ bằng', en:'A right prism $ABC.A\\prime B\\prime C\\prime$ has lateral edge $AA\\prime=5$. The distance from $A\\prime$ to plane $(ABC)$ is', ans:'5', w:['$5\\sqrt2$','10','$5/2$'], sol:'Trong lăng trụ đứng, cạnh bên vuông góc với đáy nên $d(A\\prime,(ABC))=AA\\prime=5$.'},
+      {vi:'Cho hình lập phương $ABCD.A\\prime B\\prime C\\prime D\\prime$ cạnh $a$. Khoảng cách từ $A\\prime$ đến mặt phẳng $(ABCD)$ bằng', en:'A cube $ABCD.A\\prime B\\prime C\\prime D\\prime$ has side $a$. The distance from $A\\prime$ to plane $(ABCD)$ is', ans:'$a$', w:['$a\\sqrt2$','$a\\sqrt3$','$\\dfrac{a}{2}$'], sol:'Cạnh $AA\\prime$ vuông góc với mặt đáy $(ABCD)$, do đó khoảng cách bằng $AA\\prime=a$.'},
+      {vi:'Cho lăng trụ đứng $ABC.A\\prime B\\prime C\\prime$ có cạnh bên $AA\\prime=5$. Khoảng cách từ $A\\prime$ đến mặt phẳng $(ABC)$ bằng', en:'A right prism $ABC.A\\prime B\\prime C\\prime$ has lateral edge $AA\\prime=5$. The distance from $A\\prime$ to plane $(ABC)$ is', ans:'5', w:['$5\\sqrt2$','10','$\\dfrac{5}{2}$'], sol:'Trong lăng trụ đứng, cạnh bên vuông góc với đáy nên $d(A\\prime,(ABC))=AA\\prime=5$.'},
       {vi:'Cho hình hộp chữ nhật $ABCD.A\\prime B\\prime C\\prime D\\prime$ với $AA\\prime=4$. Khoảng cách từ $C\\prime$ đến mặt phẳng $(ABCD)$ bằng', en:'A rectangular box $ABCD.A\\prime B\\prime C\\prime D\\prime$ has $AA\\prime=4$. The distance from $C\\prime$ to plane $(ABCD)$ is', ans:'4', w:['2','8','$4\\sqrt2$'], sol:'Ta có $CC\\prime\\perp(ABCD)$ và $CC\\prime=AA\\prime=4$, nên khoảng cách cần tìm bằng 4.'},
     ][v];
     return mk(r.vi,r.en,r.ans,r.sol,r.w);
@@ -1521,8 +1521,8 @@ function directSample(type: MathType, family: ExerciseFamily, variant: number): 
     const rows = [
       {vi:'Cho $\\sin\\alpha=\\dfrac35$ và $\\dfrac\\pi2<\\alpha<\\pi$. Giá trị $\\cos\\alpha$ bằng',en:'Given $\\sin\\alpha=\\dfrac35$ and $\\dfrac\\pi2<\\alpha<\\pi$, find $\\cos\\alpha$.',ans:'$-\\dfrac45$',w:['$\\dfrac45$','$-\\dfrac35$','$\\dfrac34$'],sol:'Dùng $\\sin^2\\alpha+\\cos^2\\alpha=1$ và dấu của cosin ở góc phần tư II.'},
       {vi:'Biết $\\tan\\alpha=2$. Giá trị $\\dfrac{1}{\\cos^2\\alpha}$ bằng',en:'Given $\\tan\\alpha=2$, find $\\dfrac{1}{\\cos^2\\alpha}$.',ans:'5',w:['3','4','$\\dfrac15$'],sol:'Dùng $1+\\tan^2\\alpha=\\dfrac1{\\cos^2\\alpha}$.'},
-      {vi:'Cho $\\sin\\alpha=\\dfrac{12}{13}$ và $0<\\alpha<\\dfrac\\pi2$. Giá trị $\\tan\\alpha$ bằng',en:'Given $\\sin\\alpha=\\dfrac{12}{13}$ and $0<\\alpha<\\dfrac\\pi2$, find $\\tan\\alpha$.',ans:'$\\dfrac{12}{5}$',w:['$\\dfrac5{12}$','$-\\dfrac{12}{5}$','$\\dfrac{13}{5}$'],sol:'Suy ra $\\cos\\alpha=5/13$, rồi $\\tan\\alpha=\\sin\\alpha/\\cos\\alpha$.'},
-      {vi:'Cho $\\cos\\alpha=-\\dfrac5{13}$ và $\\pi<\\alpha<\\dfrac{3\\pi}{2}$. Giá trị $\\tan\\alpha$ bằng',en:'Given $\\cos\\alpha=-\\dfrac5{13}$ and $\\pi<\\alpha<\\dfrac{3\\pi}{2}$, find $\\tan\\alpha$.',ans:'$\\dfrac{12}{5}$',w:['$-\\dfrac{12}{5}$','$\\dfrac5{12}$','$-\\dfrac5{12}$'],sol:'Ở góc phần tư III, $\\sin\\alpha=-12/13$, nên $\\tan\\alpha=12/5$.'},
+      {vi:'Cho $\\sin\\alpha=\\dfrac{12}{13}$ và $0<\\alpha<\\dfrac\\pi2$. Giá trị $\\tan\\alpha$ bằng',en:'Given $\\sin\\alpha=\\dfrac{12}{13}$ and $0<\\alpha<\\dfrac\\pi2$, find $\\tan\\alpha$.',ans:'$\\dfrac{12}{5}$',w:['$\\dfrac5{12}$','$-\\dfrac{12}{5}$','$\\dfrac{13}{5}$'],sol:'Suy ra $\\cos\\alpha=\\dfrac{5}{13}$, rồi $\\tan\\alpha=\\dfrac{\\sin\\alpha}{\\cos\\alpha}$.'},
+      {vi:'Cho $\\cos\\alpha=-\\dfrac5{13}$ và $\\pi<\\alpha<\\dfrac{3\\pi}{2}$. Giá trị $\\tan\\alpha$ bằng',en:'Given $\\cos\\alpha=-\\dfrac5{13}$ and $\\pi<\\alpha<\\dfrac{3\\pi}{2}$, find $\\tan\\alpha$.',ans:'$\\dfrac{12}{5}$',w:['$-\\dfrac{12}{5}$','$\\dfrac5{12}$','$-\\dfrac5{12}$'],sol:'Ở góc phần tư III, $\\sin\\alpha=-\\dfrac{12}{13}$, nên $\\tan\\alpha=\\dfrac{12}{5}$.'},
     ][variant%4];
     return {vi:rows.vi,en:rows.en,answer:rows.ans,solutionVi:rows.sol,solutionEn:rows.sol,options:[[rows.ans,rows.ans,true],[rows.w[0],rows.w[0],false],[rows.w[1],rows.w[1],false],[rows.w[2],rows.w[2],false]]};
   }
@@ -1583,10 +1583,10 @@ function directSample(type: MathType, family: ExerciseFamily, variant: number): 
   }
   if (tid === 'type-kntt-11-15-03') {
     const rows=[
-      {vi:'Tổng của cấp số nhân lùi vô hạn $1+\\dfrac12+\\dfrac14+\\cdots$ bằng',en:'The infinite geometric sum $1+\\dfrac12+\\dfrac14+\\cdots$ equals',ans:'2',w:['1','$\\dfrac32$','4'],sol:'$S=\\dfrac{1}{1-1/2}=2$.'},
-      {vi:'Tổng $3+1+\\dfrac13+\\dfrac19+\\cdots$ bằng',en:'The sum $3+1+\\dfrac13+\\dfrac19+\\cdots$ equals',ans:'$\\dfrac92$',w:['4','5','$\\dfrac32$'],sol:'$S=\\dfrac3{1-1/3}=\\dfrac92$.'},
+      {vi:'Tổng của cấp số nhân lùi vô hạn $1+\\dfrac12+\\dfrac14+\\cdots$ bằng',en:'The infinite geometric sum $1+\\dfrac12+\\dfrac14+\\cdots$ equals',ans:'2',w:['1','$\\dfrac32$','4'],sol:'$S=\\dfrac{1}{1-\\dfrac{1}{2}}=2$.'},
+      {vi:'Tổng $3+1+\\dfrac13+\\dfrac19+\\cdots$ bằng',en:'The sum $3+1+\\dfrac13+\\dfrac19+\\cdots$ equals',ans:'$\\dfrac92$',w:['4','5','$\\dfrac32$'],sol:'$S=\\dfrac3{1-\\dfrac{1}{3}}=\\dfrac92$.'},
       {vi:'Một quả bóng rơi từ độ cao 8 m; sau mỗi lần chạm đất nó nảy lên bằng một nửa độ cao trước. Tổng quãng đường đi được đến khi dừng là',en:'A ball is dropped from 8 m and rebounds to half the preceding height. Find the total distance traveled.',ans:'24',w:['16','20','32'],sol:'$8+2(4+2+1+\\cdots)=8+16=24$.'},
-      {vi:'Chu vi một hình đầu tiên là 16; mỗi hình sau có chu vi bằng một nửa hình trước. Tổng chu vi của vô hạn hình bằng',en:'The first figure has perimeter 16 and each next perimeter is half the previous one. Find the infinite total.',ans:'32',w:['16','24','64'],sol:'$S=\\dfrac{16}{1-1/2}=32$.'},
+      {vi:'Chu vi một hình đầu tiên là 16; mỗi hình sau có chu vi bằng một nửa hình trước. Tổng chu vi của vô hạn hình bằng',en:'The first figure has perimeter 16 and each next perimeter is half the previous one. Find the infinite total.',ans:'32',w:['16','24','64'],sol:'$S=\\dfrac{16}{1-\\dfrac{1}{2}}=32$.'},
     ][variant%4];
     return {vi:rows.vi,en:rows.en,answer:rows.ans,solutionVi:rows.sol,solutionEn:rows.sol,options:[[rows.ans,rows.ans,true],[rows.w[0],rows.w[0],false],[rows.w[1],rows.w[1],false],[rows.w[2],rows.w[2],false]]};
   }
@@ -1601,19 +1601,19 @@ function directSample(type: MathType, family: ExerciseFamily, variant: number): 
   }
   if (tid === 'type-kntt-11-18-01') {
     const rows=[
-      {expr:'$27^{2/3}$',ans:'9',w:['6','18','3']},
-      {expr:'$16^{-1/2}$',ans:'$\\dfrac14$',w:['4','$-\\dfrac14$','$\\dfrac18$']},
-      {expr:'$81^{3/4}$',ans:'27',w:['9','12','243']},
-      {expr:'$32^{2/5}$',ans:'4',w:['2','8','16']},
+      {expr:'$27^{\\dfrac{2}{3}}$',ans:'9',w:['6','18','3']},
+      {expr:'$16^{-\\dfrac{1}{2}}$',ans:'$\\dfrac14$',w:['4','$-\\dfrac14$','$\\dfrac18$']},
+      {expr:'$81^{\\dfrac{3}{4}}$',ans:'27',w:['9','12','243']},
+      {expr:'$32^{\\dfrac{2}{5}}$',ans:'4',w:['2','8','16']},
     ][variant%4];
-    return {vi:`Giá trị ${rows.expr} bằng`,en:`The value of ${rows.expr} is`,answer:rows.ans,solutionVi:'Dùng $a^{m/n}=(\\sqrt[n]{a})^m$ và $a^{-r}=1/a^r$.',solutionEn:'Use $a^{m/n}=(\\sqrt[n]{a})^m$ and $a^{-r}=1/a^r$.',options:[[rows.ans,rows.ans,true],[rows.w[0],rows.w[0],false],[rows.w[1],rows.w[1],false],[rows.w[2],rows.w[2],false]]};
+    return {vi:`Giá trị ${rows.expr} bằng`,en:`The value of ${rows.expr} is`,answer:rows.ans,solutionVi:'Dùng $a^{\\dfrac{m}{n}}=(\\sqrt[n]{a})^m$ và $a^{-r}=\\dfrac{1}{a^r}$.',solutionEn:'Use $a^{\\dfrac{m}{n}}=(\\sqrt[n]{a})^m$ and $a^{-r}=\\dfrac{1}{a^r}$.',options:[[rows.ans,rows.ans,true],[rows.w[0],rows.w[0],false],[rows.w[1],rows.w[1],false],[rows.w[2],rows.w[2],false]]};
   }
   if (tid === 'type-kntt-11-18-03') {
     const rows=[
-      {expr:'$8^{2/3}$',ans:'4',w:['2','8','16']},
-      {expr:'$27^{-1/3}$',ans:'$\\dfrac13$',w:['3','$-\\dfrac13$','$\\dfrac19$']},
-      {expr:'$4^{3/2}$',ans:'8',w:['6','4','16']},
-      {expr:'$16^{3/4}$',ans:'8',w:['4','12','64']},
+      {expr:'$8^{\\dfrac{2}{3}}$',ans:'4',w:['2','8','16']},
+      {expr:'$27^{-\\dfrac{1}{3}}$',ans:'$\\dfrac13$',w:['3','$-\\dfrac13$','$\\dfrac19$']},
+      {expr:'$4^{\\dfrac{3}{2}}$',ans:'8',w:['6','4','16']},
+      {expr:'$16^{\\dfrac{3}{4}}$',ans:'8',w:['4','12','64']},
     ][variant%4];
     return {vi:`Rút gọn ${rows.expr}, ta được`,en:`Simplify ${rows.expr}.`,answer:rows.ans,solutionVi:'Đổi số mũ hữu tỉ về căn và lũy thừa rồi rút gọn.',solutionEn:'Rewrite the rational exponent using radicals and simplify.',options:[[rows.ans,rows.ans,true],[rows.w[0],rows.w[0],false],[rows.w[1],rows.w[1],false],[rows.w[2],rows.w[2],false]]};
   }
@@ -1630,10 +1630,10 @@ function directSample(type: MathType, family: ExerciseFamily, variant: number): 
   }
   if (tid === 'type-kntt-12-13-02') {
     const rows=[
-      {vi:'Diện tích hình phẳng giới hạn bởi $y=x$ và $y=x^2$ trên $[0,1]$ bằng',en:'The area between $y=x$ and $y=x^2$ on $[0,1]$ is',ans:'$\\dfrac16$',w:['$\\dfrac12$','$\\dfrac13$','1'],sol:'$S=\\int_0^1(x-x^2)\\,dx=1/6$.'},
-      {vi:'Diện tích hình phẳng giới hạn bởi $y=2x$ và $y=x^2$ trên $[0,2]$ bằng',en:'The area between $y=2x$ and $y=x^2$ on $[0,2]$ is',ans:'$\\dfrac43$',w:['2','$\\dfrac23$','$\\dfrac83$'],sol:'$S=\\int_0^2(2x-x^2)\\,dx=4/3$.'},
-      {vi:'Diện tích hình phẳng giới hạn bởi $y=4$ và $y=x^2$ từ $x=-2$ đến $x=2$ bằng',en:'The area between $y=4$ and $y=x^2$ from $x=-2$ to $x=2$ is',ans:'$\\dfrac{32}{3}$',w:['8','$\\dfrac{16}{3}$','16'],sol:'$S=\\int_{-2}^2(4-x^2)\\,dx=32/3$.'},
-      {vi:'Diện tích hình phẳng giới hạn bởi $y=x+2$ và $y=x^2$ giữa hai giao điểm bằng',en:'The area enclosed by $y=x+2$ and $y=x^2$ is',ans:'$\\dfrac92$',w:['3','6','$\\dfrac32$'],sol:'Hai giao điểm có hoành độ $-1,2$; $S=\\int_{-1}^2(-x^2+x+2)\\,dx=9/2$.'},
+      {vi:'Diện tích hình phẳng giới hạn bởi $y=x$ và $y=x^2$ trên $[0,1]$ bằng',en:'The area between $y=x$ and $y=x^2$ on $[0,1]$ is',ans:'$\\dfrac16$',w:['$\\dfrac12$','$\\dfrac13$','1'],sol:'$S=\\int_0^1(x-x^2)\\,dx=\\dfrac{1}{6}$.'},
+      {vi:'Diện tích hình phẳng giới hạn bởi $y=2x$ và $y=x^2$ trên $[0,2]$ bằng',en:'The area between $y=2x$ and $y=x^2$ on $[0,2]$ is',ans:'$\\dfrac43$',w:['2','$\\dfrac23$','$\\dfrac83$'],sol:'$S=\\int_0^2(2x-x^2)\\,dx=\\dfrac{4}{3}$.'},
+      {vi:'Diện tích hình phẳng giới hạn bởi $y=4$ và $y=x^2$ từ $x=-2$ đến $x=2$ bằng',en:'The area between $y=4$ and $y=x^2$ from $x=-2$ to $x=2$ is',ans:'$\\dfrac{32}{3}$',w:['8','$\\dfrac{16}{3}$','16'],sol:'$S=\\int_{-2}^2(4-x^2)\\,dx=\\dfrac{32}{3}$.'},
+      {vi:'Diện tích hình phẳng giới hạn bởi $y=x+2$ và $y=x^2$ giữa hai giao điểm bằng',en:'The area enclosed by $y=x+2$ and $y=x^2$ is',ans:'$\\dfrac92$',w:['3','6','$\\dfrac32$'],sol:'Hai giao điểm có hoành độ $-1,2$; $S=\\int_{-1}^2(-x^2+x+2)\\,dx=\\dfrac{9}{2}$.'},
     ][variant%4];
     return {vi:rows.vi,en:rows.en,answer:rows.ans,solutionVi:rows.sol,solutionEn:rows.sol,options:[[rows.ans,rows.ans,true],[rows.w[0],rows.w[0],false],[rows.w[1],rows.w[1],false],[rows.w[2],rows.w[2],false]]};
   }
@@ -1670,9 +1670,9 @@ function directSample(type: MathType, family: ExerciseFamily, variant: number): 
     if (hasAny(t,['tích phân bằng đổi biến'])) {
       const rows=[
         {vi:'$\\int_0^1 2xe^{x^2}\\,dx$ bằng',en:'$\\int_0^1 2xe^{x^2}\\,dx$ equals',ans:'$e-1$',w:['$e$','1','$2e-2$']},
-        {vi:'$\\int_0^1 2x(x^2+1)^2\\,dx$ bằng',en:'$\\int_0^1 2x(x^2+1)^2\\,dx$ equals',ans:'$7/3$',w:['$1/3$','$8/3$','3']},
-        {vi:'$\\int_0^1(2x+1)^2\\,dx$ bằng',en:'$\\int_0^1(2x+1)^2\\,dx$ equals',ans:'$13/3$',w:['$7/3$','4','$9/2$']},
-        {vi:'$\\int_0^1(x+1)^3\\,dx$ bằng',en:'$\\int_0^1(x+1)^3\\,dx$ equals',ans:'$15/4$',w:['$7/4$','4','$3/2$']},
+        {vi:'$\\int_0^1 2x(x^2+1)^2\\,dx$ bằng',en:'$\\int_0^1 2x(x^2+1)^2\\,dx$ equals',ans:'$\\dfrac{7}{3}$',w:['$\\dfrac{1}{3}$','$\\dfrac{8}{3}$','3']},
+        {vi:'$\\int_0^1(2x+1)^2\\,dx$ bằng',en:'$\\int_0^1(2x+1)^2\\,dx$ equals',ans:'$\\dfrac{13}{3}$',w:['$\\dfrac{7}{3}$','4','$\\dfrac{9}{2}$']},
+        {vi:'$\\int_0^1(x+1)^3\\,dx$ bằng',en:'$\\int_0^1(x+1)^3\\,dx$ equals',ans:'$\\dfrac{15}{4}$',w:['$\\dfrac{7}{4}$','4','$\\dfrac{3}{2}$']},
       ][variant%4];
       return {vi:rows.vi,en:rows.en,answer:rows.ans,solutionVi:'Chọn phép đổi biến thích hợp, đổi cận rồi tính tích phân.',solutionEn:'Choose a suitable substitution, transform the bounds, then integrate.',options:[[rows.ans,rows.ans,true],[rows.w[0],rows.w[0],false],[rows.w[1],rows.w[1],false],[rows.w[2],rows.w[2],false]]};
     }
@@ -1736,7 +1736,7 @@ function directSample(type: MathType, family: ExerciseFamily, variant: number): 
     if (hasAny(t, ['tiệm cận xiên'])) {
       return {
         vi: 'Đồ thị $y=\\dfrac{x^2+2x+3}{x+1}$ có tiệm cận xiên là', en: 'The oblique asymptote of $y=\\dfrac{x^2+2x+3}{x+1}$ is',
-        answer: '$y=x+1$', solutionVi: '$y=x+1+\\dfrac{2}{x+1}$ nên khi $x\\to\\pm\\infty$, phần dư tiến về $0$.', solutionEn: '$y=x+1+2/(x+1)$, so the remainder tends to zero.',
+        answer: '$y=x+1$', solutionVi: '$y=x+1+\\dfrac{2}{x+1}$ nên khi $x\\to\\pm\\infty$, phần dư tiến về $0$.', solutionEn: '$y=x+1+\\dfrac{2}{x+1}$, so the remainder tends to zero.',
         options: [['$y=x+1$','$y=x+1$',true],['$y=x-1$','$y=x-1$',false],['$x=-1$','$x=-1$',false],['$y=1$','$y=1$',false]],
       };
     }
@@ -1790,18 +1790,18 @@ function directSample(type: MathType, family: ExerciseFamily, variant: number): 
       if (hasAny(t,['đổi biến'])) {
         const rows=[
           {vi:'Với $u=x^2$, $\\int_0^1 2xe^{x^2}dx$ bằng',en:'Using $u=x^2$, $\\int_0^1 2xe^{x^2}dx$ equals',ans:'$e-1$',w:['$e$','1','$2e-2$']},
-          {vi:'Với $u=x^2+1$, $\\int_0^1 2x(x^2+1)^2dx$ bằng',en:'Using $u=x^2+1$, $\\int_0^1 2x(x^2+1)^2dx$ equals',ans:'$7/3$',w:['$1/3$','$8/3$','3']},
-          {vi:'Với $u=2x+1$, $\\int_0^1(2x+1)^2dx$ bằng',en:'Using $u=2x+1$, $\\int_0^1(2x+1)^2dx$ equals',ans:'$13/3$',w:['$7/3$','4','$9/2$']},
-          {vi:'Với $u=x+1$, $\\int_0^1(x+1)^3dx$ bằng',en:'Using $u=x+1$, $\\int_0^1(x+1)^3dx$ equals',ans:'$15/4$',w:['$7/4$','4','$3/2$']},
+          {vi:'Với $u=x^2+1$, $\\int_0^1 2x(x^2+1)^2dx$ bằng',en:'Using $u=x^2+1$, $\\int_0^1 2x(x^2+1)^2dx$ equals',ans:'$\\dfrac{7}{3}$',w:['$\\dfrac{1}{3}$','$\\dfrac{8}{3}$','3']},
+          {vi:'Với $u=2x+1$, $\\int_0^1(2x+1)^2dx$ bằng',en:'Using $u=2x+1$, $\\int_0^1(2x+1)^2dx$ equals',ans:'$\\dfrac{13}{3}$',w:['$\\dfrac{7}{3}$','4','$\\dfrac{9}{2}$']},
+          {vi:'Với $u=x+1$, $\\int_0^1(x+1)^3dx$ bằng',en:'Using $u=x+1$, $\\int_0^1(x+1)^3dx$ equals',ans:'$\\dfrac{15}{4}$',w:['$\\dfrac{7}{4}$','4','$\\dfrac{3}{2}$']},
         ][variant%4];
         return {vi:rows.vi,en:rows.en,answer:rows.ans,solutionVi:'Đổi biến, đổi cận rồi tính tích phân theo biến mới.',solutionEn:'Substitute, transform the bounds, and integrate.',options:[[rows.ans,rows.ans,true],[rows.w[0],rows.w[0],false],[rows.w[1],rows.w[1],false],[rows.w[2],rows.w[2],false]]};
       }
       if (hasAny(t,['từng phần'])) {
         const rows=[
           {vi:'$\\int_0^1xe^x\\,dx$ bằng',en:'$\\int_0^1xe^x\\,dx$ equals',ans:'1',w:['$e-1$','$e$','0']},
-          {vi:'$\\int_0^1x\\,dx$ bằng',en:'$\\int_0^1x\\,dx$ equals',ans:'$1/2$',w:['1','0','2']},
-          {vi:'$\\int_0^1(x+1)\\,dx$ bằng',en:'$\\int_0^1(x+1)\\,dx$ equals',ans:'$3/2$',w:['1','2','$1/2$']},
-          {vi:'$\\int_0^1 2x\\,dx$ bằng',en:'$\\int_0^1 2x\\,dx$ equals',ans:'1',w:['2','$1/2$','0']},
+          {vi:'$\\int_0^1x\\,dx$ bằng',en:'$\\int_0^1x\\,dx$ equals',ans:'$\\dfrac{1}{2}$',w:['1','0','2']},
+          {vi:'$\\int_0^1(x+1)\\,dx$ bằng',en:'$\\int_0^1(x+1)\\,dx$ equals',ans:'$\\dfrac{3}{2}$',w:['1','2','$\\dfrac{1}{2}$']},
+          {vi:'$\\int_0^1 2x\\,dx$ bằng',en:'$\\int_0^1 2x\\,dx$ equals',ans:'1',w:['2','$\\dfrac{1}{2}$','0']},
         ][variant%4];
         return {vi:rows.vi,en:rows.en,answer:rows.ans,solutionVi:'Tính trực tiếp hoặc áp dụng tích phân từng phần khi thích hợp.',solutionEn:'Evaluate directly or use integration by parts as appropriate.',options:[[rows.ans,rows.ans,true],[rows.w[0],rows.w[0],false],[rows.w[1],rows.w[1],false],[rows.w[2],rows.w[2],false]]};
       }
@@ -1820,10 +1820,10 @@ function directSample(type: MathType, family: ExerciseFamily, variant: number): 
     if (hasAny(t, ['tích phân', 'diện tích hình phẳng', 'khối tròn xoay'])) {
       if (hasAny(t,['diện tích'])) {
         const rows = [
-          { vi: 'Diện tích hình phẳng giới hạn bởi $y=x$, trục $Ox$, $x=0$ và $x=2$ bằng', en: 'The area bounded by $y=x$, the $x$-axis, $x=0$ and $x=2$ equals', ans: '2', sol: '$S=\\int_0^2x\\,dx=2$.', wrong: ['1','4','$8/3$'] },
-          { vi: 'Diện tích hình phẳng giới hạn bởi $y=2x$, trục $Ox$, $x=0$ và $x=1$ bằng', en: 'The area bounded by $y=2x$, the $x$-axis, $x=0$ and $x=1$ equals', ans: '1', sol: '$S=\\int_0^1 2x\\,dx=1$.', wrong: ['2','$1/2$','$4/3$'] },
-          { vi: 'Diện tích hình phẳng giới hạn bởi $y=x^2$, trục $Ox$, $x=0$ và $x=1$ bằng', en: 'The area bounded by $y=x^2$, the $x$-axis, $x=0$ and $x=1$ equals', ans: '$1/3$', sol: '$S=\\int_0^1x^2\\,dx=\\dfrac13$.', wrong: ['1','$1/2$','$2/3$'] },
-          { vi: 'Diện tích hình phẳng giới hạn bởi $y=3-x$, trục $Ox$, $x=0$ và $x=3$ bằng', en: 'The area bounded by $y=3-x$, the $x$-axis, $x=0$ and $x=3$ equals', ans: '$9/2$', sol: '$S=\\int_0^3(3-x)\\,dx=\\dfrac92$.', wrong: ['3','6','$3/2$'] },
+          { vi: 'Diện tích hình phẳng giới hạn bởi $y=x$, trục $Ox$, $x=0$ và $x=2$ bằng', en: 'The area bounded by $y=x$, the $x$-axis, $x=0$ and $x=2$ equals', ans: '2', sol: '$S=\\int_0^2x\\,dx=2$.', wrong: ['1','4','$\\dfrac{8}{3}$'] },
+          { vi: 'Diện tích hình phẳng giới hạn bởi $y=2x$, trục $Ox$, $x=0$ và $x=1$ bằng', en: 'The area bounded by $y=2x$, the $x$-axis, $x=0$ and $x=1$ equals', ans: '1', sol: '$S=\\int_0^1 2x\\,dx=1$.', wrong: ['2','$\\dfrac{1}{2}$','$\\dfrac{4}{3}$'] },
+          { vi: 'Diện tích hình phẳng giới hạn bởi $y=x^2$, trục $Ox$, $x=0$ và $x=1$ bằng', en: 'The area bounded by $y=x^2$, the $x$-axis, $x=0$ and $x=1$ equals', ans: '$\\dfrac{1}{3}$', sol: '$S=\\int_0^1x^2\\,dx=\\dfrac13$.', wrong: ['1','$\\dfrac{1}{2}$','$\\dfrac{2}{3}$'] },
+          { vi: 'Diện tích hình phẳng giới hạn bởi $y=3-x$, trục $Ox$, $x=0$ và $x=3$ bằng', en: 'The area bounded by $y=3-x$, the $x$-axis, $x=0$ and $x=3$ equals', ans: '$\\dfrac{9}{2}$', sol: '$S=\\int_0^3(3-x)\\,dx=\\dfrac92$.', wrong: ['3','6','$\\dfrac{3}{2}$'] },
         ][variant % 4];
         return {
           vi: rows.vi, en: rows.en, answer: rows.ans,
@@ -1833,10 +1833,10 @@ function directSample(type: MathType, family: ExerciseFamily, variant: number): 
       }
       if (hasAny(t,['thể tích','tròn xoay'])) {
         const rows=[
-          {f:'$y=x$',a:'0',b:'1',ans:'$\\pi/3$',w:['$\\pi/2$','$\\pi$','$2\\pi/3$']},
-          {f:'$y=2x$',a:'0',b:'1',ans:'$4\\pi/3$',w:['$2\\pi/3$','$2\\pi$','$4\\pi$']},
-          {f:'$y=1$',a:'0',b:'2',ans:'$2\\pi$',w:['$\\pi$','$4\\pi$','$2\\pi/3$']},
-          {f:'$y=\\sqrt{x}$',a:'0',b:'1',ans:'$\\pi/2$',w:['$\\pi/3$','$\\pi$','$2\\pi/3$']},
+          {f:'$y=x$',a:'0',b:'1',ans:'$\\dfrac{\\pi}{3}$',w:['$\\dfrac{\\pi}{2}$','$\\pi$','$\\dfrac{2\\pi}{3}$']},
+          {f:'$y=2x$',a:'0',b:'1',ans:'$\\dfrac{4\\pi}{3}$',w:['$\\dfrac{2\\pi}{3}$','$2\\pi$','$4\\pi$']},
+          {f:'$y=1$',a:'0',b:'2',ans:'$2\\pi$',w:['$\\pi$','$4\\pi$','$\\dfrac{2\\pi}{3}$']},
+          {f:'$y=\\sqrt{x}$',a:'0',b:'1',ans:'$\\dfrac{\\pi}{2}$',w:['$\\dfrac{\\pi}{3}$','$\\pi$','$\\dfrac{2\\pi}{3}$']},
         ][variant%4];
         return {vi:`Quay miền dưới ${rows.f}, $${rows.a}\\le x\\le${rows.b}$ quanh trục $Ox$. Thể tích bằng`,en:`Rotate the region under ${rows.f}, $${rows.a}\\le x\\le${rows.b}$ about the $x$-axis. The volume is`,answer:rows.ans,solutionVi:'Dùng $V=\\pi\\int_a^b y^2\\,dx$.',solutionEn:'Use $V=\\pi\\int_a^b y^2\\,dx$.',options:[[rows.ans,rows.ans,true],[rows.w[0],rows.w[0],false],[rows.w[1],rows.w[1],false],[rows.w[2],rows.w[2],false]]};
       }
@@ -1932,9 +1932,9 @@ function directSample(type: MathType, family: ExerciseFamily, variant: number): 
     if (hasAny(t,['bayes','hậu nghiệm'])) {
       const rows=[
         {vi:'Một bệnh có tỉ lệ 1%. Test dương tính với người bệnh 90% và dương giả 5%. Xác suất thực sự bệnh khi test dương gần nhất là',en:'Disease prevalence is 1%, sensitivity 90%, false-positive rate 5%. Find the probability of disease given a positive test.',ans:'15.4%',w:['90%','5%','1%'],sol:'$P(B|+)=\\dfrac{0.01\\cdot0.9}{0.01\\cdot0.9+0.99\\cdot0.05}\\approx15.4\\%$.'},
-        {vi:'Máy A làm 60% sản phẩm, lỗi 1%; máy B làm 40%, lỗi 4%. Biết một sản phẩm bị lỗi, xác suất nó do máy B làm gần nhất là',en:'Machine A makes 60% with 1% defects; B makes 40% with 4% defects. Given a defective product, find the probability it came from B.',ans:'72.7%',w:['40%','80%','27.3%'],sol:'$P(B|D)=0.4\\cdot0.04/(0.6\\cdot0.01+0.4\\cdot0.04)\\approx72.7\\%$.'},
-        {vi:'Xác suất mưa là 30%. Ứng dụng cảnh báo mưa đúng 80% khi có mưa và báo nhầm 10% khi không mưa. Khi có cảnh báo, xác suất thực sự mưa gần nhất là',en:'Rain probability is 30%; an app alerts with 80% sensitivity and 10% false-positive rate. Given an alert, find the probability of rain.',ans:'77.4%',w:['80%','30%','70%'],sol:'$0.3\\cdot0.8/(0.3\\cdot0.8+0.7\\cdot0.1)\\approx77.4\\%$.'},
-        {vi:'20% email là spam. Bộ lọc bắt đúng 90% spam và gắn nhầm 5% email thường. Biết email bị gắn spam, xác suất nó thực sự là spam gần nhất là',en:'20% of emails are spam. A filter catches 90% of spam and falsely flags 5% of normal mail. Given a flag, find the spam probability.',ans:'81.8%',w:['90%','20%','75%'],sol:'$0.2\\cdot0.9/(0.2\\cdot0.9+0.8\\cdot0.05)\\approx81.8\\%$.'},
+        {vi:'Máy A làm 60% sản phẩm, lỗi 1%; máy B làm 40%, lỗi 4%. Biết một sản phẩm bị lỗi, xác suất nó do máy B làm gần nhất là',en:'Machine A makes 60% with 1% defects; B makes 40% with 4% defects. Given a defective product, find the probability it came from B.',ans:'72.7%',w:['40%','80%','27.3%'],sol:'$P(B|D)=0.4\\cdot\\dfrac{0.04}{0.6\\cdot0.01+0.4\\cdot0.04}\\approx72.7\\%$.'},
+        {vi:'Xác suất mưa là 30%. Ứng dụng cảnh báo mưa đúng 80% khi có mưa và báo nhầm 10% khi không mưa. Khi có cảnh báo, xác suất thực sự mưa gần nhất là',en:'Rain probability is 30%; an app alerts with 80% sensitivity and 10% false-positive rate. Given an alert, find the probability of rain.',ans:'77.4%',w:['80%','30%','70%'],sol:'$0.3\\cdot\\dfrac{0.8}{0.3\\cdot0.8+0.7\\cdot0.1}\\approx77.4\\%$.'},
+        {vi:'20% email là spam. Bộ lọc bắt đúng 90% spam và gắn nhầm 5% email thường. Biết email bị gắn spam, xác suất nó thực sự là spam gần nhất là',en:'20% of emails are spam. A filter catches 90% of spam and falsely flags 5% of normal mail. Given a flag, find the spam probability.',ans:'81.8%',w:['90%','20%','75%'],sol:'$0.2\\cdot\\dfrac{0.9}{0.2\\cdot0.9+0.8\\cdot0.05}\\approx81.8\\%$.'},
       ][variant%4]; return {vi:rows.vi,en:rows.en,answer:rows.ans,solutionVi:rows.sol,solutionEn:rows.sol,options:[[rows.ans,rows.ans,true],[rows.w[0],rows.w[0],false],[rows.w[1],rows.w[1],false],[rows.w[2],rows.w[2],false]]};
     }
     if (hasAny(t,['có điều kiện'])) {
@@ -1957,17 +1957,17 @@ function directSample(type: MathType, family: ExerciseFamily, variant: number): 
     }
     if (hasAny(t,['công thức nhân','độc lập','chuỗi phép thử'])) {
       const rows=[
-        {vi:'Tung hai đồng xu cân đối độc lập. Xác suất cả hai cùng ngửa bằng',en:'Toss two fair independent coins. Probability both are heads is',ans:'$1/4$',w:['$1/2$','$3/4$','1'],sol:'$P=\\dfrac12\\cdot\\dfrac12=\\dfrac14$.'},
-        {vi:'Gieo hai xúc xắc độc lập. Xác suất cả hai cùng ra số 6 bằng',en:'Roll two independent fair dice. Probability both show 6 is',ans:'$1/36$',w:['$1/6$','$1/12$','$1/18$'],sol:'$P=\\dfrac16\\cdot\\dfrac16=\\dfrac1{36}$.'},
+        {vi:'Tung hai đồng xu cân đối độc lập. Xác suất cả hai cùng ngửa bằng',en:'Toss two fair independent coins. Probability both are heads is',ans:'$\\dfrac{1}{4}$',w:['$\\dfrac{1}{2}$','$\\dfrac{3}{4}$','1'],sol:'$P=\\dfrac12\\cdot\\dfrac12=\\dfrac14$.'},
+        {vi:'Gieo hai xúc xắc độc lập. Xác suất cả hai cùng ra số 6 bằng',en:'Roll two independent fair dice. Probability both show 6 is',ans:'$\\dfrac{1}{36}$',w:['$\\dfrac{1}{6}$','$\\dfrac{1}{12}$','$\\dfrac{1}{18}$'],sol:'$P=\\dfrac16\\cdot\\dfrac16=\\dfrac1{36}$.'},
         {vi:'Một biến cố có xác suất 0.8 ở mỗi phép thử độc lập. Xác suất nó xảy ra cả 3 lần bằng',en:'An event has probability 0.8 in each independent trial. Probability it occurs in all 3 trials is',ans:'0.512',w:['0.64','0.8','0.488'],sol:'$0.8^3=0.512$.'},
         {vi:'Bắn hai phát độc lập, xác suất trúng mỗi phát là 0.7. Xác suất cả hai phát đều trúng bằng',en:'Two independent shots each hit with probability 0.7. Probability both hit is',ans:'0.49',w:['0.7','0.3','0.21'],sol:'$0.7\\cdot0.7=0.49$.'},
       ][variant%4]; return {vi:rows.vi,en:rows.en,answer:rows.ans,solutionVi:rows.sol,solutionEn:rows.sol,options:[[rows.ans,rows.ans,true],[rows.w[0],rows.w[0],false],[rows.w[1],rows.w[1],false],[rows.w[2],rows.w[2],false]]};
     }
     const rows=[
-      {vi:'Gieo một xúc xắc cân đối. Xác suất xuất hiện số chẵn bằng',en:'Roll a fair die. Probability of an even number is',ans:'$1/2$',w:['$1/3$','$2/3$','$1/6$'],sol:'Có 3 kết quả thuận lợi trên 6 kết quả.'},
-      {vi:'Gieo một xúc xắc cân đối. Xác suất xuất hiện số lớn hơn 4 bằng',en:'Roll a fair die. Probability of a number greater than 4 is',ans:'$1/3$',w:['$1/2$','$2/3$','$1/6$'],sol:'Có 2 kết quả thuận lợi $\\{5,6\\}$ trên 6.'},
-      {vi:'Rút ngẫu nhiên một thẻ từ các thẻ đánh số 1 đến 10. Xác suất rút số chia hết cho 5 bằng',en:'Draw one card numbered 1 to 10. Probability the number is divisible by 5 is',ans:'$1/5$',w:['$1/2$','$1/10$','$2/5$'],sol:'Có 2 số thuận lợi 5, 10 trên 10 thẻ.'},
-      {vi:'Tung một đồng xu cân đối một lần. Xác suất xuất hiện mặt ngửa bằng',en:'Toss a fair coin once. Probability of heads is',ans:'$1/2$',w:['$1/4$','1','0'],sol:'Hai kết quả đồng khả năng và có một kết quả thuận lợi.'},
+      {vi:'Gieo một xúc xắc cân đối. Xác suất xuất hiện số chẵn bằng',en:'Roll a fair die. Probability of an even number is',ans:'$\\dfrac{1}{2}$',w:['$\\dfrac{1}{3}$','$\\dfrac{2}{3}$','$\\dfrac{1}{6}$'],sol:'Có 3 kết quả thuận lợi trên 6 kết quả.'},
+      {vi:'Gieo một xúc xắc cân đối. Xác suất xuất hiện số lớn hơn 4 bằng',en:'Roll a fair die. Probability of a number greater than 4 is',ans:'$\\dfrac{1}{3}$',w:['$\\dfrac{1}{2}$','$\\dfrac{2}{3}$','$\\dfrac{1}{6}$'],sol:'Có 2 kết quả thuận lợi $\\{5,6\\}$ trên 6.'},
+      {vi:'Rút ngẫu nhiên một thẻ từ các thẻ đánh số 1 đến 10. Xác suất rút số chia hết cho 5 bằng',en:'Draw one card numbered 1 to 10. Probability the number is divisible by 5 is',ans:'$\\dfrac{1}{5}$',w:['$\\dfrac{1}{2}$','$\\dfrac{1}{10}$','$\\dfrac{2}{5}$'],sol:'Có 2 số thuận lợi 5, 10 trên 10 thẻ.'},
+      {vi:'Tung một đồng xu cân đối một lần. Xác suất xuất hiện mặt ngửa bằng',en:'Toss a fair coin once. Probability of heads is',ans:'$\\dfrac{1}{2}$',w:['$\\dfrac{1}{4}$','1','0'],sol:'Hai kết quả đồng khả năng và có một kết quả thuận lợi.'},
     ][variant%4];
     return {vi:rows.vi,en:rows.en,answer:rows.ans,solutionVi:rows.sol,solutionEn:rows.sol,options:[[rows.ans,rows.ans,true],[rows.w[0],rows.w[0],false],[rows.w[1],rows.w[1],false],[rows.w[2],rows.w[2],false]]};
   }
@@ -2022,11 +2022,11 @@ function directSample(type: MathType, family: ExerciseFamily, variant: number): 
         {cls:['[5;15)','[15;25)','[25;35)','[35;45)'],f:[8,8,8,8],ans:'20',w:['10','15','30']},
       ][variant%4];
       const table=`$$\\begin{array}{c|cccc}\\text{Khoảng lớp}&${rows.cls.join('&')}\\\\\\hline\\text{Tần số}&${rows.f.join('&')}\\end{array}$$`;
-      return {vi:`Cho bảng tần số ghép nhóm ${table} Khoảng tứ phân vị $\\Delta_Q=Q_3-Q_1$ bằng`,en:`Given the grouped table ${table} the interquartile range $\\Delta_Q=Q_3-Q_1$ is`,answer:rows.ans,solutionVi:'Nội suy các vị trí $n/4$ và $3n/4$ trong các lớp rồi tính $Q_3-Q_1$.',solutionEn:'Interpolate the $n/4$ and $3n/4$ positions, then compute $Q_3-Q_1$.',options:[[rows.ans,rows.ans,true],[rows.w[0],rows.w[0],false],[rows.w[1],rows.w[1],false],[rows.w[2],rows.w[2],false]]};
+      return {vi:`Cho bảng tần số ghép nhóm ${table} Khoảng tứ phân vị $\\Delta_Q=Q_3-Q_1$ bằng`,en:`Given the grouped table ${table} the interquartile range $\\Delta_Q=Q_3-Q_1$ is`,answer:rows.ans,solutionVi:'Nội suy các vị trí $\\dfrac{n}{4}$ và $\\dfrac{3n}{4}$ trong các lớp rồi tính $Q_3-Q_1$.',solutionEn:'Interpolate the $\\dfrac{n}{4}$ and $\\dfrac{3n}{4}$ positions, then compute $Q_3-Q_1$.',options:[[rows.ans,rows.ans,true],[rows.w[0],rows.w[0],false],[rows.w[1],rows.w[1],false],[rows.w[2],rows.w[2],false]]};
     }
     if (hasAny(t,['trung bình'])) return {
       vi: 'Số trung bình của mẫu $2,4,5,7,7$ bằng', en: 'The mean of $2,4,5,7,7$ is', answer: '5',
-      solutionVi: '$(2+4+5+7+7)/5=5$.', solutionEn: 'The mean is 5.', options: [['5','5',true],['4','4',false],['5.5','5.5',false],['7','7',false]],
+      solutionVi: '$\\dfrac{2+4+5+7+7}{5}=5$.', solutionEn: 'The mean is 5.', options: [['5','5',true],['4','4',false],['5.5','5.5',false],['7','7',false]],
     };
     if (hasAny(t,['trung vị','tứ phân vị'])) return {
       vi: 'Trung vị của mẫu đã sắp xếp $1,3,4,6,9$ bằng', en: 'The median of the ordered sample $1,3,4,6,9$ is', answer: '4',
@@ -2038,7 +2038,7 @@ function directSample(type: MathType, family: ExerciseFamily, variant: number): 
     };
     if (hasAny(t,['phương sai','độ lệch chuẩn'])) return {
       vi: 'Mẫu $1,1,3,3$ có số trung bình bằng 2. Phương sai (chia cho $n$) bằng', en: 'For sample $1,1,3,3$ with mean 2, the population-style variance is', answer: '1',
-      solutionVi: '$s^2=[1+1+1+1]/4=1$.', solutionEn: 'Average squared deviation is 1.', options: [['1','1',true],['2','2',false],['4','4',false],['0','0',false]],
+      solutionVi: '$s^2=\\dfrac{[1+1+1+1]}{4}=1$.', solutionEn: 'Average squared deviation is 1.', options: [['1','1',true],['2','2',false],['4','4',false],['0','0',false]],
     };
     if (hasAny(t,['khoảng biến thiên'])) {
       const rows = [
@@ -2088,60 +2088,60 @@ function directSample(type: MathType, family: ExerciseFamily, variant: number): 
   if (family === 'trig') {
     if (tid === 'type-kntt-11-04-01') {
       const rows=[
-        {eq:'$\\sin x=0$',ans:'$x=k\\pi$',w:['$x=\\pi/2+k\\pi$','$x=2k\\pi+\\pi/4$','$x=k$']},
-        {eq:'$\\sin x=1$',ans:'$x=\\pi/2+2k\\pi$',w:['$x=k\\pi$','$x=\\pi/2+k\\pi$','$x=2k\\pi$']},
-        {eq:'$\\sin x=-1$',ans:'$x=-\\pi/2+2k\\pi$',w:['$x=\\pi/2+2k\\pi$','$x=k\\pi$','$x=\\pi+2k\\pi$']},
-        {eq:'$\\sin x=\\dfrac12$',ans:'$x=\\pi/6+2k\\pi$ hoặc $x=5\\pi/6+2k\\pi$',w:['$x=\\pi/6+k\\pi$','$x=\\pi/3+2k\\pi$','$x=5\\pi/6+k\\pi$']},
+        {eq:'$\\sin x=0$',ans:'$x=k\\pi$',w:['$x=\\dfrac{\\pi}{2}+k\\pi$','$x=2k\\pi+\\dfrac{\\pi}{4}$','$x=k$']},
+        {eq:'$\\sin x=1$',ans:'$x=\\dfrac{\\pi}{2}+2k\\pi$',w:['$x=k\\pi$','$x=\\dfrac{\\pi}{2}+k\\pi$','$x=2k\\pi$']},
+        {eq:'$\\sin x=-1$',ans:'$x=-\\dfrac{\\pi}{2}+2k\\pi$',w:['$x=\\dfrac{\\pi}{2}+2k\\pi$','$x=k\\pi$','$x=\\pi+2k\\pi$']},
+        {eq:'$\\sin x=\\dfrac12$',ans:'$x=\\dfrac{\\pi}{6}+2k\\pi$ hoặc $x=\\dfrac{5\\pi}{6}+2k\\pi$',w:['$x=\\dfrac{\\pi}{6}+k\\pi$','$x=\\dfrac{\\pi}{3}+2k\\pi$','$x=\\dfrac{5\\pi}{6}+k\\pi$']},
       ][variant%4]; return {vi:`Nghiệm của ${rows.eq} là`,en:`Solutions of ${rows.eq} are`,answer:rows.ans,solutionVi:'Dùng nghiệm cơ bản của phương trình sin và chu kì $2\\pi$.',solutionEn:'Use the basic sine solutions and period $2\\pi$.',options:[[rows.ans,rows.ans,true],[rows.w[0],rows.w[0],false],[rows.w[1],rows.w[1],false],[rows.w[2],rows.w[2],false]]};
     }
     if (tid === 'type-kntt-11-04-02') {
       const rows=[
-        {eq:'$\\cos x=1$',ans:'$x=2k\\pi$',w:['$x=k\\pi$','$x=\\pi/2+k\\pi$','$x=\\pi+2k\\pi$']},
-        {eq:'$\\cos x=0$',ans:'$x=\\pi/2+k\\pi$',w:['$x=k\\pi$','$x=2k\\pi$','$x=\\pi/2+2k\\pi$']},
-        {eq:'$\\cos x=-1$',ans:'$x=\\pi+2k\\pi$',w:['$x=2k\\pi$','$x=k\\pi$','$x=-\\pi/2+2k\\pi$']},
-        {eq:'$\\cos x=\\dfrac12$',ans:'$x=\\pm\\pi/3+2k\\pi$',w:['$x=\\pi/3+k\\pi$','$x=\\pm\\pi/6+2k\\pi$','$x=2k\\pi$']},
+        {eq:'$\\cos x=1$',ans:'$x=2k\\pi$',w:['$x=k\\pi$','$x=\\dfrac{\\pi}{2}+k\\pi$','$x=\\pi+2k\\pi$']},
+        {eq:'$\\cos x=0$',ans:'$x=\\dfrac{\\pi}{2}+k\\pi$',w:['$x=k\\pi$','$x=2k\\pi$','$x=\\dfrac{\\pi}{2}+2k\\pi$']},
+        {eq:'$\\cos x=-1$',ans:'$x=\\pi+2k\\pi$',w:['$x=2k\\pi$','$x=k\\pi$','$x=-\\dfrac{\\pi}{2}+2k\\pi$']},
+        {eq:'$\\cos x=\\dfrac12$',ans:'$x=\\pm\\dfrac{\\pi}{3}+2k\\pi$',w:['$x=\\dfrac{\\pi}{3}+k\\pi$','$x=\\pm\\dfrac{\\pi}{6}+2k\\pi$','$x=2k\\pi$']},
       ][variant%4]; return {vi:`Nghiệm của ${rows.eq} là`,en:`Solutions of ${rows.eq} are`,answer:rows.ans,solutionVi:'Dùng nghiệm cơ bản của phương trình cos và chu kì $2\\pi$.',solutionEn:'Use the basic cosine solutions and period $2\\pi$.',options:[[rows.ans,rows.ans,true],[rows.w[0],rows.w[0],false],[rows.w[1],rows.w[1],false],[rows.w[2],rows.w[2],false]]};
     }
     if (tid === 'type-kntt-11-04-03') {
       const rows=[
-        {eq:'$\\tan x=1$',ans:'$x=\\pi/4+k\\pi$',w:['$x=\\pi/4+2k\\pi$','$x=k\\pi$','$x=\\pi/2+k\\pi$']},
-        {eq:'$\\tan x=0$',ans:'$x=k\\pi$',w:['$x=2k\\pi$','$x=\\pi/2+k\\pi$','$x=\\pi/4+k\\pi$']},
-        {eq:'$\\cot x=1$',ans:'$x=\\pi/4+k\\pi$',w:['$x=k\\pi$','$x=\\pi/2+k\\pi$','$x=\\pi/4+2k\\pi$']},
-        {eq:'$\\tan x=\\sqrt3$',ans:'$x=\\pi/3+k\\pi$',w:['$x=\\pi/6+k\\pi$','$x=\\pi/3+2k\\pi$','$x=2\\pi/3+k\\pi$']},
+        {eq:'$\\tan x=1$',ans:'$x=\\dfrac{\\pi}{4}+k\\pi$',w:['$x=\\dfrac{\\pi}{4}+2k\\pi$','$x=k\\pi$','$x=\\dfrac{\\pi}{2}+k\\pi$']},
+        {eq:'$\\tan x=0$',ans:'$x=k\\pi$',w:['$x=2k\\pi$','$x=\\dfrac{\\pi}{2}+k\\pi$','$x=\\dfrac{\\pi}{4}+k\\pi$']},
+        {eq:'$\\cot x=1$',ans:'$x=\\dfrac{\\pi}{4}+k\\pi$',w:['$x=k\\pi$','$x=\\dfrac{\\pi}{2}+k\\pi$','$x=\\dfrac{\\pi}{4}+2k\\pi$']},
+        {eq:'$\\tan x=\\sqrt3$',ans:'$x=\\dfrac{\\pi}{3}+k\\pi$',w:['$x=\\dfrac{\\pi}{6}+k\\pi$','$x=\\dfrac{\\pi}{3}+2k\\pi$','$x=\\dfrac{2\\pi}{3}+k\\pi$']},
       ][variant%4]; return {vi:`Nghiệm của ${rows.eq} là`,en:`Solutions of ${rows.eq} are`,answer:rows.ans,solutionVi:'Dùng nghiệm cơ bản và chu kì $\\pi$ của tan/cot.',solutionEn:'Use the basic solution and period $\\pi$ of tangent/cotangent.',options:[[rows.ans,rows.ans,true],[rows.w[0],rows.w[0],false],[rows.w[1],rows.w[1],false],[rows.w[2],rows.w[2],false]]};
     }
     if (hasAny(t,['phương trình sin'])) return {
-      vi: 'Nghiệm của $\\sin x=0$ là', en: 'Solutions of $\\sin x=0$ are', answer: '$x=k\\pi$', solutionVi: '$\\sin x=0\\Leftrightarrow x=k\\pi, k\\in\\mathbb Z$.', solutionEn: '$x=k\\pi$.', options: [['$x=k\\pi$','$x=k\\pi$',true],['$x=\\pi/2+k\\pi$','$x=\\pi/2+k\\pi$',false],['$x=2k\\pi+\\pi/4$','$x=2k\\pi+\\pi/4$',false],['$x=k$','$x=k$',false]],
+      vi: 'Nghiệm của $\\sin x=0$ là', en: 'Solutions of $\\sin x=0$ are', answer: '$x=k\\pi$', solutionVi: '$\\sin x=0\\Leftrightarrow x=k\\pi, k\\in\\mathbb Z$.', solutionEn: '$x=k\\pi$.', options: [['$x=k\\pi$','$x=k\\pi$',true],['$x=\\dfrac{\\pi}{2}+k\\pi$','$x=\\dfrac{\\pi}{2}+k\\pi$',false],['$x=2k\\pi+\\dfrac{\\pi}{4}$','$x=2k\\pi+\\dfrac{\\pi}{4}$',false],['$x=k$','$x=k$',false]],
     };
     if (hasAny(t,['phương trình cos'])) return {
-      vi: 'Nghiệm của $\\cos x=1$ là', en: 'Solutions of $\\cos x=1$ are', answer: '$x=2k\\pi$', solutionVi: '$\\cos x=1\\Leftrightarrow x=2k\\pi$.', solutionEn: '$x=2k\\pi$.', options: [['$x=2k\\pi$','$x=2k\\pi$',true],['$x=k\\pi$','$x=k\\pi$',false],['$x=\\pi/2+k\\pi$','$x=\\pi/2+k\\pi$',false],['$x=\\pi+2k\\pi$','$x=\\pi+2k\\pi$',false]],
+      vi: 'Nghiệm của $\\cos x=1$ là', en: 'Solutions of $\\cos x=1$ are', answer: '$x=2k\\pi$', solutionVi: '$\\cos x=1\\Leftrightarrow x=2k\\pi$.', solutionEn: '$x=2k\\pi$.', options: [['$x=2k\\pi$','$x=2k\\pi$',true],['$x=k\\pi$','$x=k\\pi$',false],['$x=\\dfrac{\\pi}{2}+k\\pi$','$x=\\dfrac{\\pi}{2}+k\\pi$',false],['$x=\\pi+2k\\pi$','$x=\\pi+2k\\pi$',false]],
     };
     if (hasAny(t,['tan','cot']) && hasAny(t,['phương trình'])) return {
-      vi: 'Nghiệm của $\\tan x=1$ là', en: 'Solutions of $\\tan x=1$ are', answer: '$x=\\pi/4+k\\pi$', solutionVi: '$\\tan x=1\\Leftrightarrow x=\\pi/4+k\\pi$.', solutionEn: '$x=\\pi/4+k\\pi$.', options: [['$x=\\pi/4+k\\pi$','$x=\\pi/4+k\\pi$',true],['$x=\\pi/4+2k\\pi$','$x=\\pi/4+2k\\pi$',false],['$x=k\\pi$','$x=k\\pi$',false],['$x=\\pi/2+k\\pi$','$x=\\pi/2+k\\pi$',false]],
+      vi: 'Nghiệm của $\\tan x=1$ là', en: 'Solutions of $\\tan x=1$ are', answer: '$x=\\dfrac{\\pi}{4}+k\\pi$', solutionVi: '$\\tan x=1\\Leftrightarrow x=\\dfrac{\\pi}{4}+k\\pi$.', solutionEn: '$x=\\dfrac{\\pi}{4}+k\\pi$.', options: [['$x=\\dfrac{\\pi}{4}+k\\pi$','$x=\\dfrac{\\pi}{4}+k\\pi$',true],['$x=\\dfrac{\\pi}{4}+2k\\pi$','$x=\\dfrac{\\pi}{4}+2k\\pi$',false],['$x=k\\pi$','$x=k\\pi$',false],['$x=\\dfrac{\\pi}{2}+k\\pi$','$x=\\dfrac{\\pi}{2}+k\\pi$',false]],
     };
     if (hasAny(t,['độ','radian'])) {
       const rows=[
-        {vi:'$60^\\circ$ bằng bao nhiêu radian?',en:'How many radians is $60^\\circ$?',ans:'$\\pi/3$',w:['$\\pi/6$','$2\\pi/3$','$\\pi/4$']},
-        {vi:'$45^\\circ$ bằng bao nhiêu radian?',en:'How many radians is $45^\\circ$?',ans:'$\\pi/4$',w:['$\\pi/2$','$\\pi/3$','$3\\pi/4$']},
-        {vi:'$150^\\circ$ bằng bao nhiêu radian?',en:'How many radians is $150^\\circ$?',ans:'$5\\pi/6$',w:['$3\\pi/4$','$2\\pi/3$','$5\\pi/3$']},
+        {vi:'$60^\\circ$ bằng bao nhiêu radian?',en:'How many radians is $60^\\circ$?',ans:'$\\dfrac{\\pi}{3}$',w:['$\\dfrac{\\pi}{6}$','$\\dfrac{2\\pi}{3}$','$\\dfrac{\\pi}{4}$']},
+        {vi:'$45^\\circ$ bằng bao nhiêu radian?',en:'How many radians is $45^\\circ$?',ans:'$\\dfrac{\\pi}{4}$',w:['$\\dfrac{\\pi}{2}$','$\\dfrac{\\pi}{3}$','$\\dfrac{3\\pi}{4}$']},
+        {vi:'$150^\\circ$ bằng bao nhiêu radian?',en:'How many radians is $150^\\circ$?',ans:'$\\dfrac{5\\pi}{6}$',w:['$\\dfrac{3\\pi}{4}$','$\\dfrac{2\\pi}{3}$','$\\dfrac{5\\pi}{3}$']},
         {vi:'$\\dfrac{2\\pi}{3}$ rad bằng bao nhiêu độ?',en:'How many degrees is $\\dfrac{2\\pi}{3}$ radians?',ans:'$120^\\circ$',w:['$60^\\circ$','$90^\\circ$','$240^\\circ$']},
       ][variant%4];
       return {vi:rows.vi,en:rows.en,answer:rows.ans,solutionVi:'Dùng $180^\\circ=\\pi$ rad.',solutionEn:'Use $180^\\circ=\\pi$ radians.',options:[[rows.ans,rows.ans,true],[rows.w[0],rows.w[0],false],[rows.w[1],rows.w[1],false],[rows.w[2],rows.w[2],false]]};
     }
     if (hasAny(t,['công thức cộng','công thức hiệu'])) {
       const rows=[
-        {vi:'$\\sin(30^\\circ+60^\\circ)$ bằng',en:'$\\sin(30^\\circ+60^\\circ)$ equals',ans:'1',w:['0','$1/2$','$\\sqrt3/2$']},
-        {vi:'$\\cos(60^\\circ-30^\\circ)$ bằng',en:'$\\cos(60^\\circ-30^\\circ)$ equals',ans:'$\\sqrt3/2$',w:['$1/2$','1','0']},
-        {vi:'$\\sin(45^\\circ-30^\\circ)$ bằng',en:'$\\sin(45^\\circ-30^\\circ)$ equals',ans:'$\\dfrac{\\sqrt6-\\sqrt2}{4}$',w:['$1/2$','$\\sqrt2/2$','$\\dfrac{\\sqrt6+\\sqrt2}{4}$']},
-        {vi:'$\\cos(45^\\circ+45^\\circ)$ bằng',en:'$\\cos(45^\\circ+45^\\circ)$ equals',ans:'0',w:['1','$1/2$','$\\sqrt2/2$']},
+        {vi:'$\\sin(30^\\circ+60^\\circ)$ bằng',en:'$\\sin(30^\\circ+60^\\circ)$ equals',ans:'1',w:['0','$\\dfrac{1}{2}$','$\\dfrac{\\sqrt3}{2}$']},
+        {vi:'$\\cos(60^\\circ-30^\\circ)$ bằng',en:'$\\cos(60^\\circ-30^\\circ)$ equals',ans:'$\\dfrac{\\sqrt3}{2}$',w:['$\\dfrac{1}{2}$','1','0']},
+        {vi:'$\\sin(45^\\circ-30^\\circ)$ bằng',en:'$\\sin(45^\\circ-30^\\circ)$ equals',ans:'$\\dfrac{\\sqrt6-\\sqrt2}{4}$',w:['$\\dfrac{1}{2}$','$\\dfrac{\\sqrt2}{2}$','$\\dfrac{\\sqrt6+\\sqrt2}{4}$']},
+        {vi:'$\\cos(45^\\circ+45^\\circ)$ bằng',en:'$\\cos(45^\\circ+45^\\circ)$ equals',ans:'0',w:['1','$\\dfrac{1}{2}$','$\\dfrac{\\sqrt2}{2}$']},
       ][variant%4];
       return {vi:rows.vi,en:rows.en,answer:rows.ans,solutionVi:'Áp dụng công thức cộng hoặc hiệu lượng giác.',solutionEn:'Apply the angle addition/subtraction formula.',options:[[rows.ans,rows.ans,true],[rows.w[0],rows.w[0],false],[rows.w[1],rows.w[1],false],[rows.w[2],rows.w[2],false]]};
     }
     const rows = [
-      { vi: '$\\sin^2 30^\\circ+\\cos^2 30^\\circ$ bằng', en: '$\\sin^2 30^\\circ+\\cos^2 30^\\circ$ equals', ans: '1', sol: 'Dùng $\\sin^2\\alpha+\\cos^2\\alpha=1$.', wrong: ['0','$1/2$','2'] },
-      { vi: '$\\sin(30^\\circ+60^\\circ)$ bằng', en: '$\\sin(30^\\circ+60^\\circ)$ equals', ans: '1', sol: '$\\sin90^\\circ=1$.', wrong: ['0','$1/2$','$\\sqrt3/2$'] },
-      { vi: '$\\cos60^\\circ$ bằng', en: '$\\cos60^\\circ$ equals', ans: '$1/2$', sol: '$\\cos60^\\circ=\\dfrac12$.', wrong: ['1','0','$\\sqrt3/2$'] },
-      { vi: '$\\tan45^\\circ$ bằng', en: '$\\tan45^\\circ$ equals', ans: '1', sol: '$\\tan45^\\circ=1$.', wrong: ['0','$\\sqrt3$','$1/\\sqrt3$'] },
+      { vi: '$\\sin^2 30^\\circ+\\cos^2 30^\\circ$ bằng', en: '$\\sin^2 30^\\circ+\\cos^2 30^\\circ$ equals', ans: '1', sol: 'Dùng $\\sin^2\\alpha+\\cos^2\\alpha=1$.', wrong: ['0','$\\dfrac{1}{2}$','2'] },
+      { vi: '$\\sin(30^\\circ+60^\\circ)$ bằng', en: '$\\sin(30^\\circ+60^\\circ)$ equals', ans: '1', sol: '$\\sin90^\\circ=1$.', wrong: ['0','$\\dfrac{1}{2}$','$\\dfrac{\\sqrt3}{2}$'] },
+      { vi: '$\\cos60^\\circ$ bằng', en: '$\\cos60^\\circ$ equals', ans: '$\\dfrac{1}{2}$', sol: '$\\cos60^\\circ=\\dfrac12$.', wrong: ['1','0','$\\dfrac{\\sqrt3}{2}$'] },
+      { vi: '$\\tan45^\\circ$ bằng', en: '$\\tan45^\\circ$ equals', ans: '1', sol: '$\\tan45^\\circ=1$.', wrong: ['0','$\\sqrt3$','$\\dfrac{1}{\\sqrt3}$'] },
     ][variant % 4];
     return {
       vi: rows.vi, en: rows.en, answer: rows.ans,
@@ -2192,7 +2192,7 @@ function directSample(type: MathType, family: ExerciseFamily, variant: number): 
       const rows=[
         {vi:'Nếu $\\vec a=(1,-2)$ thì $3\\vec a$ bằng',en:'If $\\vec a=(1,-2)$, then $3\\vec a$ is',ans:'$(3,-6)$',w:['$(3,-2)$','$(1,-6)$','$(-3,6)$']},
         {vi:'Nếu $\\vec a=(2,1)$ thì $-2\\vec a$ bằng',en:'If $\\vec a=(2,1)$, then $-2\\vec a$ is',ans:'$(-4,-2)$',w:['$(4,2)$','$(-2,-1)$','$(-4,2)$']},
-        {vi:'Nếu $\\vec a=(-1,3)$ thì $\\dfrac12\\vec a$ bằng',en:'If $\\vec a=(-1,3)$, then $\\dfrac12\\vec a$ is',ans:'$(-1/2,3/2)$',w:['$(-2,6)$','$(1/2,3/2)$','$(-1,3/2)$']},
+        {vi:'Nếu $\\vec a=(-1,3)$ thì $\\dfrac12\\vec a$ bằng',en:'If $\\vec a=(-1,3)$, then $\\dfrac12\\vec a$ is',ans:'$(-\\dfrac{1}{2},\\dfrac{3}{2})$',w:['$(-2,6)$','$(\\dfrac{1}{2},\\dfrac{3}{2})$','$(-1,\\dfrac{3}{2})$']},
         {vi:'Nếu $\\vec a=(0,4)$ thì $-\\vec a$ bằng',en:'If $\\vec a=(0,4)$, then $-\\vec a$ is',ans:'$(0,-4)$',w:['$(0,4)$','$(-4,0)$','$(4,0)$']},
       ][variant%4];
       return {vi:rows.vi,en:rows.en,answer:rows.ans,solutionVi:'Nhân từng tọa độ với hệ số.',solutionEn:'Multiply each coordinate by the scalar.',options:[[rows.ans,rows.ans,true],[rows.w[0],rows.w[0],false],[rows.w[1],rows.w[1],false],[rows.w[2],rows.w[2],false]]};
@@ -2285,13 +2285,13 @@ function directSample(type: MathType, family: ExerciseFamily, variant: number): 
   // ---------------- FUNCTION ----------------
   if (family === 'function') {
     if (hasAny(t,['tập xác định'])) return {
-      vi: 'Tập xác định của $f(x)=\\dfrac{1}{x-2}$ là', en: 'The domain of $f(x)=1/(x-2)$ is', answer: '$\\mathbb R\\setminus\\{2\\}$', solutionVi: 'Mẫu số khác 0 nên $x\\ne2$.', solutionEn: 'The denominator must be nonzero.', options: [['$\\mathbb R\\setminus\\{2\\}$','$\\mathbb R\\setminus\\{2\\}$',true],['$\\mathbb R$','$\\mathbb R$',false],['$(2,+\\infty)$','$(2,+\\infty)$',false],['$[2,+\\infty)$','$[2,+\\infty)$',false]],
+      vi: 'Tập xác định của $f(x)=\\dfrac{1}{x-2}$ là', en: 'The domain of $f(x)=\\dfrac{1}{x-2}$ is', answer: '$\\mathbb R\\setminus\\{2\\}$', solutionVi: 'Mẫu số khác 0 nên $x\\ne2$.', solutionEn: 'The denominator must be nonzero.', options: [['$\\mathbb R\\setminus\\{2\\}$','$\\mathbb R\\setminus\\{2\\}$',true],['$\\mathbb R$','$\\mathbb R$',false],['$(2,+\\infty)$','$(2,+\\infty)$',false],['$[2,+\\infty)$','$[2,+\\infty)$',false]],
     };
     if (hasAny(t,['chẵn','lẻ'])) return {
       vi: 'Hàm số $f(x)=x^4+2x^2$ là', en: '$f(x)=x^4+2x^2$ is', answer: 'hàm chẵn', solutionVi: '$f(-x)=f(x)$ nên hàm số chẵn.', solutionEn: '$f(-x)=f(x)$, so it is even.', options: [['Hàm chẵn','Even',true],['Hàm lẻ','Odd',false],['Vừa chẵn vừa lẻ','Both',false],['Không xác định','Undefined',false]],
     };
     if (hasAny(t,['parabol','bậc hai','đỉnh'])) return {
-      vi: 'Đỉnh của parabol $y=x^2-4x+3$ là', en: 'The vertex of $y=x^2-4x+3$ is', answer: '$(2,-1)$', solutionVi: '$x_I=-b/(2a)=2$, $y_I=-1$.', solutionEn: 'Vertex is $(2,-1)$.', options: [['$(2,-1)$','$(2,-1)$',true],['$(-2,-1)$','$(-2,-1)$',false],['$(2,1)$','$(2,1)$',false],['$(4,3)$','$(4,3)$',false]],
+      vi: 'Đỉnh của parabol $y=x^2-4x+3$ là', en: 'The vertex of $y=x^2-4x+3$ is', answer: '$(2,-1)$', solutionVi: '$x_I=-\\dfrac{b}{2a}=2$, $y_I=-1$.', solutionEn: 'Vertex is $(2,-1)$.', options: [['$(2,-1)$','$(2,-1)$',true],['$(-2,-1)$','$(-2,-1)$',false],['$(2,1)$','$(2,1)$',false],['$(4,3)$','$(4,3)$',false]],
     };
     if (hasAny(t,['hàm số mũ'])) return {
       vi: 'Điểm nào sau đây thuộc đồ thị hàm số $y=2^x$?', en: 'Which point lies on the graph $y=2^x$?', answer: '$(3,8)$', solutionVi: 'Với $x=3$ ta có $y=2^3=8$.', solutionEn: 'At $x=3$, $y=2^3=8$.', options: [['$(3,8)$','$(3,8)$',true],['$(2,8)$','$(2,8)$',false],['$(3,6)$','$(3,6)$',false],['$(0,0)$','$(0,0)$',false]],
@@ -2419,7 +2419,7 @@ function directSample(type: MathType, family: ExerciseFamily, variant: number): 
     if (hasAny(t,['diện tích tam giác bằng các công thức lượng giác và heron'])) {
       const rows=[
         {vi:'Tam giác có hai cạnh $3,4$ và góc xen giữa $90^\\circ$. Diện tích bằng',en:'A triangle has sides $3,4$ with included angle $90^\\circ$. Its area is',ans:'6',w:['12','5','7']},
-        {vi:'Tam giác có hai cạnh $5,6$ và góc xen giữa $30^\\circ$. Diện tích bằng',en:'A triangle has sides $5,6$ with included angle $30^\\circ$. Its area is',ans:'$15/2$',w:['15','$15\\sqrt3/2$','30']},
+        {vi:'Tam giác có hai cạnh $5,6$ và góc xen giữa $30^\\circ$. Diện tích bằng',en:'A triangle has sides $5,6$ with included angle $30^\\circ$. Its area is',ans:'$\\dfrac{15}{2}$',w:['15','$\\dfrac{15\\sqrt3}{2}$','30']},
         {vi:'Tam giác có ba cạnh $3,4,5$. Diện tích theo công thức Heron bằng',en:'A triangle has side lengths $3,4,5$. By Heron formula, its area is',ans:'6',w:['12','5','7']},
         {vi:'Tam giác có ba cạnh $5,5,6$. Diện tích bằng',en:'A triangle has side lengths $5,5,6$. Its area is',ans:'12',w:['10','15','18']},
       ][variant%4];
@@ -2473,8 +2473,8 @@ function directSample(type: MathType, family: ExerciseFamily, variant: number): 
     if (hasAny(t,['tìm tham số để góc trong không gian'])) {
       const rows=[
         {ang:'$45^\\circ$',ans:'1',w:['0','$\\sqrt3$','2']},
-        {ang:'$30^\\circ$',ans:'$\\sqrt3$',w:['1','$1/\\sqrt3$','3']},
-        {ang:'$60^\\circ$',ans:'$1/\\sqrt3$',w:['1','$\\sqrt3$','0']},
+        {ang:'$30^\\circ$',ans:'$\\sqrt3$',w:['1','$\\dfrac{1}{\\sqrt3}$','3']},
+        {ang:'$60^\\circ$',ans:'$\\dfrac{1}{\\sqrt3}$',w:['1','$\\sqrt3$','0']},
         {ang:'$90^\\circ$',ans:'0',w:['1','-1','$\\sqrt3$']},
       ][variant%4];
       return {vi:`Cho $\\vec u=(1,0,0)$ và $\\vec v=(m,1,0)$ với $m\\ge0$. Góc giữa hai vectơ bằng ${rows.ang}. Giá trị $m$ bằng`,en:`Let $\\vec u=(1,0,0)$ and $\\vec v=(m,1,0)$ with $m\\ge0$. Their angle is ${rows.ang}. Find $m$.`,answer:rows.ans,solutionVi:'Dùng công thức cosin của góc giữa hai vectơ và giải phương trình theo $m$.',solutionEn:'Use the vector angle formula and solve for $m$.',options:[[rows.ans,rows.ans,true],[rows.w[0],rows.w[0],false],[rows.w[1],rows.w[1],false],[rows.w[2],rows.w[2],false]]};
@@ -2490,10 +2490,10 @@ function directSample(type: MathType, family: ExerciseFamily, variant: number): 
     }
     if (hasAny(t,['tích có hướng']) && hasAny(t,['diện tích tam giác','thể tích tứ diện'])) {
       const rows=[
-        {vi:'Cho $\\overrightarrow{AB}=(1,0,0)$, $\\overrightarrow{AC}=(0,2,0)$. Diện tích tam giác $ABC$ bằng',en:'Given $\\overrightarrow{AB}=(1,0,0)$ and $\\overrightarrow{AC}=(0,2,0)$, the area of triangle $ABC$ is',ans:'1',w:['2','$1/2$','4']},
-        {vi:'Cho $\\overrightarrow{AB}=(2,0,0)$, $\\overrightarrow{AC}=(0,3,0)$. Diện tích tam giác $ABC$ bằng',en:'Given $\\overrightarrow{AB}=(2,0,0)$ and $\\overrightarrow{AC}=(0,3,0)$, the area of triangle $ABC$ is',ans:'3',w:['6','$3/2$','5']},
-        {vi:'Tứ diện $OABC$ có $\\overrightarrow{OA}=(1,0,0)$, $\\overrightarrow{OB}=(0,2,0)$, $\\overrightarrow{OC}=(0,0,3)$. Thể tích bằng',en:'For tetrahedron $OABC$ with the given three vectors, the volume is',ans:'1',w:['6','3','$1/2$']},
-        {vi:'Cho $\\overrightarrow{AB}=(1,1,0)$, $\\overrightarrow{AC}=(1,-1,0)$. Diện tích tam giác $ABC$ bằng',en:'Given $\\overrightarrow{AB}=(1,1,0)$ and $\\overrightarrow{AC}=(1,-1,0)$, the area of triangle $ABC$ is',ans:'1',w:['2','$\\sqrt2$','$1/2$']},
+        {vi:'Cho $\\overrightarrow{AB}=(1,0,0)$, $\\overrightarrow{AC}=(0,2,0)$. Diện tích tam giác $ABC$ bằng',en:'Given $\\overrightarrow{AB}=(1,0,0)$ and $\\overrightarrow{AC}=(0,2,0)$, the area of triangle $ABC$ is',ans:'1',w:['2','$\\dfrac{1}{2}$','4']},
+        {vi:'Cho $\\overrightarrow{AB}=(2,0,0)$, $\\overrightarrow{AC}=(0,3,0)$. Diện tích tam giác $ABC$ bằng',en:'Given $\\overrightarrow{AB}=(2,0,0)$ and $\\overrightarrow{AC}=(0,3,0)$, the area of triangle $ABC$ is',ans:'3',w:['6','$\\dfrac{3}{2}$','5']},
+        {vi:'Tứ diện $OABC$ có $\\overrightarrow{OA}=(1,0,0)$, $\\overrightarrow{OB}=(0,2,0)$, $\\overrightarrow{OC}=(0,0,3)$. Thể tích bằng',en:'For tetrahedron $OABC$ with the given three vectors, the volume is',ans:'1',w:['6','3','$\\dfrac{1}{2}$']},
+        {vi:'Cho $\\overrightarrow{AB}=(1,1,0)$, $\\overrightarrow{AC}=(1,-1,0)$. Diện tích tam giác $ABC$ bằng',en:'Given $\\overrightarrow{AB}=(1,1,0)$ and $\\overrightarrow{AC}=(1,-1,0)$, the area of triangle $ABC$ is',ans:'1',w:['2','$\\sqrt2$','$\\dfrac{1}{2}$']},
       ][variant%4];
       return {vi:rows.vi,en:rows.en,answer:rows.ans,solutionVi:'Dùng $S=\\dfrac12|\\overrightarrow{AB}\\times\\overrightarrow{AC}|$ hoặc $V=\\dfrac16|[\\vec a,\\vec b,\\vec c]|$.',solutionEn:'Use the cross-product area formula or the scalar triple product volume formula.',options:[[rows.ans,rows.ans,true],[rows.w[0],rows.w[0],false],[rows.w[1],rows.w[1],false],[rows.w[2],rows.w[2],false]]};
     }
@@ -2598,7 +2598,7 @@ function directSample(type: MathType, family: ExerciseFamily, variant: number): 
       vi: 'Tam giác có hai cạnh 3, 4 và góc xen giữa $90^\\circ$. Cạnh đối diện góc đó bằng', en: 'A triangle has sides 3 and 4 with included angle $90^\\circ$. The opposite side is', answer: '5', solutionVi: '$c^2=3^2+4^2-2\\cdot3\\cdot4\\cos90^\\circ=25$.', solutionEn: 'Cosine rule gives 5.', options: [['5','5',true],['7','7',false],['1','1',false],['$\\sqrt7$','$\\sqrt7$',false]],
     };
     if (hasAny(t,['định lí sin'])) return {
-      vi: 'Trong tam giác, $a=6$, $A=30^\\circ$, $B=90^\\circ$. Cạnh $b$ bằng', en: 'In a triangle, $a=6$, $A=30^\\circ$, $B=90^\\circ$. Find $b$.', answer: '12', solutionVi: '$a/\\sin A=b/\\sin B$, nên $b=6/0.5=12$.', solutionEn: 'Sine rule gives 12.', options: [['12','12',true],['6','6',false],['3','3',false],['$6\\sqrt3$','$6\\sqrt3$',false]],
+      vi: 'Trong tam giác, $a=6$, $A=30^\\circ$, $B=90^\\circ$. Cạnh $b$ bằng', en: 'In a triangle, $a=6$, $A=30^\\circ$, $B=90^\\circ$. Find $b$.', answer: '12', solutionVi: '$\\dfrac{a}{\\sin A}=\\dfrac{b}{\\sin B}$, nên $b=\\dfrac{6}{0.5}=12$.', solutionEn: 'Sine rule gives 12.', options: [['12','12',true],['6','6',false],['3','3',false],['$6\\sqrt3$','$6\\sqrt3$',false]],
     };
     if (hasAny(t,['diện tích tam giác'])) return {
       vi: 'Tam giác có hai cạnh 4, 5 và góc xen giữa $30^\\circ$. Diện tích bằng', en: 'A triangle has sides 4 and 5 with included angle $30^\\circ$. Its area is', answer: '5', solutionVi: '$S=\\frac12\\cdot4\\cdot5\\sin30^\\circ=5$.', solutionEn: 'Area is 5.', options: [['5','5',true],['10','10',false],['20','20',false],['$5\\sqrt3$','$5\\sqrt3$',false]],
@@ -2616,13 +2616,13 @@ function directSample(type: MathType, family: ExerciseFamily, variant: number): 
       vi: 'Đường thẳng qua $A(1,2,3)$ có vectơ chỉ phương $(2,-1,1)$ có dạng tham số', en: 'The line through $A(1,2,3)$ with direction $(2,-1,1)$ has parametric equations', answer: '$x=1+2t,y=2-t,z=3+t$', solutionVi: 'Lấy tọa độ điểm cộng tham số nhân vectơ chỉ phương.', solutionEn: 'Point plus parameter times direction vector.', options: [['$x=1+2t,y=2-t,z=3+t$','$x=1+2t,y=2-t,z=3+t$',true],['$x=2+t,y=-1+2t,z=1+3t$','$x=2+t,y=-1+2t,z=1+3t$',false],['$x=1+t,y=2+t,z=3+t$','$x=1+t,y=2+t,z=3+t$',false],['$x=2t,y=-t,z=t$','$x=2t,y=-t,z=t$',false]],
     };
     if (hasAny(t,['khoảng cách từ điểm đến mặt phẳng'])) return {
-      vi: 'Khoảng cách từ $M(1,2,3)$ đến mặt phẳng $x+2y+2z-3=0$ bằng', en: 'Distance from $M(1,2,3)$ to $x+2y+2z-3=0$ is', answer: '$8/3$', solutionVi: '$d=|1+4+6-3|/\\sqrt{1+4+4}=8/3$.', solutionEn: 'Point-plane distance formula gives $8/3$.', options: [['$8/3$','$8/3$',true],['8','8',false],['$4/3$','$4/3$',false],['3','3',false]],
+      vi: 'Khoảng cách từ $M(1,2,3)$ đến mặt phẳng $x+2y+2z-3=0$ bằng', en: 'Distance from $M(1,2,3)$ to $x+2y+2z-3=0$ is', answer: '$\\dfrac{8}{3}$', solutionVi: '$d=\\dfrac{|1+4+6-3|}{\\sqrt{1+4+4}}=\\dfrac{8}{3}$.', solutionEn: 'Point-plane distance formula gives $\\dfrac{8}{3}$.', options: [['$\\dfrac{8}{3}$','$\\dfrac{8}{3}$',true],['8','8',false],['$\\dfrac{4}{3}$','$\\dfrac{4}{3}$',false],['3','3',false]],
     };
     if (hasAny(t,['thể tích khối chóp'])) return {
-      vi: 'Khối chóp có diện tích đáy 12 và chiều cao 6. Thể tích bằng', en: 'A pyramid has base area 12 and height 6. Its volume is', answer: '24', solutionVi: '$V=\\frac13Sh=24$.', solutionEn: '$V=Sh/3=24$.', options: [['24','24',true],['72','72',false],['36','36',false],['18','18',false]],
+      vi: 'Khối chóp có diện tích đáy 12 và chiều cao 6. Thể tích bằng', en: 'A pyramid has base area 12 and height 6. Its volume is', answer: '24', solutionVi: '$V=\\frac13Sh=24$.', solutionEn: '$V=\\dfrac{Sh}{3}=24$.', options: [['24','24',true],['72','72',false],['36','36',false],['18','18',false]],
     };
     if (hasAny(t,['thể tích khối lăng trụ','khối hộp'])) return {
-      vi: 'Khối lăng trụ có diện tích đáy 10 và chiều cao 7. Thể tích bằng', en: 'A prism has base area 10 and height 7. Its volume is', answer: '70', solutionVi: '$V=Sh=70$.', solutionEn: '$V=Sh=70$.', options: [['70','70',true],['35','35',false],['17','17',false],['$70/3$','$70/3$',false]],
+      vi: 'Khối lăng trụ có diện tích đáy 10 và chiều cao 7. Thể tích bằng', en: 'A prism has base area 10 and height 7. Its volume is', answer: '70', solutionVi: '$V=Sh=70$.', solutionEn: '$V=Sh=70$.', options: [['70','70',true],['35','35',false],['17','17',false],['$\\dfrac{70}{3}$','$\\dfrac{70}{3}$',false]],
     };
     if (hasAny(t,['góc giữa'])) return {
       vi: 'Hai vectơ $\\vec a=(1,0,0)$ và $\\vec b=(0,1,0)$ tạo với nhau góc bằng', en: 'The angle between $\\vec a=(1,0,0)$ and $\\vec b=(0,1,0)$ is', answer: '$90^\\circ$', solutionVi: '$\\vec a\\cdot\\vec b=0$ nên hai vectơ vuông góc.', solutionEn: 'Dot product is zero, so the angle is 90 degrees.', options: [['$90^\\circ$','$90^\\circ$',true],['$0^\\circ$','$0^\\circ$',false],['$45^\\circ$','$45^\\circ$',false],['$180^\\circ$','$180^\\circ$',false]],

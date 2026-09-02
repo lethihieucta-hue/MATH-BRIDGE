@@ -1,5 +1,6 @@
 import React from 'react';
 import katex from 'katex';
+import { normalizeLatexFractions, normalizeMathFractionsInText } from '../../lib/mathFormatting';
 
 interface MathRendererProps {
   content: string;
@@ -12,7 +13,7 @@ const UNICODE_LETTER_REGEX = /[A-Za-zÀ-ỹ]/u;
 
 function renderLatexSafe(latex: string, isInline: boolean): string {
   try {
-    const clean = latex
+    const clean = normalizeLatexFractions(latex)
       .trim()
       .replace(/(?<!\\)\\\\([a-zA-Z]+)/g, '\\$1')
       .replace(/[“”]/g, '"')
@@ -86,7 +87,7 @@ export const MathRenderer: React.FC<MathRendererProps> = ({
 }) => {
   if (!content) return null;
 
-  const normalizedContent = normalizeMathText(content);
+  const normalizedContent = normalizeMathFractionsInText(normalizeMathText(content));
 
   // IMPORTANT: tokenize delimited math FIRST. Never pass a mixed string such as
   // `$M(0,2,1)$.`, `$A$ và $B$`, or `${\\alpha}:...$` to KaTeX as one formula.

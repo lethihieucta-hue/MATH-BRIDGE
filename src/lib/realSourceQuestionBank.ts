@@ -1491,7 +1491,7 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "difficulty": "MEDIUM",
     "language_level": 2,
     "question_vi": "Cho năm số a, b, c, d, e tạo thành một cấp số nhân theo thứ tự đó và các số đều khác 0, biết\n1 1 1 1 1\n+ + + + = 10 và tổng của chúng bằng 40. Tính giá trị S với S = abcde.\na b c d e",
-    "question_en": "Five nonzero numbers a,b,c,d,e, in that order, form a geometric progression. Given that 1/a+1/b+1/c+1/d+1/e=10 and a+b+c+d+e=40, find S=abcde.",
+    "question_en": "Five nonzero numbers a,b,c,d,e, in that order, form a geometric progression. Given that $\\dfrac{1}{a}$+$\\dfrac{1}{b}$+$\\dfrac{1}{c}$+$\\dfrac{1}{d}$+$\\dfrac{1}{e}$=10 and a+b+c+d+e=40, find S=abcde.",
     "options": [],
     "solution_vi": "1 1 1 1 1\nGọi q ( q ≠ 0 ) là công bội của cấp số nhân a, b, c, d, e. Khi đó,,,, là cấp số\na b c d e\n1\nnhân có công bội.\nq\nTheo đề bài ta có:\n20 \n{ 1 - q5\na. = 40\n1 - q { 1 - q5\n{a + b + c + d + e = 40 a. = 40\n5\n1 - q\n1 1 1 1 1 ⇔ 1- ( 1 ) ⇔ ⇔ a 2q 4 = 4.\n+ + + + = 10 5\n-\na b c d e 1 q = 10.\n1 q 1\n= 10\na. a q 4 ( q - 1)\n1-\n1 \nq\nTa có S = abcde = a.aq.aq 2.aq 3.aq 4 = a 5 q10 nên $s_{2}$ = ( a 5q10 ) = ( a^2 q 4 ) = 45.\n2 5\nSuy ra S = 45 = 32.\n{5u + 5u1 - $u_{2}$ = $u_{2}$ + 6",
     "solution_en": "",
@@ -1585,7 +1585,7 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "question_vi": "Một cây đàn organ có tần số âm thanh các phim liên tiếp tạo thành một cấp số nhân. Cho biết tần\nsố phim La Trung lả 400 Hz và tần số của phím LaCao cao hơn 12 phím là 800 Hz. Tìm công\nbội của cẩp số nhân nói trên (làm tròn kết quả đến hàng phần nghìn).",
     "question_en": "The frequencies produced by consecutive keys on an organ form a geometric progression. The middle A key has frequency 400 Hz, and the higher A key 12 keys above it has frequency 800 Hz. Find the common ratio, rounded to the nearest thousandth.",
     "options": [],
-    "solution_vi": "Ta có $q^{12}=800/400=2$, nên $q=\\sqrt[12]{2}\\approx1{,}059463$. Làm tròn đến hàng phần nghìn được $q\\approx1{,}059$.",
+    "solution_vi": "Ta có $q^{12}=\\dfrac{800}{400}=2$, nên $q=\\sqrt[12]{2}\\approx1{,}059463$. Làm tròn đến hàng phần nghìn được $q\\approx1{,}059$.",
     "solution_en": "",
     "correct_answer": "1.059",
     "math_skill": "Cấp số nhân",
@@ -12706,25 +12706,25 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
       {
         "option_key": "a",
         "content_vi": "Thể tích của khối hộp là lớn nhất khi cạnh của hình vuông bị cắt bằng. 12 a",
-        "content_en": "The box volume is maximized when the side of each cut-out square is $a/12$.",
+        "content_en": "The box volume is maximized when the side of each cut-out square is $\\dfrac{a}{12}$.",
         "is_correct": false
       },
       {
         "option_key": "b",
         "content_vi": "Thể tích của khối hộp là lớn nhất khi cạnh của hình vuông bị cắt bằng. 6 3 2a",
-        "content_en": "The box volume is maximized when the side of each cut-out square is $a/6$.",
+        "content_en": "The box volume is maximized when the side of each cut-out square is $\\dfrac{a}{6}$.",
         "is_correct": true
       },
       {
         "option_key": "c",
         "content_vi": "Thể tích của khối hộp lớn nhất bằng. 27 a3",
-        "content_en": "The maximum box volume is $2a^3/27$.",
+        "content_en": "The maximum box volume is $\\dfrac{2a^3}{27}$.",
         "is_correct": true
       },
       {
         "option_key": "d",
         "content_vi": "Thể tích hộp lớn nhất bằng. 27",
-        "content_en": "The maximum box volume is $a^3/27$.",
+        "content_en": "The maximum box volume is $\\dfrac{a^3}{27}$.",
         "is_correct": false
       }
     ],
@@ -16146,7 +16146,7 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "question_vi": "Một khách sạn có 50 phòng. Nếu giá thuê mỗi phòng là 400 nghìn đồng/ngày thì tất cả các phòng đều được thuê. Cứ tăng giá thêm 20 nghìn đồng/phòng thì có thêm 2 phòng trống. Hỏi nên đặt giá thuê mỗi phòng là bao nhiêu nghìn đồng/ngày để doanh thu trong ngày lớn nhất?",
     "question_en": "A hotel has 50 rooms. At 400 thousand VND per room per day, all rooms are occupied. Each 20-thousand-VND price increase results in 2 additional vacant rooms. What daily room rate, in thousand VND, maximizes revenue?",
     "options": [],
-    "solution_vi": "Gọi x (nghìn đồng) là giá thuê phòng. Số lần tăng 20 nghìn là (x-400)/20 nên số phòng được thuê là 50-2(x-400)/20=90-x/10. Doanh thu R(x)=x(90-x/10)=-x^2/10+90x, là parabol quay xuống và đạt cực đại tại x=450.",
+    "solution_vi": "Gọi x (nghìn đồng) là giá thuê phòng. Số lần tăng 20 nghìn là $\\dfrac{x-400}{20}$ nên số phòng được thuê là $50-2\\dfrac{x-400}{20}=90-\\dfrac{x}{10}$. Doanh thu $R(x)=x\\left(90-\\dfrac{x}{10}\\right)=-\\dfrac{x^2}{10}+90x$, là parabol quay xuống và đạt cực đại tại $x=450$.",
     "solution_en": "",
     "correct_answer": "450",
     "math_skill": "Tối ưu doanh thu bằng đạo hàm",
