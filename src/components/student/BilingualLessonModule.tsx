@@ -51,7 +51,8 @@ import {
 
 type QuestionCounts = { tn: number; ds: number; tln: number; tl: number };
 const DEFAULT_COUNTS: QuestionCounts = { tn: 4, ds: 2, tln: 2, tl: 1 };
-const MAX_COUNTS: QuestionCounts = { tn: 12, ds: 4, tln: 6, tl: 2 };
+// Không giới hạn cứng số câu mỗi dạng: lấy được bao nhiêu câu nguồn sạch thì cho phép chọn bấy nhiêu.
+const MAX_COUNTS: QuestionCounts = { tn: Number.MAX_SAFE_INTEGER, ds: Number.MAX_SAFE_INTEGER, tln: Number.MAX_SAFE_INTEGER, tl: Number.MAX_SAFE_INTEGER };
 const getDefaultCountsForType = (type?: MathType): QuestionCounts => ({
   tn: type?.sample_count_tn ?? DEFAULT_COUNTS.tn,
   ds: type?.sample_count_ds ?? DEFAULT_COUNTS.ds,
@@ -687,7 +688,7 @@ export const BilingualLessonModule: React.FC = () => {
   };
 
   const updateTypeQuestionCount = (typeId: string, kind: keyof QuestionCounts, rawValue: string) => {
-    const value = Math.max(0, Math.min(MAX_COUNTS[kind], Number.parseInt(rawValue, 10) || 0));
+    const value = Math.max(0, Number.parseInt(rawValue, 10) || 0);
     setQuestionShuffleSeed(Date.now());
     autoGenerationRunRef.current = '';
     setQuestionGenerationMessage('');
@@ -1175,7 +1176,7 @@ export const BilingualLessonModule: React.FC = () => {
       return;
     }
     const missing = shortagePlans.reduce((sum, p) => sum + p.missing.tn + p.missing.ds + p.missing.tln + p.missing.tl, 0);
-    setQuestionGenerationMessage(`Kho câu sạch hiện có còn thiếu ${missing} câu so với số lượng Thầy/Cô yêu cầu. Có thể bấm AI tạo thêm biến thể; hệ thống không lấy câu sai dạng để bù.`);
+    setQuestionGenerationMessage(`Kho câu nguồn sạch hiện có còn thiếu ${missing} câu so với số lượng Thầy/Cô yêu cầu. Hệ thống không tự sinh AI và không lấy câu sai dạng để bù.`);
   }, [activeLesson?.id, selectedTypeIds, typeQuestionCounts, allQuestions]);
 
   // Export Action: Copy Word Text
@@ -1881,17 +1882,8 @@ export const BilingualLessonModule: React.FC = () => {
                               {questionGenerationMessage}
                             </p>
                           )}
-                          {selectedTypeIds.length > 0 && (
-                            <div className="pt-2">
-                              <button
-                                onClick={() => void generateQuestionsForPlans(shortagePlans, 'manual')}
-                                disabled={isAutoGeneratingQuestions || shortagePlans.length === 0}
-                                className="px-4 py-2 bg-violet-600 hover:bg-violet-700 disabled:opacity-50 text-white text-xs font-extrabold rounded-xl shadow-xs transition inline-flex items-center gap-1.5"
-                              >
-                                <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-                                {isAutoGeneratingQuestions ? 'AI đang tạo thêm...' : '✨ AI tạo thêm biến thể'}
-                              </button>
-                            </div>
+                          {selectedTypeIds.length > 0 && shortagePlans.length > 0 && (
+                            <p className="pt-2 text-[11px] font-semibold text-amber-700">Chỉ sử dụng ngân hàng câu nguồn đã kiểm; không tự sinh AI để bù.</p>
                           )}
                         </div>
                       ) : (
@@ -1900,7 +1892,7 @@ export const BilingualLessonModule: React.FC = () => {
                             <div className="flex items-center justify-between gap-3 p-3 rounded-xl border border-amber-200 bg-amber-50 font-sans text-xs">
                               <div>
                                 <p className="font-bold text-amber-900">
-                                  {isAutoGeneratingQuestions ? 'AI đang tạo thêm biến thể...' : 'Số lượng yêu cầu đang vượt số câu sạch hiện có trong kho.'}
+                                  {'Số lượng yêu cầu đang vượt số câu nguồn sạch hiện có trong kho.'}
                                 </p>
                                 <p className="text-amber-800 mt-0.5">
                                   Còn thiếu {shortagePlans.reduce((sum, p) => sum + p.missing.tn + p.missing.ds + p.missing.tln + p.missing.tl, 0)} câu so với yêu cầu; hệ thống không lấy câu sai dạng để bù.
@@ -1909,13 +1901,7 @@ export const BilingualLessonModule: React.FC = () => {
                                   <p className="text-violet-700 mt-1 font-semibold">{questionGenerationMessage}</p>
                                 )}
                               </div>
-                              <button
-                                onClick={() => void generateQuestionsForPlans(shortagePlans, 'manual')}
-                                disabled={isAutoGeneratingQuestions}
-                                className="shrink-0 px-3 py-1.5 bg-violet-600 text-white font-bold rounded-lg disabled:opacity-50"
-                              >
-                                {isAutoGeneratingQuestions ? 'Đang tạo...' : 'AI tạo thêm'}
-                              </button>
+                              <span className="shrink-0 px-3 py-1.5 bg-white border border-amber-300 text-amber-800 font-bold rounded-lg">Nguồn sạch</span>
                             </div>
                           )}
                           {/* PHẦN I: TRẮC NGHIỆM NHIỀU LỰA CHỌN (TN) */}
@@ -2187,7 +2173,6 @@ export const BilingualLessonModule: React.FC = () => {
                             <input
                               type="number"
                               min={0}
-                              max={MAX_COUNTS.tn}
                               value={counts.tn}
                               onChange={(e) => updateTypeQuestionCount(type.id, 'tn', e.target.value)}
                               className="w-full text-center bg-white border border-slate-200 rounded py-0.5 text-xs font-bold text-violet-900"
@@ -2199,7 +2184,6 @@ export const BilingualLessonModule: React.FC = () => {
                             <input
                               type="number"
                               min={0}
-                              max={MAX_COUNTS.ds}
                               value={counts.ds}
                               onChange={(e) => updateTypeQuestionCount(type.id, 'ds', e.target.value)}
                               className="w-full text-center bg-white border border-slate-200 rounded py-0.5 text-xs font-bold text-violet-900"
@@ -2211,7 +2195,6 @@ export const BilingualLessonModule: React.FC = () => {
                             <input
                               type="number"
                               min={0}
-                              max={MAX_COUNTS.tln}
                               value={counts.tln}
                               onChange={(e) => updateTypeQuestionCount(type.id, 'tln', e.target.value)}
                               className="w-full text-center bg-white border border-slate-200 rounded py-0.5 text-xs font-bold text-violet-900"
@@ -2223,7 +2206,6 @@ export const BilingualLessonModule: React.FC = () => {
                             <input
                               type="number"
                               min={0}
-                              max={MAX_COUNTS.tl}
                               value={counts.tl}
                               onChange={(e) => updateTypeQuestionCount(type.id, 'tl', e.target.value)}
                               className="w-full text-center bg-white border border-slate-200 rounded py-0.5 text-xs font-bold text-violet-900"

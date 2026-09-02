@@ -4,6 +4,7 @@ import { STATIC_QUESTION_BANK } from './staticQuestionBank';
 import { REAL_SOURCE_QUESTION_BANK } from './realSourceQuestionBank';
 import { SOURCE_SUPPLEMENT_QUESTION_BANK } from './sourceSupplementQuestionBank';
 import { ORIGINAL_SOURCE_VISUAL_QUESTION_BANK } from './originalSourceVisualQuestionBank';
+import { CURATED_20260902_QUESTION_BANK } from './curated20260902QuestionBank';
 
 // =========================================================================
 // BỘ BÀI TẬP MẪU CÓ LỜI GIẢI CHI TIẾT THEO TỪNG BÀI HỌC (WORKED EXAMPLES)
@@ -1462,6 +1463,7 @@ function sanitizeImportedQuestion(q: Question): Question {
 // Nguồn GV sạch được xếp trước; nếu câu nguồn hỏng dữ kiện hoặc nặng lý thuyết thì tự loại.
 const RAW_FULL_QUESTION_BANK: Question[] = [
   ...ORIGINAL_SOURCE_VISUAL_QUESTION_BANK, // PNL có hình/bảng gốc: ưu tiên cao nhất
+  ...CURATED_20260902_QUESTION_BANK,       // nguồn 10-11-12 bổ sung 02/09, đã kiểm tay
   ...REAL_SOURCE_QUESTION_BANK,            // nguồn PNL/GV đã lọc
   ...SOURCE_SUPPLEMENT_QUESTION_BANK,      // nguồn bổ sung khác
   ...STATIC_QUESTION_BANK,                 // fallback tối thiểu 4-2-2-1
@@ -1470,7 +1472,7 @@ const RAW_FULL_QUESTION_BANK: Question[] = [
 const CLEAN_UNCAPPED_QUESTION_BANK: Question[] = RAW_FULL_QUESTION_BANK.filter(
   (q) => isQuestionGradeCurriculumClean(q)
     && isSourceQuestionStructurallyComplete(q)
-    && (!isPureTheoryRecallQuestion(q) || !!q.assets?.some((asset) => asset.kind === 'image'))
+    && (q.created_by === 'curated-source-20260902' || !isPureTheoryRecallQuestion(q) || !!q.assets?.some((asset) => asset.kind === 'image'))
 );
 
 /** Return true only when a question can be graded safely by OnlineExamRoom. */
