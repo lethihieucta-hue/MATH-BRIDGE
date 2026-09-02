@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import katex from 'katex';
 import { useAppStore } from '../../lib/store';
 import { Chapter, Lesson, MathType, WorkedExample, Question, LanguageMode } from '../../types';
 import { MathRenderer } from '../math/MathRenderer';
@@ -54,6 +55,54 @@ const getDefaultCountsForType = (type?: MathType): QuestionCounts => ({
   tln: type?.sample_count_tln ?? DEFAULT_COUNTS.tln,
   tl: type?.sample_count_tl ?? DEFAULT_COUNTS.tl,
 });
+
+const WORD_MATH_REGEX = /(\$\$[\s\S]*?\$\$|\$[^$\n]+?\$|\\\[[\s\S]*?\\\]|\\\([\s\S]*?\\\))/g;
+
+const escapeWordHtml = (value: string): string => (value || '')
+  .replace(/&/g, '&amp;')
+  .replace(/</g, '&lt;')
+  .replace(/>/g, '&gt;')
+  .replace(/"/g, '&quot;')
+  .replace(/'/g, '&#39;');
+
+/** Render delimited LaTeX as MathML so Word receives equations instead of literal $...$ text. */
+const renderWordRichText = (value: string, forceMath = false): string => {
+  const source = (value || '').normalize('NFC').trim();
+  if (!source) return '';
+
+  const renderMath = (latex: string, displayMode: boolean): string => {
+    try {
+      const cleaned = latex.trim().replace(/(?<!\\)\\\\([a-zA-Z]+)/g, '\\$1');
+      return `<span class="word-math ${displayMode ? 'word-math-block' : 'word-math-inline'}">${katex.renderToString(cleaned, {
+        displayMode,
+        output: 'mathml',
+        throwOnError: false,
+        strict: 'ignore',
+      })}</span>`;
+    } catch {
+      return escapeWordHtml(latex);
+    }
+  };
+
+  if (forceMath) {
+    const unwrapped = source
+      .replace(/^\$\$|\$\$$/g, '')
+      .replace(/^\$|\$$/g, '')
+      .replace(/^\\\[|\\\]$/g, '')
+      .replace(/^\\\(|\\\)$/g, '');
+    return renderMath(unwrapped, true);
+  }
+
+  const parts = source.split(WORD_MATH_REGEX);
+  return parts.map((part) => {
+    if (!part) return '';
+    const isDisplay = (part.startsWith('$$') && part.endsWith('$$')) || (part.startsWith('\\[') && part.endsWith('\\]'));
+    const isInline = (part.startsWith('$') && part.endsWith('$')) || (part.startsWith('\\(') && part.endsWith('\\)'));
+    if (isDisplay) return renderMath(part.slice(2, -2), true);
+    if (isInline) return renderMath(part.startsWith('$') ? part.slice(1, -1) : part.slice(2, -2), false);
+    return escapeWordHtml(part).replace(/\n/g, '<br/>');
+  }).join('');
+};
 
 const withTimeout = async <T,>(promise: Promise<T>, ms: number, label = 'AI'): Promise<T> => {
   let timer: number | undefined;
@@ -486,6 +535,9 @@ export const BilingualLessonModule: React.FC = () => {
 
   // Export Action: Print PDF
   const handlePrint = () => {
+    document.body.classList.add('printing-worksheet');
+    const cleanup = () => document.body.classList.remove('printing-worksheet');
+    window.addEventListener('afterprint', cleanup, { once: true });
     window.print();
   };
 
@@ -936,6 +988,24 @@ export const BilingualLessonModule: React.FC = () => {
   const displayedQuestions = getDisplayedQuestions();
   const shortagePlans = getShortagePlans();
 
+  const isEnglishExport = languageMode === 'ENGLISH';
+  const isBilingualExport = languageMode === 'BILINGUAL';
+  const localizedDocumentTitle = isEnglishExport
+    ? (/^PHIẾU BÀI TẬP TOÁN/i.test(documentTitle) ? `MATHEMATICS ${selectedGrade} WORKSHEET` : documentTitle)
+    : documentTitle;
+  const plainLocalized = (vi?: string, en?: string): string => {
+    if (isEnglishExport) return en || vi || '';
+    if (isBilingualExport) return [vi, en].filter(Boolean).join('\n');
+    return vi || en || '';
+  };
+  const wordLocalized = (vi?: string, en?: string): string => {
+    if (isEnglishExport) return renderWordRichText(en || vi || '');
+    if (isBilingualExport) {
+      return `<div>${renderWordRichText(vi || en || '')}</div>${en ? `<div class="english-line">${renderWordRichText(en)}</div>` : ''}`;
+    }
+    return renderWordRichText(vi || en || '');
+  };
+
   // IMPORTANT: selecting a type never calls Gemini automatically anymore.
   // The static bank guarantees the minimum 4 TN + 2 Đ/S + 2 TLN + 1 TL for every type_id.
   // PNL/source questions extend that pool; AI remains optional only when the clean pool is still short.
@@ -953,38 +1023,37 @@ export const BilingualLessonModule: React.FC = () => {
   const handleCopyWord = () => {
     let content = `=========================================================\n`;
     content += `TRƯỜNG THPT CHÂU THÀNH A\n`;
-    content += `TỔ TOÁN\n`;
-    content += `${documentTitle.toUpperCase()}\n`;
+    content += `${isEnglishExport ? 'MATHEMATICS DEPARTMENT' : 'TỔ TOÁN'}\n`;
+    content += `${localizedDocumentTitle.toUpperCase()}\n`;
     if (activeLesson) {
-      content += `${activeLesson.title_vi.toUpperCase()}\n`;
-      content += `(${activeLesson.title_en})\n\n`;
+      content += `${plainLocalized(activeLesson.title_vi, activeLesson.title_en).toUpperCase()}\n\n`;
     }
     content += `=========================================================\n\n`;
 
     if (includeTheory && activeLesson) {
-      content += `A. TÓM TẮT LÝ THUYẾT:\n`;
-      content += `${activeLesson.key_concepts_vi}\n`;
+      content += `${isEnglishExport ? 'A. THEORY SUMMARY' : isBilingualExport ? 'A. TÓM TẮT LÝ THUYẾT / THEORY SUMMARY' : 'A. TÓM TẮT LÝ THUYẾT'}:\n`;
+      content += `${plainLocalized(activeLesson.key_concepts_vi, activeLesson.key_concepts_en)}\n`;
       if (activeLesson.formulas?.length) {
-        content += `Công thức trọng tâm:\n${activeLesson.formulas.map((f) => `• ${f}`).join('\n')}\n`;
+        content += `${isEnglishExport ? 'Key formulas' : isBilingualExport ? 'Công thức trọng tâm / Key formulas' : 'Công thức trọng tâm'}:\n${activeLesson.formulas.map((f) => `• ${f}`).join('\n')}\n`;
       }
       content += `\n`;
     }
 
-    if (includeWorkedExamples && activeLesson?.worked_examples) {
-      content += `B. BÀI TẬP MẪU CÓ LỜI GIẢI:\n`;
-      activeLesson.worked_examples.forEach((we, i) => {
-        content += `${we.type_code || `Dạng ${i + 1}`}: ${we.title_vi}\n`;
-        content += `Đề bài: ${we.problem_vi}\n`;
-        content += `Lời giải: ${we.solution_vi}\n\n`;
+    if (includeWorkedExamples && displayedExamples.length > 0) {
+      content += `${isEnglishExport ? 'B. WORKED EXAMPLES' : isBilingualExport ? 'B. BÀI TẬP MẪU / WORKED EXAMPLES' : 'B. BÀI TẬP MẪU CÓ LỜI GIẢI'}:\n`;
+      displayedExamples.forEach((we, i) => {
+        content += `${isEnglishExport ? `Type ${i + 1}` : we.type_code || `Dạng ${i + 1}`}: ${plainLocalized(we.title_vi, we.title_en)}\n`;
+        content += `${isEnglishExport ? 'Problem' : 'Đề bài'}: ${plainLocalized(we.problem_vi, we.problem_en)}\n`;
+        content += `${isEnglishExport ? 'Solution' : 'Lời giải'}: ${plainLocalized(we.solution_vi, we.solution_en)}\n\n`;
       });
     }
 
-    content += `C. BÀI TẬP TỰ LUYỆN:\n`;
+    content += `${isEnglishExport ? 'C. PRACTICE EXERCISES' : isBilingualExport ? 'C. BÀI TẬP TỰ LUYỆN / PRACTICE EXERCISES' : 'C. BÀI TẬP TỰ LUYỆN'}:\n`;
     displayedQuestions.forEach((q, i) => {
-      content += `Câu ${i + 1}: ${q.question_vi}\n`;
+      content += `${isEnglishExport ? 'Question' : 'Câu'} ${i + 1}: ${plainLocalized(q.question_vi, q.question_en)}\n`;
       if (q.options) {
         q.options.forEach((opt) => {
-          content += `  ${opt.option_key}. ${opt.content_vi}\n`;
+          content += `  ${opt.option_key}. ${plainLocalized(opt.content_vi, opt.content_en)}\n`;
         });
       }
       content += `\n`;
@@ -997,43 +1066,75 @@ export const BilingualLessonModule: React.FC = () => {
   // Download Word file (.doc)
   const handleDownloadDoc = () => {
     let docContent = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
-    <head><meta charset='utf-8'><title>${documentTitle}</title>
-    <style>body { font-family: 'Times New Roman', serif; line-height: 1.5; margin: 30px; }</style>
+    <head><meta charset='utf-8'><title>${escapeWordHtml(localizedDocumentTitle)}</title>
+    <style>
+      @page { size: 21cm 29.7cm; margin: 1.5cm 1.6cm; }
+      body { font-family: 'Times New Roman', serif; font-size: 12pt; line-height: 1.35; margin: 0; color: #111; }
+      h1, h2, h3 { page-break-after: avoid; }
+      h2 { text-align: center; font-size: 16pt; margin: 6pt 0; }
+      h3 { font-size: 13pt; margin: 14pt 0 7pt; }
+      p { margin: 5pt 0; }
+      .school { text-align: center; font-weight: bold; margin-bottom: 3pt; }
+      .english-line { color: #0f766e; font-style: italic; margin-top: 2pt; }
+      .question, .worked-example, .solution-item { page-break-inside: avoid; margin: 8pt 0; }
+      .option { margin-left: 18pt; }
+      .word-math-inline math { display: inline; vertical-align: middle; }
+      .word-math-block { display: block; text-align: center; margin: 5pt 0; }
+      table.answer-key { width: 100%; border-collapse: collapse; margin-top: 7pt; }
+      table.answer-key td { border: 1px solid #999; padding: 4pt; text-align: center; }
+    </style>
     </head><body>`;
 
-    docContent += `<h2 style='text-align:center;'>TRƯỜNG THPT CHÂU THÀNH A</h2>`;
-    docContent += `<h2 style='text-align:center;'>${documentTitle}</h2>`;
+    docContent += `<div class='school'>TRƯỜNG THPT CHÂU THÀNH A</div>`;
+    docContent += `<div class='school'>${isEnglishExport ? 'MATHEMATICS DEPARTMENT' : 'TỔ TOÁN'}</div>`;
+    docContent += `<h2>${escapeWordHtml(localizedDocumentTitle)}</h2>`;
     if (activeLesson) {
-      docContent += `<h3 style='text-align:center;'>${activeLesson.title_vi}</h3>`;
-      docContent += `<p style='text-align:center; font-style: italic;'>${activeLesson.title_en}</p>`;
+      docContent += `<h2>${wordLocalized(activeLesson.title_vi, activeLesson.title_en)}</h2>`;
     }
 
     if (includeTheory && activeLesson) {
-      docContent += `<h3>A. TÓM TẮT LÝ THUYẾT</h3><p>${activeLesson.key_concepts_vi.replace(/\n/g, '<br/>')}</p>`;
+      docContent += `<h3>${isEnglishExport ? 'A. THEORY SUMMARY' : isBilingualExport ? 'A. TÓM TẮT LÝ THUYẾT / THEORY SUMMARY' : 'A. TÓM TẮT LÝ THUYẾT'}</h3>`;
+      docContent += `<div>${wordLocalized(activeLesson.key_concepts_vi, activeLesson.key_concepts_en)}</div>`;
       if (activeLesson.formulas?.length) {
-        docContent += `<p><strong>Công thức trọng tâm:</strong><br/>${activeLesson.formulas.map((f) => `• ${f}`).join('<br/>')}</p>`;
+        docContent += `<p><strong>${isEnglishExport ? 'Key formulas' : isBilingualExport ? 'Công thức trọng tâm / Key formulas' : 'Công thức trọng tâm'}:</strong></p>`;
+        docContent += activeLesson.formulas.map((f) => `<div>${renderWordRichText(f, true)}</div>`).join('');
       }
     }
 
-    if (includeWorkedExamples && activeLesson?.worked_examples) {
-      docContent += `<h3>B. BÀI TẬP MẪU</h3>`;
-      activeLesson.worked_examples.forEach((we) => {
-        docContent += `<p><strong>${we.type_code || 'Ví dụ'}:</strong> ${we.problem_vi}</p>`;
-        docContent += `<p><em>Lời giải:</em> ${we.solution_vi}</p>`;
+    if (includeWorkedExamples && displayedExamples.length > 0) {
+      docContent += `<h3>${isEnglishExport ? 'B. WORKED EXAMPLES' : isBilingualExport ? 'B. BÀI TẬP MẪU / WORKED EXAMPLES' : 'B. BÀI TẬP MẪU'}</h3>`;
+      displayedExamples.forEach((we, index) => {
+        docContent += `<div class="worked-example"><p><strong>${isEnglishExport ? `Example ${index + 1}` : we.type_code || `Ví dụ ${index + 1}`}:</strong> ${wordLocalized(we.problem_vi, we.problem_en)}</p>`;
+        docContent += `<p><em>${isEnglishExport ? 'Solution' : isBilingualExport ? 'Lời giải / Solution' : 'Lời giải'}:</em> ${wordLocalized(we.solution_vi, we.solution_en)}</p></div>`;
       });
     }
 
-    docContent += `<h3>C. BÀI TẬP TỰ LUYỆN</h3>`;
+    docContent += `<h3>${isEnglishExport ? 'C. PRACTICE EXERCISES' : isBilingualExport ? 'C. BÀI TẬP TỰ LUYỆN / PRACTICE EXERCISES' : 'C. BÀI TẬP TỰ LUYỆN'}</h3>`;
     displayedQuestions.forEach((q, idx) => {
-      docContent += `<p><strong>Câu ${idx + 1}:</strong> ${q.question_vi}</p>`;
+      docContent += `<div class="question"><p><strong>${isEnglishExport ? 'Question' : 'Câu'} ${idx + 1}:</strong> ${wordLocalized(q.question_vi, q.question_en)}</p>`;
       if (q.options) {
-        docContent += `<ul>`;
         q.options.forEach((opt) => {
-          docContent += `<li><strong>${opt.option_key}.</strong> ${opt.content_vi}</li>`;
+          docContent += `<div class="option"><strong>${escapeWordHtml(opt.option_key)}.</strong> ${wordLocalized(opt.content_vi, opt.content_en)}</div>`;
         });
-        docContent += `</ul>`;
       }
+      docContent += `</div>`;
     });
+
+    if (includeAnswerKey && displayedQuestions.length > 0) {
+      docContent += `<h3>${isEnglishExport ? 'D. ANSWER KEY' : isBilingualExport ? 'D. BẢNG ĐÁP SỐ / ANSWER KEY' : 'D. BẢNG ĐÁP SỐ'}</h3><table class="answer-key"><tr>`;
+      displayedQuestions.forEach((q, idx) => {
+        docContent += `<td><strong>${idx + 1}</strong><br/>${renderWordRichText(q.correct_answer || '—')}</td>`;
+        if ((idx + 1) % 6 === 0 && idx + 1 < displayedQuestions.length) docContent += `</tr><tr>`;
+      });
+      docContent += `</tr></table>`;
+    }
+
+    if (includeDetailedSolutions && displayedQuestions.length > 0) {
+      docContent += `<h3>${isEnglishExport ? 'E. DETAILED SOLUTIONS' : isBilingualExport ? 'E. LỜI GIẢI CHI TIẾT / DETAILED SOLUTIONS' : 'E. LỜI GIẢI CHI TIẾT'}</h3>`;
+      displayedQuestions.forEach((q, idx) => {
+        docContent += `<div class="solution-item"><p><strong>${isEnglishExport ? 'Question' : 'Câu'} ${idx + 1}:</strong> ${wordLocalized(q.solution_vi, q.solution_en)}</p></div>`;
+      });
+    }
 
     docContent += `</body></html>`;
 
@@ -1041,11 +1142,11 @@ export const BilingualLessonModule: React.FC = () => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `${documentTitle.replace(/\s+/g, '_')}.doc`;
+    a.download = `${localizedDocumentTitle.replace(/\s+/g, '_')}.doc`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
     showNotification('📥 Đã tải file Microsoft Word (.doc) về máy tính!');
   };
 
@@ -1342,20 +1443,23 @@ export const BilingualLessonModule: React.FC = () => {
             {/* A4 DOCUMENT PREVIEW CONTAINER */}
             <div className="bg-slate-200/70 p-3 sm:p-5 rounded-2xl overflow-x-auto flex justify-center border border-slate-300/80 shadow-inner">
               <div
+                id="worksheet-print-area"
                 ref={printAreaRef}
                 style={{ transform: `scale(${zoomLevel / 100})`, transformOrigin: 'top center' }}
-                className="bg-white w-full max-w-[210mm] min-h-[297mm] p-8 sm:p-12 shadow-2xl border border-slate-300 text-slate-900 font-serif leading-relaxed transition-transform duration-150 print:shadow-none print:border-none print:m-0 print:p-6"
+                className="worksheet-print-area bg-white w-full max-w-[210mm] min-h-[297mm] p-8 sm:p-12 shadow-2xl border border-slate-300 text-slate-900 font-serif leading-relaxed transition-transform duration-150 print:shadow-none print:border-none print:m-0 print:p-6"
               >
                 {/* School & Topic Header */}
                 <div className="border-b-2 border-slate-900 pb-3 mb-6 font-sans">
                   <div className="flex justify-between items-start text-xs">
                     <div>
                       <p className="font-extrabold uppercase text-slate-800 tracking-wide text-xs">THPT CHÂU THÀNH A</p>
-                      <p className="font-black text-violet-900 uppercase text-xs mt-0.5">TỔ TOÁN</p>
+                      <p className="font-black text-violet-900 uppercase text-xs mt-0.5">
+                        {isEnglishExport ? 'MATHEMATICS DEPARTMENT' : 'TỔ TOÁN'}
+                      </p>
                     </div>
                     <div className="text-right">
-                      <p className="font-bold text-slate-700">CHUYÊN ĐỀ GDPT 2018</p>
-                      <p className="font-mono text-slate-500 text-[11px]">Mã phiếu: MB-TOAN{selectedGrade}</p>
+                      <p className="font-bold text-slate-700">{isEnglishExport ? '2018 GENERAL EDUCATION CURRICULUM' : 'CHUYÊN ĐỀ GDPT 2018'}</p>
+                      <p className="font-mono text-slate-500 text-[11px]">{isEnglishExport ? 'Worksheet ID' : 'Mã phiếu'}: MB-TOAN{selectedGrade}</p>
                     </div>
                   </div>
                 </div>
@@ -1366,13 +1470,17 @@ export const BilingualLessonModule: React.FC = () => {
                   return (
                     <div className="text-center space-y-1 mb-6 font-sans">
                       <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight uppercase">
-                        {documentTitle}
+                        {localizedDocumentTitle}
                       </h1>
                       <h2 className="text-sm sm:text-base font-bold text-violet-900 uppercase">
-                        {activeLesson?.title_vi || `CHUYÊN ĐỀ TOÁN ${selectedGrade}`}
+                        {isEnglishExport
+                          ? activeLesson?.title_en || `MATHEMATICS ${selectedGrade}`
+                          : activeLesson?.title_vi || `CHUYÊN ĐỀ TOÁN ${selectedGrade}`}
                       </h2>
                       <p className="text-xs text-slate-500 italic">
-                        {activeChap ? `${activeChap.name_vi} — Toán ${selectedGrade} KNTT` : `Toán ${selectedGrade} KNTT`}
+                        {activeChap
+                          ? `${isEnglishExport ? activeChap.name_en : activeChap.name_vi} — ${isEnglishExport ? `Grade ${selectedGrade} Mathematics` : `Toán ${selectedGrade} KNTT`}`
+                          : isEnglishExport ? `Grade ${selectedGrade} Mathematics` : `Toán ${selectedGrade} KNTT`}
                       </p>
                       {languageMode === 'BILINGUAL' && activeLesson?.title_en && (
                         <p className="text-xs font-bold text-teal-700 font-sans">
@@ -1390,7 +1498,7 @@ export const BilingualLessonModule: React.FC = () => {
                   <div className="space-y-3 mb-8">
                     <div className="flex items-center gap-2 border-b border-violet-200 pb-1">
                       <h3 className="font-sans font-black text-sm sm:text-base text-violet-950 uppercase">
-                        A. TÓM TẮT LÝ THUYẾT
+                        {isEnglishExport ? 'A. THEORY SUMMARY' : 'A. TÓM TẮT LÝ THUYẾT'}
                       </h3>
                       {languageMode === 'BILINGUAL' && (
                         <span className="text-xs text-slate-500 font-sans italic">(Theory Summary)</span>
@@ -1411,10 +1519,20 @@ export const BilingualLessonModule: React.FC = () => {
                         </div>
                       )}
 
+                      {isBilingualExport && activeLesson.key_concepts_en && (
+                        <div className="space-y-1.5 leading-relaxed text-teal-800 italic pl-3 border-l-2 border-teal-300">
+                          {activeLesson.key_concepts_en.split('\n').map((line, idx) => (
+                            <div key={idx}><MathRenderer content={line} /></div>
+                          ))}
+                        </div>
+                      )}
+
                       {/* Formulas */}
                       {activeLesson.formulas && activeLesson.formulas.length > 0 && (
                         <div className="p-2.5 bg-slate-50 rounded-xl border border-slate-200 mt-2 space-y-1">
-                          <p className="font-bold text-violet-900 text-xs uppercase font-sans">Công thức trọng tâm:</p>
+                          <p className="font-bold text-violet-900 text-xs uppercase font-sans">
+                            {isEnglishExport ? 'Key formulas:' : isBilingualExport ? 'Công thức trọng tâm / Key formulas:' : 'Công thức trọng tâm:'}
+                          </p>
                           <div className="space-y-1 pl-2 font-mono text-xs">
                             {activeLesson.formulas.map((f, i) => (
                               <div key={i}>
@@ -1430,7 +1548,7 @@ export const BilingualLessonModule: React.FC = () => {
                         <div className="flex items-center justify-between">
                           <span className="font-extrabold text-violet-900 flex items-center gap-1">
                             <Sparkles className="w-3.5 h-3.5 text-violet-600" />
-                            5 từ vựng Toán tiếng Anh của bài:
+                            {isEnglishExport ? 'Key English mathematics vocabulary:' : '5 từ vựng Toán tiếng Anh của bài:'}
                           </span>
                           <button
                             onClick={() => speakEnglishWord(activeLesson.vocabulary_list?.map((v) => v.split('—')[0].trim()).join(', ') || activeLesson.title_en || 'Mathematics')}
@@ -1463,7 +1581,7 @@ export const BilingualLessonModule: React.FC = () => {
                   <div className="space-y-4 mb-8">
                     <div className="flex items-center gap-2 border-b border-violet-200 pb-1">
                       <h3 className="font-sans font-black text-sm sm:text-base text-violet-950 uppercase">
-                        B. BÀI TẬP MẪU CÓ LỜI GIẢI
+                        {isEnglishExport ? 'B. WORKED EXAMPLES' : 'B. BÀI TẬP MẪU CÓ LỜI GIẢI'}
                       </h3>
                       {languageMode === 'BILINGUAL' && (
                         <span className="text-xs text-slate-500 font-sans italic">(Worked Examples)</span>
@@ -1487,7 +1605,7 @@ export const BilingualLessonModule: React.FC = () => {
                           <div key={idx} className="space-y-2 border-b border-slate-100 pb-4">
                             <div className="flex items-center justify-between">
                               <h4 className="font-sans font-bold text-violet-900">
-                                {ex.type_code || `Dạng ${idx + 1}`}
+                                {isEnglishExport ? `Type ${idx + 1}` : ex.type_code || `Dạng ${idx + 1}`}
                               </h4>
                               {ex.problem_en && (
                                 <button
@@ -1501,8 +1619,8 @@ export const BilingualLessonModule: React.FC = () => {
                             </div>
 
                             <div className="font-medium text-slate-900">
-                              <strong>{ex.title_vi || `Ví dụ ${idx + 1}`}:</strong>{' '}
-                              <MathRenderer content={ex.problem_vi} inline />
+                              <strong>{isEnglishExport ? ex.title_en || `Example ${idx + 1}` : ex.title_vi || `Ví dụ ${idx + 1}`}:</strong>{' '}
+                              <MathRenderer content={isEnglishExport ? ex.problem_en || ex.problem_vi : ex.problem_vi} inline />
                             </div>
 
                             {languageMode === 'BILINGUAL' && ex.problem_en && (
@@ -1512,9 +1630,14 @@ export const BilingualLessonModule: React.FC = () => {
                             )}
 
                             <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 text-xs sm:text-sm text-slate-800 space-y-1">
-                              <p className="font-bold font-sans text-rose-800">Lời giải chi tiết:</p>
+                              <p className="font-bold font-sans text-rose-800">
+                                {isEnglishExport ? 'Detailed solution:' : isBilingualExport ? 'Lời giải chi tiết / Detailed solution:' : 'Lời giải chi tiết:'}
+                              </p>
                               <div className="leading-relaxed">
-                                <MathRenderer content={ex.solution_vi || ex.solution_en || ''} />
+                                <MathRenderer content={isEnglishExport ? ex.solution_en || ex.solution_vi || '' : ex.solution_vi || ex.solution_en || ''} />
+                                {isBilingualExport && ex.solution_en && (
+                                  <div className="text-teal-800 italic mt-1"><MathRenderer content={ex.solution_en} /></div>
+                                )}
                               </div>
                             </div>
                           </div>
@@ -1537,7 +1660,11 @@ export const BilingualLessonModule: React.FC = () => {
                     <div className="space-y-5 mb-8">
                       <div className="flex items-center justify-between border-b border-violet-200 pb-1">
                         <h3 className="font-sans font-black text-sm sm:text-base text-violet-950 uppercase">
-                          C. BÀI TẬP TỰ LUYỆN SONG NGỮ (Theo 4 dạng thức GDPT 2018)
+                          {isEnglishExport
+                            ? 'C. PRACTICE EXERCISES (2018 CURRICULUM — 4 QUESTION FORMATS)'
+                            : isBilingualExport
+                              ? 'C. BÀI TẬP TỰ LUYỆN SONG NGỮ (Theo 4 dạng thức GDPT 2018)'
+                              : 'C. BÀI TẬP TỰ LUYỆN (Theo 4 dạng thức GDPT 2018)'}
                         </h3>
                       </div>
 
@@ -1604,14 +1731,14 @@ export const BilingualLessonModule: React.FC = () => {
                           {tnQuestions.length > 0 && (
                             <div className="space-y-3">
                               <p className="font-sans font-bold text-xs sm:text-sm text-violet-900 uppercase">
-                                PHẦN I. CÂU TRẮC NGHIỆM NHIỀU LỰA CHỌN (TN)
+                                {isEnglishExport ? 'PART I. MULTIPLE-CHOICE QUESTIONS (MCQ)' : 'PHẦN I. CÂU TRẮC NGHIỆM NHIỀU LỰA CHỌN (TN)'}
                               </p>
                               <div className="space-y-4 text-xs sm:text-sm">
                                 {tnQuestions.map((q, idx) => (
                                   <div key={q.id} className="space-y-1.5">
                                     <div>
-                                      <span className="font-sans font-bold text-slate-900 mr-1.5">Câu {idx + 1}:</span>
-                                      <MathRenderer content={languageMode === 'ENGLISH' ? q.question_en : q.question_vi} inline />
+                                      <span className="font-sans font-bold text-slate-900 mr-1.5">{isEnglishExport ? 'Question' : 'Câu'} {idx + 1}:</span>
+                                      <MathRenderer content={isEnglishExport ? q.question_en || q.question_vi : q.question_vi} inline />
                                       <QuestionAssetRenderer assets={q.assets} language={languageMode} compact />
                                     </div>
 
@@ -1626,7 +1753,10 @@ export const BilingualLessonModule: React.FC = () => {
                                         {q.options.map((opt) => (
                                           <div key={opt.option_key} className="flex items-center gap-1.5">
                                             <span className="font-bold">{opt.option_key}.</span>
-                                            <MathRenderer content={opt.content_vi || opt.content_en} inline />
+                                            <MathRenderer content={isEnglishExport ? opt.content_en || opt.content_vi : opt.content_vi || opt.content_en} inline />
+                                            {isBilingualExport && opt.content_en && (
+                                              <span className="text-[11px] text-teal-800 italic ml-1">(<MathRenderer content={opt.content_en} inline />)</span>
+                                            )}
                                           </div>
                                         ))}
                                       </div>
@@ -1641,12 +1771,12 @@ export const BilingualLessonModule: React.FC = () => {
                           {dsQuestions.length > 0 && (
                             <div className="space-y-3 pt-2">
                               <p className="font-sans font-bold text-xs sm:text-sm text-violet-900 uppercase">
-                                PHẦN II. CÂU TRẮC NGHIỆM ĐÚNG / SAI (Đ/S)
+                                {isEnglishExport ? 'PART II. TRUE / FALSE QUESTIONS (T/F)' : 'PHẦN II. CÂU TRẮC NGHIỆM ĐÚNG / SAI (Đ/S)'}
                               </p>
                               {dsQuestions.map((q, idx) => (
                                 <div key={q.id} className="space-y-2 text-xs sm:text-sm">
                                   <div>
-                                    <span className="font-sans font-bold text-slate-900 mr-1.5">Câu {idx + 1}:</span>
+                                    <span className="font-sans font-bold text-slate-900 mr-1.5">{isEnglishExport ? 'Question' : 'Câu'} {idx + 1}:</span>
                                     <MathRenderer content={languageMode === 'ENGLISH' && q.question_en ? q.question_en : q.question_vi} inline />
                                     <QuestionAssetRenderer assets={q.assets} language={languageMode} compact />
                                   </div>
@@ -1673,8 +1803,8 @@ export const BilingualLessonModule: React.FC = () => {
                                             )}
                                           </div>
                                           <div className="flex gap-2 text-[11px] font-bold shrink-0 ml-2">
-                                            <span className="px-2 py-0.5 border border-slate-300 rounded bg-white">Đ</span>
-                                            <span className="px-2 py-0.5 border border-slate-300 rounded bg-white">S</span>
+                                            <span className="px-2 py-0.5 border border-slate-300 rounded bg-white">{isEnglishExport ? 'T' : 'Đ'}</span>
+                                            <span className="px-2 py-0.5 border border-slate-300 rounded bg-white">{isEnglishExport ? 'F' : 'S'}</span>
                                           </div>
                                         </div>
                                       ))}
@@ -1689,12 +1819,12 @@ export const BilingualLessonModule: React.FC = () => {
                           {tlnQuestions.length > 0 && (
                             <div className="space-y-3 pt-2">
                               <p className="font-sans font-bold text-xs sm:text-sm text-violet-900 uppercase">
-                                PHẦN III. CÂU TRẮC NGHIỆM TRẢ LỜI NGẮN (TLN)
+                                {isEnglishExport ? 'PART III. SHORT-ANSWER QUESTIONS' : 'PHẦN III. CÂU TRẮC NGHIỆM TRẢ LỜI NGẮN (TLN)'}
                               </p>
                               {tlnQuestions.map((q, idx) => (
                                 <div key={q.id} className="space-y-1.5 text-xs sm:text-sm">
                                   <div>
-                                    <span className="font-sans font-bold text-slate-900 mr-1.5">Câu {idx + 1}:</span>
+                                    <span className="font-sans font-bold text-slate-900 mr-1.5">{isEnglishExport ? 'Question' : 'Câu'} {idx + 1}:</span>
                                     <MathRenderer content={languageMode === 'ENGLISH' && q.question_en ? q.question_en : q.question_vi} inline />
                                     <QuestionAssetRenderer assets={q.assets} language={languageMode} compact />
                                   </div>
@@ -1706,7 +1836,7 @@ export const BilingualLessonModule: React.FC = () => {
                                   )}
 
                                   <div className="pl-5 font-sans text-xs text-slate-500">
-                                    Đáp số: [ ____________________ ]
+                                    {isEnglishExport ? 'Answer' : 'Đáp số'}: [ ____________________ ]
                                   </div>
                                 </div>
                               ))}
@@ -1717,12 +1847,12 @@ export const BilingualLessonModule: React.FC = () => {
                           {tlQuestions.length > 0 && (
                             <div className="space-y-3 pt-2">
                               <p className="font-sans font-bold text-xs sm:text-sm text-violet-900 uppercase">
-                                PHẦN IV. CÂU HỎI TỰ LUẬN (TL)
+                                {isEnglishExport ? 'PART IV. EXTENDED-RESPONSE QUESTIONS' : 'PHẦN IV. CÂU HỎI TỰ LUẬN (TL)'}
                               </p>
                               {tlQuestions.map((q, idx) => (
                                 <div key={q.id} className="space-y-1.5 text-xs sm:text-sm">
                                   <div>
-                                    <span className="font-sans font-bold text-slate-900 mr-1.5">Câu {idx + 1}:</span>
+                                    <span className="font-sans font-bold text-slate-900 mr-1.5">{isEnglishExport ? 'Question' : 'Câu'} {idx + 1}:</span>
                                     <MathRenderer content={languageMode === 'ENGLISH' && q.question_en ? q.question_en : q.question_vi} inline />
                                     <QuestionAssetRenderer assets={q.assets} language={languageMode} compact />
                                   </div>
@@ -1748,7 +1878,7 @@ export const BilingualLessonModule: React.FC = () => {
                 {includeAnswerKey && displayedQuestions.length > 0 && (
                   <div className="mt-8 pt-4 border-t-2 border-dashed border-slate-300 font-sans text-xs">
                     <p className="font-bold text-center uppercase text-slate-700 mb-2">
-                      BẢNG ĐÁP SỐ GỌN (ANSWER KEY)
+                      {isEnglishExport ? 'ANSWER KEY' : isBilingualExport ? 'BẢNG ĐÁP SỐ GỌN (ANSWER KEY)' : 'BẢNG ĐÁP SỐ GỌN'}
                     </p>
                     <div className="grid grid-cols-4 sm:grid-cols-6 gap-1.5 text-center border border-slate-300 p-2 rounded-xl bg-slate-50/50">
                       {displayedQuestions.map((q, qIdx) => (
@@ -1757,8 +1887,29 @@ export const BilingualLessonModule: React.FC = () => {
                             {qIdx + 1} ({q.format_type || 'TN'})
                           </div>
                           <div className="font-bold text-violet-800 text-xs truncate" title={q.correct_answer}>
-                            {q.correct_answer || 'Xem giải'}
+                            {q.correct_answer || (isEnglishExport ? 'See solution' : 'Xem giải')}
                           </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {includeDetailedSolutions && displayedQuestions.length > 0 && (
+                  <div className="mt-8 pt-4 border-t-2 border-slate-300 font-sans text-xs solution-section">
+                    <p className="font-bold text-center uppercase text-slate-700 mb-3">
+                      {isEnglishExport ? 'DETAILED SOLUTIONS' : isBilingualExport ? 'LỜI GIẢI CHI TIẾT / DETAILED SOLUTIONS' : 'LỜI GIẢI CHI TIẾT'}
+                    </p>
+                    <div className="space-y-4">
+                      {displayedQuestions.map((q, qIdx) => (
+                        <div key={`solution-${q.id || qIdx}`} className="worksheet-solution-item break-inside-avoid">
+                          <p className="font-bold text-slate-900 mb-1">{isEnglishExport ? 'Question' : 'Câu'} {qIdx + 1}:</p>
+                          <MathRenderer content={isEnglishExport ? q.solution_en || q.solution_vi : q.solution_vi || q.solution_en} />
+                          {isBilingualExport && q.solution_en && (
+                            <div className="text-teal-800 italic mt-1 pl-3 border-l-2 border-teal-300">
+                              <MathRenderer content={q.solution_en} />
+                            </div>
+                          )}
                         </div>
                       ))}
                     </div>
@@ -1767,7 +1918,7 @@ export const BilingualLessonModule: React.FC = () => {
 
                 {/* Footer Signoff */}
                 <div className="text-center pt-8 text-xs italic font-sans text-slate-400">
-                  --- HẾT ---
+                  --- {isEnglishExport ? 'END' : 'HẾT'} ---
                 </div>
               </div>
             </div>
@@ -2046,20 +2197,30 @@ export const BilingualLessonModule: React.FC = () => {
                   </div>
                 </label>
 
-                <label className="flex items-start gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={languageMode === 'BILINGUAL'}
-                    onChange={(e) => setLanguageMode(e.target.checked ? 'BILINGUAL' : 'VIETNAMESE')}
-                    className="mt-0.5 w-3.5 h-3.5 accent-violet-600 rounded cursor-pointer"
-                  />
-                  <div>
-                    <span className="font-bold text-slate-800">Chế độ song ngữ Anh - Việt</span>
-                    <p className="text-[10px] text-slate-400 leading-tight">
-                      Đề bài và lý thuyết hiển thị song ngữ chuẩn quốc tế
-                    </p>
+                <div className="space-y-1.5 pt-1">
+                  <span className="font-bold text-slate-800">Ngôn ngữ file xuất:</span>
+                  <div className="grid grid-cols-3 gap-1 rounded-xl bg-slate-100 p-1">
+                    {([
+                      ['VIETNAMESE', 'VN'],
+                      ['BILINGUAL', 'Song ngữ'],
+                      ['ENGLISH', 'Full English'],
+                    ] as Array<[LanguageMode, string]>).map(([mode, label]) => (
+                      <button
+                        key={mode}
+                        type="button"
+                        onClick={() => setLanguageMode(mode)}
+                        className={`rounded-lg px-1 py-1.5 text-[10px] font-extrabold transition ${
+                          languageMode === mode ? 'bg-violet-600 text-white shadow-xs' : 'text-slate-600 hover:bg-white'
+                        }`}
+                      >
+                        {label}
+                      </button>
+                    ))}
                   </div>
-                </label>
+                  <p className="text-[10px] text-slate-400 leading-tight">
+                    PDF, Word và bản xem trước luôn dùng đúng lựa chọn này.
+                  </p>
+                </div>
               </div>
 
               {/* 3 Action Buttons */}

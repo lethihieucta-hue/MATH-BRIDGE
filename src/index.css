@@ -64,3 +64,69 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
 }
+
+/* Print only the worksheet. A zero page margin prevents Chromium from injecting
+   the URL/date/page headers seen in exported PDFs; the A4 padding lives here instead. */
+@page {
+  size: A4 portrait;
+  margin: 0;
+}
+
+@media print {
+  html,
+  body {
+    width: 210mm !important;
+    min-width: 210mm !important;
+    height: auto !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    background: #fff !important;
+  }
+
+  body.printing-worksheet * {
+    visibility: hidden !important;
+  }
+
+  body.printing-worksheet #worksheet-print-area,
+  body.printing-worksheet #worksheet-print-area * {
+    visibility: visible !important;
+  }
+
+  body.printing-worksheet #worksheet-print-area {
+    position: absolute !important;
+    inset: 0 auto auto 0 !important;
+    display: block !important;
+    box-sizing: border-box !important;
+    width: 210mm !important;
+    max-width: 210mm !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 12mm 14mm !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    transform: none !important;
+    overflow: visible !important;
+    background: #fff !important;
+  }
+
+  body.printing-worksheet #worksheet-print-area button {
+    display: none !important;
+  }
+
+  body.printing-worksheet #worksheet-print-area h1,
+  body.printing-worksheet #worksheet-print-area h2,
+  body.printing-worksheet #worksheet-print-area h3,
+  body.printing-worksheet #worksheet-print-area .worksheet-solution-item,
+  body.printing-worksheet #worksheet-print-area .question-asset-renderer,
+  body.printing-worksheet #worksheet-print-area figure,
+  body.printing-worksheet #worksheet-print-area table {
+    break-inside: avoid-page !important;
+  }
+
+  body.printing-worksheet #worksheet-print-area .katex-display {
+    overflow: visible !important;
+  }
+}
