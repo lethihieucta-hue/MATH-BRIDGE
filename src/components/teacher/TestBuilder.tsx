@@ -5,7 +5,16 @@ import { MathRenderer } from '../math/MathRenderer';
 import { ONLINE_SAFE_QUESTION_BANK } from '../../lib/questionBankData';
 import { apiFetch } from '../../lib/dataService';
 import { FULL_LESSONS } from '../../lib/curriculumData';
+import { isQuestionEnglishReady } from '../../lib/englishQuality';
 import { OnlineExamRoom, OnlineExamData } from '../online_exam/OnlineExamRoom';
+import {
+  createDocxBlob,
+  downloadBlob,
+  printElementAsA4,
+  wordMathRichText,
+  wordParagraph,
+  wordTextRun,
+} from '../../lib/officeExport';
 import {
   Sparkles,
   Printer,
@@ -229,7 +238,9 @@ export const TestBuilder: React.FC = () => {
 
   // Initial generated test default state (10 questions on GTLN & GTNN)
   const [currentTest, setCurrentTest] = useState<GeneratedTestState>(() => {
-    const initialList = ONLINE_SAFE_QUESTION_BANK.filter((q) => q.topic_id === 'top-12-1-2');
+    const initialList = ONLINE_SAFE_QUESTION_BANK.filter(
+      (q) => q.topic_id === 'top-12-1-2' && isQuestionEnglishReady(q)
+    );
     return {
       title: `ĐỀ KIỂM TRA 15 PHÚT: GIÁ TRỊ LỚN NHẤT VÀ NHỎ NHẤT CỦA HÀM SỐ`,
       title_en: `15-MINUTE TEST: MAXIMUM AND MINIMUM VALUES OF FUNCTIONS`,
@@ -281,7 +292,13 @@ export const TestBuilder: React.FC = () => {
 
     // Ngân hàng đề là nguồn chính; không gọi Gemini mặc định.
     // Lọc đúng lớp/bài/dạng từ ngân hàng có khóa đáp án an toàn cho thi online.
-    const candidateQuestions = filterQuestionsFromPrompt(promptDescription, detectedGrade);
+    const rawCandidateQuestions = filterQuestionsFromPrompt(promptDescription, detectedGrade);
+    // A bilingual/English test must never reuse a field that merely prefixes an
+    // English sentence to Vietnamese source text. Keep only fully translated stems
+    // and options; the shortage warning below remains fail-closed.
+    const candidateQuestions = detectedRatio >= 40
+      ? rawCandidateQuestions.filter((question) => isQuestionEnglishReady(question))
+      : rawCandidateQuestions;
     const formatCounts = parseFormatCounts(promptDescription, targetCount);
     targetCount = formatCounts.total;
     const selected: Question[] = [
@@ -331,7 +348,11 @@ export const TestBuilder: React.FC = () => {
 
   // Export: Print PDF
   const handlePrint = () => {
-    window.print();
+    if (currentTest.englishRatio >= 40 && currentTest.questions.some((question) => !isQuestionEnglishReady(question))) {
+      showNotification('⚠️ Đề còn câu chưa dịch trọn vẹn. Hãy tạo lại đề để hệ thống chỉ lấy câu English đã kiểm tra.');
+      return;
+    }
+    printElementAsA4('printable-test-area', currentTest.title);
   };
 
   // Export: Online Exam Share Link
@@ -381,6 +402,10 @@ export const TestBuilder: React.FC = () => {
 
   // Export: Copy to Word Clipboard
   const handleCopyWord = () => {
+    if (currentTest.englishRatio >= 40 && currentTest.questions.some((question) => !isQuestionEnglishReady(question))) {
+      showNotification('⚠️ Không sao chép: đề còn câu English chưa dịch trọn vẹn. Hãy tạo lại đề.');
+      return;
+    }
     const isPureEnglish = currentTest.englishRatio >= 80;
     let content = `=========================================================\n`;
     content += `TRƯỜNG THPT CHÂU THÀNH A\n`;
@@ -434,85 +459,92 @@ export const TestBuilder: React.FC = () => {
     showNotification('📋 Đã sao chép nội dung bài test vào bộ nhớ tạm (Clipboard)!');
   };
 
-  // Export: Download Word File (.doc)
+  // Export: real DOCX with native Office Equation (OMML), editable in Word and
+  // convertible by MathType. Plain LaTeX is retained only when conversion fails.
   const handleDownloadDoc = () => {
+    if (currentTest.englishRatio >= 40 && currentTest.questions.some((question) => !isQuestionEnglishReady(question))) {
+      showNotification('⚠️ Không xuất Word: đề còn câu English chưa dịch trọn vẹn. Hãy tạo lại đề.');
+      return;
+    }
     const isPureEnglish = currentTest.englishRatio >= 80;
-    let docContent = `<html><head><meta charset='utf-8'><title>${currentTest.title}</title>
-    <style>
-      body { font-family: 'Times New Roman', serif; line-height: 1.5; padding: 20px; font-size: 14pt; }
-      .header-table { width: 100%; margin-bottom: 20px; }
-      .candidate-box { border: 1px solid #000; padding: 10px; margin-bottom: 20px; }
-      .question-item { margin-bottom: 15px; }
-      .key-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-      .key-table th, .key-table td { border: 1px solid #000; padding: 6px; text-align: center; }
-    </style>
-    </head><body>`;
+    const isBilingual = !isPureEnglish && currentTest.englishRatio >= 40;
+    const paragraphs: string[] = [];
+    const title = isPureEnglish ? currentTest.title_en : currentTest.title;
+    const safeName = title.replace(/[\\/:*?"<>|]/g, '').replace(/\s+/g, '_');
 
-    docContent += `<table class='header-table'>
-      <tr>
-        <td style='text-align:left; font-weight:bold;'>TRƯỜNG THPT CHÂU THÀNH A<br/>TỔ TOÁN</td>
-        <td style='text-align:right; font-weight:bold;'>ĐỀ KIỂM TRA ĐÁNH GIÁ GDPT 2018<br/>Thời gian: ${currentTest.duration} phút</td>
-      </tr>
-    </table>`;
-
-    docContent += `<h2 style='text-align:center; text-transform:uppercase;'>${isPureEnglish ? currentTest.title_en : currentTest.title}</h2>`;
-    docContent += `<p style='text-align:center; font-style:italic;'>${isPureEnglish ? currentTest.instructions_en : currentTest.instructions_vi}</p>`;
+    paragraphs.push(wordParagraph(wordTextRun('TRƯỜNG THPT CHÂU THÀNH A', { bold: true }), { align: 'center', keepNext: true }));
+    paragraphs.push(wordParagraph(wordTextRun(isPureEnglish ? 'MATHEMATICS DEPARTMENT' : 'TỔ TOÁN', { bold: true }), { align: 'center', keepNext: true }));
+    paragraphs.push(wordParagraph(wordTextRun(title.toUpperCase(), { bold: true }), { style: 'Title', align: 'center', keepNext: true }));
+    if (isBilingual && currentTest.title_en) {
+      paragraphs.push(wordParagraph(wordTextRun(currentTest.title_en.toUpperCase(), { italic: true, color: '0F766E' }), { align: 'center', keepNext: true }));
+    }
+    paragraphs.push(wordParagraph(wordTextRun(
+      isPureEnglish ? currentTest.instructions_en : currentTest.instructions_vi,
+      { italic: true },
+    ), { align: 'center' }));
+    if (isBilingual) {
+      paragraphs.push(wordParagraph(wordTextRun(currentTest.instructions_en, { italic: true, color: '0F766E' }), { align: 'center' }));
+    }
 
     if (includeCandidateBox) {
       if (isPureEnglish) {
-        docContent += `<div class='candidate-box'>
-          <p>Student Name: ............................................................................ Class: ................. Candidate ID: .................</p>
-          <p>Score: ................................... Teacher's Feedback: ................................................................</p>
-        </div>`;
+        paragraphs.push(wordParagraph(wordTextRun('Student Name: .............................................................   Class: ...............   Candidate ID: ...............'), { keepLines: true }));
+        paragraphs.push(wordParagraph(wordTextRun("Score: ...............   Teacher's Feedback: ........................................................................"), { keepLines: true }));
       } else {
-        docContent += `<div class='candidate-box'>
-          <p>Họ và tên: ............................................................................ Lớp: ................. SBD: .................</p>
-          <p>Điểm số: ................................... Lời phê của Thầy/Cô: ................................................................</p>
-        </div>`;
+        paragraphs.push(wordParagraph(wordTextRun('Họ và tên: ................................................................   Lớp: ...............   SBD: ...............'), { keepLines: true }));
+        paragraphs.push(wordParagraph(wordTextRun('Điểm số: ...............   Lời phê của Thầy/Cô: ................................................................'), { keepLines: true }));
       }
     }
 
     currentTest.questions.forEach((q, idx) => {
-      docContent += `<div class='question-item'>`;
       if (isPureEnglish) {
-        docContent += `<p><strong>Question ${idx + 1} (${q.format_type || 'MCQ'}):</strong> ${q.question_en || q.question_vi}</p>`;
+        paragraphs.push(wordParagraph(
+          `${wordTextRun(`Question ${idx + 1} (${q.format_type || 'MCQ'}): `, { bold: true })}${wordMathRichText(q.question_en || q.question_vi)}`,
+          { keepLines: true },
+        ));
       } else {
-        docContent += `<p><strong>Câu ${idx + 1} (${q.format_type || 'TN'}):</strong> ${q.question_vi}</p>`;
-        if (q.question_en && currentTest.englishRatio >= 40) {
-          docContent += `<p style='color: #0d9488; font-style: italic; margin-left: 20px;'>En: ${q.question_en}</p>`;
+        paragraphs.push(wordParagraph(
+          `${wordTextRun(`Câu ${idx + 1} (${q.format_type || 'TN'}): `, { bold: true })}${wordMathRichText(q.question_vi || q.question_en)}`,
+          { keepLines: true },
+        ));
+        if (isBilingual && q.question_en) {
+          paragraphs.push(wordParagraph(
+            `${wordTextRun('English: ', { bold: true, italic: true, color: '0F766E' })}${wordMathRichText(q.question_en)}`,
+            { indent: 360, keepLines: true },
+          ));
         }
       }
       if (q.options && q.options.length > 0) {
-        docContent += `<ul>`;
         q.options.forEach((opt) => {
-          docContent += `<li><strong>${opt.option_key}.</strong> ${isPureEnglish ? (opt.content_en || opt.content_vi) : (opt.content_vi || opt.content_en)}</li>`;
+          const primary = isPureEnglish
+            ? (opt.content_en || opt.content_vi)
+            : (opt.content_vi || opt.content_en);
+          paragraphs.push(wordParagraph(
+            `${wordTextRun(`${opt.option_key}. `, { bold: true })}${wordMathRichText(primary)}`,
+            { indent: 540, keepLines: true },
+          ));
+          if (isBilingual && opt.content_en && opt.content_en !== primary) {
+            paragraphs.push(wordParagraph(
+              `${wordTextRun('English: ', { italic: true, color: '0F766E' })}${wordMathRichText(opt.content_en)}`,
+              { indent: 900, keepLines: true },
+            ));
+          }
         });
-        docContent += `</ul>`;
       }
-      docContent += `</div>`;
     });
 
     if (includeAnswerKey) {
-      docContent += `<h3 style='margin-top:30px; text-align:center;'>BẢNG ĐÁP ÁN VÀ HƯỚNG DẪN CHẤM</h3>`;
-      docContent += `<table class='key-table'><tr><th>Câu</th><th>Dạng</th><th>Đáp án đúng</th></tr>`;
+      paragraphs.push(wordParagraph(wordTextRun(isPureEnglish ? 'ANSWER KEY' : 'BẢNG ĐÁP ÁN VÀ HƯỚNG DẪN CHẤM', { bold: true }), { style: 'Heading1', align: 'center', keepNext: true }));
       currentTest.questions.forEach((q, idx) => {
-        docContent += `<tr><td>${idx + 1}</td><td>${q.format_type || 'TN'}</td><td><strong>${q.correct_answer || 'Xem giải'}</strong></td></tr>`;
+        paragraphs.push(wordParagraph(
+          `${wordTextRun(`${isPureEnglish ? 'Question' : 'Câu'} ${idx + 1}: `, { bold: true })}${wordMathRichText(q.correct_answer || (isPureEnglish ? 'See solution' : 'Xem giải'))}`,
+          { keepLines: true },
+        ));
       });
-      docContent += `</table>`;
     }
 
-    docContent += `</body></html>`;
-
-    const blob = new Blob(['\ufeff' + docContent], { type: 'application/msword' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${currentTest.title.replace(/\s+/g, '_')}.doc`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    showNotification('📥 Đã tải file Microsoft Word (.doc) về máy!');
+    downloadBlob(createDocxBlob(title, paragraphs), `${safeName}.docx`);
+    showNotification('📥 Đã tải Word (.docx) với Office Equation chuẩn, sẵn sàng chỉnh bằng MathType!');
   };
 
   // If teacher clicked "Xem thử phòng thi học sinh"
@@ -750,7 +782,7 @@ export const TestBuilder: React.FC = () => {
                         : `PHẦN I. CÂU TRẮC NGHIỆM NHIỀU LỰA CHỌN (${tnList.length} CÂU)`}
                     </div>
                     {tnList.map((q, idx) => (
-                      <div key={q.id || idx} className="space-y-2">
+                      <div key={q.id || idx} className="space-y-2 print-keep-together">
                         <div>
                           <span className="font-sans font-bold text-slate-900 mr-1.5">
                             {isPureEnglish ? `Question ${idx + 1}:` : `Câu ${idx + 1}:`}
@@ -788,7 +820,7 @@ export const TestBuilder: React.FC = () => {
                         : `PHẦN II. CÂU TRẮC NGHIỆM ĐÚNG / SAI (${dsList.length} CÂU)`}
                     </div>
                     {dsList.map((q, idx) => (
-                      <div key={q.id || idx} className="space-y-2">
+                      <div key={q.id || idx} className="space-y-2 print-keep-together">
                         <div>
                           <span className="font-sans font-bold text-slate-900 mr-1.5">
                             {isPureEnglish ? `Question ${idx + 1}:` : `Câu ${idx + 1}:`}
@@ -829,7 +861,7 @@ export const TestBuilder: React.FC = () => {
                         : `PHẦN III. CÂU TRẮC NGHIỆM TRẢ LỜI NGẮN (${tlnList.length} CÂU)`}
                     </div>
                     {tlnList.map((q, idx) => (
-                      <div key={q.id || idx} className="space-y-1.5">
+                      <div key={q.id || idx} className="space-y-1.5 print-keep-together">
                         <div>
                           <span className="font-sans font-bold text-slate-900 mr-1.5">
                             {isPureEnglish ? `Question ${idx + 1}:` : `Câu ${idx + 1}:`}
@@ -853,7 +885,7 @@ export const TestBuilder: React.FC = () => {
                         : `PHẦN IV. CÂU HỎI TỰ LUẬN (${tlList.length} CÂU)`}
                     </div>
                     {tlList.map((q, idx) => (
-                      <div key={q.id || idx} className="space-y-1.5">
+                      <div key={q.id || idx} className="space-y-1.5 print-keep-together">
                         <div>
                           <span className="font-sans font-bold text-slate-900 mr-1.5">
                             {isPureEnglish ? `Question ${idx + 1}:` : `Câu ${idx + 1}:`}
@@ -955,7 +987,7 @@ export const TestBuilder: React.FC = () => {
                   className="w-full py-2.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-900 border border-indigo-200 font-extrabold text-xs rounded-xl transition flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <FileDown className="w-4 h-4 text-indigo-700" />
-                  <span>Tải File Word (.doc)</span>
+                  <span>Tải File Word (.docx Equation)</span>
                 </button>
 
                 <button

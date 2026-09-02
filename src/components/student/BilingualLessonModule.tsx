@@ -15,6 +15,8 @@ import {
   isQuestionCompatibleWithTopic,
 } from '../../lib/questionBankData';
 import { getAllowedVariantTags } from '../../lib/questionBlueprintData';
+import { printElementAsA4 } from '../../lib/officeExport';
+import { isCleanEnglishText, isQuestionEnglishReady } from '../../lib/englishQuality';
 import {
   BookOpen,
   Search,
@@ -170,8 +172,8 @@ const docxTextRun = (value: string, options: { bold?: boolean; italic?: boolean;
 
 /** Return WordprocessingML runs with native Office Equation nodes and LaTeX fallback runs. */
 const renderDocxRichText = (value: string, forceMath = false): string => {
-  const source = (value || '').normalize('NFC').trim();
-  if (!source) return '';
+  const source = (value || '').normalize('NFC');
+  if (!source.trim()) return '';
 
   const renderMath = (latex: string): string => {
     const omml = latexToOmml(latex);
@@ -181,7 +183,7 @@ const renderDocxRichText = (value: string, forceMath = false): string => {
   };
 
   if (forceMath) {
-    const unwrapped = source
+    const unwrapped = source.trim()
       .replace(/^\$\$|\$\$$/g, '')
       .replace(/^\$|\$$/g, '')
       .replace(/^\\\[|\\\]$/g, '')
@@ -696,10 +698,7 @@ export const BilingualLessonModule: React.FC = () => {
 
   // Export Action: Print PDF
   const handlePrint = () => {
-    document.body.classList.add('printing-worksheet');
-    const cleanup = () => document.body.classList.remove('printing-worksheet');
-    window.addEventListener('afterprint', cleanup, { once: true });
-    window.print();
+    printElementAsA4('worksheet-print-area', documentTitle);
   };
 
   // Question routing helpers. Every question is isolated by exact type_id and then by format.
@@ -774,7 +773,10 @@ export const BilingualLessonModule: React.FC = () => {
       seen.add(key);
       return true;
     });
-    return orderQuestionPool(deduped, typeId);
+    const languageReady = languageMode === 'VIETNAMESE'
+      ? deduped
+      : deduped.filter((question) => isQuestionEnglishReady(question));
+    return orderQuestionPool(languageReady, typeId);
   };
 
   const takeQuestionsForType = (typeId: string, requested: QuestionCounts): Question[] => {
@@ -1154,9 +1156,11 @@ export const BilingualLessonModule: React.FC = () => {
   const localizedDocumentTitle = isEnglishExport
     ? (/^PHIẾU BÀI TẬP TOÁN/i.test(documentTitle) ? `MATHEMATICS ${selectedGrade} WORKSHEET` : documentTitle)
     : documentTitle;
+  const safeEnglish = (en?: string, fallback = 'English translation unavailable.'): string =>
+    isCleanEnglishText(en) ? en!.trim() : fallback;
   const plainLocalized = (vi?: string, en?: string): string => {
-    if (isEnglishExport) return en || vi || '';
-    if (isBilingualExport) return [vi, en].filter(Boolean).join('\n');
+    if (isEnglishExport) return safeEnglish(en);
+    if (isBilingualExport) return [vi, isCleanEnglishText(en) ? en : undefined].filter(Boolean).join('\n');
     return vi || en || '';
   };
 
@@ -1242,11 +1246,12 @@ export const BilingualLessonModule: React.FC = () => {
       prefixEn = '',
       options: { indent?: number; keepLines?: boolean } = {}
     ) => {
+      const cleanEnglish = isCleanEnglishText(en) ? en : undefined;
       if (isEnglishExport) {
-        paragraphs.push(paragraph(`${docxTextRun(prefixEn || prefixVi, { bold: !!(prefixEn || prefixVi) })}${renderDocxRichText(en || vi || '')}`, options));
+        paragraphs.push(paragraph(`${docxTextRun(prefixEn || prefixVi, { bold: !!(prefixEn || prefixVi) })}${renderDocxRichText(cleanEnglish || 'English translation unavailable.')}`, options));
       } else if (isBilingualExport) {
         paragraphs.push(paragraph(`${docxTextRun(prefixVi, { bold: !!prefixVi })}${renderDocxRichText(vi || en || '')}`, options));
-        if (en) paragraphs.push(paragraph(`${docxTextRun(prefixEn, { bold: !!prefixEn, italic: true, color: '0F766E' })}${renderDocxRichText(en)}`, options));
+        if (cleanEnglish) paragraphs.push(paragraph(`${docxTextRun(prefixEn, { bold: !!prefixEn, italic: true, color: '0F766E' })}${renderDocxRichText(cleanEnglish)}`, options));
       } else {
         paragraphs.push(paragraph(`${docxTextRun(prefixVi || prefixEn, { bold: !!(prefixVi || prefixEn) })}${renderDocxRichText(vi || en || '')}`, options));
       }
@@ -1694,8 +1699,8 @@ export const BilingualLessonModule: React.FC = () => {
                       {/* Key Concepts */}
                       {activeLesson.key_concepts_vi && (
                         <div className="space-y-1.5 leading-relaxed">
-                          {(languageMode === 'ENGLISH' && activeLesson.key_concepts_en
-                            ? activeLesson.key_concepts_en.split('\n')
+                          {(languageMode === 'ENGLISH'
+                            ? safeEnglish(activeLesson.key_concepts_en).split('\n')
                             : activeLesson.key_concepts_vi.split('\n')).map((line, idx) => (
                             <div key={idx} className="flex items-start gap-1">
                               <MathRenderer content={line} />
@@ -1704,7 +1709,7 @@ export const BilingualLessonModule: React.FC = () => {
                         </div>
                       )}
 
-                      {isBilingualExport && activeLesson.key_concepts_en && (
+                      {isBilingualExport && isCleanEnglishText(activeLesson.key_concepts_en) && (
                         <div className="space-y-1.5 leading-relaxed text-teal-800 italic pl-3 border-l-2 border-teal-300">
                           {activeLesson.key_concepts_en.split('\n').map((line, idx) => (
                             <div key={idx}><MathRenderer content={line} /></div>
@@ -1804,11 +1809,11 @@ export const BilingualLessonModule: React.FC = () => {
                             </div>
 
                             <div className="font-medium text-slate-900">
-                              <strong>{isEnglishExport ? ex.title_en || `Example ${idx + 1}` : ex.title_vi || `Ví dụ ${idx + 1}`}:</strong>{' '}
-                              <MathRenderer content={isEnglishExport ? ex.problem_en || ex.problem_vi : ex.problem_vi} inline />
+                              <strong>{isEnglishExport ? safeEnglish(ex.title_en, `Example ${idx + 1}`) : ex.title_vi || `Ví dụ ${idx + 1}`}:</strong>{' '}
+                              <MathRenderer content={isEnglishExport ? safeEnglish(ex.problem_en) : ex.problem_vi} inline />
                             </div>
 
-                            {languageMode === 'BILINGUAL' && ex.problem_en && (
+                            {languageMode === 'BILINGUAL' && isCleanEnglishText(ex.problem_en) && (
                               <div className="text-xs text-teal-800 font-sans italic pl-3 border-l-2 border-teal-300">
                                 <MathRenderer content={ex.problem_en} inline />
                               </div>
@@ -1819,8 +1824,8 @@ export const BilingualLessonModule: React.FC = () => {
                                 {isEnglishExport ? 'Detailed solution:' : isBilingualExport ? 'Lời giải chi tiết / Detailed solution:' : 'Lời giải chi tiết:'}
                               </p>
                               <div className="leading-relaxed">
-                                <MathRenderer content={isEnglishExport ? ex.solution_en || ex.solution_vi || '' : ex.solution_vi || ex.solution_en || ''} />
-                                {isBilingualExport && ex.solution_en && (
+                                <MathRenderer content={isEnglishExport ? safeEnglish(ex.solution_en) : ex.solution_vi || ex.solution_en || ''} />
+                                {isBilingualExport && isCleanEnglishText(ex.solution_en) && (
                                   <div className="text-teal-800 italic mt-1"><MathRenderer content={ex.solution_en} /></div>
                                 )}
                               </div>
@@ -2089,8 +2094,8 @@ export const BilingualLessonModule: React.FC = () => {
                       {displayedQuestions.map((q, qIdx) => (
                         <div key={`solution-${q.id || qIdx}`} className="worksheet-solution-item break-inside-avoid">
                           <p className="font-bold text-slate-900 mb-1">{isEnglishExport ? 'Question' : 'Câu'} {qIdx + 1}:</p>
-                          <MathRenderer content={isEnglishExport ? q.solution_en || q.solution_vi : q.solution_vi || q.solution_en} />
-                          {isBilingualExport && q.solution_en && (
+                          <MathRenderer content={isEnglishExport ? safeEnglish(q.solution_en) : q.solution_vi || q.solution_en} />
+                          {isBilingualExport && isCleanEnglishText(q.solution_en) && (
                             <div className="text-teal-800 italic mt-1 pl-3 border-l-2 border-teal-300">
                               <MathRenderer content={q.solution_en} />
                             </div>

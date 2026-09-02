@@ -11,7 +11,8 @@
     "lint": "tsc --noEmit",
     "audit:curriculum": "node scripts/audit-curriculum.mjs",
     "audit:worksheet": "node scripts/audit-worksheet.mjs",
-    "audit:static-bank": "tsx scripts/audit-static-bank.ts"
+    "audit:static-bank": "tsx scripts/audit-static-bank.ts",
+    "audit:export": "node --import tsx scripts/audit-export-fixes.ts"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",

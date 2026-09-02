@@ -65,11 +65,10 @@
   background: #94a3b8;
 }
 
-/* Print only the worksheet. Keep @page at zero so Chromium cannot inject URL/date
-   headers. Cloned box decoration below creates a 10 mm safe zone on every page. */
+/* A4 safe zone: 10 mm at the top and bottom of every printed page. */
 @page {
   size: A4 portrait;
-  margin: 0;
+  margin: 10mm 0;
 }
 
 @media print {
@@ -103,7 +102,7 @@
     max-width: 210mm !important;
     min-height: 0 !important;
     margin: 0 !important;
-    padding: 10mm 14mm !important;
+    padding: 0 14mm !important;
     border: 0 !important;
     border-radius: 0 !important;
     box-shadow: none !important;

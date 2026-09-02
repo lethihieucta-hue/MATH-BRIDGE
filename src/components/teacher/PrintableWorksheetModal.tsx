@@ -4,6 +4,7 @@ import { MathRenderer } from '../math/MathRenderer';
 import { QuestionAssetRenderer } from '../math/QuestionAssetRenderer';
 import { Printer, Copy, Download, X, CheckCircle2, FileText } from 'lucide-react';
 import { useAppStore } from '../../lib/store';
+import { printElementAsA4 } from '../../lib/officeExport';
 
 interface PrintableWorksheetModalProps {
   isOpen: boolean;
@@ -26,7 +27,7 @@ export const PrintableWorksheetModal: React.FC<PrintableWorksheetModalProps> = (
   if (!isOpen) return null;
 
   const handlePrint = () => {
-    window.print();
+    printElementAsA4('printable-worksheet-modal-area', testTitle);
   };
 
   const handleCopyText = () => {
@@ -85,6 +86,7 @@ export const PrintableWorksheetModal: React.FC<PrintableWorksheetModalProps> = (
         {/* Printable Paper Preview (Standard High School Exam Style) */}
         <div className="p-8 overflow-y-auto bg-slate-100 flex justify-center">
           <div
+            id="printable-worksheet-modal-area"
             ref={printRef}
             className="bg-white w-full max-w-[210mm] min-h-[297mm] p-8 sm:p-12 shadow-lg border border-slate-300 text-slate-900 space-y-6 font-serif leading-normal print:shadow-none print:border-none print:m-0 print:p-4"
           >
@@ -130,7 +132,7 @@ export const PrintableWorksheetModal: React.FC<PrintableWorksheetModalProps> = (
             {/* Questions List */}
             <div className="space-y-6 text-xs sm:text-sm">
               {questions.map((q, idx) => (
-                <div key={q.id} className="space-y-2">
+                <div key={q.id} className="space-y-2 print-keep-together">
                   <div className="font-bold text-slate-900">
                     <span className="font-sans font-black text-teal-900 mr-1.5">Câu {idx + 1}:</span>
                     <MathRenderer content={q.question_en} inline />
