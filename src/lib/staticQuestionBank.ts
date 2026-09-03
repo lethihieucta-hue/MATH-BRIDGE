@@ -23,7 +23,7 @@ const opt = (items: Array<[string, string, boolean]>): QuestionOption[] =>
   items.map((item, i) => ({
     option_key: ['A', 'B', 'C', 'D'][i],
     content_vi: item[0],
-    content_en: item[1],
+    content_en: englishChoiceText(item[1]),
     is_correct: item[2],
   }));
 
@@ -32,13 +32,710 @@ const hasAny = (s: string, words: string[]) => words.some((w) => s.includes(w));
 const bareMath = (s: string) => s.replace(/^\$+|\$+$/g, '');
 
 
+// Keep text-only answer choices bilingual. Mathematical choices are returned unchanged.
+// This is intentionally deterministic: no AI translation is used in the source bank.
+
+const polishStaticEnglishText = (value: string): string => {
+  let s = (value || '').trim();
+  if (!s) return s;
+
+  // Text embedded in LaTeX tables must also be localized.
+  s = s
+    .replace(/\\text\{Khoảng lớp\}/g, '\\text{Class interval}')
+    .replace(/\\text\{Tần số\}/g, '\\text{Frequency}')
+    .replace(/\\text\{Mẫu A\}/g, '\\text{Sample A}')
+    .replace(/\\text\{Mẫu B\}/g, '\\text{Sample B}');
+
+  const exact: Record<string, string> = {
+    'Một hãng taxi thu 15 nghìn đồng phí mở cửa và 12 nghìn đồng cho mỗi km. Chi phí $C(x)$ (nghìn đồng) cho $x$ km là': 'A taxi company charges a base fare of 15 thousand VND plus 12 thousand VND per kilometer. The cost $C(x)$, in thousand VND, for $x$ kilometers is',
+    'Một bể có sẵn 100 lít nước và được bơm thêm 8 lít mỗi phút. Lượng nước sau $t$ phút là': 'A tank initially contains 100 liters of water and is filled at 8 liters per minute. The amount of water after $t$ minutes is',
+    'Nhiệt độ ban đầu 20°C tăng đều 2°C mỗi giờ. Sau $t$ giờ, mô hình là': 'The initial temperature is $20^\\circ\\mathrm C$ and increases by $2^\\circ\\mathrm C$ per hour. After $t$ hours, the model is',
+    'Một tài khoản có 500 nghìn đồng và mỗi tuần thêm 50 nghìn. Sau $n$ tuần số tiền là': 'An account initially has 500 thousand VND and receives an additional 50 thousand VND each week. After $n$ weeks, the balance is',
+    'Một quần thể 1000 cá thể tăng 20% mỗi năm. Sau 2 năm có': 'A population starts at 1,000 and grows by 20% per year. After 2 years, the population is',
+    'Một chất còn 80% sau mỗi giờ. Từ 100 g, sau 2 giờ còn (g)': 'A substance retains 80% of its mass each hour. Starting from 100 g, the mass remaining after 2 hours is',
+    'Một hình chữ nhật có chu vi 40 m. Diện tích lớn nhất là': 'A rectangle has perimeter 40 m. Its maximum area is',
+    'Một hộp không nắp đáy vuông có tổng diện tích vật liệu cố định; bài toán tối ưu được giải bằng': 'An open-top box with a square base is made from a fixed amount of material. The optimization problem is solved by',
+    'Một cửa hàng bán $x$ sản phẩm với lợi nhuận $P(x)=-x^2+20x$. Lợi nhuận lớn nhất là': 'A store sells $x$ products with profit $P(x)=-x^2+20x$. The maximum profit is',
+    'Một mảnh đất sát sông dùng 60 m hàng rào cho ba cạnh. Diện tích lớn nhất là': 'A rectangular plot beside a river uses 60 m of fencing for the other three sides. Its maximum area is',
+    'Một hình chữ nhật có chu vi 20 m. Diện tích lớn nhất bằng': 'A rectangle has perimeter 20 m. Its maximum area is',
+    'Một hình chữ nhật có chu vi 24 m. Diện tích lớn nhất bằng': 'A rectangle has perimeter 24 m. Its maximum area is',
+    'Một mảnh vườn sát tường dùng 20 m hàng rào cho ba cạnh. Diện tích lớn nhất bằng': 'A rectangular garden beside a wall uses 20 m of fencing for the other three sides. Its maximum area is',
+    'Một mảnh vườn sát tường dùng 24 m hàng rào cho ba cạnh. Diện tích lớn nhất bằng': 'A rectangular garden beside a wall uses 24 m of fencing for the other three sides. Its maximum area is',
+    'Một mái vòm elip có nửa trục lớn 5 m và nửa trục nhỏ 3 m. Khoảng cách từ tâm đến mỗi tiêu điểm là': 'An elliptical arch has semi-major axis 5 m and semi-minor axis 3 m. The distance from the center to each focus is',
+    'Một chảo parabol có mặt cắt $y^2=16x$ (cm). Tiêu điểm cách đỉnh một khoảng': 'A parabolic dish has cross-section $y^2=16x$ (cm). The distance from the vertex to the focus is',
+    'Một quỹ đạo hypebol có $a=3,b=4$. Khoảng cách từ tâm đến mỗi tiêu điểm là': 'A hyperbola has $a=3$ and $b=4$. The distance from the center to each focus is',
+    'Một gương parabol có mặt cắt $x^2=20y$ (cm). Tiêu điểm cách đỉnh': 'A parabolic mirror has cross-section $x^2=20y$ (cm). The distance from the vertex to the focus is',
+    'Gửi 10 triệu đồng với lãi kép 10%/năm. Sau 2 năm số tiền (triệu đồng) là': 'An amount of 10 million VND is deposited at 10% compound interest per year. After 2 years, the balance, in million VND, is',
+    'Một thiết bị trị giá 200 triệu, giảm 10% mỗi năm. Sau 2 năm còn (triệu)': 'A device is worth 200 million VND and depreciates by 10% per year. After 2 years, its value, in million VND, is',
+    'Một quần thể 1000 cá thể tăng 5% mỗi năm. Mô hình sau $t$ năm là': 'A population starts at 1,000 and grows by 5% per year. Its size after $t$ years is modeled by',
+    'Một chất 200 g giảm 10% mỗi giờ. Khối lượng sau $t$ giờ là': 'A 200 g substance loses 10% of its mass each hour. Its mass after $t$ hours is',
+    'Cường độ âm tăng gấp 10 lần thì mức dB tăng': 'If sound intensity increases by a factor of 10, the sound level increases by',
+    'Một khoản 50 triệu tăng 8% mỗi năm theo lãi kép. Sau $t$ năm là': 'An investment of 50 million VND grows by 8% per year with compound interest. After $t$ years, its value is',
+    'Một khoản tiền tăng gấp đôi sau mỗi 5 năm. Sau 15 năm tăng gấp': 'An amount doubles every 5 years. After 15 years, it is multiplied by',
+    'Một quần thể tăng 10% mỗi năm. Hệ số tăng sau 2 năm là': 'A population grows by 10% per year. The growth factor after 2 years is',
+    'Một chất phóng xạ còn một nửa sau mỗi 3 giờ. Sau 6 giờ còn': 'A radioactive substance halves every 3 hours. After 6 hours, the fraction remaining is',
+    'Thang pH cho $pH=-\\log_{10}[H^+]$. Nếu $[H^+]=10^{-4}$ thì pH bằng': 'The pH scale is defined by $pH=-\\log_{10}[H^+]$. If $[H^+]=10^{-4}$, then the pH is',
+    'Một con dốc cao 3 m trên đoạn chiếu ngang 4 m. $\\tan\\alpha$ của góc dốc bằng': 'A ramp rises 3 m over a horizontal run of 4 m. The value of $\\tan\\alpha$ for the incline angle is',
+    'Một mái dốc cao 5 m, hình chiếu ngang 5 m. Góc dốc bằng': 'A roof rises 5 m over a horizontal run of 5 m. The incline angle is',
+    'Một đường dốc có góc $30^\\circ$ và hình chiếu ngang $6\\sqrt3$ m. Độ cao bằng': 'A ramp has incline angle $30^\\circ$ and horizontal run $6\\sqrt3$ m. Its height is',
+    'Một dây cáp dài 10 m tạo góc $60^\\circ$ với mặt đất. Hình chiếu ngang dài': 'A 10 m cable makes a $60^\\circ$ angle with the ground. Its horizontal projection has length',
+    'Trong hình lập phương, góc nhị diện giữa hai mặt kề nhau bằng': 'In a cube, the dihedral angle between two adjacent faces is',
+    'Hai mặt phẳng vuông góc tạo góc nhị diện bằng': 'Two perpendicular planes form a dihedral angle of',
+    'Hai mặt phẳng song song có góc giữa hai mặt phẳng bằng': 'The angle between two parallel planes is',
+    'Một lăng trụ đứng có mặt bên vuông góc với đáy. Góc nhị diện giữa mặt bên và đáy bằng': 'In a right prism, a lateral face is perpendicular to the base. The dihedral angle between that face and the base is',
+    'Một bể dạng hộp chữ nhật kích thước $2\\times3\\times4$ m. Thể tích là': 'A rectangular tank measures $2\\times3\\times4$ m. Its volume is',
+    'Một lều dạng lăng trụ tam giác có diện tích đáy 6 m² và dài 5 m. Thể tích là': 'A triangular-prism tent has base area 6 m² and length 5 m. Its volume is',
+    'Một mái chóp có diện tích đáy 30 m² và chiều cao 6 m. Thể tích là': 'A pyramid-shaped roof has base area 30 m² and height 6 m. Its volume is',
+    'Một thùng dạng lăng trụ có diện tích đáy 2.5 m² và cao 4 m. Thể tích là': 'A prism-shaped container has base area 2.5 m² and height 4 m. Its volume is',
+  };
+  if (exact[s]) s = exact[s];
+
+  // Structured bilingual repairs. These preserve mathematical expressions and numerical data.
+  // Keep these regex literals simple: a single backslash is required for regex metacharacters.
+  s = s
+    .replace(/không tồn tại/gi, 'does not exist')
+    .replace(/không có điểm chung/gi, 'has no common point')
+    .replace(/song song với/gi, 'parallel to')
+    .replace(/vuông góc với/gi, 'perpendicular to')
+    .replace(/song song/gi, 'parallel')
+    .replace(/vuông góc/gi, 'perpendicular')
+    .replace(/có vectơ chỉ phương/gi, 'has direction vector')
+    .replace(/có vectơ pháp tuyến/gi, 'has normal vector')
+    .replace(/với mọi/gi, 'for all')
+    .replace(/có giá trị nhỏ nhất bằng/gi, 'has minimum value')
+    .replace(/có giá trị lớn nhất bằng/gi, 'has maximum value')
+    .replace(/có hai nghiệm/gi, 'has two roots')
+    .replace(/có đỉnh/gi, 'has vertex')
+    .replace(/và hệ số/gi, 'and coefficient')
+    .replace(/đường thẳng/gi, 'line')
+    .replace(/mặt phẳng/gi, 'plane')
+    .replace(/đồ thị/gi, 'graph')
+    .replace(/hàm số/gi, 'function')
+    .replace(/thiết diện/gi, 'cross-section')
+    .replace(/giao tuyến/gi, 'line of intersection')
+    .replace(/giao điểm/gi, 'intersection points')
+    .replace(/hoành độ/gi, 'x-coordinates')
+    .replace(/trung điểm/gi, 'midpoint')
+    .replace(/thẳng hàng/gi, 'collinear')
+    .replace(/tiêu điểm/gi, 'focus')
+    .replace(/đường chuẩn/gi, 'directrix')
+    .replace(/bán kính/gi, 'radius')
+    .replace(/đồng dạng/gi, 'similar')
+    .replace(/độc lập/gi, 'independent')
+    .replace(/đơn vị/gi, 'units')
+    .replace(/Khoảng mà tam thức thỏa điều kiện đã cho là:\s*/gi, 'The interval on which the quadratic expression satisfies the inequality is: ')
+    .replace(/Tập nghiệm của bất phương trình là:\s*/gi, 'The solution set of the inequality is: ')
+    .replace(/chọn lớp trưởng và lớp phó/gi, 'choose a class president and a vice president')
+    .replace(/chọn ba chức vụ trưởng, phó và thư kí/gi, 'choose three officers: president, vice president, and secretary')
+    .replace(/chọn huy chương vàng và bạc/gi, 'choose gold- and silver-medal recipients')
+    .replace(/xếp ba vị trí thứ nhất, nhì, ba/gi, 'assign first, second, and third places')
+    .replace(/Trong phép chiếu song song không suy biến, ba điểm thẳng hàng/gi, 'Under a nondegenerate parallel projection, three collinear points')
+    .replace(/Trong phép chiếu song song không suy biến, hai đường thẳng song song/gi, 'Under a nondegenerate parallel projection, two parallel lines')
+    .replace(/Trung điểm của một đoạn thẳng qua phép chiếu song song không suy biến/gi, 'Under a nondegenerate parallel projection, the midpoint of a segment')
+    .replace(/Tỉ số của hai đoạn thẳng cùng nằm trên một đường thẳng qua phép chiếu song song không suy biến/gi, 'Under a nondegenerate parallel projection, the ratio of two collinear segments')
+    .replace(/\bqua\b/gi, 'through')
+    .replace(/và/gi, 'and')
+    .replace(/với/gi, 'with')
+    .replace(/hoặc/gi, 'or')
+    .replace(/tại/gi, 'at')
+    .replace(/trên/gi, 'on')
+    .replace(/mọi/gi, 'every')
+    .replace(/Dùng/gi, 'Use')
+    .replace(/Suy ra/gi, 'Therefore')
+    .replace(/Ở góc phần tư II/gi, 'In quadrant II')
+    .replace(/Ở góc phần tư III/gi, 'In quadrant III')
+    .replace(/góc phần tư II/gi, 'quadrant II')
+    .replace(/góc phần tư III/gi, 'quadrant III')
+    .replace(/dấu của cosin/gi, 'the sign of cosine')
+    .replace(/rồi/gi, 'then')
+    .replace(/nên/gi, 'so')
+    .replace(/Khoảng cách từ tâm đến plane là/gi, 'The distance from the center to the plane is')
+    .replace(/Mặt phẳng đi through tâm/gi, 'The plane passes through the center')
+    .replace(/đường tròn giao tuyến/gi, 'the intersection circle')
+    .replace(/mặt cầu/gi, 'sphere')
+    .replace(/Thay/gi, 'Substituting')
+    .replace(/lớn hơn/gi, 'greater than')
+    .replace(/không giao nhau/gi, 'do not intersect')
+    .replace(/Có (\d+) kết quả thuận lợi/gi, 'There are $1 favorable outcomes')
+    .replace(/Có (\d+) số thuận lợi/gi, 'There are $1 favorable numbers')
+    .replace(/trên (\d+) thẻ/gi, 'among $1 cards')
+    .replace(/trên (\d+) kết quả/gi, 'out of $1 outcomes')
+    .replace(/Hai kết quả đồng khả năng/gi, 'There are two equally likely outcomes')
+    .replace(/có một kết quả thuận lợi/gi, 'there is one favorable outcome')
+    .replace(/Hai intersection points có x-coordinates/gi, 'The two intersection points have x-coordinates')
+    .replace(/plane đi through tâm/gi, 'The plane passes through the center')
+    .replace(/đường tròn line of intersection/gi, 'the intersection circle')
+    .replace(/có radius bằng radius sphere/gi, 'has radius equal to the sphere radius')
+    .replace(/được \$x\^2=4\$/gi, 'gives $x^2=4$')
+    .replace(/có 2 intersection points/gi, 'there are 2 intersection points')
+    .replace(/kết quả/gi, 'outcomes')
+    .replace(/thẻ/gi, 'cards')
+    .replace(/\s{2,}/g, ' ')
+    .trim();
+
+  // Compact mixed-language templates that occur in deterministic fallback questions.
+  s = s
+    .replace(/The condition on \$m\$ so that (.+) for all \$x\$/i, 'Find the condition on $m$ such that $1 for all $x$')
+    .replace(/Find \$m\$ so that (.+) and (.+) parallel\./i, 'Find $m$ so that $1 and $2 are parallel.')
+    .replace(/Find \$m\$ so that (.+) and (.+) perpendicular\./i, 'Find $m$ so that $1 and $2 are perpendicular.')
+    .replace(/The tangent to the circle (.+) at (.+) is/i, 'The tangent to the circle $1 at $2 is')
+    .replace(/Using graph intersections, the number of real solutions of (.+) with (\$m[^$]+\$)/i, 'Using graph intersections, the number of real solutions of $1 with $2')
+    // Naturalize compact deterministic fallback stems without changing mathematical data.
+    .replace(/^Graph of (\$[^$]+\$) crosses at ([^ ]+) from negative to positive\. (\$[^$]+\$) has$/i, 'The graph of $1 crosses the x-axis at $2, with the derivative changing from negative to positive. Then $3 has')
+    .replace(/^Profit (\$[^$]+\$)\. Optimal output:$/i, 'For the profit function $1, find the output that maximizes profit.')
+    .replace(/^Centroid of (.+):$/i, 'Find the centroid of $1.')
+    .replace(/^Midpoint of (.+):$/i, 'Find the midpoint of $1.')
+    .replace(/^Distance (A\([^)]*\)) to (B\([^)]*\)):\s*$/i, 'Find the distance from $1 to $2.')
+    .replace(/^Distance (A\([^)]*\)),\s*(B\([^)]*\)):\s*$/i, 'Find the distance between $1 and $2.')
+    .replace(/^Length of vector (\([^)]*\)):\s*$/i, 'Find the magnitude of the vector $1.')
+    .replace(/^Length of (\([^)]*\)):\s*$/i, 'Find the magnitude of the vector $1.')
+    .replace(/\. Distance:\s*$/i, '. Find the distance.')
+    .replace(/\. Magnitude:\s*$/i, '. Find the magnitude.')
+    .replace(/\. Number of packages:\s*$/i, '. How many packages are possible?')
+    .replace(/\. Total codes:\s*$/i, '. How many codes are possible in total?')
+    .replace(/\. Best description:\s*$/i, '. Which description is most appropriate?')
+    .replace(/\. Probability it is (.+):\s*$/i, '. Find the probability that it is $1.')
+    .replace(/\. Probability result is (.+):\s*$/i, '. Find the probability that the result is $1.')
+    .replace(/\. Probability result (.+):\s*$/i, '. Find the probability that the result $1.')
+    .replace(/\. Probability of (.+):\s*$/i, '. Find the probability of $1.')
+    .replace(/\. Probability (.+):\s*$/i, '. Find the probability of the event: $1.')
+    .replace(/\. Union:\s*$/i, '. Find the probability of the union.')
+    .replace(/\. Intersection:\s*$/i, '. Find the probability of the intersection.')
+    .replace(/\. Both occur:\s*$/i, '. Find the probability that both events occur.')
+    .replace(/\. At least one:\s*$/i, '. Find the probability that at least one event occurs.')
+    .replace(/\. At least one defect:\s*$/i, '. Find the probability of at least one defect.')
+    .replace(/\. Both work:\s*$/i, '. Find the probability that both devices work.')
+    .replace(/\. Both on time:\s*$/i, '. Find the probability that both flights are on time.')
+    .replace(/\. Both detect:\s*$/i, '. Find the probability that both sensors detect the event.')
+    .replace(/\. All occur:\s*$/i, '. Find the probability that all three occurrences happen.')
+    .replace(/^There are (\d+) shirts and (\d+) pants\. Choose one of each\.$/i, 'There are $1 shirts and $2 pairs of pants. How many outfits can be formed by choosing one shirt and one pair of pants?')
+    .replace(/^A meal has (\d+) mains and (\d+) drinks\. Choose one of each\.$/i, 'A meal can be formed by choosing one of $1 main dishes and one of $2 drinks. How many different meals are possible?')
+    .replace(/^A menu has (\d+) starters, (\d+) mains, (\d+) desserts\. Choose one of each\.$/i, 'A three-course meal consists of one starter, one main course, and one dessert. With $1 starters, $2 main courses, and $3 desserts available, how many different meals are possible?')
+    .replace(/^A password has one of (\d+) letters and one of (\d+) digits\.$/i, 'A password consists of one letter chosen from $1 letters and one digit chosen from $2 digits. How many such passwords are possible?')
+    .replace(/^A product code chooses one of (\d+) colors and one of (\d+) sizes\.$/i, 'A product code is determined by one of $1 colors and one of $2 sizes. How many product codes are possible?')
+    .replace(/^Choose one card 1–6\. Find the probability of the event: divisible by 3\.$/i, 'One card is chosen at random from cards numbered 1 through 6. Find the probability that its number is divisible by 3.')
+    .replace(/^Flip 2 coins\. Find the probability of exactly one head\.$/i, 'Two fair coins are tossed. Find the probability that exactly one head occurs.')
+    .replace(/^Flip 3 coins\. Find the probability of the event: all heads\.$/i, 'Three fair coins are tossed. Find the probability that all three show heads.')
+    .replace(/^Flip 3 independent coins\. Find the probability of the event: all heads\.$/i, 'Three independent fair coins are tossed. Find the probability that all three show heads.')
+    .replace(/^Roll 3 dice independently\. Find the probability of the event: all are 6\.$/i, 'Three fair dice are rolled independently. Find the probability that all three show 6.')
+    .replace(/^Roll two dice\. Find the probability of the event: sum is 7\.$/i, 'Two fair dice are rolled. Find the probability that their sum is 7.')
+    .replace(/^Choose 2 numbers from (.+)\. Find the probability of the event: both are even\.$/i, 'Two numbers are chosen at random from $1. Find the probability that both are even.')
+    .replace(/^Choose 2 of 5 students\. Find the probability of the event: a specified pair is chosen\.$/i, 'Two of five students are chosen at random. Find the probability that a specified pair is chosen.')
+    .replace(/^Randomly order 4 people\. Find the probability of the event: A is first\.$/i, 'Four people are arranged in a random order. Find the probability that A is first.')
+    .replace(/^Randomly order 5 people\. Find the probability of the event: A and B are adjacent\.$/i, 'Five people are arranged in a random order. Find the probability that A and B are adjacent.')
+    .replace(/^Independent A,B with ([0-9.]+),([0-9.]+)\. Find the probability of the intersection\.$/i, 'Events $A$ and $B$ are independent with probabilities $1 and $2. Find $P(A\\cap B)$.')
+    .replace(/^Independent events probabilities ([0-9.]+) and ([0-9.]+)\. Find the probability that both events occur\.$/i, 'Two events are independent with probabilities $1 and $2. Find the probability that both occur.')
+    .replace(/^A box has 3 red and 2 blue balls\. Draw one\. Find the probability of the event: red\.$/i, 'A box contains 3 red and 2 blue balls. One ball is drawn at random. Find the probability that it is red.')
+    .replace(/^A class has 12 girls and 18 boys\. Choose one\. Find the probability of the event: girl\.$/i, 'A class has 12 girls and 18 boys. One student is chosen at random. Find the probability that the student is a girl.')
+    .replace(/^A lot has 2 defective out of 20\. Choose one\. Find the probability of the event: defective\.$/i, 'A lot contains 20 items, 2 of which are defective. One item is chosen at random. Find the probability that it is defective.')
+    .replace(/^A spinner has 8 equal sectors, 3 winning\. Find the probability of the event: win\.$/i, 'A spinner has 8 equal sectors, 3 of which are winning sectors. Find the probability of landing on a winning sector.')
+    .replace(/^Independent A,B probabilities ([0-9.]+),([0-9.]+)\. Find the probability of the intersection\.$/i, 'Events $A$ and $B$ are independent with probabilities $1 and $2. Find $P(A\\cap B)$.')
+    .replace(/^Survey: 40% like A, 35% B, 15% both\. Find the probability that at least one event occurs\.$/i, 'In a survey, 40% of respondents like A, 35% like B, and 15% like both. What percentage like at least one of A or B?')
+    .replace(/^Club: 30% ball, 25% swim, 10% both\. Find the probability that at least one event occurs\.$/i, 'In a club, 30% play ball games, 25% swim, and 10% do both. What percentage participate in at least one of these activities?')
+    .replace(/^70% use X, 20% Y, 10% both\. Find the probability that at least one event occurs\.$/i, 'Suppose 70% use X, 20% use Y, and 10% use both. What percentage use at least one of X or Y?')
+    .replace(/^20% defect A, 15% B, 5% both\. Find the probability of at least one defect\.$/i, 'Suppose 20% have defect A, 15% have defect B, and 5% have both defects. What is the probability of having at least one defect?')
+    .replace(/^Independent devices work with probabilities ([0-9.]+) and ([0-9.]+)\. Find the probability that both devices work\.$/i, 'Two devices operate independently, with probabilities $1 and $2 of working properly. Find the probability that both work properly.')
+    .replace(/^Independent flights on time ([0-9.]+),([0-9.]+)\. Find the probability that both flights are on time\.$/i, 'Two flights are independently on time with probabilities $1 and $2. Find the probability that both flights are on time.')
+    .replace(/^Independent sensors detect with ([0-9.]+) and ([0-9.]+)\. Find the probability that both sensors detect the event\.$/i, 'Two sensors detect an event independently with probabilities $1 and $2. Find the probability that both sensors detect it.')
+    .replace(/^Tree: P\(A\)=0\.4,P\(B\|A\)=0\.5,P\(B\|not A\)=0\.2\. P\(B\)=$/i, 'Given $P(A)=0.4$, $P(B\\mid A)=0.5$, and $P(B\\mid \\overline A)=0.2$, find $P(B)$.')
+    .replace(/^Type A codes: 5 ways; type B has positions with 3 and 4 choices\. How many codes are possible in total\?$/i, 'There are 5 type-A codes. A type-B code is formed by making one of 3 choices for the first position and one of 4 choices for the second. How many codes are possible in total?')
+    .replace(/^Choose 3 of 6 people as a group, order irrelevant\.$/i, 'How many groups of 3 people can be chosen from 6 people?')
+    .replace(/^Arrange 4 people in a row\.$/i, 'How many ways can 4 people be arranged in a row?')
+    .replace(/^Choose 3 of 6 people, including both of the 2 women\. Find the probability of this event\.$/i, 'Three of six people are chosen at random, and two of the six are women. Find the probability that both women are chosen.')
+    .replace(/^Choose 2 of 6\. Find the probability of the event: selecting one specified pair\.$/i, 'Two of six people are chosen at random. Find the probability that one specified pair is chosen.')
+    .replace(/^Randomly order A,B,C,D\. Find the probability of the event: A and B are adjacent\.$/i, 'A, B, C, and D are arranged in a random order. Find the probability that A and B are adjacent.')
+    .replace(/^Given probabilities ([0-9.]+),([0-9.]+), intersection ([0-9.]+)\. Find the probability of the union\.$/i, 'Given $P(A)=$1$, $P(B)=$2$, and $P(A\\cap B)=$3$, find $P(A\\cup B)$.')
+    .replace(/^Given ([0-9.]+),([0-9.]+) and intersection ([0-9.]+)\. Find the probability of the union\.$/i, 'Given $P(A)=$1$, $P(B)=$2$, and $P(A\\cap B)=$3$, find $P(A\\cup B)$.')
+    .replace(/^Disjoint events with probabilities ([0-9.]+),([0-9.]+)\. Find the probability of the union\.$/i, 'Two disjoint events have probabilities $1 and $2. Find the probability of their union.')
+    .replace(/^Disjoint events have probabilities ([0-9.]+) and ([0-9.]+)\. Find the probability of the union\.$/i, 'Two disjoint events have probabilities $1 and $2. Find the probability of their union.')
+    .replace(/^Disjoint \$A,B\$ have ([0-9.]+) and ([0-9.]+)\. Find the probability of the union\.$/i, 'Disjoint events $A$ and $B$ have probabilities $1 and $2. Find $P(A\\cup B)$.')
+    .replace(/^Disjoint A,B with ([0-9.]+),([0-9.]+)\. Find the probability of the event: neither occurs\.$/i, 'Disjoint events $A$ and $B$ have probabilities $1 and $2. Find the probability that neither event occurs.')
+    .replace(/^Machine A 60% with 1% defect, B 40% with 4%\. Given defective, probability from B:$/i, 'Machine A produces 60% of the items with a 1% defect rate, while machine B produces 40% with a 4% defect rate. Given that an item is defective, find the probability that it was produced by machine B.')
+    .replace(/^Disease prevalence 1%, sensitivity 90%, false positive 5%\. Probability disease given positive approx$/i, 'A disease has prevalence 1%. A test has 90% sensitivity and a 5% false-positive rate. Given a positive result, approximately what is the probability that the person has the disease?')
+    .replace(/^Choose box A with 0\.7 \((.+) red\), B 0\.3 \((.+) red\)\. Given red, probability A:$/i, 'Box A is chosen with probability 0.7 and has $1 red balls; box B is chosen with probability 0.3 and has $2 red balls. Given that the drawn ball is red, find the probability that box A was chosen.')
+    .replace(/^Source X 40% accurate95%, Y60% accurate80%\. Given correct, probability X:$/i, 'Source X provides 40% of the reports and is 95% accurate; source Y provides 60% and is 80% accurate. Given that a report is correct, find the probability that it came from source X.')
+    .replace(/^Tree branch P\(A\)=0\.6, P\(B\|A\)=0\.2\. Path probability A∩B:$/i, 'A probability tree gives $P(A)=0.6$ and $P(B\\mid A)=0.2$. Find $P(A\\cap B)$.')
+    .replace(/^Table: X 30 with 6 positive; Y 70 with 7 positive\. Given positive, probability X:$/i, 'A table shows 30 observations in group X with 6 positive results and 70 in group Y with 7 positive results. Given a positive result, find the probability that it belongs to group X.')
+    .replace(/^Cross-table: 20 type A \(4 defective\),30 B \(3 defective\)\. Given defective, probability A:$/i, 'A table shows 20 type-A items, 4 defective, and 30 type-B items, 3 defective. Given that an item is defective, find the probability that it is type A.')
+    .replace(/^A screening test uses Bayes after a positive result\. Needed quantity is$/i, 'After a positive screening result, which conditional probability does Bayes’ theorem compute?')
+    .replace(/\. Probability:\s*$/i, '. Find the probability of this event.')
+    .replace(/^Success probability 0\.9 each\. Two independent successes:$/i, 'Each of two independent trials has success probability 0.9. Find the probability that both trials succeed.')
+    .replace(/^A customer buys with 0\.2; two independent customers both buy:$/i, 'Each of two independent customers makes a purchase with probability 0.2. Find the probability that both customers make a purchase.')
+    .replace(/^Independent A,B with ([0-9.]+),([0-9.]+)\. Intersection:$/i, 'Events $A$ and $B$ are independent with probabilities $1 and $2. Find $P(A\\cap B)$.')
+    .replace(/^Independent A,B probabilities ([0-9.]+),([0-9.]+)\. Intersection:$/i, 'Events $A$ and $B$ are independent with probabilities $1 and $2. Find $P(A\\cap B)$.')
+    .replace(/^Independent events probabilities ([0-9.]+) and ([0-9.]+)\. Both occur:$/i, 'Two events are independent with probabilities $1 and $2. Find the probability that both occur.')
+    .replace(/^Disjoint events with probabilities ([0-9.]+),([0-9.]+)\. Union:$/i, 'Two disjoint events have probabilities $1 and $2. Find the probability of their union.')
+    .replace(/^Disjoint events have probabilities ([0-9.]+) and ([0-9.]+)\. Union:$/i, 'Two disjoint events have probabilities $1 and $2. Find the probability of their union.')
+    .replace(/^Disjoint \$A,B\$ have ([0-9.]+) and ([0-9.]+)\. Union:$/i, 'Disjoint events $A$ and $B$ have probabilities $1 and $2. Find $P(A\\cup B)$.')
+    .replace(/^Given probabilities ([0-9.]+),([0-9.]+), intersection ([0-9.]+)\. Union:$/i, 'Given $P(A)=$1$, $P(B)=$2$, and $P(A\\cap B)=$3$, find $P(A\\cup B)$.')
+    .replace(/^Given ([0-9.]+),([0-9.]+) and intersection ([0-9.]+)\. Union:$/i, 'Given $P(A)=$1$, $P(B)=$2$, and $P(A\\cap B)=$3$, find $P(A\\cup B)$.')
+    .replace(/the sign of cosine In quadrant/gi, 'the sign of cosine in quadrant')
+    .replace(/\b(are|is|the|and|or|to|of|with)\s+\1(?:\s+\1)*/gi, '$1')
+    .replace(/\s{2,}/g, ' ')
+    .trim();
+
+  return s;
+};
+
+const ENGLISH_CHOICE_EXACT: Record<string, string> = {
+  'Đúng': 'True', 'Sai': 'False', 'Có': 'Yes', 'Không': 'No',
+  'Dương': 'Positive', 'Âm': 'Negative', 'Bằng 0': 'Zero',
+  'Không xác định': 'Undefined', 'Không phải mệnh đề': 'Not a proposition',
+  'Bằng nhau': 'Equal', 'Không giao nhau': 'Disjoint',
+  'Liên tục': 'Continuous', 'Không liên tục': 'Discontinuous',
+  'Đồng biến': 'Increasing', 'Nghịch biến': 'Decreasing',
+  'Cùng phương': 'Parallel', 'Vuông góc': 'Perpendicular',
+  'Cùng hướng': 'Same direction', 'Ngược hướng': 'Opposite directions',
+  'Trung vị': 'Median', 'Mốt': 'Mode', 'Số trung bình': 'Mean',
+  'Phương sai': 'Variance', 'Độ lệch chuẩn': 'Standard deviation',
+  'Khoảng biến thiên': 'Range', 'Khoảng tứ phân vị': 'Interquartile range',
+  'Xác suất hậu nghiệm': 'Posterior probability',
+  'Xác suất tiên nghiệm': 'Prior probability',
+  'Cập nhật xác suất sau bằng chứng': 'Update the probability after observing evidence',
+  'Xác suất hậu nghiệm của các lớp': 'Posterior probabilities of the classes',
+  'Chu vi các lớp': 'Class perimeters', 'Đạo hàm lớp': 'Class derivatives',
+  'Số phần tử': 'Number of elements',
+
+  'Trùng nhau': 'Coincident', 'Trùng': 'Coincident', 'Chéo nhau': 'Skew', 'Cắt nhau': 'Intersecting',
+  'Không tồn tại': 'Does not exist', 'Không đủ dữ kiện': 'Insufficient information', 'Không có': 'None',
+  'Vô số': 'Infinitely many', 'Không so sánh được': 'Cannot be compared', 'Như nhau': 'The same',
+  'Không đổi': 'Unchanged', 'Không đơn điệu': 'Not monotonic', 'Hàm chẵn': 'Even function', 'Hàm lẻ': 'Odd function',
+  'Không chẵn không lẻ': 'Neither even nor odd', 'Vừa chẵn vừa lẻ': 'Both even and odd',
+  'Đối nhau': 'Opposite', 'Không cùng phương': 'Not parallel', 'Luôn vuông góc': 'Always perpendicular',
+  'Không cực trị': 'No extremum', 'Không có cực trị': 'No extremum', 'Không có cực đại': 'No local maximum',
+  'Không có tiệm cận': 'No asymptote', 'Không có nghiệm ngoại lai': 'No extraneous roots',
+  'Không có lớp mốt': 'No modal class', 'Không có mặt phẳng nào': 'No plane', 'Một mặt phẳng': 'One plane',
+  'Hai mặt phẳng': 'Two planes', 'Không gian duy nhất': 'A unique space', 'Một đường': 'One line',
+  'Một đường tròn': 'A circle', 'Đường tròn': 'Circle', 'Tam giác': 'Triangle', 'Hình vuông': 'Square',
+  'Hình rất dài': 'A very elongated rectangle', 'Mọi hình như nhau': 'All shapes are equivalent',
+  'Xác suất': 'Probability', 'Đạo hàm': 'Derivative', 'Tổ hợp': 'Combination', 'Khai căn': 'Take a square root',
+  'Tính đạo hàm': 'Differentiate', 'Tính xác suất': 'Compute the probability', 'Tính trung vị': 'Compute the median',
+  'Tính thẳng hàng': 'Check collinearity', 'Tích vô hướng': 'Dot product',
+  'Thẳng hàng': 'Collinear', 'Không đồng phẳng': 'Not coplanar', 'Nằm trong mặt phẳng': 'Lies in the plane',
+  'Một đoạn vuông góc chung': 'A common perpendicular segment', 'Không độc lập': 'Not independent', 'Độc lập': 'Independent',
+  'Cắt nhưng không vuông góc': 'Intersecting but not perpendicular', 'Luôn cắt nhau': 'Always intersect',
+  'Điểm cực đại': 'Local maximum point', 'Điểm cực tiểu': 'Local minimum point', 'Tiệm cận': 'Asymptote',
+  'Mọi $m$': 'All $m$', 'Sang trái 1': 'Shift left by 1', 'Lên 1': 'Shift up by 1',
+  'Chắc chắn': 'Certain', 'Rất khó xảy ra': 'Very unlikely', 'Ra số lẻ': 'An odd number', 'Ra số chẵn': 'An even number',
+  'Mẫu A': 'Sample A', 'Mẫu B': 'Sample B', 'Hai mẫu như nhau': 'The two samples are equally dispersed',
+  'Rủi ro như nhau': 'Equal risk', 'Không có quan hệ': 'No such relation',
+  'Có ít nhất một nghiệm trong $(0,2)$': 'There is at least one root in $(0,2)$',
+  'Tồn tại $c\\in(a,b)$ sao cho $f(c)=0$': 'There exists $c\\in(a,b)$ such that $f(c)=0$',
+  '$f$ không có nghiệm': '$f$ has no root', '$f$ luôn dương': '$f$ is always positive', '$f$ luôn âm': '$f$ is always negative',
+  'Giảm': 'Decreasing', 'Tăng': 'Increasing',
+  'Phương án A': 'Option A', 'Phương án B': 'Option B',
+  'Hằng': 'Constant', 'Sấp': 'Tails', 'Ngửa': 'Heads',
+  'Không xảy ra': 'Does not occur', 'Cả ngửa và sấp': 'Both heads and tails',
+  'Chắc chắn xảy ra': 'Certain to occur', 'Rất dễ xảy ra': 'Very likely to occur',
+  'Rất có khả năng xảy ra': 'Very likely to occur', 'Không thể': 'Impossible',
+  'Hiếm gặp': 'Rare', 'Phổ biến': 'Common',
+  'Hàm số chẵn': 'Even function', 'Hàm số lẻ': 'Odd function', 'Hàm lẻ: sai': 'Odd-function claim: false',
+};
+
+const englishChoiceText = (value: string): string => {
+  const original = (value || '').trim();
+  if (!original) return original;
+  if (ENGLISH_CHOICE_EXACT[original]) return ENGLISH_CHOICE_EXACT[original];
+  const wrapped = original.match(/^([a-d]\)) The result is ([\s\S]*)\.$/i);
+  if (wrapped) return `${wrapped[1]} The result is ${englishChoiceText(wrapped[2])}.`;
+
+  // Translate complete/common answer-choice patterns before generic prose polishing.
+  let t = original
+    .replace(/^Hai cực đại$/i, 'Two local maxima')
+    .replace(/^Hai cực tiểu$/i, 'Two local minima')
+    .replace(/^Luôn dương$/i, 'Always positive')
+    .replace(/^Một hằng số$/i, 'A constant')
+    .replace(/^Chia đa thức để tìm tiệm cận xiên$/i, 'Use polynomial division to find the oblique asymptote')
+    .replace(/^Lập hàm mục tiêu theo một biến$/i, 'Express the objective function in one variable')
+    .replace(/^Lấy đạo hàm khi chưa có hàm$/i, 'Differentiate before defining the function')
+    .replace(/^Dùng Bayes$/i, 'Use Bayes’ theorem')
+    .replace(/^Dùng tổ hợp$/i, 'Use combinations')
+    .replace(/^Chỉ (.+)$/i, 'Only $1')
+    .replace(/^Không cắt (.+)$/i, 'Does not intersect $1')
+    .replace(/^Cắt tại (.+)$/i, 'Intersects at $1')
+    .replace(/^Hàm không bị chặn dưới$/i, 'The function is unbounded below')
+    .replace(/^Chỉ liên tục trái$/i, 'Left-continuous only')
+    .replace(/^Chỉ liên tục phải$/i, 'Right-continuous only')
+    .replace(/^Chỉ do không xác định$/i, 'Only because it is undefined')
+    .replace(/^Luôn liên tục$/i, 'Always continuous')
+    .replace(/^Không có nghiệm$/i, 'No root exists')
+    .replace(/^Có tập giá trị (.+)$/i, 'Has range $1')
+    .replace(/^Tập giá trị là (.+)$/i, 'The range is $1')
+    .replace(/^Tập giá trị (.+)$/i, 'Range $1')
+    .replace(/^Tập xác định là (.+)$/i, 'The domain is $1')
+    .replace(/^Tập xác định (.+)$/i, 'Domain $1')
+    .replace(/^Chu kì là (.+)$/i, 'The period is $1')
+    .replace(/^Chu kì (.+)$/i, 'Period $1')
+    .replace(/^Giá trị lớn nhất của hàm số là (.+)$/i, 'The maximum value of the function is $1')
+    .replace(/^Giá trị nhỏ nhất của hàm số là (.+)$/i, 'The minimum value of the function is $1')
+    .replace(/^Giá trị lớn nhất là (.+)$/i, 'The maximum value is $1')
+    .replace(/^Giá trị nhỏ nhất là (.+)$/i, 'The minimum value is $1')
+    .replace(/^Giá trị lớn nhất (.+)$/i, 'Maximum value $1')
+    .replace(/^Giá trị nhỏ nhất (.+)$/i, 'Minimum value $1')
+    .replace(/^Khoảng cách bằng (.+)$/i, 'The distance is $1')
+    .replace(/^Điểm thuộc mặt phẳng$/i, 'The point lies in the plane')
+    .replace(/^Tạo tam giác vuông$/i, 'Form a right triangle')
+    .replace(/^Bằng độ lớn lực$/i, 'Equal to the force magnitude')
+    .replace(/^Cực đại tại (.+), cực tiểu tại (.+)$/i, 'Local maximum at $1; local minimum at $2')
+    .replace(/^Cực tiểu tại (.+)$/i, 'Local minimum at $1')
+    .replace(/^Cực đại tại (.+)$/i, 'Local maximum at $1')
+    .replace(/^Tiệm cận tại (.+)$/i, 'Asymptote at $1')
+    .replace(/^Đồng biến trên (.+)$/i, 'Increasing on $1')
+    .replace(/^Nghịch biến trên (.+)$/i, 'Decreasing on $1')
+    .replace(/^Đồ thị đi qua (.+)$/i, 'The graph passes through $1')
+    .replace(/^Đi qua (.+)$/i, 'Passes through $1')
+    .replace(/^Có giá trị lớn nhất (.+)$/i, 'Has maximum value $1')
+    .replace(/^Có giá trị nhỏ nhất (.+)$/i, 'Has minimum value $1')
+    .replace(/^Có chu kì (.+)$/i, 'Has period $1')
+    .replace(/^Biên độ (.+), chu kì (.+)$/i, 'Amplitude $1 and period $2')
+    .replace(/^Biên độ (.+)$/i, 'Amplitude $1')
+    .replace(/^Đường trung bình là (.+)$/i, 'Midline $1')
+    .replace(/^Đường trung bình (.+)$/i, 'Midline $1')
+    .replace(/^Sang trái (.+)$/i, 'Shift left by $1')
+    .replace(/^Sang phải (.+)$/i, 'Shift right by $1')
+    .replace(/^Lên (.+)$/i, 'Shift up by $1')
+    .replace(/^Xuống (.+)$/i, 'Shift down by $1')
+    .replace(/^Co ngang (.+) lần$/i, 'Horizontal compression by a factor of $1')
+    .replace(/^(\d+(?:[.,]\d+)?) nghìn$/i, '$1 thousand')
+    .replace(/^(.+) giờ$/i, '$1 hours')
+    .replace(/^(.+) giây$/i, '$1 seconds')
+    .replace(/^Hai giao điểm với \$Ox\$ có hoành độ (.+) và (.+)$/i, 'The two intersections with the $x$-axis have x-coordinates $1 and $2')
+    .replace(/^Hai giao điểm (.+)$/i, 'Two intersection points: $1')
+    .replace(/^Tiêu điểm là (.+)$/i, 'The focus is $1')
+    .replace(/^Hai tiêu điểm cách tâm (.+) đơn vị$/i, 'Each focus is $1 units from the center')
+    .replace(/^Đường chuẩn là (.+)$/i, 'The directrix is $1')
+    .replace(/^Ra số lớn hơn (.+)$/i, 'Roll a number greater than $1')
+    .replace(/^Ra số nhỏ hơn (.+)$/i, 'Roll a number less than $1')
+    .replace(/^Ra số (.+)$/i, 'Roll $1')
+    .replace(/^Xác suất bằng (.+)$/i, 'Probability $1')
+    .replace(/^Biến cố có xác suất (.+)$/i, 'An event with probability $1')
+    .replace(/^Có xác suất (.+)$/i, 'Has probability $1')
+    .replace(/^(.+) và (.+)$/i, '$1 and $2')
+    .replace(/^(.+) hoặc (.+)$/i, '$1 or $2');
+
+  const exactAfterPatterns: Record<string,string> = {
+    'Hằng': 'Constant',
+    'Không tồn tại': 'Does not exist',
+    'Hàm số chẵn': 'Even function',
+    'Hàm số lẻ': 'Odd function',
+    'Hàm lẻ: sai': 'Odd-function claim: false',
+    'Sấp': 'Tails',
+    'Ngửa': 'Heads',
+    'Không xảy ra': 'Does not occur',
+    'Cả ngửa và sấp': 'Both heads and tails',
+    'Chắc chắn xảy ra': 'Certain to occur',
+    'Rất dễ xảy ra': 'Very likely to occur',
+    'Rất có khả năng xảy ra': 'Very likely to occur',
+    'Không thể': 'Impossible',
+    'Hiếm gặp': 'Rare',
+    'Phổ biến': 'Common',
+    'Giá trị chính xác của từng quan sát': 'The exact value of each observation',
+    'Tổng tần số': 'Total frequency',
+    'Các khoảng lớp': 'Class intervals',
+    'Tần số mỗi nhóm': 'Frequency of each class',
+    'Bảng mới thường mất nhiều chi tiết hơn': 'The regrouped table usually contains less detail',
+    'Bảng mới luôn giữ nhiều chi tiết hơn': 'The regrouped table always preserves more detail',
+    'Hai bảng luôn giống nhau': 'The two tables are always identical',
+    'Tần số tổng sẽ thay đổi': 'The total frequency will change',
+    'Ranh giới và độ rộng lớp': 'Class boundaries and class widths',
+    'Chỉ số hàng': 'Only the number of rows',
+    'Tên biến': 'Variable name',
+    'Màu của bảng': 'Table color',
+    'Tóm tắt phân bố nhưng chấp nhận mất một phần chi tiết': 'Summarize the distribution while accepting some loss of detail',
+    'Giữ nguyên mọi giá trị gốc': 'Preserve every original value',
+    'Làm tăng số quan sát': 'Increase the number of observations',
+    'Loại bỏ hoàn toàn sai số': 'Eliminate all error',
+    'Hình tròn': 'Circle',
+    'Ngũ giác': 'Pentagon',
+    'Đường thẳng': 'Line',
+    'Tứ giác': 'Quadrilateral',
+    'Chỉ tam giác': 'Triangles only',
+    'Chỉ ngũ giác': 'Pentagons only',
+    'Luôn là tam giác': 'Always a triangle',
+    'Luôn là hình vuông': 'Always a square',
+    'Song song hoặc trùng nhau': 'Parallel or coincident',
+    'Luôn chéo nhau': 'Always skew',
+    'Đồng phẳng và không có điểm chung': 'Coplanar with no common point',
+    'Có một điểm chung': 'Have one common point',
+    'Một đường': 'One line',
+    'Hai đường': 'Two lines',
+    'Vô số đường': 'Infinitely many lines',
+    'Không đường': 'No line',
+    'Duy nhất một đường thẳng song song': 'Exactly one parallel line',
+    'Đôi một vuông góc': 'Pairwise perpendicular',
+    'Đồng quy': 'Concurrent',
+    'Tọa độ bắt buộc': 'Coordinates are required',
+    'Một điểm': 'One point',
+    'Không thuộc đáy': 'Does not lie in the base',
+    'Số tổ hợp': 'Number of combinations',
+    'Quãng đường bất kì': 'An arbitrary distance',
+    'Hàm thời gian tổng cộng': 'Total-time function',
+    'tìm cực trị của hàm thể tích': 'Optimize the volume function',
+    'Chỉ dùng định lí Pythagore': 'Use only the Pythagorean theorem',
+    'dùng xác suất': 'Use probability',
+    'không cần hàm số': 'No function is needed',
+    'Song song và bằng nhau': 'Parallel and equal in length',
+    'Không đồng dạng': 'Not similar',
+    'Song song phân biệt': 'Distinct parallel lines',
+    'Cắt nhau tại một điểm': 'Intersect at one point',
+  };
+  if (exactAfterPatterns[t]) return exactAfterPatterns[t];
+
+  // Mixed formula/text choices and short mathematical statements.
+  t = polishStaticEnglishText(t)
+    .replace(/^Cực đại at (.+), cực tiểu at (.+)$/i, 'Local maximum at $1; local minimum at $2')
+    .replace(/^Cực tiểu at (.+)$/i, 'Local minimum at $1')
+    .replace(/^Cực đại at (.+)$/i, 'Local maximum at $1')
+    .replace(/^Tiệm cận at (.+)$/i, 'Asymptote at $1')
+    .replace(/^Đồng biến on (.+)$/i, 'Increasing on $1')
+    .replace(/^Nghịch biến on (.+)$/i, 'Decreasing on $1')
+    .replace(/^graph đi through (.+)$/i, 'The graph passes through $1')
+    .replace(/^Đi through (.+)$/i, 'Passes through $1')
+    .replace(/^Only liên tục trái$/i, 'Left-continuous only')
+    .replace(/^Only liên tục phải$/i, 'Right-continuous only')
+    .replace(/^Only do không xác định$/i, 'Only because it is undefined')
+    .replace(/^Không xác định at (.+)$/i, 'Undefined at $1')
+    .replace(/^Không tồn at$/i, 'Does not exist')
+    .replace(/^Maximum value on graph là (.+)$/i, 'The maximum value on the graph is $1')
+    .replace(/^The graph intersects (.+) at (.+) and (.+)$/i, 'The graph intersects $1 at $2 and $3')
+    .replace(/^\$A,B,M\$ collinear$/i, '$A,B,M$ are collinear')
+    .replace(/^\$M\$ là midpoint \$AB\$$/i, '$M$ is the midpoint of $AB$')
+    .replace(/^\$n=2k\$ with \$k\\in\\mathbb Z\$$/i, '$n=2k$ with $k\\in\\mathbb Z$')
+    .replace(/^\$P\$ đúng, \$Q\$ sai$/i, '$P$ is true and $Q$ is false')
+    .replace(/^\$P\$ sai, \$Q\$ đúng$/i, '$P$ is false and $Q$ is true')
+    .replace(/^\$P,Q\$ đều đúng$/i, 'Both $P$ and $Q$ are true')
+    .replace(/^\$P,Q\$ đều sai$/i, 'Both $P$ and $Q$ are false')
+    .replace(/^\$x=([^$]+)\$ or \$x=([^$]+)\$$/i, '$x=$1$ or $x=$2$')
+    .replace(/^(.+) hoặc (.+)$/i, '$1 or $2')
+    .replace(/^(.+) và (.+)$/i, '$1 and $2');
+
+  const postExact: Record<string,string> = {
+    "Hai plane cắt nhau": "The two planes intersect",
+    "Only liên tục trái": "Left-continuous only",
+    "Only liên tục phải": "Right-continuous only",
+    "Only do không xác định": "Only because it is undefined",
+    "graph cắt $Ox$ at $x=-2$ and $x=2$": "The graph intersects the $x$-axis at $x=-2$ and $x=2$",
+    "Hai plane trùng nhau": "The two planes are coincident",
+    "2 là số chẵn": "2 is an even number",
+    "Bạn bao nhiêu tuổi?": "How old are you?",
+    "Hãy mở cửa!": "Open the door!",
+    "Nếu $n$ chẵn thì $n$ chia hết cho 4": "If $n$ is even, then $n$ is divisible by 4",
+    "Nếu $n$ không chẵn thì $n$ không chia hết cho 4": "If $n$ is not even, then $n$ is not divisible by 4",
+    "Nếu $n$ chia hết cho 4 thì $n$ chẵn": "If $n$ is divisible by 4, then $n$ is even",
+    "Nếu $n$ lẻ thì $n$ chia hết cho 4": "If $n$ is odd, then $n$ is divisible by 4",
+    "Only Use định lí Pythagore": "Use only the Pythagorean theorem",
+    "parallel and bằng nhau": "Parallel and equal in length",
+    "cross-section parallel to hai đáy": "A cross-section parallel to both bases",
+    "cross-section perpendicular every cạnh": "A cross-section perpendicular to every edge",
+    "graph $y=\\sin x$ tịnh tiến sang phải $\\dfrac{\\pi}{3}$": "The graph of $y=\\sin x$ shifted right by $\\dfrac{\\pi}{3}$",
+    "Ranh giới and độ rộng lớp": "Class boundaries and class widths",
+    "Only số hàng": "Only the number of rows",
+    "Đa giác có các đỉnh on các cạnh của hình chóp": "A polygon whose vertices lie on edges of the pyramid",
+    "Only tam giác": "Triangles only",
+    "Only ngũ giác": "Pentagons only",
+    "parallel or trùng nhau": "Parallel or coincident",
+    "Một đường cắt $d\\prime$": "A line intersecting $d\\prime$",
+    "every đường through $M$": "Every line through $M$",
+    "Cắt cả hai": "Intersects both",
+    "Đôi một parallel": "Pairwise parallel",
+    "$(ABB\\prime A\\prime)$ vì nằm trong đó": "$(ABB\\prime A\\prime)$ because it lies in that plane",
+    "Một line nằm trong $(P)$ and $d$ không thuộc $(P)$": "A line contained in $(P)$ while $d$ is not contained in $(P)$",
+    "every đường trong $(P)$": "Every line in $(P)$",
+    "Pháp tuyến của $(P)$": "A normal vector to $(P)$",
+    "Một điểm của $(P)$": "A point of $(P)$",
+    "Trùng plane thứ hai": "Coincident with the second plane",
+    "Một điểm chung and phương của line of intersection": "One common point and the direction of the line of intersection",
+    "Trung bình mẫu": "Sample mean",
+    "similar with đáy theo tỉ số $\\dfrac{1}{2}$": "Similar to the base with scale factor $\\dfrac{1}{2}$",
+    "Bằng đáy": "Congruent to the base",
+    "perpendicular every cạnh": "Perpendicular to every edge",
+    "$a,b$ chéo nhau": "$a$ and $b$ are skew",
+    "Ba điểm collinear (or trùng nhau)": "Three collinear (or coincident) points",
+    "Ba điểm tạo tam giác": "Three points forming a triangle",
+    "Ba điểm bất kì": "Any three points",
+    "Ảnh của line chứa đoạn": "The image of the line containing the segment",
+    "Đường perpendicular bắt buộc": "A perpendicular line is required",
+    "có ảnh parallel or trùng nhau": "have images that are parallel or coincident",
+    "luôn perpendicular": "are always perpendicular",
+    "luôn cắt nhau": "always intersect",
+    "luôn biến thành đường tròn": "always become a circle",
+    "biến thành midpoint của đoạn ảnh": "maps to the midpoint of the image segment",
+    "biến thành một đầu mút": "maps to an endpoint",
+    "không được bảo toàn": "is not preserved",
+    "luôn là tâm đường tròn": "is always the center of a circle",
+    "Biểu diễn hình không gian on plane": "Represent a spatial figure in a plane",
+    "Tìm đạo hàm": "Differentiate",
+    "Giải phương trình mũ": "Solve an exponential equation",
+    "Vẫn parallel": "Remain parallel",
+    "Thành đường tròn": "Become a circle",
+    "Có ít nhất một nghiệm trong $(1,2)$": "There is at least one root in $(1,2)$",
+    "Hàm không liên tục": "The function is discontinuous",
+    "every điểm đều là nghiệm": "Every point is a root",
+    "graph $y=2^x$ tịnh tiến lên 3 units": "The graph of $y=2^x$ shifted upward by 3 units",
+    "graph $y=\\log_2x$ tịnh tiến sang phải 1": "The graph of $y=\\log_2x$ shifted right by 1",
+    "Tổng tọa độ": "Sum of coordinates",
+    "Chéo with plane": "Skew to the plane",
+    "$d$ chéo $a$": "$d$ is skew to $a$",
+    "Cắt nhau bắt buộc": "Must intersect",
+    "Trọng tâm": "Centroid",
+    "Khoảng cách từ điểm đến plane": "Distance from a point to a plane",
+    "Khoảng cách giữa hai điểm bất kì": "Distance between two arbitrary points",
+    "Diện tích": "Area",
+    "Đồng phẳng": "Coplanar",
+    "Độ dài đoạn perpendicular chung": "Length of the common perpendicular segment",
+    "Góc giữa chúng": "The angle between them",
+    "Tổng độ dài": "Total length",
+    "Một intersection points": "One intersection point",
+    "Chu vi đáy": "Base perimeter",
+    "Đường perpendicular to tường": "A line perpendicular to the wall",
+    "every đường xiên": "Every oblique line",
+    "Đường parallel tường": "A line parallel to the wall",
+    "Chu vi tường": "Wall perimeter",
+    "$A,B$ xung khắc": "$A$ and $B$ are mutually exclusive",
+    "$A,B$ đối nhau": "$A$ and $B$ are complementary events",
+    "Trung bình": "Mean",
+    "Tính khoảng cách": "Compute the distance",
+    "$f\\prime(x)$ giữ dấu thích hợp": "$f\\prime(x)$ has the appropriate sign",
+    "$f(x)=0$ bắt buộc": "$f(x)=0$ is required",
+    "The graph passes through gốc": "The graph passes through the origin",
+    "$f$ chẵn": "$f$ is even",
+    "$(SAB)$ duy nhất": "Only $(SAB)$",
+    "$(SCD)$ duy nhất": "Only $(SCD)$",
+    "Các intersection points của plane cắt with các cạnh/mặt của khối": "The intersections of the cutting plane with the edges/faces of the solid",
+    "Phương trình đại số của một đường cong": "An algebraic equation of a curve",
+    "Đồng phẳng and has no common point": "Coplanar with no common point",
+    "Cùng perpendicular một plane là đủ trong every trường hợp": "Being perpendicular to the same plane is sufficient in every case",
+    "parallel to plane thứ hai": "Parallel to the second plane",
+    "perpendicular plane thứ hai": "Perpendicular to the second plane",
+    "Trùng $a$": "Coincident with $a$",
+    "Các plane chứa and line of intersection": "The containing planes and their line of intersection",
+    "$d$ cắt $(P)$": "$d$ intersects $(P)$",
+    "Trùng $d$ bắt buộc": "Must coincide with $d$",
+    "Cắt $d$": "Intersects $d$",
+    "Phương của line of intersection with plane đáy parallel": "Direction of the line of intersection with the base plane is parallel",
+    "Tâm sphere": "Center of the sphere",
+    "$MN$ không parallel cạnh nào": "$MN$ is not parallel to any edge",
+    "Midline của tam giác": "A midline of the triangle",
+    "Pythagore bắt buộc": "The Pythagorean theorem is required",
+    "$(P)=(Q)$ bắt buộc": "$(P)=(Q)$ is required",
+    "$(P)$ cắt $(Q)": "$(P)$ intersects $(Q)",
+    "Hai cặp line cắt nhau tương ứng parallel": "Two corresponding pairs of intersecting lines are parallel",
+    "Một điểm chung": "One common point",
+    "Một đường chung": "One common line",
+    "Hai pháp tuyến perpendicular": "The two normal vectors are perpendicular",
+    "Trùng nhau luôn": "Always coincident",
+    "Therefore các line parallel": "Therefore the lines are parallel",
+    "Đa giác bằng with đáy": "A polygon congruent to the base",
+    "Luôn tam giác": "Always a triangle",
+    "Luôn nhỏ hơn một nửa": "Always less than one half",
+    "Các cạnh tương ứng parallel": "Corresponding edges are parallel",
+    "every đường perpendicular": "Every line is perpendicular",
+    "every đường đồng quy": "All lines are concurrent",
+    "Một line": "One line",
+    "Luôn một điểm": "Always one point",
+    "Độ dài every đoạn": "Length of every segment",
+    "Góc every cặp đường": "Angle between every pair of lines",
+    "Diện tích every hình": "Area of every figure",
+    "vẫn collinear": "remain collinear",
+    "luôn thành ba điểm không collinear": "always become three non-collinear points",
+    "luôn cách đều nhau": "are always equally spaced",
+    "luôn tạo tam giác vuông": "always form a right triangle",
+    "được bảo toàn": "is preserved",
+    "luôn đổi dấu": "always changes sign",
+    "luôn bằng 1": "is always 1",
+    "không xác định": "is undefined",
+    "Góc and độ dài": "Angles and lengths",
+    "Tính parallel phù hợp": "Appropriate parallel relationships",
+    "Quan hệ liên thuộc": "Incidence relationships",
+    "Có đúng hai nghiệm trong $(0,2)$": "There are exactly two roots in $(0,2)$",
+    "Hàm gián đoạn": "The function is discontinuous",
+    "Gián đoạn at 0": "Discontinuous at 0",
+    "Only liên tục bên trái": "Left-continuous only",
+    "Passes through điểm $(0,1)$": "Passes through the point $(0,1)$",
+    "Có nghiệm $x=0$": "Has root $x=0$",
+    "graph $y=2^x$ tịnh tiến sang phải 1 units": "The graph of $y=2^x$ shifted right by 1 unit",
+    "Co dọc 2 lần": "Vertical compression by a factor of 2",
+    "graph $y=\\log_2x$ tịnh tiến lên 2": "The graph of $y=\\log_2x$ shifted upward by 2",
+    "8 lần": "8 times",
+    "2 lần": "2 times",
+    "4 lần": "4 times",
+    "6 lần": "6 times",
+    "$SB$ luôn": "Always $SB$",
+    "$SC$ luôn": "Always $SC$",
+    "$BC$ không xác định": "$BC$ is undefined",
+    "Chéo bắt buộc": "Must be skew",
+    "Hai line cắt nhau nằm trong $(P)$": "Two intersecting lines contained in $(P)$",
+    "Một đường bất kì trong $(P)$": "Any line in $(P)$",
+    "Một điểm trong $(P)$": "A point in $(P)$",
+    "Pháp tuyến khác": "A different normal vector",
+    "Passes through chân đường perpendicular": "Passes through the foot of the perpendicular",
+    "Không cần đi through chân": "Need not pass through the foot",
+    "Bất kì trong không gian": "Arbitrary in space",
+    "Một đường through $H$": "A line through $H$",
+    "Chính điểm đó": "That point itself",
+    "Gốc tọa độ": "The origin",
+    "Không kết luận": "No conclusion can be drawn",
+    "Một line perpendicular plane kia": "A line perpendicular to the other plane",
+    "Một đường parallel mặt kia": "A line parallel to the other plane",
+    "Một điểm của mặt kia": "A point of the other plane",
+    "Hai đường parallel": "Two parallel lines",
+    "Độ dài $d$": "Length $d$",
+    "Một đoạn bất kì": "An arbitrary segment",
+    "Đường chéo": "Diagonal",
+    "Xung khắc": "Mutually exclusive",
+    "Không thể kết luận": "Cannot be determined",
+    "Luôn có xác suất bằng nhau": "Always have equal probabilities",
+    "5 lít/units thời gian": "5 liters per unit time",
+    "Điểm tới hạn của hàm kinh tế on miền cho phép": "A critical point of the economic function on the feasible domain",
+    "Định lí sin": "The sine rule",
+    "$P(\\text{bệnh}|\\text{dương})$": "$P(\\text{disease}|\\text{positive})$",
+    "$P(\\text{dương}|\\text{bệnh})$": "$P(\\text{positive}|\\text{disease})$",
+    "$P(\\text{bệnh})$": "$P(\\text{disease})$",
+    "$P(\\text{âm})$": "$P(\\text{negative})$",
+    "Cắt $a$": "Intersects $a$",
+    "parallel to chúng": "Parallel to them",
+    "perpendicular to chúng": "Perpendicular to them",
+    "$(P)$ cắt $(Q)$": "$(P)$ intersects $(Q)$",
+  };
+  if (postExact[t]) return postExact[t];
+
+  // Formula-only choices and neutral numeric/unit choices are already language-independent.
+  if (/^\$[\s\S]*\$$/.test(t) || /^[+\-]?\d+(?:[.,]\d+)?%?(?:\s*[A-Za-z]+)?$/.test(t)) return t;
+  return t
+    .replace(/\?\./g, '?')
+    .replace(/!\./g, '!')
+    .replace(/\.{2,}/g, '.')
+    .replace(/\bthe result is the result is\b/gi, 'the result is')
+    .replace(/\b(is|are|equals)\s+\1\b/gi, '$1')
+    .replace(/\s{2,}/g, ' ')
+    .trim();
+};
+
+
+const defaultStaticEnglishSolution = (family: ExerciseFamily, answer: string): string => {
+  const method: Record<ExerciseFamily, string> = {
+    logic: 'Apply the relevant definition or logical relation.',
+    algebra: 'Set up the appropriate algebraic relation and simplify.',
+    trig: 'Use the appropriate trigonometric value or identity.',
+    geometry: 'Apply the relevant geometric theorem or formula.',
+    vector: 'Use the relevant vector definition or identity.',
+    stats: 'Use the appropriate statistical definition or formula.',
+    probability: 'Identify the sample space or conditional events and apply the appropriate probability rule.',
+    calculus: 'Apply the appropriate derivative, antiderivative, or integral rule.',
+    function: 'Use the defining properties of the function or its graph.',
+    combinatorics: 'Identify whether order matters, then apply the appropriate counting rule.',
+  };
+  return `${method[family]} Final answer: ${englishChoiceText(answer)}.`;
+};
+
 /** Exact-type semantic repairs for curriculum types whose family fallback is too broad. */
 function semanticExactTypeSample(type: MathType, variant: number): Sample | null {
   const tid = type.id;
   const v = variant % 4;
-  const mk = (vi:string,en:string,answer:string,solutionVi:string,wrong:string[],solutionEn=solutionVi): Sample => ({
-    vi,en,answer,solutionVi,solutionEn,
-    options:[[answer,answer,true],[wrong[0],wrong[0],false],[wrong[1],wrong[1],false],[wrong[2],wrong[2],false]],
+  const mk = (vi:string,en:string,answer:string,solutionVi:string,wrong:string[],solutionEn?:string): Sample => ({
+    vi,en,answer,solutionVi,
+    solutionEn: solutionEn || defaultStaticEnglishSolution(TYPE_FAMILY_BY_ID[type.id] || 'algebra', answer),
+    options:[[answer,englishChoiceText(answer),true],[wrong[0],englishChoiceText(wrong[0]),false],[wrong[1],englishChoiceText(wrong[1]),false],[wrong[2],englishChoiceText(wrong[2]),false]],
   });
 
   // ---- Grade 10: propositions / sets ----
@@ -490,7 +1187,7 @@ function semanticExactTypeSample(type: MathType, variant: number): Sample | null
 
   // ---- Grade 12 antiderivatives / integrals ----
   if (tid === 'type-kntt-12-11-01') {
-    const r=[['Một nguyên hàm của $3x^2$ là','An antiderivative of $3x^2$ is','$x^3$',['$3x^3$','$x^2$','$6x$']],['Một nguyên hàm của $2x+1$ là','An antiderivative of $2x+1$ is','$x^2+x$',['$2x^2+x$','$x^2+1$','$2$']],['Một nguyên hàm của $\\cos x$ là','An antiderivative of $\\cos x$ is','$\\sin x$',['$-\\sin x$','$\\cos x$','$-\\cos x$']],['Một nguyên hàm của $\\dfrac{1}{x}$ trên $(0,+\\infty)$ là','An antiderivative of $\\dfrac{1}{x}$ on positive reals is','$\\ln x$',['$\\dfrac{1}{x^2}$','$\\dfrac{x^2}{2}$','$e^x$']]][v];return mk(r[0] as string,r[1] as string,r[2] as string,'Dùng bảng nguyên hàm cơ bản và tính tuyến tính.',r[3] as string[]);
+    const r=[['Một nguyên hàm của $3x^2$ là','An antiderivative of $3x^2$ is','$x^3$',['$3x^3$','$x^2$','$6x$']],['Một nguyên hàm của $2x+1$ là','An antiderivative of $2x+1$ is','$x^2+x$',['$2x^2+x$','$x^2+1$','$2$']],['Một nguyên hàm của $\\cos x$ là','An antiderivative of $\\cos x$ is','$\\sin x$',['$-\\sin x$','$\\cos x$','$-\\cos x$']],['Một nguyên hàm của $\\dfrac{1}{x}$ trên $(0,+\\infty)$ là','An antiderivative of $\\dfrac{1}{x}$ on $(0,+\\infty)$ is','$\\ln x$',['$\\dfrac{1}{x^2}$','$\\dfrac{x^2}{2}$','$e^x$']]][v];return mk(r[0] as string,r[1] as string,r[2] as string,'Dùng bảng nguyên hàm cơ bản và tính tuyến tính.',r[3] as string[]);
   }
   if (tid === 'type-kntt-12-11-05') {
     const r=[['Biết $F\\prime(x)=2x$, $F(0)=3$. Khi đó $F(x)=$','Given $F\\prime(x)=2x$, $F(0)=3$. Then F=','$x^2+3$',['$x^2$','$2x+3$','$x^2-3$']],['$F\\prime(x)=3x^2$, $F(1)=2$. $F(x)=$','Given $F\\prime=3x^2$, $F(1)=2$.','$x^3+1$',['$x^3+2$','$3x^2+1$','$x^3-1$']],['$F\\prime(x)=\\cos x$, $F(0)=1$. $F(x)=$','Given $F\\prime=\\cos x$, F(0)=1.','$\\sin x+1$',['$\\cos x$','$\\sin x$','$-\\sin x+1$']],['$F\\prime(x)=1$, $F(2)=5$. $F(x)=$','Given F prime=1, F(2)=5.','$x+3$',['$x+5$','$x-3$','5']]][v];return mk(r[0] as string,r[1] as string,r[2] as string,'Tìm họ nguyên hàm rồi dùng điều kiện ban đầu để xác định hằng số $C$.',r[3] as string[]);
@@ -499,21 +1196,21 @@ function semanticExactTypeSample(type: MathType, variant: number): Sample | null
     const r=[['$\\int_0^1 2x\\,dx$ bằng','Evaluate $\\int_0^1 2x\\,dx$.','1',['2','$\\dfrac{1}{2}$','0']],['$\\int_0^2 3\\,dx$ bằng','Evaluate $\\int_0^2 3\\,dx$.','6',['3','5','9']],['$\\int_0^1 x^2\\,dx$ bằng','Evaluate $\\int_0^1 x^2\\,dx$.','$\\dfrac{1}{3}$',['$\\dfrac{1}{2}$','1','$\\dfrac{2}{3}$']],['$\\int_0^\\pi \\sin x\\,dx$ bằng','Evaluate $\\int_0^\\pi \\sin x\\,dx$.','2',['0','1','$\\pi$']]][v];return mk(r[0] as string,r[1] as string,r[2] as string,'Tìm nguyên hàm rồi áp dụng định lí Newton–Leibniz.',r[3] as string[]);
   }
   if (tid === 'type-kntt-12-12-04') {
-    const r=[['Nếu $f$ lẻ và khả tích trên $[-2,2]$ thì $\\int_{-2}^2f(x)dx$ bằng','If f is odd on [-2,2], its integral is','0',['2','4','Không xác định']],['Nếu $f$ chẵn thì $\\int_{-a}^a f(x)dx$ bằng','If f is even, integral from -a to a equals','$2\\int_0^a f(x)dx$',['0','$\\int_0^a f$','$-2\\int_0^a f$']],['$\\int_0^2 f=5$ và $\\int_2^3 f=4$. $\\int_0^3 f$ bằng','If integrals 0–2=5 and 2–3=4, integral 0–3 is','9',['1','20','5']],['Nếu $\\int_0^1 f(x)dx=m$ và biết giá trị tích phân bằng 3 thì','If integral 0–1 equals m and computed value is 3, then','$m=3$',['$m=0$','$m=1$','$m=-3$']]][v];return mk(r[0] as string,r[1] as string,r[2] as string,'Dùng tính đối xứng, tính cộng theo khoảng và điều kiện tham số.',r[3] as string[]);
+    const r=[['Nếu $f$ lẻ và khả tích trên $[-2,2]$ thì $\\int_{-2}^2f(x)dx$ bằng','If $f$ is odd and integrable on $[-2,2]$, then $\int_{-2}^{2}f(x)\,dx$ equals','0',['2','4','Không xác định']],['Nếu $f$ chẵn thì $\\int_{-a}^a f(x)dx$ bằng','If $f$ is even, then $\int_{-a}^{a}f(x)\,dx$ equals','$2\\int_0^a f(x)dx$',['0','$\\int_0^a f$','$-2\\int_0^a f$']],['$\\int_0^2 f=5$ và $\\int_2^3 f=4$. $\\int_0^3 f$ bằng','If $\int_0^2 f(x)\,dx=5$ and $\int_2^3 f(x)\,dx=4$, then $\int_0^3 f(x)\,dx$ equals','9',['1','20','5']],['Nếu $\\int_0^1 f(x)dx=m$ và biết giá trị tích phân bằng 3 thì','If $m=\int_0^1 f(x)\,dx$ and the integral evaluates to $3$, then','$m=3$',['$m=0$','$m=1$','$m=-3$']]][v];return mk(r[0] as string,r[1] as string,r[2] as string,'Dùng tính đối xứng, tính cộng theo khoảng và điều kiện tham số.',r[3] as string[]);
   }
   if (tid === 'type-kntt-12-12-05') {
-    const r=[['Lưu lượng $q(t)=2t$ L/min trong 0–3 phút. Thể tích tích lũy là','Flow $q(t)=2t$ L/min over 0–3 min. Accumulated volume:','9 L',['6 L','3 L','18 L']],['Vận tốc $v(t)=3t^2$ m/s trong 0–2 s. Quãng đường là','Velocity $v(t)=3t^2$ from 0–2 s. Distance:','8 m',['6 m','12 m','4 m']],['Công suất $P(t)=100$ W trong 10 s. Năng lượng là','Power 100 W for 10 s. Energy:','1000 J',['100 J','10 J','10000 J']],['Tốc độ tăng dân số $r(t)=4t$ (nghìn/năm) trong 0–2 năm. Mức tăng tích lũy là','Growth rate 4t over 0–2 years. Accumulated increase:','8 nghìn',['4 nghìn','16 nghìn','2 nghìn']]][v];return mk(r[0] as string,r[1] as string,r[2] as string,'Đại lượng tích lũy bằng tích phân của tốc độ theo thời gian.',r[3] as string[]);
+    const r=[['Lưu lượng $q(t)=2t$ L/min trong 0–3 phút. Thể tích tích lũy là','The flow rate is $q(t)=2t$ L/min for $0\\le t\\le3$. Find the accumulated volume.','9 L',['6 L','3 L','18 L']],['Vận tốc $v(t)=3t^2$ m/s trong 0–2 s. Quãng đường là','A particle has velocity $v(t)=3t^2$ m/s for $0\\le t\\le2$. Find the distance traveled.','8 m',['6 m','12 m','4 m']],['Công suất $P(t)=100$ W trong 10 s. Năng lượng là','A device operates at a constant power of $100$ W for $10$ s. Find the energy used.','1000 J',['100 J','10 J','10000 J']],['Tốc độ tăng dân số $r(t)=4t$ (nghìn/năm) trong 0–2 năm. Mức tăng tích lũy là','A population grows at a rate $r(t)=4t$ thousand people per year for $0\\le t\\le2$. Find the total increase.','8 nghìn',['4 nghìn','16 nghìn','2 nghìn']]][v];return mk(r[0] as string,r[1] as string,r[2] as string,'Đại lượng tích lũy bằng tích phân của tốc độ theo thời gian.',r[3] as string[]);
   }
 
   // ---- Grade 12 conditional probability / Bayes ----
   if (tid === 'type-kntt-12-18-01') {
-    const r=[['$P(A\\cap B)=0.2,P(B)=0.5$. $P(A|B)=$','Given intersection 0.2 and P(B)=0.5. Conditional probability:','0.4',['0.1','0.7','2.5']],['$P(A\\cap B)=0.18,P(B)=0.6$. $P(A|B)=$','Given 0.18 intersection and P(B)=0.6.','0.3',['0.12','0.78','0.6']],['$P(A\\cap B)=0.1,P(B)=0.25$. $P(A|B)=$','Given 0.1 intersection and P(B)=0.25.','0.4',['0.025','0.35','2.5']],['$P(A\\cap B)=0.12,P(B)=0.4$. $P(A|B)=$','Given 0.12 intersection and P(B)=0.4.','0.3',['0.48','0.28','0.4']]][v];return mk(r[0] as string,r[1] as string,r[2] as string,'Dùng $P(A|B)=\\dfrac{P(A\\cap B)}{P(B)}$.',r[3] as string[]);
+    const r=[['$P(A\\cap B)=0.2,P(B)=0.5$. $P(A|B)=$','Given $P(A\\cap B)=0.2$ and $P(B)=0.5$, find $P(A\\mid B)$.','0.4',['0.1','0.7','2.5']],['$P(A\\cap B)=0.18,P(B)=0.6$. $P(A|B)=$','Given $P(A\\cap B)=0.18$ and $P(B)=0.6$, find $P(A\\mid B)$.','0.3',['0.12','0.78','0.6']],['$P(A\\cap B)=0.1,P(B)=0.25$. $P(A|B)=$','Given $P(A\\cap B)=0.1$ and $P(B)=0.25$, find $P(A\\mid B)$.','0.4',['0.025','0.35','2.5']],['$P(A\\cap B)=0.12,P(B)=0.4$. $P(A|B)=$','Given $P(A\\cap B)=0.12$ and $P(B)=0.4$, find $P(A\\mid B)$.','0.3',['0.48','0.28','0.4']]][v];return mk(r[0] as string,r[1] as string,r[2] as string,'Dùng $P(A|B)=\\dfrac{P(A\\cap B)}{P(B)}$.',r[3] as string[]);
   }
   if (tid === 'type-kntt-12-18-02') {
-    const r=[['Trong 100 người có 40 nữ, 10 nữ thuận tay trái. Chọn một người biết rằng là nữ. Xác suất thuận tay trái là','Among 100 people, 40 are women and 10 of those are left-handed. Given woman, probability left-handed:','$\\dfrac{1}{4}$',['$\\dfrac{1}{10}$','$\\dfrac{2}{5}$','$\\dfrac{1}{2}$']],['Bảng có 60 nam, trong đó 12 thích A. Biết chọn nam, xác suất thích A là','There are 60 men, 12 like A. Given male, probability likes A:','$\\dfrac{1}{5}$',['$\\dfrac{1}{12}$','$\\dfrac{12}{100}$','$\\dfrac{3}{5}$']],['Trong 80 học sinh, 20 học lớp X và 8 trong số đó đạt giỏi. Biết thuộc lớp X, xác suất giỏi là','80 students, 20 in class X and 8 of those are excellent. Given class X:','$\\dfrac{2}{5}$',['$\\dfrac{1}{10}$','$\\dfrac{1}{4}$','$\\dfrac{3}{5}$']],['Có 50 sản phẩm loại B, 5 lỗi. Biết sản phẩm là loại B, xác suất lỗi là','50 type-B products, 5 defective. Given type B, probability defective:','$\\dfrac{1}{10}$',['$\\dfrac{1}{5}$','$\\dfrac{5}{100}$','$\\dfrac{9}{10}$']]][v];return mk(r[0] as string,r[1] as string,r[2] as string,'Đọc hàng/cột điều kiện trong bảng: số trường hợp vừa thỏa chia tổng số trong nhóm điều kiện.',r[3] as string[]);
+    const r=[['Trong 100 người có 40 nữ, 10 nữ thuận tay trái. Chọn một người biết rằng là nữ. Xác suất thuận tay trái là','Among 100 people, 40 are women and 10 of those women are left-handed. Given that the selected person is a woman, find the probability that she is left-handed.','$\\dfrac{1}{4}$',['$\\dfrac{1}{10}$','$\\dfrac{2}{5}$','$\\dfrac{1}{2}$']],['Bảng có 60 nam, trong đó 12 thích A. Biết chọn nam, xác suất thích A là','There are 60 men, 12 of whom prefer A. Given that the selected person is male, find the probability that he prefers A.','$\\dfrac{1}{5}$',['$\\dfrac{1}{12}$','$\\dfrac{12}{100}$','$\\dfrac{3}{5}$']],['Trong 80 học sinh, 20 học lớp X và 8 trong số đó đạt giỏi. Biết thuộc lớp X, xác suất giỏi là','Among 80 students, 20 are in class X and 8 of those students have excellent results. Given that a student is in class X, find the probability of an excellent result.','$\\dfrac{2}{5}$',['$\\dfrac{1}{10}$','$\\dfrac{1}{4}$','$\\dfrac{3}{5}$']],['Có 50 sản phẩm loại B, 5 lỗi. Biết sản phẩm là loại B, xác suất lỗi là','Among 50 type-B products, 5 are defective. Given that a product is type B, find the probability that it is defective.','$\\dfrac{1}{10}$',['$\\dfrac{1}{5}$','$\\dfrac{5}{100}$','$\\dfrac{9}{10}$']]][v];return mk(r[0] as string,r[1] as string,r[2] as string,'Đọc hàng/cột điều kiện trong bảng: số trường hợp vừa thỏa chia tổng số trong nhóm điều kiện.',r[3] as string[]);
   }
   if (tid === 'type-kntt-12-18-04') {
-    const r=[['Một lớp có 30 nữ, 20 nam; 12 nữ và 4 nam tham gia CLB. Biết người được chọn tham gia CLB, xác suất là nữ bằng','Class: 30 women,20 men; 12 women,4 men in club. Given club member, probability female:','$\\dfrac{3}{4}$',['$\\dfrac{2}{5}$','$\\dfrac{12}{50}$','$\\dfrac{1}{2}$']],['Một bệnh viện: 100 ca, 60 nội trú; 18 nội trú tái khám. Biết ca nội trú, xác suất tái khám là','100 cases, 60 inpatient, 18 revisit. Given inpatient, revisit probability:','0.3',['0.18','0.6','0.42']],['Một website: 200 khách mobile, 50 mua hàng. Biết khách mobile, xác suất mua là','Website: 200 mobile visitors,50 purchase. Given mobile, probability purchase:','0.25',['0.5','0.2','0.75']],['Một nhà máy: 80 sản phẩm ca đêm, 8 lỗi. Biết sản phẩm ca đêm, xác suất lỗi là','Factory:80 night-shift products,8 defective. Given night shift, probability defect:','0.1',['0.8','0.08','0.9']]][v];return mk(r[0] as string,r[1] as string,r[2] as string,'Xác định đúng biến cố điều kiện trong tình huống thực tế.',r[3] as string[]);
+    const r=[['Một lớp có 30 nữ, 20 nam; 12 nữ và 4 nam tham gia CLB. Biết người được chọn tham gia CLB, xác suất là nữ bằng','A class has 30 female and 20 male students; 12 female and 4 male students are club members. Given that a selected student is a club member, find the probability that the student is female.','$\\dfrac{3}{4}$',['$\\dfrac{2}{5}$','$\\dfrac{12}{50}$','$\\dfrac{1}{2}$']],['Một bệnh viện: 100 ca, 60 nội trú; 18 nội trú tái khám. Biết ca nội trú, xác suất tái khám là','A hospital has 100 cases, 60 of which are inpatients; 18 inpatients return for follow-up. Given an inpatient case, find the probability of a follow-up visit.','0.3',['0.18','0.6','0.42']],['Một website: 200 khách mobile, 50 mua hàng. Biết khách mobile, xác suất mua là','A website has 200 mobile visitors, 50 of whom make a purchase. Given a mobile visitor, find the probability of a purchase.','0.25',['0.5','0.2','0.75']],['Một nhà máy: 80 sản phẩm ca đêm, 8 lỗi. Biết sản phẩm ca đêm, xác suất lỗi là','A factory records 80 night-shift products, 8 of which are defective. Given a night-shift product, find the probability that it is defective.','0.1',['0.8','0.08','0.9']]][v];return mk(r[0] as string,r[1] as string,r[2] as string,'Xác định đúng biến cố điều kiện trong tình huống thực tế.',r[3] as string[]);
   }
   if (tid.startsWith('type-kntt-12-19-')) {
     const sub=tid.slice(-2);
@@ -527,9 +1224,10 @@ function semanticExactTypeSample(type: MathType, variant: number): Sample | null
 
 function remainingDuplicateFixSample(tid: string, variant: number): Sample | null {
   const v = variant % 4;
-  const mk = (vi:string,en:string,answer:string,solutionVi:string,wrong:string[],solutionEn=solutionVi): Sample => ({
-    vi,en,answer,solutionVi,solutionEn,
-    options:[[answer,answer,true],[wrong[0],wrong[0],false],[wrong[1],wrong[1],false],[wrong[2],wrong[2],false]],
+  const mk = (vi:string,en:string,answer:string,solutionVi:string,wrong:string[],solutionEn?:string): Sample => ({
+    vi,en,answer,solutionVi,
+    solutionEn: solutionEn || defaultStaticEnglishSolution(TYPE_FAMILY_BY_ID[tid] || 'algebra', answer),
+    options:[[answer,englishChoiceText(answer),true],[wrong[0],englishChoiceText(wrong[0]),false],[wrong[1],englishChoiceText(wrong[1]),false],[wrong[2],englishChoiceText(wrong[2]),false]],
   });
 
   if (tid === 'type-kntt-10-03-01') {
@@ -929,12 +1627,12 @@ function remainingDuplicateFixSample(tid: string, variant: number): Sample | nul
 
   if (tid === 'type-kntt-11-14-02') {
     const r=[
-      ['Trong phép chiếu song song không suy biến, ba điểm thẳng hàng','vẫn thẳng hàng',['luôn thành ba điểm không thẳng hàng','luôn cách đều nhau','luôn tạo tam giác vuông']],
-      ['Trong phép chiếu song song không suy biến, hai đường thẳng song song','có ảnh song song hoặc trùng nhau',['luôn vuông góc','luôn cắt nhau','luôn biến thành đường tròn']],
-      ['Trung điểm của một đoạn thẳng qua phép chiếu song song không suy biến','biến thành trung điểm của đoạn ảnh',['biến thành một đầu mút','không được bảo toàn','luôn là tâm đường tròn']],
-      ['Tỉ số của hai đoạn thẳng cùng nằm trên một đường thẳng qua phép chiếu song song không suy biến','được bảo toàn',['luôn đổi dấu','luôn bằng 1','không xác định']],
+      ['Trong phép chiếu song song không suy biến, ba điểm thẳng hàng','Under a nondegenerate parallel projection, three collinear points','vẫn thẳng hàng',['luôn thành ba điểm không thẳng hàng','luôn cách đều nhau','luôn tạo tam giác vuông']],
+      ['Trong phép chiếu song song không suy biến, hai đường thẳng song song','Under a nondegenerate parallel projection, two parallel lines','có ảnh song song hoặc trùng nhau',['luôn vuông góc','luôn cắt nhau','luôn biến thành đường tròn']],
+      ['Trung điểm của một đoạn thẳng qua phép chiếu song song không suy biến','Under a nondegenerate parallel projection, the midpoint of a segment','biến thành trung điểm của đoạn ảnh',['biến thành một đầu mút','không được bảo toàn','luôn là tâm đường tròn']],
+      ['Tỉ số của hai đoạn thẳng cùng nằm trên một đường thẳng qua phép chiếu song song không suy biến','Under a nondegenerate parallel projection, the ratio of two collinear segments','được bảo toàn',['luôn đổi dấu','luôn bằng 1','không xác định']],
     ][v];
-    return mk(`${r[0]} thì`,`${r[0]} then`,r[1] as string,'Phép chiếu song song là một phép biến đổi afin nên bảo toàn tính thẳng hàng, song song và tỉ số trên cùng đường thẳng.',r[2] as string[]);
+    return mk(`${r[0]} thì`,`${r[1]}.`,r[2] as string,'Phép chiếu song song là một phép biến đổi afin nên bảo toàn tính thẳng hàng, song song và tỉ số trên cùng đường thẳng.',r[3] as string[],'A parallel projection is an affine transformation, so it preserves collinearity, parallelism, and ratios of collinear segments.');
   }
 
   if (tid === 'type-kntt-11-19-01') {
@@ -1630,13 +2328,14 @@ function directSample(type: MathType, family: ExerciseFamily, variant: number): 
   }
   if (tid === 'type-kntt-12-13-02') {
     const rows=[
-      {vi:'Diện tích hình phẳng giới hạn bởi $y=x$ và $y=x^2$ trên $[0,1]$ bằng',en:'The area between $y=x$ and $y=x^2$ on $[0,1]$ is',ans:'$\\dfrac16$',w:['$\\dfrac12$','$\\dfrac13$','1'],sol:'$S=\\int_0^1(x-x^2)\\,dx=\\dfrac{1}{6}$.'},
-      {vi:'Diện tích hình phẳng giới hạn bởi $y=2x$ và $y=x^2$ trên $[0,2]$ bằng',en:'The area between $y=2x$ and $y=x^2$ on $[0,2]$ is',ans:'$\\dfrac43$',w:['2','$\\dfrac23$','$\\dfrac83$'],sol:'$S=\\int_0^2(2x-x^2)\\,dx=\\dfrac{4}{3}$.'},
-      {vi:'Diện tích hình phẳng giới hạn bởi $y=4$ và $y=x^2$ từ $x=-2$ đến $x=2$ bằng',en:'The area between $y=4$ and $y=x^2$ from $x=-2$ to $x=2$ is',ans:'$\\dfrac{32}{3}$',w:['8','$\\dfrac{16}{3}$','16'],sol:'$S=\\int_{-2}^2(4-x^2)\\,dx=\\dfrac{32}{3}$.'},
-      {vi:'Diện tích hình phẳng giới hạn bởi $y=x+2$ và $y=x^2$ giữa hai giao điểm bằng',en:'The area enclosed by $y=x+2$ and $y=x^2$ is',ans:'$\\dfrac92$',w:['3','6','$\\dfrac32$'],sol:'Hai giao điểm có hoành độ $-1,2$; $S=\\int_{-1}^2(-x^2+x+2)\\,dx=\\dfrac{9}{2}$.'},
+      {vi:'Diện tích hình phẳng giới hạn bởi $y=x$ và $y=x^2$ trên $[0,1]$ bằng',en:'The area between $y=x$ and $y=x^2$ on $[0,1]$ is',ans:'$\\dfrac16$',w:['$\\dfrac12$','$\\dfrac13$','1'],sol:'$S=\\int_0^1(x-x^2)\\,dx=\\dfrac{1}{6}$.',solEn:'$S=\\int_0^1(x-x^2)\\,dx=\\dfrac{1}{6}$.'},
+      {vi:'Diện tích hình phẳng giới hạn bởi $y=2x$ và $y=x^2$ trên $[0,2]$ bằng',en:'The area between $y=2x$ and $y=x^2$ on $[0,2]$ is',ans:'$\\dfrac43$',w:['2','$\\dfrac23$','$\\dfrac83$'],sol:'$S=\\int_0^2(2x-x^2)\\,dx=\\dfrac{4}{3}$.',solEn:'$S=\\int_0^2(2x-x^2)\\,dx=\\dfrac{4}{3}$.'},
+      {vi:'Diện tích hình phẳng giới hạn bởi $y=4$ và $y=x^2$ từ $x=-2$ đến $x=2$ bằng',en:'The area between $y=4$ and $y=x^2$ from $x=-2$ to $x=2$ is',ans:'$\\dfrac{32}{3}$',w:['8','$\\dfrac{16}{3}$','16'],sol:'$S=\\int_{-2}^2(4-x^2)\\,dx=\\dfrac{32}{3}$.',solEn:'$S=\\int_{-2}^2(4-x^2)\\,dx=\\dfrac{32}{3}$.'},
+      {vi:'Diện tích hình phẳng giới hạn bởi $y=x+2$ và $y=x^2$ giữa hai giao điểm bằng',en:'The area enclosed by $y=x+2$ and $y=x^2$ is',ans:'$\\dfrac92$',w:['3','6','$\\dfrac32$'],sol:'Hai giao điểm có hoành độ $-1,2$; $S=\\int_{-1}^2(-x^2+x+2)\\,dx=\\dfrac{9}{2}$.',solEn:'The curves intersect at $x=-1$ and $x=2$, so $S=\\int_{-1}^2(-x^2+x+2)\\,dx=\\dfrac{9}{2}$.'},
     ][variant%4];
-    return {vi:rows.vi,en:rows.en,answer:rows.ans,solutionVi:rows.sol,solutionEn:rows.sol,options:[[rows.ans,rows.ans,true],[rows.w[0],rows.w[0],false],[rows.w[1],rows.w[1],false],[rows.w[2],rows.w[2],false]]};
+    return {vi:rows.vi,en:rows.en,answer:rows.ans,solutionVi:rows.sol,solutionEn:rows.solEn,options:[[rows.ans,rows.ans,true],[rows.w[0],rows.w[0],false],[rows.w[1],rows.w[1],false],[rows.w[2],rows.w[2],false]]};
   }
+
   if (tid === 'type-kntt-12-13-04') {
     const rows=[
       {vi:'Mặt cắt một khu vườn được mô hình bởi miền dưới $y=4-x^2$ từ $x=-2$ đến $x=2$ (đơn vị mét). Diện tích khu vực bằng',en:'A garden cross-section is modeled by the region under $y=4-x^2$ for $-2\\le x\\le2$ meters. Find its area.',ans:'$\\dfrac{32}{3}$',w:['8','16','$\\dfrac{16}{3}$']},
@@ -1648,13 +2347,14 @@ function directSample(type: MathType, family: ExerciseFamily, variant: number): 
   }
   if (tid === 'type-kntt-12-17-03') {
     const rows=[
-      {vi:'Mặt cầu $x^2+y^2+z^2=25$ cắt mặt phẳng $z=3$ theo đường tròn có bán kính bằng',en:'The sphere $x^2+y^2+z^2=25$ meets the plane $z=3$ in a circle. Its radius is',ans:'4',w:['3','5','2'],sol:'Khoảng cách từ tâm đến mặt phẳng là 3, nên $r=\\sqrt{5^2-3^2}=4$.'},
-      {vi:'Mặt cầu $(x-1)^2+y^2+z^2=9$ cắt mặt phẳng $x=1$ theo đường tròn có bán kính bằng',en:'The sphere $(x-1)^2+y^2+z^2=9$ meets plane $x=1$ in a circle. Its radius is',ans:'3',w:['1','2','9'],sol:'Mặt phẳng đi qua tâm, nên đường tròn giao tuyến có bán kính bằng bán kính mặt cầu: 3.'},
-      {vi:'Đường thẳng $d:\ y=0,\\ z=0$ cắt mặt cầu $x^2+y^2+z^2=4$ tại bao nhiêu điểm?',en:'How many intersection points are there between line $d:\ y=0,\\ z=0$ and sphere $x^2+y^2+z^2=4$?',ans:'2',w:['0','1','4'],sol:'Thay $y=z=0$ được $x^2=4$, nên $x=\\pm2$: có 2 giao điểm.'},
-      {vi:'Mặt phẳng $z=4$ và mặt cầu $x^2+y^2+z^2=9$ có bao nhiêu điểm chung?',en:'How many common points do plane $z=4$ and sphere $x^2+y^2+z^2=9$ have?',ans:'0',w:['1','2','Vô số'],sol:'Khoảng cách từ tâm đến mặt phẳng là 4 lớn hơn bán kính 3, nên không giao nhau.'},
+      {vi:'Mặt cầu $x^2+y^2+z^2=25$ cắt mặt phẳng $z=3$ theo đường tròn có bán kính bằng',en:'The sphere $x^2+y^2+z^2=25$ meets the plane $z=3$ in a circle. Its radius is',ans:'4',w:['3','5','2'],sol:'Khoảng cách từ tâm đến mặt phẳng là 3, nên $r=\\sqrt{5^2-3^2}=4$.',solEn:'The distance from the center to the plane is 3, so $r=\\sqrt{5^2-3^2}=4$.'},
+      {vi:'Mặt cầu $(x-1)^2+y^2+z^2=9$ cắt mặt phẳng $x=1$ theo đường tròn có bán kính bằng',en:'The sphere $(x-1)^2+y^2+z^2=9$ meets plane $x=1$ in a circle. Its radius is',ans:'3',w:['1','2','9'],sol:'Mặt phẳng đi qua tâm, nên đường tròn giao tuyến có bán kính bằng bán kính mặt cầu: 3.',solEn:'The plane passes through the center, so the intersection circle has the same radius as the sphere: 3.'},
+      {vi:'Đường thẳng $d:\\ y=0,\\ z=0$ cắt mặt cầu $x^2+y^2+z^2=4$ tại bao nhiêu điểm?',en:'How many intersection points are there between line $d:\\ y=0,\\ z=0$ and sphere $x^2+y^2+z^2=4$?',ans:'2',w:['0','1','4'],sol:'Thay $y=z=0$ được $x^2=4$, nên $x=\\pm2$: có 2 giao điểm.',solEn:'Substituting $y=z=0$ gives $x^2=4$, hence $x=\\pm2$; therefore there are 2 intersection points.'},
+      {vi:'Mặt phẳng $z=4$ và mặt cầu $x^2+y^2+z^2=9$ có bao nhiêu điểm chung?',en:'How many common points do plane $z=4$ and sphere $x^2+y^2+z^2=9$ have?',ans:'0',w:['1','2','Vô số'],sol:'Khoảng cách từ tâm đến mặt phẳng là 4 lớn hơn bán kính 3, nên không giao nhau.',solEn:'The distance from the center to the plane is 4, greater than the sphere radius 3, so they do not intersect.'},
     ][variant%4];
-    return {vi:rows.vi,en:rows.en,answer:rows.ans,solutionVi:rows.sol,solutionEn:rows.sol,options:[[rows.ans,rows.ans,true],[rows.w[0],rows.w[0],false],[rows.w[1],rows.w[1],false],[rows.w[2],rows.w[2],false]]};
+    return {vi:rows.vi,en:rows.en,answer:rows.ans,solutionVi:rows.sol,solutionEn:rows.solEn,options:[[rows.ans,rows.ans,true],[rows.w[0],rows.w[0],false],[rows.w[1],rows.w[1],false],[rows.w[2],rows.w[2],false]]};
   }
+
   if (tid === 'type-kntt-12-17-04') {
     const rows=[
       {vi:'Mặt cầu tâm $O(0,0,0)$ đi qua $A(1,2,2)$. Bán kính bằng',en:'A sphere centered at $O(0,0,0)$ passes through $A(1,2,2)$. Its radius is',ans:'3',w:['2','$\\sqrt5$','9']},
@@ -1719,17 +2419,19 @@ function directSample(type: MathType, family: ExerciseFamily, variant: number): 
     }
     if (hasAny(t, ['tiệm cận đứng'])) {
       const a = [2, -1, 3, -4][variant % 4];
+      const denominator = a >= 0 ? `x-${a}` : `x+${Math.abs(a)}`;
       return {
-        vi: `Đồ thị $y=\\dfrac{2x+1}{x-${a}}$ có tiệm cận đứng là`, en: `The vertical asymptote of $y=\\dfrac{2x+1}{x-${a}}$ is`,
-        answer: `$x=${a}$`, solutionVi: `Mẫu số bằng $0$ tại $x=${a}$ và tử khác $0$, nên tiệm cận đứng là $x=${a}$.`, solutionEn: `The denominator is zero at $x=${a}$ while the numerator is nonzero.`,
+        vi: `Đồ thị $y=\\dfrac{2x+1}{${denominator}}$ có tiệm cận đứng là`, en: `The vertical asymptote of $y=\\dfrac{2x+1}{${denominator}}$ is`,
+        answer: `$x=${a}$`, solutionVi: `Mẫu số bằng $0$ tại $x=${a}$ và tử khác $0$, nên tiệm cận đứng là $x=${a}$.`, solutionEn: `The denominator is zero at $x=${a}$ while the numerator is nonzero, so the vertical asymptote is $x=${a}$.`,
         options: [[`$x=${a}$`,`$x=${a}$`,true],['$y=2$','$y=2$',false],['$x=0$','$x=0$',false],[`$y=${a}$`,`$y=${a}$`,false]],
       };
     }
     if (hasAny(t, ['tiệm cận ngang'])) {
       const a = [2, 3, -1, 4][variant % 4];
+      const leadingTerm = a === 1 ? 'x' : a === -1 ? '-x' : `${a}x`;
       return {
-        vi: `Đồ thị $y=\\dfrac{${a}x+1}{x+2}$ có tiệm cận ngang là`, en: `The horizontal asymptote of $y=\\dfrac{${a}x+1}{x+2}$ is`,
-        answer: `$y=${a}$`, solutionVi: `Tử và mẫu cùng bậc nên tiệm cận ngang bằng tỉ số hệ số bậc cao nhất: $y=${a}$.`, solutionEn: `Same degrees: horizontal asymptote equals the ratio of leading coefficients.`,
+        vi: `Đồ thị $y=\\dfrac{${leadingTerm}+1}{x+2}$ có tiệm cận ngang là`, en: `The horizontal asymptote of $y=\\dfrac{${leadingTerm}+1}{x+2}$ is`,
+        answer: `$y=${a}$`, solutionVi: `Tử và mẫu cùng bậc nên tiệm cận ngang bằng tỉ số hệ số bậc cao nhất: $y=${a}$.`, solutionEn: `The numerator and denominator have the same degree, so the horizontal asymptote is the ratio of the leading coefficients: $y=${a}$.`,
         options: [[`$y=${a}$`,`$y=${a}$`,true],['$x=-2$','$x=-2$',false],['$y=0$','$y=0$',false],[`$x=${a}$`,`$x=${a}$`,false]],
       };
     }
@@ -1964,12 +2666,12 @@ function directSample(type: MathType, family: ExerciseFamily, variant: number): 
       ][variant%4]; return {vi:rows.vi,en:rows.en,answer:rows.ans,solutionVi:rows.sol,solutionEn:rows.sol,options:[[rows.ans,rows.ans,true],[rows.w[0],rows.w[0],false],[rows.w[1],rows.w[1],false],[rows.w[2],rows.w[2],false]]};
     }
     const rows=[
-      {vi:'Gieo một xúc xắc cân đối. Xác suất xuất hiện số chẵn bằng',en:'Roll a fair die. Probability of an even number is',ans:'$\\dfrac{1}{2}$',w:['$\\dfrac{1}{3}$','$\\dfrac{2}{3}$','$\\dfrac{1}{6}$'],sol:'Có 3 kết quả thuận lợi trên 6 kết quả.'},
-      {vi:'Gieo một xúc xắc cân đối. Xác suất xuất hiện số lớn hơn 4 bằng',en:'Roll a fair die. Probability of a number greater than 4 is',ans:'$\\dfrac{1}{3}$',w:['$\\dfrac{1}{2}$','$\\dfrac{2}{3}$','$\\dfrac{1}{6}$'],sol:'Có 2 kết quả thuận lợi $\\{5,6\\}$ trên 6.'},
-      {vi:'Rút ngẫu nhiên một thẻ từ các thẻ đánh số 1 đến 10. Xác suất rút số chia hết cho 5 bằng',en:'Draw one card numbered 1 to 10. Probability the number is divisible by 5 is',ans:'$\\dfrac{1}{5}$',w:['$\\dfrac{1}{2}$','$\\dfrac{1}{10}$','$\\dfrac{2}{5}$'],sol:'Có 2 số thuận lợi 5, 10 trên 10 thẻ.'},
-      {vi:'Tung một đồng xu cân đối một lần. Xác suất xuất hiện mặt ngửa bằng',en:'Toss a fair coin once. Probability of heads is',ans:'$\\dfrac{1}{2}$',w:['$\\dfrac{1}{4}$','1','0'],sol:'Hai kết quả đồng khả năng và có một kết quả thuận lợi.'},
+      {vi:'Gieo một xúc xắc cân đối. Xác suất xuất hiện số chẵn bằng',en:'Roll a fair die. Probability of an even number is',ans:'$\\dfrac{1}{2}$',w:['$\\dfrac{1}{3}$','$\\dfrac{2}{3}$','$\\dfrac{1}{6}$'],sol:'Có 3 kết quả thuận lợi trên 6 kết quả.',solEn:'There are 3 favorable outcomes out of 6 equally likely outcomes.'},
+      {vi:'Gieo một xúc xắc cân đối. Xác suất xuất hiện số lớn hơn 4 bằng',en:'Roll a fair die. Probability of a number greater than 4 is',ans:'$\\dfrac{1}{3}$',w:['$\\dfrac{1}{2}$','$\\dfrac{2}{3}$','$\\dfrac{1}{6}$'],sol:'Có 2 kết quả thuận lợi $\\{5,6\\}$ trên 6.',solEn:'The favorable outcomes are $\\{5,6\\}$, so the probability is $\\dfrac{2}{6}=\\dfrac{1}{3}$.'},
+      {vi:'Rút ngẫu nhiên một thẻ từ các thẻ đánh số 1 đến 10. Xác suất rút số chia hết cho 5 bằng',en:'Draw one card numbered 1 to 10. Probability the number is divisible by 5 is',ans:'$\\dfrac{1}{5}$',w:['$\\dfrac{1}{2}$','$\\dfrac{1}{10}$','$\\dfrac{2}{5}$'],sol:'Có 2 số thuận lợi 5, 10 trên 10 thẻ.',solEn:'The favorable cards are 5 and 10, so the probability is $\\dfrac{2}{10}=\\dfrac{1}{5}$.'},
+      {vi:'Tung một đồng xu cân đối một lần. Xác suất xuất hiện mặt ngửa bằng',en:'Toss a fair coin once. Probability of heads is',ans:'$\\dfrac{1}{2}$',w:['$\\dfrac{1}{4}$','1','0'],sol:'Hai kết quả đồng khả năng và có một kết quả thuận lợi.',solEn:'There are two equally likely outcomes and one favorable outcome, so the probability is $\\dfrac{1}{2}$.'},
     ][variant%4];
-    return {vi:rows.vi,en:rows.en,answer:rows.ans,solutionVi:rows.sol,solutionEn:rows.sol,options:[[rows.ans,rows.ans,true],[rows.w[0],rows.w[0],false],[rows.w[1],rows.w[1],false],[rows.w[2],rows.w[2],false]]};
+    return {vi:rows.vi,en:rows.en,answer:rows.ans,solutionVi:rows.sol,solutionEn:rows.solEn,options:[[rows.ans,rows.ans,true],[rows.w[0],rows.w[0],false],[rows.w[1],rows.w[1],false],[rows.w[2],rows.w[2],false]]};
   }
 
   // ---------------- STATISTICS ----------------
@@ -2159,7 +2861,7 @@ function directSample(type: MathType, family: ExerciseFamily, variant: number): 
         {vi:'Hai vectơ $\\vec a=(1,2)$ và $\\vec b=(2,4)$ có quan hệ',en:'The vectors $\\vec a=(1,2)$ and $\\vec b=(2,4)$ are',ans:'Cùng phương',w:['Vuông góc','Bằng nhau','Đối nhau']},
         {vi:'Hai vectơ $\\vec a=(1,0)$ và $\\vec b=(-1,0)$ có quan hệ',en:'The vectors $\\vec a=(1,0)$ and $\\vec b=(-1,0)$ are',ans:'Đối nhau',w:['Bằng nhau','Cùng hướng','Vuông góc']},
       ][variant%4];
-      return {vi:rows.vi,en:rows.en,answer:rows.ans,solutionVi:'Dùng định nghĩa vectơ-không, cùng phương, cùng hướng và hai vectơ bằng nhau.',solutionEn:'Use the definitions of zero, parallel, same-direction, and equal vectors.',options:[[rows.ans,rows.ans,true],[rows.w[0],rows.w[0],false],[rows.w[1],rows.w[1],false],[rows.w[2],rows.w[2],false]]};
+      return {vi:rows.vi,en:rows.en,answer:rows.ans,solutionVi:'Dùng định nghĩa vectơ-không, cùng phương, cùng hướng và hai vectơ bằng nhau.',solutionEn:'Use the definitions of the zero vector, parallel vectors, vectors with the same direction, and equal vectors.',options:[[rows.ans,rows.ans,true],[rows.w[0],rows.w[0],false],[rows.w[1],rows.w[1],false],[rows.w[2],rows.w[2],false]]};
     }
     if (hasAny(t,['vectơ đối'])) {
       const rows=[
@@ -2571,7 +3273,7 @@ function directSample(type: MathType, family: ExerciseFamily, variant: number): 
       ][variant%4];
       return {
         vi:`Mặt cầu ${rows.eq} có tâm ${rows.center}. Bán kính bằng`,
-        en:`The sphere ${rows.eq} has center ${rows.center}. Its radius is`,
+        en:`The sphere ${rows.eq} has center ${rows.center}. Find its radius.`,
         answer:rows.r,
         solutionVi:`So sánh với $(x-a)^2+(y-b)^2+(z-c)^2=R^2$, suy ra $R=${rows.r}$.`,
         solutionEn:`Compare with $(x-a)^2+(y-b)^2+(z-c)^2=R^2$ to obtain $R=${rows.r}$.`,
@@ -2587,7 +3289,7 @@ function directSample(type: MathType, family: ExerciseFamily, variant: number): 
       ][variant%4];
       return {
         vi:`Trong $Oxyz$, cho điểm ${rows.p} và đường thẳng ${rows.d}. Khoảng cách từ điểm đến đường thẳng bằng`,
-        en:`In $Oxyz$, given point ${rows.p} and line ${rows.d}, the point-line distance is`,
+        en:`In $Oxyz$, find the distance from point ${rows.p} to line ${rows.d}.`,
         answer:rows.ans,
         solutionVi:'Dùng hình chiếu vuông góc của điểm lên đường thẳng hoặc công thức khoảng cách.',
         solutionEn:'Use the orthogonal projection or the point-line distance formula.',
@@ -2595,37 +3297,37 @@ function directSample(type: MathType, family: ExerciseFamily, variant: number): 
       };
     }
     if (hasAny(t,['định lí côsin','côsin'])) return {
-      vi: 'Tam giác có hai cạnh 3, 4 và góc xen giữa $90^\\circ$. Cạnh đối diện góc đó bằng', en: 'A triangle has sides 3 and 4 with included angle $90^\\circ$. The opposite side is', answer: '5', solutionVi: '$c^2=3^2+4^2-2\\cdot3\\cdot4\\cos90^\\circ=25$.', solutionEn: 'Cosine rule gives 5.', options: [['5','5',true],['7','7',false],['1','1',false],['$\\sqrt7$','$\\sqrt7$',false]],
+      vi: 'Tam giác có hai cạnh 3, 4 và góc xen giữa $90^\\circ$. Cạnh đối diện góc đó bằng', en: 'A triangle has sides 3 and 4 with included angle $90^\\circ$. The opposite side is', answer: '5', solutionVi: '$c^2=3^2+4^2-2\\cdot3\\cdot4\\cos90^\\circ=25$.', solutionEn: 'By the cosine rule, $c^2=3^2+4^2-2\cdot3\cdot4\cos90^\circ=25$, so $c=5$.', options: [['5','5',true],['7','7',false],['1','1',false],['$\\sqrt7$','$\\sqrt7$',false]],
     };
     if (hasAny(t,['định lí sin'])) return {
-      vi: 'Trong tam giác, $a=6$, $A=30^\\circ$, $B=90^\\circ$. Cạnh $b$ bằng', en: 'In a triangle, $a=6$, $A=30^\\circ$, $B=90^\\circ$. Find $b$.', answer: '12', solutionVi: '$\\dfrac{a}{\\sin A}=\\dfrac{b}{\\sin B}$, nên $b=\\dfrac{6}{0.5}=12$.', solutionEn: 'Sine rule gives 12.', options: [['12','12',true],['6','6',false],['3','3',false],['$6\\sqrt3$','$6\\sqrt3$',false]],
+      vi: 'Trong tam giác, $a=6$, $A=30^\\circ$, $B=90^\\circ$. Cạnh $b$ bằng', en: 'In a triangle, $a=6$, $A=30^\\circ$, $B=90^\\circ$. Find $b$.', answer: '12', solutionVi: '$\\dfrac{a}{\\sin A}=\\dfrac{b}{\\sin B}$, nên $b=\\dfrac{6}{0.5}=12$.', solutionEn: 'By the sine rule, $\\dfrac{a}{\\sin A}=\\dfrac{b}{\\sin B}$, so $b=12$.', options: [['12','12',true],['6','6',false],['3','3',false],['$6\\sqrt3$','$6\\sqrt3$',false]],
     };
     if (hasAny(t,['diện tích tam giác'])) return {
-      vi: 'Tam giác có hai cạnh 4, 5 và góc xen giữa $30^\\circ$. Diện tích bằng', en: 'A triangle has sides 4 and 5 with included angle $30^\\circ$. Its area is', answer: '5', solutionVi: '$S=\\frac12\\cdot4\\cdot5\\sin30^\\circ=5$.', solutionEn: 'Area is 5.', options: [['5','5',true],['10','10',false],['20','20',false],['$5\\sqrt3$','$5\\sqrt3$',false]],
+      vi: 'Tam giác có hai cạnh 4, 5 và góc xen giữa $30^\\circ$. Diện tích bằng', en: 'A triangle has sides 4 and 5 with included angle $30^\\circ$. Its area is', answer: '5', solutionVi: '$S=\\frac12\\cdot4\\cdot5\\sin30^\\circ=5$.', solutionEn: 'Using $S=\dfrac12ab\\sin C$, we get $S=5$.', options: [['5','5',true],['10','10',false],['20','20',false],['$5\\sqrt3$','$5\\sqrt3$',false]],
     };
     if (hasAny(t,['đường tròn'])) return {
       vi: 'Đường tròn $(x-2)^2+(y+1)^2=9$ có tâm và bán kính là', en: 'For $(x-2)^2+(y+1)^2=9$, the center and radius are', answer: '$I(2,-1),R=3$', solutionVi: 'So sánh với $(x-a)^2+(y-b)^2=R^2$.', solutionEn: 'Compare with standard circle form.', options: [['$I(2,-1),R=3$','$I(2,-1),R=3$',true],['$I(-2,1),R=9$','$I(-2,1),R=9$',false],['$I(2,1),R=3$','$I(2,1),R=3$',false],['$I(-2,-1),R=3$','$I(-2,-1),R=3$',false]],
     };
     if (hasAny(t,['mặt cầu'])) return {
-      vi: 'Mặt cầu $(x-1)^2+(y+2)^2+(z-3)^2=16$ có bán kính bằng', en: 'The sphere $(x-1)^2+(y+2)^2+(z-3)^2=16$ has radius', answer: '4', solutionVi: '$R=\\sqrt{16}=4$.', solutionEn: '$R=4$.', options: [['4','4',true],['16','16',false],['2','2',false],['8','8',false]],
+      vi: 'Mặt cầu $(x-1)^2+(y+2)^2+(z-3)^2=16$ có bán kính bằng', en: 'Find the radius of the sphere $(x-1)^2+(y+2)^2+(z-3)^2=16$.', answer: '4', solutionVi: '$R=\\sqrt{16}=4$.', solutionEn: '$R=4$.', options: [['4','4',true],['16','16',false],['2','2',false],['8','8',false]],
     };
     if (hasAny(t,['mặt phẳng']) && hasAny(t,['phương trình','vectơ pháp tuyến'])) return {
       vi: 'Mặt phẳng qua $A(1,0,0)$ và có vectơ pháp tuyến $\\vec n=(2,1,-1)$ có phương trình là', en: 'A plane through $A(1,0,0)$ with normal $\\vec n=(2,1,-1)$ has equation', answer: '$2(x-1)+y-z=0$', solutionVi: 'Dùng $\\vec n\\cdot\\overrightarrow{AM}=0$.', solutionEn: 'Use the point-normal form.', options: [['$2(x-1)+y-z=0$','$2(x-1)+y-z=0$',true],['$x+2y-z=0$','$x+2y-z=0$',false],['$2x+y-z=0$','$2x+y-z=0$',false],['$2(x+1)+y-z=0$','$2(x+1)+y-z=0$',false]],
     };
     if (hasAny(t,['đường thẳng']) && hasAny(t,['phương trình','tham số','chính tắc'])) return {
-      vi: 'Đường thẳng qua $A(1,2,3)$ có vectơ chỉ phương $(2,-1,1)$ có dạng tham số', en: 'The line through $A(1,2,3)$ with direction $(2,-1,1)$ has parametric equations', answer: '$x=1+2t,y=2-t,z=3+t$', solutionVi: 'Lấy tọa độ điểm cộng tham số nhân vectơ chỉ phương.', solutionEn: 'Point plus parameter times direction vector.', options: [['$x=1+2t,y=2-t,z=3+t$','$x=1+2t,y=2-t,z=3+t$',true],['$x=2+t,y=-1+2t,z=1+3t$','$x=2+t,y=-1+2t,z=1+3t$',false],['$x=1+t,y=2+t,z=3+t$','$x=1+t,y=2+t,z=3+t$',false],['$x=2t,y=-t,z=t$','$x=2t,y=-t,z=t$',false]],
+      vi: 'Đường thẳng qua $A(1,2,3)$ có vectơ chỉ phương $(2,-1,1)$ có dạng tham số', en: 'Find parametric equations of the line through $A(1,2,3)$ with direction vector $(2,-1,1)$.', answer: '$x=1+2t,y=2-t,z=3+t$', solutionVi: 'Lấy tọa độ điểm cộng tham số nhân vectơ chỉ phương.', solutionEn: 'Use the point-direction form: a point on the line plus a scalar multiple of its direction vector.', options: [['$x=1+2t,y=2-t,z=3+t$','$x=1+2t,y=2-t,z=3+t$',true],['$x=2+t,y=-1+2t,z=1+3t$','$x=2+t,y=-1+2t,z=1+3t$',false],['$x=1+t,y=2+t,z=3+t$','$x=1+t,y=2+t,z=3+t$',false],['$x=2t,y=-t,z=t$','$x=2t,y=-t,z=t$',false]],
     };
     if (hasAny(t,['khoảng cách từ điểm đến mặt phẳng'])) return {
-      vi: 'Khoảng cách từ $M(1,2,3)$ đến mặt phẳng $x+2y+2z-3=0$ bằng', en: 'Distance from $M(1,2,3)$ to $x+2y+2z-3=0$ is', answer: '$\\dfrac{8}{3}$', solutionVi: '$d=\\dfrac{|1+4+6-3|}{\\sqrt{1+4+4}}=\\dfrac{8}{3}$.', solutionEn: 'Point-plane distance formula gives $\\dfrac{8}{3}$.', options: [['$\\dfrac{8}{3}$','$\\dfrac{8}{3}$',true],['8','8',false],['$\\dfrac{4}{3}$','$\\dfrac{4}{3}$',false],['3','3',false]],
+      vi: 'Khoảng cách từ $M(1,2,3)$ đến mặt phẳng $x+2y+2z-3=0$ bằng', en: 'Find the distance from $M(1,2,3)$ to the plane $x+2y+2z-3=0$.', answer: '$\\dfrac{8}{3}$', solutionVi: '$d=\\dfrac{|1+4+6-3|}{\\sqrt{1+4+4}}=\\dfrac{8}{3}$.', solutionEn: 'Point-plane distance formula gives $\\dfrac{8}{3}$.', options: [['$\\dfrac{8}{3}$','$\\dfrac{8}{3}$',true],['8','8',false],['$\\dfrac{4}{3}$','$\\dfrac{4}{3}$',false],['3','3',false]],
     };
     if (hasAny(t,['thể tích khối chóp'])) return {
-      vi: 'Khối chóp có diện tích đáy 12 và chiều cao 6. Thể tích bằng', en: 'A pyramid has base area 12 and height 6. Its volume is', answer: '24', solutionVi: '$V=\\frac13Sh=24$.', solutionEn: '$V=\\dfrac{Sh}{3}=24$.', options: [['24','24',true],['72','72',false],['36','36',false],['18','18',false]],
+      vi: 'Khối chóp có diện tích đáy 12 và chiều cao 6. Thể tích bằng', en: 'A pyramid has base area $12$ and height $6$. Find its volume.', answer: '24', solutionVi: '$V=\\frac13Sh=24$.', solutionEn: '$V=\\dfrac{Sh}{3}=24$.', options: [['24','24',true],['72','72',false],['36','36',false],['18','18',false]],
     };
     if (hasAny(t,['thể tích khối lăng trụ','khối hộp'])) return {
-      vi: 'Khối lăng trụ có diện tích đáy 10 và chiều cao 7. Thể tích bằng', en: 'A prism has base area 10 and height 7. Its volume is', answer: '70', solutionVi: '$V=Sh=70$.', solutionEn: '$V=Sh=70$.', options: [['70','70',true],['35','35',false],['17','17',false],['$\\dfrac{70}{3}$','$\\dfrac{70}{3}$',false]],
+      vi: 'Khối lăng trụ có diện tích đáy 10 và chiều cao 7. Thể tích bằng', en: 'A prism has base area $10$ and height $7$. Find its volume.', answer: '70', solutionVi: '$V=Sh=70$.', solutionEn: '$V=Sh=70$.', options: [['70','70',true],['35','35',false],['17','17',false],['$\\dfrac{70}{3}$','$\\dfrac{70}{3}$',false]],
     };
     if (hasAny(t,['góc giữa'])) return {
-      vi: 'Hai vectơ $\\vec a=(1,0,0)$ và $\\vec b=(0,1,0)$ tạo với nhau góc bằng', en: 'The angle between $\\vec a=(1,0,0)$ and $\\vec b=(0,1,0)$ is', answer: '$90^\\circ$', solutionVi: '$\\vec a\\cdot\\vec b=0$ nên hai vectơ vuông góc.', solutionEn: 'Dot product is zero, so the angle is 90 degrees.', options: [['$90^\\circ$','$90^\\circ$',true],['$0^\\circ$','$0^\\circ$',false],['$45^\\circ$','$45^\\circ$',false],['$180^\\circ$','$180^\\circ$',false]],
+      vi: 'Hai vectơ $\\vec a=(1,0,0)$ và $\\vec b=(0,1,0)$ tạo với nhau góc bằng', en: 'The angle between $\\vec a=(1,0,0)$ and $\\vec b=(0,1,0)$ is', answer: '$90^\\circ$', solutionVi: '$\\vec a\\cdot\\vec b=0$ nên hai vectơ vuông góc.', solutionEn: 'The dot product is zero, so the vectors are perpendicular and the angle is $90^\circ$.', options: [['$90^\\circ$','$90^\\circ$',true],['$0^\\circ$','$0^\\circ$',false],['$45^\\circ$','$45^\\circ$',false],['$180^\\circ$','$180^\\circ$',false]],
     };
     if (hasAny(t,['không gian','mặt phẳng','đường thẳng','mặt cầu','oxyz','tọa độ','toạ độ','vectơ'])) {
       const rows=[
@@ -2667,29 +3369,35 @@ function trueFalseSample(type: MathType, family: ExerciseFamily, index: number):
         ['Không xác định','Undetermined',false] as [string,string,boolean],
       ];
   const statements: Array<[string,string,boolean]> = choices.map((choice, i) => [
-    `${String.fromCharCode(97+i)}) Kết quả có thể là ${choice[0]}.`,
-    `${String.fromCharCode(97+i)}) A possible result is ${choice[1]}.`,
+    `${String.fromCharCode(97+i)}) ${choice[0]}`,
+    `${String.fromCharCode(97+i)}) ${englishChoiceText(choice[1])}`,
     choice[2],
   ]);
+  const truthSummaryEn = statements
+    .map((statement, i) => `${String.fromCharCode(97+i)}) ${statement[2] ? 'True' : 'False'}`)
+    .join('; ');
   return {
     vi: `Cho bài toán: ${base.vi.replace(/\s+là\s*$/,'')}. Xét tính đúng/sai của các kết quả sau:`,
-    en: `For the problem: ${base.en.replace(/\s+is\s*$/,'')}. Determine whether the following proposed results are true or false:`,
+    en: `For the following problem, determine whether each proposed answer is true or false: ${polishStaticEnglishText(base.en)}`,
     answer: statements.map((st, i) => `${String.fromCharCode(97+i)}-${st[2] ? 'Đ' : 'S'}`).join(', '),
     solutionVi: `${base.solutionVi} Do đó đối chiếu từng kết quả với đáp án ${base.answer}.`,
-    solutionEn: `${base.solutionEn} Compare each proposed result with ${base.answer}.`,
+    solutionEn: `${polishStaticEnglishText(base.solutionEn)} Therefore: ${truthSummaryEn}.`,
     options: statements,
   };
 }
 
 function shortSample(type: MathType, family: ExerciseFamily, index: number): Sample {
   const direct = directSample(type, family, index + 1);
-  // Convert the direct exercise into a short-answer prompt without showing choices.
+  const directEn = polishStaticEnglishText(direct.en);
+  const isCompletionStem = /\b(?:is|are|equals|is approximately|is closest to|is modeled by)\s*$/i.test(directEn);
   return {
     vi: `${direct.vi.replace(/\s+là\s*$/,'')}. Hãy ghi kết quả cuối cùng.`,
-    en: `${direct.en.replace(/\s+is\s*$/,'')}. Give the final answer.`,
+    en: isCompletionStem
+      ? `Complete the following statement with the correct result: ${directEn}`
+      : `Give the final answer to the following problem: ${directEn}`,
     answer: direct.answer,
     solutionVi: direct.solutionVi,
-    solutionEn: direct.solutionEn,
+    solutionEn: polishStaticEnglishText(direct.solutionEn),
   };
 }
 
@@ -2697,10 +3405,10 @@ function essaySample(type: MathType, family: ExerciseFamily): Sample {
   const direct = directSample(type, family, 2);
   return {
     vi: `Giải chi tiết bài toán sau: ${direct.vi}`,
-    en: `Solve the following problem in detail: ${direct.en}`,
+    en: `Provide a complete solution to the following problem: ${polishStaticEnglishText(direct.en)}`,
     answer: direct.answer,
     solutionVi: `Gợi ý lời giải: ${direct.solutionVi} Sau khi tính toán, cần kết luận đúng theo yêu cầu của dạng “${type.title_vi}”.`,
-    solutionEn: `Suggested solution: ${direct.solutionEn} Conclude explicitly according to “${type.title_en}”.`,
+    solutionEn: `Solution outline: ${polishStaticEnglishText(direct.solutionEn)} State the final answer clearly.`,
   };
 }
 
@@ -2714,46 +3422,13 @@ function visualAssetsForType(type: MathType, kind: StaticKind, index: number): Q
 
 function makeQuestion(lesson: Lesson, type: MathType, family: ExerciseFamily, kind: StaticKind, index: number, sample: Sample): Question {
   const qType = kind === 'TN' ? 'MCQ' : kind === 'DS' ? 'TRUE_FALSE' : kind === 'TLN' ? 'SHORT' : 'ESSAY';
+  const cleanSampleEn = polishStaticEnglishText(sample.en);
+  const cleanSolutionEn = polishStaticEnglishText(sample.solutionEn);
 
-  // Keep the guaranteed 4-2-2-1 baseline without number-only clones.
-  // The four TN variants use different assessment prompts; the two DS/TLN variants
-  // also differ structurally instead of merely changing constants.
-  const promptVi = kind === 'TN'
-    ? [
-        sample.vi,
-        `Dựa trên dữ kiện của bài toán sau, hãy chọn kết quả đúng: ${sample.vi}`,
-        `Xét yêu cầu sau và chọn phương án thỏa mãn: ${sample.vi}`,
-        `Kiểm tra các phương án cho bài toán sau và chọn kết luận chính xác: ${sample.vi}`,
-      ][index] || sample.vi
-    : kind === 'DS'
-      ? [
-          `Xét tính đúng/sai của các nhận định trong bài toán sau: ${sample.vi}`,
-          `Đánh giá từng khẳng định A–D dựa trên dữ kiện sau: ${sample.vi}`,
-        ][index] || sample.vi
-      : kind === 'TLN'
-        ? [
-            sample.vi,
-            `Không cần chọn phương án; hãy tính và ghi kết quả cuối cùng cho bài toán sau: ${sample.vi}`,
-          ][index] || sample.vi
-        : sample.vi;
-  const promptEn = kind === 'TN'
-    ? [
-        sample.en,
-        `Using the data in the following problem, choose the correct result: ${sample.en}`,
-        `Consider the following task and select the option that satisfies it: ${sample.en}`,
-        `Check the options for the following problem and choose the correct conclusion: ${sample.en}`,
-      ][index] || sample.en
-    : kind === 'DS'
-      ? [
-          `Determine whether each statement is true or false for the following problem: ${sample.en}`,
-          `Evaluate statements A–D using the following data: ${sample.en}`,
-        ][index] || sample.en
-      : kind === 'TLN'
-        ? [
-            sample.en,
-            `Do not choose an option; compute and give the final answer for the following problem: ${sample.en}`,
-          ][index] || sample.en
-        : sample.en;
+  // directSample/trueFalseSample/shortSample already provide distinct variants.
+  // Preserve their natural wording instead of adding generic wrapper phrases.
+  const promptVi = sample.vi;
+  const promptEn = cleanSampleEn;
   const variantNames = kind === 'TN'
     ? ['direct', 'concept', 'reverse', 'error-analysis']
     : kind === 'DS' ? ['reasoning', 'validation']
@@ -2768,10 +3443,10 @@ function makeQuestion(lesson: Lesson, type: MathType, family: ExerciseFamily, ki
     difficulty: index === 0 ? 'EASY' : index >= 2 ? 'MEDIUM' : 'MEDIUM',
     language_level: 2,
     question_vi: promptVi,
-    question_en: promptEn,
+    question_en: polishStaticEnglishText(promptEn),
     options: sample.options ? opt(sample.options) : undefined,
     solution_vi: sample.solutionVi,
-    solution_en: sample.solutionEn,
+    solution_en: cleanSolutionEn,
     correct_answer: kind === 'TN' && sample.options
       ? (['A','B','C','D'][Math.max(0, sample.options.findIndex((item) => item[2]))] || 'A')
       : sample.answer,

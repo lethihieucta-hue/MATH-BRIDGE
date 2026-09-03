@@ -239,7 +239,7 @@ export const TestBuilder: React.FC = () => {
   // Initial generated test default state (10 questions on GTLN & GTNN)
   const [currentTest, setCurrentTest] = useState<GeneratedTestState>(() => {
     const initialList = ONLINE_SAFE_QUESTION_BANK.filter(
-      (q) => q.topic_id === 'top-12-1-2' && isQuestionEnglishReady(q)
+      (q) => q.topic_id === 'top-12-1-2' && isQuestionEnglishReady(q, { includeSolution: true })
     );
     return {
       title: `ĐỀ KIỂM TRA 15 PHÚT: GIÁ TRỊ LỚN NHẤT VÀ NHỎ NHẤT CỦA HÀM SỐ`,
@@ -297,7 +297,7 @@ export const TestBuilder: React.FC = () => {
     // English sentence to Vietnamese source text. Keep only fully translated stems
     // and options; the shortage warning below remains fail-closed.
     const candidateQuestions = detectedRatio >= 40
-      ? rawCandidateQuestions.filter((question) => isQuestionEnglishReady(question))
+      ? rawCandidateQuestions.filter((question) => isQuestionEnglishReady(question, { includeSolution: true }))
       : rawCandidateQuestions;
     const formatCounts = parseFormatCounts(promptDescription, targetCount);
     targetCount = formatCounts.total;
@@ -348,7 +348,7 @@ export const TestBuilder: React.FC = () => {
 
   // Export: Print PDF
   const handlePrint = () => {
-    if (currentTest.englishRatio >= 40 && currentTest.questions.some((question) => !isQuestionEnglishReady(question))) {
+    if (currentTest.englishRatio >= 40 && currentTest.questions.some((question) => !isQuestionEnglishReady(question, { includeSolution: true }))) {
       showNotification('⚠️ Đề còn câu chưa dịch trọn vẹn. Hãy tạo lại đề để hệ thống chỉ lấy câu English đã kiểm tra.');
       return;
     }
@@ -402,7 +402,7 @@ export const TestBuilder: React.FC = () => {
 
   // Export: Copy to Word Clipboard
   const handleCopyWord = () => {
-    if (currentTest.englishRatio >= 40 && currentTest.questions.some((question) => !isQuestionEnglishReady(question))) {
+    if (currentTest.englishRatio >= 40 && currentTest.questions.some((question) => !isQuestionEnglishReady(question, { includeSolution: true }))) {
       showNotification('⚠️ Không sao chép: đề còn câu English chưa dịch trọn vẹn. Hãy tạo lại đề.');
       return;
     }
@@ -462,7 +462,7 @@ export const TestBuilder: React.FC = () => {
   // Export: real DOCX with native Office Equation (OMML), editable in Word and
   // convertible by MathType. Plain LaTeX is retained only when conversion fails.
   const handleDownloadDoc = () => {
-    if (currentTest.englishRatio >= 40 && currentTest.questions.some((question) => !isQuestionEnglishReady(question))) {
+    if (currentTest.englishRatio >= 40 && currentTest.questions.some((question) => !isQuestionEnglishReady(question, { includeSolution: true }))) {
       showNotification('⚠️ Không xuất Word: đề còn câu English chưa dịch trọn vẹn. Hãy tạo lại đề.');
       return;
     }

@@ -1,0 +1,21 @@
+{
+  "date": "2026-09-03",
+  "full_questions": 3004,
+  "online_safe_questions": 2713,
+  "type_count": 289,
+  "english_ready_with_solution": 2806,
+  "excluded_from_english_mode": 198,
+  "excluded_missing_trusted_english_solution": 198,
+  "english_ready_issues": 0,
+  "default_coverage_shortages": 0,
+  "duplicate_ids": 0,
+  "bank_holes": 0,
+  "mcq_correct_option_errors": 0,
+  "empty_english_options": 0,
+  "odd_dollar_delimiters": 0,
+  "bad_runtime_latex_patterns": 0,
+  "math_slash_occurrences": 1,
+  "math_slash_note": "Only the valid unit m/s",
+  "typescript_tsx_files_parsed": 55,
+  "typescript_parse_errors": 0
+}

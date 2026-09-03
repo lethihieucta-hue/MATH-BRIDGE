@@ -5,6 +5,7 @@ import { REAL_SOURCE_QUESTION_BANK } from './realSourceQuestionBank';
 import { SOURCE_SUPPLEMENT_QUESTION_BANK } from './sourceSupplementQuestionBank';
 import { ORIGINAL_SOURCE_VISUAL_QUESTION_BANK } from './originalSourceVisualQuestionBank';
 import { CURATED_20260902_QUESTION_BANK } from './curated20260902QuestionBank';
+import { MINIMUM_BILINGUAL_SOURCE_QUESTION_BANK } from './minimumBilingualSourceQuestionBank';
 
 // =========================================================================
 // BỘ BÀI TẬP MẪU CÓ LỜI GIẢI CHI TIẾT THEO TỪNG BÀI HỌC (WORKED EXAMPLES)
@@ -262,7 +263,7 @@ const LEGACY_DEFAULT_WORKED_EXAMPLES: Record<string, WorkedExample[]> = {
       title_vi: 'Ví dụ 1: Tìm công bội và tổng $n$ số hạng đầu của cấp số nhân',
       title_en: 'Example 1: Find Common Ratio and Sum of First n Terms of GP',
       problem_vi: 'Cho cấp số nhân $(u_n)$ có $u_1 = 3$ và công bội $q = 2$. Tính tổng 10 số hạng đầu tiên $S_{10}$.',
-      problem_en: 'For GP $(u_n)$ with $u_1 = 3$ and $q = 2$. Calculate sum of first 10 terms $S_{10}$.',
+      problem_en: 'For the geometric progression $(u_n)$ with $u_1=3$ and common ratio $q=2$, calculate the sum of the first 10 terms, $S_{10}$.',
       solution_vi: '• $S_{10} = u_1 \\frac{1 - q^{10}}{1 - q} = 3 \\frac{1 - 2^{10}}{1 - 2} = 3 (1023) = 3069$.',
       solution_en: '$S_{10} = 3 (2^{10} - 1) = 3069$.',
     },
@@ -361,7 +362,7 @@ const LEGACY_QUESTION_BANK: Question[] = [
     difficulty: 'EASY',
     language_level: 2,
     question_vi: 'Giá trị nhỏ nhất của hàm số $y = x^3 - 3x + 1$ trên đoạn $[0; 2]$ là:',
-    question_en: 'The minimum value of $y = x^3 - 3x + 1$ on $[0, 2]$ is:',
+    question_en: 'What is the minimum value of $y=x^3-3x+1$ on $[0,2]$?',
     options: [
       { option_key: 'A', content_vi: '$-1$', content_en: '$-1$', is_correct: true },
       { option_key: 'B', content_vi: '$1$', content_en: '$1$', is_correct: false },
@@ -409,7 +410,7 @@ const LEGACY_QUESTION_BANK: Question[] = [
     difficulty: 'MEDIUM',
     language_level: 2,
     question_vi: 'Giá trị nhỏ nhất của hàm số $y = x + \\frac{9}{x}$ với $x > 0$ bằng:',
-    question_en: 'The minimum value of $y = x + \\frac{9}{x}$ for $x > 0$ is:',
+    question_en: 'What is the minimum value of $y=x+\\dfrac{9}{x}$ for $x>0$?',
     options: [
       { option_key: 'A', content_vi: '$6$', content_en: '$6$', is_correct: true },
       { option_key: 'B', content_vi: '$9$', content_en: '$9$', is_correct: false },
@@ -433,7 +434,7 @@ const LEGACY_QUESTION_BANK: Question[] = [
     difficulty: 'HARD',
     language_level: 2,
     question_vi: 'Một người nông dân muốn rào một khu vườn hình chữ nhật có một cạnh giáp bờ sông (không cần rào cạnh này). Chiều dài hàng rào sẵn có là $120\\text{ m}$. Diện tích lớn nhất của khu vườn là:',
-    question_en: 'A farmer fences a rectangular plot bordering a straight river (no fence needed along the river). Using $120\\text{ m}$ of fencing, the maximum area is:',
+    question_en: 'A farmer uses $120\\text{ m}$ of fencing for three sides of a rectangular plot beside a straight river. What is the maximum possible area of the plot?',
     options: [
       { option_key: 'A', content_vi: '$1800\\text{ m}^2$', content_en: '$1800\\text{ m}^2$', is_correct: true },
       { option_key: 'B', content_vi: '$3600\\text{ m}^2$', content_en: '$3600\\text{ m}^2$', is_correct: false },
@@ -457,7 +458,7 @@ const LEGACY_QUESTION_BANK: Question[] = [
     difficulty: 'MEDIUM',
     language_level: 2,
     question_vi: 'Cho hàm số $y = x + \\frac{4}{x}$ trên khoảng $(0; +\\infty)$. Xét tính đúng/sai của các mệnh đề sau:',
-    question_en: 'Given $y = x + \\frac{4}{x}$ on $(0, +\\infty)$. Are the following statements True (Đ) or False (S):',
+    question_en: 'Given $y = x + \\frac{4}{x}$ on $(0, +\\infty)$. Determine whether each statement is true or false:',
     options: [
       { option_key: 'a', content_vi: 'Đạo hàm $y\' = 1 - \\frac{4}{x^2}$.', content_en: 'The derivative is $y\' = 1 - \\frac{4}{x^2}$.', is_correct: true },
       { option_key: 'b', content_vi: 'Hàm số đạt giá trị nhỏ nhất tại điểm $x = 2$.', content_en: 'The function attains its minimum at $x = 2$.', is_correct: true },
@@ -481,7 +482,7 @@ const LEGACY_QUESTION_BANK: Question[] = [
     difficulty: 'MEDIUM',
     language_level: 2,
     question_vi: 'Cho hàm số $f(x) = -x^3 + 3x + 2$ trên đoạn $[0; 2]$. Xét tính đúng/sai của các khẳng định sau:',
-    question_en: 'Given $f(x) = -x^3 + 3x + 2$ on $[0, 2]$. Are the following statements True (Đ) or False (S):',
+    question_en: 'Given $f(x) = -x^3 + 3x + 2$ on $[0, 2]$. Determine whether each statement is true or false:',
     options: [
       { option_key: 'a', content_vi: 'Đạo hàm $f\'(x) = -3x^2 + 3$.', content_en: 'The derivative is $f\'(x) = -3x^2 + 3$.', is_correct: true },
       { option_key: 'b', content_vi: 'Phương trình $f\'(x) = 0$ có một nghiệm $x = 1$ thuộc khoảng $(0; 2)$.', content_en: 'Root $x = 1$ lies in $(0, 2)$.', is_correct: true },
@@ -587,7 +588,7 @@ const LEGACY_QUESTION_BANK: Question[] = [
     difficulty: 'MEDIUM',
     language_level: 2,
     question_vi: 'Cho hàm số $y = \\frac{2x - 1}{x + 1}$. Xét tính đúng/sai của các mệnh đề sau:',
-    question_en: 'Given $y = \\frac{2x - 1}{x + 1}$. Determine whether each statement is True (Đ) or False (S):',
+    question_en: 'Given $y = \\frac{2x - 1}{x + 1}$. Determine whether each statement is true or false:',
     options: [
       { option_key: 'a', content_vi: 'Tập xác định $D = \\mathbb{R} \\setminus \\{-1\\}$.', content_en: 'Domain is $D = \\mathbb{R} \\setminus \\{-1\\}$.', is_correct: true },
       { option_key: 'b', content_vi: 'Đạo hàm $y\' = \\frac{3}{(x + 1)^2} > 0, \\forall x \\ne -1$.', content_en: 'Derivative $y\' = \\frac{3}{(x + 1)^2} > 0, \\forall x \\ne -1$.', is_correct: true },
@@ -721,7 +722,7 @@ const LEGACY_QUESTION_BANK: Question[] = [
     difficulty: 'EASY',
     language_level: 2,
     question_vi: 'Trong không gian $Oxyz$, cho $A(1; 2; -3)$ và $B(3; 0; 1)$. Toạ độ trung điểm $M$ của đoạn thẳng $AB$ là:',
-    question_en: 'In $Oxyz$, given $A(1, 2, -3)$ and $B(3, 0, 1)$. The midpoint $M$ of $AB$ is:',
+    question_en: 'In $Oxyz$, given $A(1,2,-3)$ and $B(3,0,1)$, what are the coordinates of the midpoint $M$ of $AB$?',
     options: [
       { option_key: 'A', content_vi: '$M(2; 1; -1)$', content_en: '$M(2, 1, -1)$', is_correct: true },
       { option_key: 'B', content_vi: '$M(4; 2; -2)$', content_en: '$M(4, 2, -2)$', is_correct: false },
@@ -745,7 +746,7 @@ const LEGACY_QUESTION_BANK: Question[] = [
     difficulty: 'MEDIUM',
     language_level: 2,
     question_vi: 'Trong không gian $Oxyz$, cho $\\vec{u} = (1; 2; -2)$ và $\\vec{v} = (2; -1; 0)$. Xét tính đúng/sai của các mệnh đề sau:',
-    question_en: 'In $Oxyz$, given $\\vec{u} = (1, 2, -2)$ and $\\vec{v} = (2, -1, 0)$. Are the following statements True (Đ) or False (S):',
+    question_en: 'In $Oxyz$, given $\\vec{u} = (1, 2, -2)$ and $\\vec{v} = (2, -1, 0)$. Determine whether each statement is true or false:',
     options: [
       { option_key: 'a', content_vi: 'Độ dài $|\\vec{u}| = 3$.', content_en: 'Length $|\\vec{u}| = 3$.', is_correct: true },
       { option_key: 'b', content_vi: 'Tích vô hướng $\\vec{u} \\cdot \\vec{v} = 0$.', content_en: 'Dot product $\\vec{u} \\cdot \\vec{v} = 0$.', is_correct: true },
@@ -791,7 +792,7 @@ const LEGACY_QUESTION_BANK: Question[] = [
     difficulty: 'EASY',
     language_level: 2,
     question_vi: 'Đạo hàm của hàm số $y = x^4 - 3x^2 + 5$ là:',
-    question_en: 'The derivative of $y = x^4 - 3x^2 + 5$ is:',
+    question_en: 'What is the derivative of $y=x^4-3x^2+5$?',
     options: [
       { option_key: 'A', content_vi: '$y\' = 4x^3 - 6x$', content_en: '$y\' = 4x^3 - 6x$', is_correct: true },
       { option_key: 'B', content_vi: '$y\' = 4x^3 - 6x + 5$', content_en: '$y\' = 4x^3 - 6x + 5$', is_correct: false },
@@ -815,7 +816,7 @@ const LEGACY_QUESTION_BANK: Question[] = [
     difficulty: 'MEDIUM',
     language_level: 2,
     question_vi: 'Hệ số góc của tiếp tuyến của đồ thị hàm số $y = x^3 - 2x + 1$ tại điểm $x_0 = 2$ bằng:',
-    question_en: 'The slope of the tangent to $y = x^3 - 2x + 1$ at $x_0 = 2$ is:',
+    question_en: 'What is the slope of the tangent to $y=x^3-2x+1$ at $x_0=2$?',
     options: [
       { option_key: 'A', content_vi: '$10$', content_en: '$10$', is_correct: true },
       { option_key: 'B', content_vi: '$12$', content_en: '$12$', is_correct: false },
@@ -839,7 +840,7 @@ const LEGACY_QUESTION_BANK: Question[] = [
     difficulty: 'MEDIUM',
     language_level: 2,
     question_vi: 'Cho hàm số $y = f(x) = \\frac{2x + 1}{x - 1}$. Xét tính đúng/sai của các khẳng định sau:',
-    question_en: 'Given $y = f(x) = \\frac{2x + 1}{x - 1}$. Determine True (Đ) or False (S):',
+    question_en: 'Given $y = f(x) = \\frac{2x + 1}{x - 1}$. Determine whether each statement is true or false:',
     options: [
       { option_key: 'a', content_vi: 'Tập xác định $D = \\mathbb{R} \\setminus \\{1\\}$.', content_en: 'Domain $D = \\mathbb{R} \\setminus \\{1\\}$.', is_correct: true },
       { option_key: 'b', content_vi: 'Đạo hàm $f\'(x) = \\frac{-3}{(x - 1)^2}$.', content_en: 'Derivative $f\'(x) = \\frac{-3}{(x - 1)^2}$.', is_correct: true },
@@ -909,7 +910,7 @@ const LEGACY_QUESTION_BANK: Question[] = [
     difficulty: 'MEDIUM',
     language_level: 2,
     question_vi: 'Nghiệm của phương trình $2^{2x - 1} = 32$ là:',
-    question_en: 'The solution of $2^{2x - 1} = 32$ is:',
+    question_en: 'Solve the equation $2^{2x-1}=32$.',
     options: [
       { option_key: 'A', content_vi: '$x = 3$', content_en: '$x = 3$', is_correct: true },
       { option_key: 'B', content_vi: '$x = 2$', content_en: '$x = 2$', is_correct: false },
@@ -933,12 +934,12 @@ const LEGACY_QUESTION_BANK: Question[] = [
     difficulty: 'MEDIUM',
     language_level: 2,
     question_vi: 'Cho phương trình $\\log_3(x - 2) + \\log_3(x + 6) = 2$. Xét tính đúng/sai của các khẳng định sau:',
-    question_en: 'Given $\\log_3(x - 2) + \\log_3(x + 6) = 2$. Determine True (Đ) or False (S):',
+    question_en: 'Given $\\log_3(x - 2) + \\log_3(x + 6) = 2$. Determine whether each statement is true or false:',
     options: [
-      { option_key: 'a', content_vi: 'Điều kiện xác định $x > 2$.', content_en: 'Domain condition $x > 2$.', is_correct: true },
-      { option_key: 'b', content_vi: 'Phương trình biến đổi về $(x - 2)(x + 6) = 9$.', content_en: 'Simplifies to $(x - 2)(x + 6) = 9$.', is_correct: true },
-      { option_key: 'c', content_vi: 'Phương trình có 2 nghiệm $x = 3$ và $x = -7$.', content_en: 'Has two solutions $x = 3$ and $x = -7$.', is_correct: false },
-      { option_key: 'd', content_vi: 'Phương trình có đúng một nghiệm duy nhất $x = 3$.', content_en: 'Has one unique solution $x = 3$.', is_correct: true },
+      { option_key: 'a', content_vi: 'Điều kiện xác định $x > 2$.', content_en: 'The domain condition is $x>2$.', is_correct: true },
+      { option_key: 'b', content_vi: 'Phương trình biến đổi về $(x - 2)(x + 6) = 9$.', content_en: 'The equation simplifies to $(x-2)(x+6)=9$.', is_correct: true },
+      { option_key: 'c', content_vi: 'Phương trình có 2 nghiệm $x = 3$ và $x = -7$.', content_en: 'The equation has two solutions, $x=3$ and $x=-7$.', is_correct: false },
+      { option_key: 'd', content_vi: 'Phương trình có đúng một nghiệm duy nhất $x = 3$.', content_en: 'The equation has exactly one solution, $x=3$.', is_correct: true },
     ],
     correct_answer: 'a-Đ, b-Đ, c-S, d-Đ',
     solution_vi: 'a-Đ, b-Đ, c-S, d-Đ.',
@@ -979,7 +980,7 @@ const LEGACY_QUESTION_BANK: Question[] = [
     difficulty: 'EASY',
     language_level: 2,
     question_vi: 'Cho dãy số $(u_n)$ có số hạng tổng quát $u_n = \\frac{2n - 1}{n + 1}$. Giá trị của $u_4$ bằng:',
-    question_en: 'For $(u_n)$ with $u_n = \\frac{2n - 1}{n + 1}$, the 4th term $u_4$ is:',
+    question_en: 'For the sequence $(u_n)$ defined by $u_n = \\dfrac{2n - 1}{n + 1}$, what is $u_4$?',
     options: [
       { option_key: 'A', content_vi: '$\\dfrac{7}{5}$', content_en: '$\\dfrac{7}{5}$', is_correct: true },
       { option_key: 'B', content_vi: '$\\dfrac{4}{5}$', content_en: '$\\dfrac{4}{5}$', is_correct: false },
@@ -1003,7 +1004,7 @@ const LEGACY_QUESTION_BANK: Question[] = [
     difficulty: 'EASY',
     language_level: 2,
     question_vi: 'Cho cấp số cộng $(u_n)$ có $u_1 = 4$ và công sai $d = 3$. Số hạng thứ 6 của cấp số cộng là:',
-    question_en: 'For an AP $(u_n)$ with $u_1 = 4$ and $d = 3$, the 6th term is:',
+    question_en: 'For the arithmetic progression $(u_n)$ with $u_1=4$ and common difference $d=3$, what is the sixth term?',
     options: [
       { option_key: 'A', content_vi: '$19$', content_en: '$19$', is_correct: true },
       { option_key: 'B', content_vi: '$22$', content_en: '$22$', is_correct: false },
@@ -1027,12 +1028,12 @@ const LEGACY_QUESTION_BANK: Question[] = [
     difficulty: 'MEDIUM',
     language_level: 2,
     question_vi: 'Cho cấp số cộng $(u_n)$ có $u_1 = 2$ và công sai $d = 5$. Xét tính đúng/sai của các mệnh đề sau:',
-    question_en: 'Given an AP $(u_n)$ with $u_1 = 2$ and $d = 5$. Determine True (Đ) or False (S):',
+    question_en: 'Given the arithmetic progression $(u_n)$ with $u_1=2$ and common difference $d=5$, determine whether each statement is true or false:',
     options: [
-      { option_key: 'a', content_vi: 'Số hạng tổng quát $u_n = 5n - 3$.', content_en: 'General term $u_n = 5n - 3$.', is_correct: true },
+      { option_key: 'a', content_vi: 'Số hạng tổng quát $u_n = 5n - 3$.', content_en: 'The general term is $u_n=5n-3$.', is_correct: true },
       { option_key: 'b', content_vi: 'Số $102$ là một số hạng của cấp số cộng.', content_en: '102 is a term of the AP.', is_correct: true },
-      { option_key: 'c', content_vi: 'Tổng 10 số hạng đầu $S_{10} = 245$.', content_en: 'Sum $S_{10} = 245$.', is_correct: true },
-      { option_key: 'd', content_vi: 'Dãy số $(u_n)$ là một dãy số giảm.', content_en: 'Sequence is strictly decreasing.', is_correct: false },
+      { option_key: 'c', content_vi: 'Tổng 10 số hạng đầu $S_{10} = 245$.', content_en: 'The sum of the first 10 terms is $S_{10}=245$.', is_correct: true },
+      { option_key: 'd', content_vi: 'Dãy số $(u_n)$ là một dãy số giảm.', content_en: 'The sequence is strictly decreasing.', is_correct: false },
     ],
     correct_answer: 'a-Đ, b-Đ, c-Đ, d-S',
     solution_vi: 'a-Đ, b-Đ, c-Đ, d-S.',
@@ -1051,7 +1052,7 @@ const LEGACY_QUESTION_BANK: Question[] = [
     difficulty: 'EASY',
     language_level: 2,
     question_vi: 'Cho cấp số nhân $(u_n)$ có $u_1 = 3$ và công bội $q = 2$. Giá trị của $u_5$ bằng:',
-    question_en: 'For GP $(u_n)$ with $u_1 = 3$ and $q = 2$, $u_5$ is:',
+    question_en: 'For the geometric progression $(u_n)$ with $u_1=3$ and common ratio $q=2$, what is $u_5$?',
     options: [
       { option_key: 'A', content_vi: '$48$', content_en: '$48$', is_correct: true },
       { option_key: 'B', content_vi: '$24$', content_en: '$24$', is_correct: false },
@@ -1075,7 +1076,7 @@ const LEGACY_QUESTION_BANK: Question[] = [
     difficulty: 'MEDIUM',
     language_level: 2,
     question_vi: 'Cho cấp số nhân $(u_n)$ có $u_1 = 3$ và công bội $q = 2$. Tính tổng $S_6$.',
-    question_en: 'For a GP $(u_n)$ with $u_1 = 3$ and $q = 2$, compute sum $S_6$.',
+    question_en: 'For the geometric progression $(u_n)$ with $u_1=3$ and common ratio $q=2$, compute the sum $S_6$.',
     correct_answer: '189',
     solution_vi: '$S_6 = \\frac{3(1 - 64)}{1 - 2} = 189$.',
     solution_en: '$S_6 = 189$.',
@@ -1121,7 +1122,7 @@ const LEGACY_QUESTION_BANK: Question[] = [
     difficulty: 'EASY',
     language_level: 2,
     question_vi: 'Toạ độ đỉnh của Parabol $y = x^2 - 4x + 3$ là:',
-    question_en: 'Vertex of parabola $y = x^2 - 4x + 3$ is:',
+    question_en: 'What are the coordinates of the vertex of the parabola $y = x^2 - 4x + 3$?',
     options: [
       { option_key: 'A', content_vi: '$I(2; -1)$', content_en: '$I(2, -1)$', is_correct: true },
       { option_key: 'B', content_vi: '$I(-2; 15)$', content_en: '$I(-2, 15)$', is_correct: false },
@@ -1149,7 +1150,7 @@ const LEGACY_QUESTION_BANK: Question[] = [
     difficulty: 'EASY',
     language_level: 2,
     question_vi: 'Tập xác định của hàm số $y = \\tan\\left(x - \\frac{\\pi}{4}\\right)$ là:',
-    question_en: 'The domain of function $y = \\tan\\left(x - \\frac{\\pi}{4}\\right)$ is:',
+    question_en: 'What is the domain of the function $y = \\tan\\left(x - \\dfrac{\\pi}{4}\\right)$?',
     options: [
       { option_key: 'A', content_vi: '$D = \\mathbb{R} \\setminus \\left\\{\\frac{3\\pi}{4} + k\\pi, k \\in \\mathbb{Z}\\right\\}$', content_en: '$D = \\mathbb{R} \\setminus \\left\\{\\frac{3\\pi}{4} + k\\pi, k \\in \\mathbb{Z}\\right\\}$', is_correct: true },
       { option_key: 'B', content_vi: '$D = \\mathbb{R} \\setminus \\left\\{\\frac{\\pi}{4} + k\\pi, k \\in \\mathbb{Z}\\right\\}$', content_en: '$D = \\mathbb{R} \\setminus \\left\\{\\frac{\\pi}{4} + k\\pi, k \\in \\mathbb{Z}\\right\\}$', is_correct: false },
@@ -1204,8 +1205,8 @@ const LEGACY_QUESTION_BANK: Question[] = [
       { option_key: 'C', content_vi: '$1$', content_en: '$1$', is_correct: false },
       { option_key: 'D', content_vi: '$2$', content_en: '$2$', is_correct: false },
     ],
-    solution_vi: 'Vì $-1 \\le \\cos(...) \\le 1 \\implies 3(-1)+2 \\le y \\le 3(1)+2 \\implies \\max y = 5$.',
-    solution_en: 'Since $-1 \\le \\cos(...) \\le 1 \\implies \\max = 3(1) + 2 = 5$.',
+    solution_vi: 'Vì $-1 \\le \\cos\\left(x-\\dfrac{\\pi}{6}\\right) \\le 1$, nên giá trị lớn nhất đạt được khi $\\cos\\left(x-\\dfrac{\\pi}{6}\\right)=1$. Do đó $\\max y=3\\cdot1+2=5$.',
+    solution_en: 'Since $-1 \\le \\cos\\left(x-\\dfrac{\\pi}{6}\\right) \\le 1$, the maximum occurs when $\\cos\\left(x-\\dfrac{\\pi}{6}\\right)=1$. Hence $\\max y=3\\cdot1+2=5$.',
     correct_answer: 'A',
     math_skill: 'GTLN của hàm lượng giác',
     english_skill: 'Maximum value of trig function',
@@ -1245,7 +1246,7 @@ const LEGACY_QUESTION_BANK: Question[] = [
     difficulty: 'MEDIUM',
     language_level: 2,
     question_vi: 'Cho hàm số $y = 2\\cos\\left(2x - \\frac{\\pi}{3}\\right) + 1$. Xét tính đúng/sai của các mệnh đề sau:',
-    question_en: 'Given $y = 2\\cos\\left(2x - \\frac{\\pi}{3}\\right) + 1$. Determine whether each statement is True (Đ) or False (S):',
+    question_en: 'Given $y = 2\\cos\\left(2x - \\frac{\\pi}{3}\\right) + 1$. Determine whether each statement is true or false:',
     options: [
       { option_key: 'a', content_vi: 'Tập xác định của hàm số là $D = \\mathbb{R}$.', content_en: 'The domain is $D = \\mathbb{R}$.', is_correct: true },
       { option_key: 'b', content_vi: 'Tập giá trị của hàm số là $[-1; 3]$.', content_en: 'The range of the function is $[-1, 3]$.', is_correct: true },
@@ -1464,6 +1465,7 @@ function sanitizeImportedQuestion(q: Question): Question {
 const RAW_FULL_QUESTION_BANK: Question[] = [
   ...ORIGINAL_SOURCE_VISUAL_QUESTION_BANK, // PNL có hình/bảng gốc: ưu tiên cao nhất
   ...CURATED_20260902_QUESTION_BANK,       // nguồn 10-11-12 bổ sung 02/09, đã kiểm tay
+  ...MINIMUM_BILINGUAL_SOURCE_QUESTION_BANK, // bù tối thiểu câu nguồn sạch English-ready cho các bài 10 đang thiếu
   ...REAL_SOURCE_QUESTION_BANK,            // nguồn PNL/GV đã lọc
   ...SOURCE_SUPPLEMENT_QUESTION_BANK,      // nguồn bổ sung khác
   ...STATIC_QUESTION_BANK,                 // fallback tối thiểu 4-2-2-1
@@ -1498,11 +1500,15 @@ export function isQuestionAutoGradable(q: Question): boolean {
   return false;
 }
 
-// User-facing bank size policy: every exact math type keeps a professional, diverse pool
-// between the guaranteed baseline 4-2-2-1 and the hard ceiling 12-4-6-2.
-// PNL questions with original figures are kept first, then other clean PNL/source questions,
-// while static questions remain the safety net so no type loses its minimum coverage.
-const QUESTION_BANK_FORMAT_CAP: Record<string, number> = { TN: 12, DS: 4, TLN: 6, TL: 2 };
+// Do not impose a hard per-format ceiling. The verified source bank may grow over time;
+// selection UI decides how many questions to take while this bank keeps every distinct clean item.
+// This also ensures the static 4-2-2-1 safety baseline is never displaced by source items.
+const QUESTION_BANK_FORMAT_CAP: Record<string, number> = {
+  TN: Number.MAX_SAFE_INTEGER,
+  DS: Number.MAX_SAFE_INTEGER,
+  TLN: Number.MAX_SAFE_INTEGER,
+  TL: Number.MAX_SAFE_INTEGER,
+};
 
 function isPnlSourceQuestion(q: Question): boolean {
   const source = `${q.source_name || ''} ${q.created_by || ''}`.toLowerCase();
@@ -1585,6 +1591,11 @@ export function getQuestionStructureSignature(questionText?: string): string {
 
 export function getQuestionDedupSignature(q: Question): string {
   const format = q.format_type || q.question_type || 'UNKNOWN';
+  // The static bank is the guaranteed 4-2-2-1 safety baseline. Its variants are
+  // intentionally authored as separate deterministic exercises; never collapse them
+  // merely because their mathematical structure is similar. Source/imported questions
+  // still use structural deduplication so near-clones do not crowd the professional bank.
+  if (q.id?.startsWith('q-static-')) return `${format}|static|${q.id}`;
   const combined = [
     q.question_vi || q.question_en || '',
     ...(q.options || []).map((o) => o.content_vi || o.content_en || ''),

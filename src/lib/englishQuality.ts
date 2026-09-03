@@ -7,8 +7,18 @@ const VIETNAMESE_WORDS = /\b(?:cho|xét|hãy|tính|tìm|giải|một|các|hàm|s
 const MATH_SPAN = /\$\$[\s\S]*?\$\$|\$[^$]*\$|\\\[[\s\S]*?\\\]|\\\([^)]*?\\\)/g;
 
 export const containsVietnameseProse = (value?: string): boolean => {
-  const prose = (value || '').normalize('NFC').replace(MATH_SPAN, ' ');
-  return VIETNAMESE_MARKS.test(prose) || VIETNAMESE_WORDS.test(prose);
+  const normalized = (value || '').normalize('NFC');
+  // Accented Vietnamese is never a mathematical command, so scan the complete field.
+  // This catches labels hidden inside LaTeX such as \text{Tần số}.
+  if (VIETNAMESE_MARKS.test(normalized)) return true;
+
+  // For unaccented Vietnamese, inspect normal prose plus human-readable LaTeX labels,
+  // while ignoring commands/variables such as \sin, \mathrm, x, y, etc.
+  const latexLabels = Array.from(normalized.matchAll(/\\(?:text|operatorname)\s*\{([^{}]*)\}/g))
+    .map((match) => match[1])
+    .join(' ');
+  const prose = normalized.replace(MATH_SPAN, ' ');
+  return VIETNAMESE_WORDS.test(`${prose} ${latexLabels}`);
 };
 
 export const isCleanEnglishText = (value?: string): boolean =>

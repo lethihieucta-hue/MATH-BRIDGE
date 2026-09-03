@@ -13766,7 +13766,7 @@ export const REAL_SOURCE_QUESTION_BANK: Question[] = [
     "difficulty": "MEDIUM",
     "language_level": 2,
     "question_vi": "Cho hàm số $y=2x^3-3(m+1)x^2+6mx+1$ nghịch biến trên khoảng (1; 3) khi và chỉ khi",
-    "question_en": "The function $y=2x^3-3(m+1)x^2+6mx+1$ is decreasing on $(1,3)$ if and only if:",
+    "question_en": "For which values of $m$ is the function $y=2x^3-3(m+1)x^2+6mx+1$ decreasing on $(1,3)$?",
     "options": [
       {
         "option_key": "A",

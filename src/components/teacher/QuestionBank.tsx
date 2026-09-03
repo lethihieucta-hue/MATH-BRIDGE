@@ -377,7 +377,7 @@ export const QuestionBank: React.FC = () => {
                   rows={2}
                   value={qEn}
                   onChange={(e) => setQEn(e.target.value)}
-                  placeholder="Ví dụ: Find the domain of the function f(x) = \sqrt{x - 3}..."
+                  placeholder="Ví dụ: Find the domain of the function f(x) = \\sqrt{x - 3}..."
                   className="w-full mt-1 p-3 rounded-xl border border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-teal-500 font-medium"
                 />
               </div>

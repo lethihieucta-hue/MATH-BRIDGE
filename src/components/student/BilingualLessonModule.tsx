@@ -777,7 +777,7 @@ export const BilingualLessonModule: React.FC = () => {
     });
     const languageReady = languageMode === 'VIETNAMESE'
       ? deduped
-      : deduped.filter((question) => isQuestionEnglishReady(question));
+      : deduped.filter((question) => isQuestionEnglishReady(question, { includeSolution: true }));
     return orderQuestionPool(languageReady, typeId);
   };
 

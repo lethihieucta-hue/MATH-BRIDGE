@@ -20625,7 +20625,7 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "difficulty": "MEDIUM",
     "language_level": 2,
     "question_vi": "Một chất điểm chuyển động theo $s(t)=4-2t+4t^2+2t^3$(m). Gia tốc tại $t=5$ s bằng",
-    "question_en": "A particle moves according to $s(t)=4-2t+4t^2+2t^3$ (m). Its acceleration at $t=5$ s is:",
+    "question_en": "A particle moves according to $s(t)=4-2t+4t^2+2t^3$ (m). What is its acceleration at $t=5$ s?",
     "options": [
       {
         "option_key": "A",
@@ -20673,7 +20673,7 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "difficulty": "MEDIUM",
     "language_level": 2,
     "question_vi": "Chuyển động có $s(t)=t^3-3t^2-9t+2$. Gia tốc tại $t=3$ s bằng",
-    "question_en": "For the motion $s(t)=t^3-3t^2-9t+2$, the acceleration at $t=3$ s is:",
+    "question_en": "For the motion $s(t)=t^3-3t^2-9t+2$, what is the acceleration at $t=3$ s?",
     "options": [
       {
         "option_key": "A",
@@ -20721,7 +20721,7 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "difficulty": "MEDIUM",
     "language_level": 2,
     "question_vi": "Một chất điểm có $s(t)=2t^4+6t^2-3t+1$. Gia tốc tại $t=3$ s bằng",
-    "question_en": "A particle moves according to $s(t)=2t^4+6t^2-3t+1$. Its acceleration at $t=3$ s is:",
+    "question_en": "A particle moves according to $s(t)=2t^4+6t^2-3t+1$. What is its acceleration at $t=3$ s?",
     "options": [
       {
         "option_key": "A",
@@ -20863,7 +20863,7 @@ export const SOURCE_SUPPLEMENT_QUESTION_BANK: Question[] = [
     "difficulty": "MEDIUM",
     "language_level": 2,
     "question_vi": "Một chuyển động có $s(t)=t^3+3t^2+9t$. Gia tốc tại $t=1$ s bằng",
-    "question_en": "For the motion $s(t)=t^3+3t^2+9t$, the acceleration at $t=1$ s is:",
+    "question_en": "For the motion $s(t)=t^3+3t^2+9t$, what is the acceleration at $t=1$ s?",
     "options": [
       {
         "option_key": "A",
