@@ -13,6 +13,8 @@ import {
   Compass,
   FileQuestion,
   UserCheck,
+  UsersRound,
+  Microscope,
 } from 'lucide-react';
 
 export const Header: React.FC = () => {
@@ -73,7 +75,7 @@ export const Header: React.FC = () => {
                     key={grade}
                     onClick={() => {
                       setSelectedGrade(grade);
-                      if (activeTab !== 'test-builder') {
+                      if (['learn', 'content-studio', 'question-bank'].includes(activeTab)) {
                         setActiveTab('learn');
                       }
                     }}
@@ -115,6 +117,28 @@ export const Header: React.FC = () => {
               >
                 <GraduationCap className="w-4 h-4" />
                 <span>Tạo Bài Test</span>
+              </button>
+              <button
+                onClick={() => setActiveTab('teacher-dashboard')}
+                className={`px-4 py-1.5 rounded-xl transition cursor-pointer flex items-center gap-1.5 ${
+                  activeTab === 'teacher-dashboard' || activeTab === 'teacher-analytics'
+                    ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-extrabold shadow-xs'
+                    : 'text-slate-300 hover:text-white hover:bg-slate-800/60'
+                }`}
+              >
+                <UsersRound className="w-4 h-4" />
+                <span>Lớp & Phân tích</span>
+              </button>
+              <button
+                onClick={() => setActiveTab('teacher-research')}
+                className={`px-4 py-1.5 rounded-xl transition cursor-pointer flex items-center gap-1.5 ${
+                  activeTab === 'teacher-research'
+                    ? 'bg-gradient-to-r from-teal-600 to-emerald-600 text-white font-extrabold shadow-xs'
+                    : 'text-slate-300 hover:text-white hover:bg-slate-800/60'
+                }`}
+              >
+                <Microscope className="w-4 h-4" />
+                <span>Nghiên cứu</span>
               </button>
             </nav>
 

@@ -58,6 +58,10 @@ export const INITIAL_DATA = {
       created_at: new Date().toISOString(),
     },
   ],
+  classes: [
+    { id: 'class-10a1', name: 'Lớp 10A1', school_id: 'sch-1', teacher_id: 'usr-teacher-1', grade_id: 10, school_year: '2026-2027', class_code: 'MB10A1', student_count: 0, created_at: new Date().toISOString() },
+    { id: 'class-10a2', name: 'Lớp 10A2', school_id: 'sch-1', teacher_id: 'usr-teacher-1', grade_id: 10, school_year: '2026-2027', class_code: 'MB10A2', student_count: 0, created_at: new Date().toISOString() },
+  ],
   grades: [
     { id: 10, name: 'Toán 10 - Kết Nối Tri Thức', order_index: 1 },
     { id: 11, name: 'Toán 11 - Kết Nối Tri Thức', order_index: 2 },
@@ -180,7 +184,17 @@ export const INITIAL_DATA = {
       mei_score: 80.5,
       calculated_at: new Date().toISOString(),
     },
-  ],
+  ],  practice_attempts: [],
+  test_attempts: [],
+  hint_logs: [],
+  teacher_interventions: [],
+  question_versions: [],
+  research_mode: {
+    enabled: false,
+    locked_at: null,
+    protocol_version: 'AMB-RP-1.0',
+    note: '',
+  },
 };
 
 function isLegacyExtremaFallbackQuestion(q: any): boolean {
@@ -276,6 +290,13 @@ function getLocalDb() {
       });
     }
 
+    parsed.practice_attempts = parsed.practice_attempts || [];
+    parsed.test_attempts = parsed.test_attempts || [];
+    parsed.hint_logs = parsed.hint_logs || [];
+    parsed.teacher_interventions = parsed.teacher_interventions || [];
+    parsed.question_versions = parsed.question_versions || [];
+    parsed.research_mode = parsed.research_mode || { enabled: false, locked_at: null, protocol_version: 'AMB-RP-1.0', note: '' };
+
     if (changed) {
       localStorage.setItem(DB_KEY, JSON.stringify(parsed));
     }
@@ -350,13 +371,20 @@ export async function apiFetch<T = any>(endpoint: string, options?: RequestInit)
     const typeIds = new Set<string>((body.type_ids || []).filter(Boolean));
     const incoming = Array.isArray(body.questions) ? body.questions : [];
     const canonicalIds = new Set(INITIAL_DATA.questions.map((q: any) => q.id));
+    const replaced = (db.questions || []).filter((q: any) => !canonicalIds.has(q.id) && q.type_id && typeIds.has(q.type_id));
+    if (db.research_mode?.enabled && replaced.length) {
+      db.question_versions = db.question_versions || [];
+      db.question_versions.push(...replaced.map((q: any) => ({ ...q, archived_at: new Date().toISOString(), archived_reason: 'Research Mode bulk replace' })));
+    }
     db.questions = (db.questions || []).filter(
       (q: any) => canonicalIds.has(q.id) || !q.type_id || !typeIds.has(q.type_id)
     );
+    const previousVersions = new Map(replaced.map((q: any) => [q.id, Number(q.question_version || 1)]));
     const now = new Date().toISOString();
     const saved = incoming.map((q: any, idx: number) => ({
       ...q,
       id: q.id || `q-ai-${Date.now()}-${idx}-${Math.random().toString(36).slice(2, 7)}`,
+      question_version: previousVersions.has(q.id) ? Number(previousVersions.get(q.id)) + 1 : Number(q.question_version || 1),
       created_at: q.created_at || now,
       updated_at: now,
     }));
@@ -370,7 +398,17 @@ export async function apiFetch<T = any>(endpoint: string, options?: RequestInit)
       const body = JSON.parse(options.body as string);
       const requestedId = body.id as string | undefined;
       const idx = requestedId ? db.questions.findIndex((q: any) => q.id === requestedId) : -1;
-      const question = { ...body, id: requestedId || `q-${Date.now()}-${Math.random().toString(36).slice(2, 8)}` };
+      const previous = idx >= 0 ? db.questions[idx] : null;
+      if (previous && db.research_mode?.enabled) {
+        db.question_versions = db.question_versions || [];
+        db.question_versions.push({ ...previous, archived_at: new Date().toISOString(), archived_reason: 'Research Mode edit' });
+      }
+      const question = {
+        ...body,
+        id: requestedId || `q-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+        question_version: previous ? Number(previous.question_version || 1) + 1 : Number(body.question_version || 1),
+        updated_at: new Date().toISOString(),
+      };
       if (idx >= 0) db.questions[idx] = { ...db.questions[idx], ...question };
       else db.questions.push(question);
       saveLocalDb(db);
@@ -421,6 +459,70 @@ export async function apiFetch<T = any>(endpoint: string, options?: RequestInit)
         { id: 'act-2', type: 'READING', title: 'Đọc hiểu Đề toán Khảo sát hàm số GDPT 2018', topic_id: 'top-12-1-1', level: 2 },
         { id: 'act-3', type: 'MINI_TEST', title: 'Mini Test 15 phút - Tỷ lệ 50% Anh', test_id: 'tst-12-1', level: 2 },
       ],
+    } as any;
+  }
+
+
+  if (path === '/api/teacher/classes') {
+    if (options?.method === 'POST') {
+      const body = JSON.parse(options.body as string);
+      const cls = { id: `class-${Date.now()}`, class_code: `MB${Math.floor(1000 + Math.random() * 9000)}`, student_count: 0, created_at: new Date().toISOString(), ...body };
+      db.classes = db.classes || [];
+      db.classes.push(cls);
+      saveLocalDb(db);
+      return { success: true, class: cls } as any;
+    }
+    return (db.classes || []) as any;
+  }
+
+  if (path === '/api/teacher/research-mode' && options?.method === 'POST') {
+    const body = JSON.parse(options.body as string);
+    db.research_mode = {
+      ...(db.research_mode || {}),
+      ...body,
+      locked_at: body.enabled ? new Date().toISOString() : null,
+    };
+    saveLocalDb(db);
+    return { success: true, research_mode: db.research_mode } as any;
+  }
+
+  if (path === '/api/teacher/interventions') {
+    if (options?.method === 'POST') {
+      const body = JSON.parse(options.body as string);
+      const item = { id: `ti-${Date.now()}`, ...body, created_at: new Date().toISOString() };
+      db.teacher_interventions = db.teacher_interventions || [];
+      db.teacher_interventions.push(item);
+      saveLocalDb(db);
+      return { success: true, intervention: item } as any;
+    }
+    return (db.teacher_interventions || []) as any;
+  }
+
+  if (path === '/api/teacher/research-snapshot') {
+    const classId = new URL(endpoint, 'http://localhost').searchParams.get('class_id') || 'class-10a1';
+    const attempts = (db.practice_attempts || []).filter((x: any) => !x.class_id || x.class_id === classId);
+    const hints = (db.hint_logs || []).filter((x: any) => !x.class_id || x.class_id === classId);
+    const counts: any = { L: 0, C: 0, M: 0 };
+    [...attempts, ...hints].forEach((x: any) => { if (x.barrier_type && counts[x.barrier_type] !== undefined) counts[x.barrier_type] += 1; });
+    const totalBarrier = counts.L + counts.C + counts.M;
+    const first = attempts.filter((x: any) => Number(x.attempt_number || 1) === 1);
+    const high = hints.filter((x: any) => Number(x.hint_level || 0) === 3).length;
+    const noHint = attempts.filter((x: any) => x.independent_mode || Number(x.hint_count || 0) === 0);
+    const pct = (a: number, b: number) => b ? Math.round((a / b) * 1000) / 10 : 0;
+    return {
+      research_mode: db.research_mode,
+      classes: db.classes || [],
+      barrier_summary: { language: counts.L, comprehension: counts.C, math_reasoning: counts.M, total_hint_events: hints.length, high_support_rate: pct(high, hints.length) },
+      independence: {
+        first_attempt_accuracy: pct(first.filter((x: any) => x.is_correct || x.first_attempt_correct).length, first.length),
+        final_accuracy: pct(attempts.filter((x: any) => x.final_correct ?? x.is_correct).length, attempts.length),
+        avg_retry: attempts.length ? Math.round((attempts.reduce((s: number, x: any) => s + Number(x.retry_count || Math.max(0, Number(x.attempt_number || 1) - 1)), 0) / attempts.length) * 10) / 10 : 0,
+        no_hint_accuracy: pct(noHint.filter((x: any) => x.is_correct).length, noHint.length),
+      },
+      common_barriers: (['L','C','M'] as const).map((code) => ({ code, label: code, count: counts[code], percent: pct(counts[code], totalBarrier) })),
+      recent_interventions: (db.teacher_interventions || []).filter((x: any) => !x.class_id || x.class_id === classId).slice(-20).reverse(),
+      question_version_count: (db.question_versions || []).length,
+      total_attempts: attempts.length,
     } as any;
   }
 

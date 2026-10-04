@@ -22,6 +22,7 @@ import { QuestionBank } from './components/teacher/QuestionBank';
 import { ContentStudio } from './components/teacher/ContentStudio';
 import { TestBuilder } from './components/teacher/TestBuilder';
 import { TeacherAnalytics } from './components/teacher/TeacherAnalytics';
+import { TeacherResearchHub } from './components/teacher/TeacherResearchHub';
 
 // Online Exam Taking Component
 import { OnlineExamRoom } from './components/online_exam/OnlineExamRoom';
@@ -56,6 +57,16 @@ export default function App() {
   const renderContent = () => {
     if (currentRole === 'TEACHER') {
       switch (activeTab) {
+        case 'teacher-dashboard':
+          return <TeacherDashboard setActiveTab={setActiveTab} />;
+        case 'teacher-analytics':
+          return <TeacherAnalytics />;
+        case 'teacher-research':
+          return <TeacherResearchHub />;
+        case 'content-studio':
+          return <ContentStudio />;
+        case 'question-bank':
+          return <QuestionBank />;
         case 'test-builder':
           return <TestBuilder />;
         case 'learn':

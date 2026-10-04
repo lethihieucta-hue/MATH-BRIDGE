@@ -1,161 +1,114 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { apiFetch } from '../../lib/dataService';
-import { BarChart3, Users, AlertCircle, HelpCircle, Lightbulb, Zap, TrendingUp } from 'lucide-react';
+import { AlertCircle, BarChart3, BrainCircuit, BookOpenCheck, ShieldCheck } from 'lucide-react';
 
 export const TeacherAnalytics: React.FC = () => {
-  const [classAnalytics, setClassAnalytics] = useState<any>(null);
+  const [classes, setClasses] = useState<any[]>([]);
+  const [classId, setClassId] = useState('class-10a1');
+  const [analytics, setAnalytics] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    apiFetch<any>('/api/teacher/classes/cls-10a1/analytics')
-      .then((data) => {
-        setClassAnalytics(data || {});
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error('Error fetching analytics:', err);
-        setLoading(false);
-      });
-  }, []);
-
-  if (loading) {
-    return (
-      <div className="max-w-7xl mx-auto p-6 space-y-4 animate-pulse">
-        <div className="h-12 bg-slate-200 rounded-2xl w-64" />
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {[...Array(3)].map((_, i) => (
-            <div key={i} className="h-44 bg-slate-200 rounded-3xl" />
-          ))}
-        </div>
-      </div>
-    );
-  }
-
-  const errorData = classAnalytics?.diagnostic_errors || {
-    language_errors: 45,
-    math_errors: 30,
-    math_and_language_errors: 25,
+  const load = async (id = classId) => {
+    setLoading(true);
+    try {
+      const [cls, data] = await Promise.all([
+        apiFetch<any[]>('/api/teacher/classes'),
+        apiFetch<any>(`/api/teacher/classes/${id}/analytics`),
+      ]);
+      setClasses(cls || []);
+      setAnalytics(data || {});
+      if (cls?.length && !cls.some((c: any) => c.id === id)) {
+        setClassId(cls[0].id);
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const hintData = classAnalytics?.hint_usage || {
-    vocabulary: 60,
-    translation: 25,
-    formula: 15,
-  };
+  useEffect(() => { load(classId); }, [classId]);
+
+  const selectedClass = useMemo(() => classes.find((c) => c.id === classId), [classes, classId]);
+  const b = analytics?.barrier_summary || {};
+  const ind = analytics?.independence || {};
+  const totalEvidence = Number(b.language || 0) + Number(b.comprehension || 0) + Number(b.math_reasoning || 0);
+  const barrierRows = [
+    { code: 'L', label: 'Language – thuật ngữ/câu lệnh', value: Number(b.language || 0) },
+    { code: 'C', label: 'Comprehension – đọc hiểu/quan hệ', value: Number(b.comprehension || 0) },
+    { code: 'M', label: 'Mathematical reasoning – chiến lược Toán', value: Number(b.math_reasoning || 0) },
+  ];
+
+  if (loading) return <div className="max-w-7xl mx-auto p-6 text-sm font-bold text-slate-500">Đang tải phân tích lớp...</div>;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8 pb-24 md:pb-12">
-      {/* Header */}
-      <div className="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-2xs">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6 pb-24 md:pb-12">
+      <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl bg-teal-100 text-teal-800 flex items-center justify-center font-bold">
-            <BarChart3 className="w-5 h-5" />
-          </div>
+          <div className="w-10 h-10 rounded-2xl bg-indigo-100 text-indigo-700 flex items-center justify-center"><BarChart3 className="w-5 h-5" /></div>
           <div>
-            <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900">
-              Phân Tích Chẩn Đoán Lớp 10A1 (Class Analytics & Diagnostics)
-            </h1>
-            <p className="text-xs text-slate-500 mt-0.5">
-              Phân biệt nguyên nhân học sinh làm sai: Lỗi Ngôn Ngữ vs Lỗi Tư Duy Toán
-            </p>
+            <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900">Phân tích rào cản & mức độc lập</h1>
+            <p className="text-xs text-slate-500 mt-0.5">Chỉ sử dụng dữ liệu thực đã ghi nhận; không hiển thị số liệu minh họa như kết quả nghiên cứu.</p>
           </div>
         </div>
+        <select value={classId} onChange={(e) => setClassId(e.target.value)} className="p-2.5 rounded-xl border border-slate-300 bg-white text-xs font-bold">
+          {classes.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+        </select>
       </div>
 
-      {/* Overview Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-        <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-2xs space-y-2">
-          <p className="text-[10px] font-bold text-slate-400 uppercase">Sĩ số học sinh</p>
-          <p className="text-3xl font-black text-slate-900">38 học sinh</p>
-          <p className="text-xs text-teal-700 font-bold">Lớp 10A1 • THPT Châu Thành A</p>
-        </div>
-
-        <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-2xs space-y-2">
-          <p className="text-[10px] font-bold text-slate-400 uppercase">Điểm MEI Trung Bình Lớp</p>
-          <p className="text-3xl font-black text-teal-700">62.5 / 100</p>
-          <p className="text-xs text-slate-500">Mức Level 2: Developing Math-English</p>
-        </div>
-
-        <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-2xs space-y-2">
-          <p className="text-[10px] font-bold text-slate-400 uppercase">Loại Hint được sử dụng nhiều nhất</p>
-          <p className="text-2xl font-black text-amber-600">Từ vựng (Vocab Hint)</p>
-          <p className="text-xs text-slate-500">Chiếm 60% tổng lượt bấm trợ giúp</p>
-        </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+        <Metric label="Sĩ số" value={selectedClass?.student_count != null ? String(selectedClass.student_count) : '—'} note={selectedClass?.name || 'Chưa chọn lớp'} />
+        <Metric label="First Attempt Accuracy" value={analytics?.total_attempts ? `${ind.first_attempt_accuracy ?? 0}%` : 'Chưa có dữ liệu'} note="Hiệu suất trước hỗ trợ" />
+        <Metric label="No-hint Accuracy" value={analytics?.total_attempts ? `${ind.no_hint_accuracy ?? 0}%` : 'Chưa có dữ liệu'} note="Nhiệm vụ độc lập" />
+        <Metric label="Hint Level 3 Rate" value={Number(b.total_hint_events || 0) ? `${b.high_support_rate ?? 0}%` : 'Chưa có dữ liệu'} note="Mức hỗ trợ cao" />
       </div>
 
-      {/* Diagnostic Error Breakdown */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Error Breakdown */}
-        <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-2xs space-y-4">
-          <h2 className="text-base font-extrabold text-slate-900 flex items-center gap-2">
-            <AlertCircle className="w-5 h-5 text-rose-500" />
-            Phân Tích Nguyên Nhân Lỗi Sai (Diagnostic Error)
-          </h2>
-
-          <div className="space-y-3">
-            <div>
-              <div className="flex justify-between text-xs font-bold mb-1">
-                <span className="text-rose-700">Lỗi Ngôn Ngữ (Language Error - Không hiểu từ vựng)</span>
-                <span>{errorData.language_errors}%</span>
-              </div>
-              <div className="w-full bg-slate-100 h-3 rounded-full overflow-hidden">
-                <div className="bg-rose-500 h-full rounded-full" style={{ width: `${errorData.language_errors}%` }} />
-              </div>
+        <div className="bg-white rounded-3xl p-6 border border-slate-200 space-y-4">
+          <h2 className="font-black text-slate-900 flex items-center gap-2"><BrainCircuit className="w-5 h-5 text-indigo-600" /> Barrier profile</h2>
+          {totalEvidence === 0 ? (
+            <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-xs text-amber-900 flex gap-2">
+              <AlertCircle className="w-4 h-4 shrink-0" /> Chưa có barrier_type L/C/M từ Student app. Hệ thống sẽ không tự suy đoán dữ liệu thay học sinh.
             </div>
-
-            <div>
-              <div className="flex justify-between text-xs font-bold mb-1">
-                <span className="text-amber-700">Lỗi Tư Duy Toán (Math Error - Hiểu đề nhưng tính sai)</span>
-                <span>{errorData.math_errors}%</span>
-              </div>
-              <div className="w-full bg-slate-100 h-3 rounded-full overflow-hidden">
-                <div className="bg-amber-500 h-full rounded-full" style={{ width: `${errorData.math_errors}%` }} />
-              </div>
+          ) : (
+            <div className="space-y-3">
+              {barrierRows.map((r) => {
+                const pct = totalEvidence ? Math.round((r.value / totalEvidence) * 1000) / 10 : 0;
+                return <div key={r.code} className="p-3 rounded-2xl bg-slate-50 border">
+                  <div className="flex justify-between text-xs font-bold"><span>{r.code} • {r.label}</span><span>{r.value} lượt • {pct}%</span></div>
+                  <div className="mt-2 h-2.5 bg-slate-200 rounded-full overflow-hidden"><div className="h-full bg-indigo-600" style={{ width: `${pct}%` }} /></div>
+                </div>;
+              })}
             </div>
-
-            <div>
-              <div className="flex justify-between text-xs font-bold mb-1">
-                <span className="text-purple-700">Kết hợp cả Toán & Ngôn Ngữ</span>
-                <span>{errorData.math_and_language_errors}%</span>
-              </div>
-              <div className="w-full bg-slate-100 h-3 rounded-full overflow-hidden">
-                <div className="bg-purple-600 h-full rounded-full" style={{ width: `${errorData.math_and_language_errors}%` }} />
-              </div>
-            </div>
-          </div>
-
-          <div className="p-4 rounded-2xl bg-teal-50 border border-teal-200 text-xs text-teal-950 font-medium">
-            💡 <span className="font-bold">Đề xuất cho giáo viên:</span> 45% lỗi sai đến từ từ vựng. Bạn nên tăng thời lượng ôn tập Flashcard 10 từ vựng chủ đề "Parabola & Quadratic Functions" trước khi cho làm bài kiểm tra tiếp theo.
-          </div>
+          )}
+          <p className="text-[11px] text-slate-500">Barrier profile là chỉ báo mô tả từ log. Giáo viên cần đối chiếu với bài làm và bối cảnh trước khi kết luận nguyên nhân.</p>
         </div>
 
-        {/* Level Distribution */}
-        <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-2xs space-y-4">
-          <h2 className="text-base font-extrabold text-slate-900 flex items-center gap-2">
-            <Users className="w-5 h-5 text-teal-600" />
-            Phân Bố Level Scaffolding Học Sinh
-          </h2>
-
-          <div className="space-y-3">
-            {[
-              { level: 'Level 1: Math Vocabulary Beginner', count: 8, percent: 21 },
-              { level: 'Level 2: Math Sentences Developing', count: 18, percent: 47 },
-              { level: 'Level 3: Math Problems Intermediate', count: 10, percent: 26 },
-              { level: 'Level 4 & 5: Advanced Math Communicator', count: 2, percent: 6 },
-            ].map((item, idx) => (
-              <div key={idx} className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 space-y-1">
-                <div className="flex justify-between text-xs font-bold">
-                  <span className="text-slate-800">{item.level}</span>
-                  <span className="text-teal-700">{item.count} học sinh ({item.percent}%)</span>
-                </div>
-                <div className="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
-                  <div className="bg-teal-600 h-full rounded-full" style={{ width: `${item.percent}%` }} />
-                </div>
-              </div>
-            ))}
+        <div className="bg-white rounded-3xl p-6 border border-slate-200 space-y-4">
+          <h2 className="font-black text-slate-900 flex items-center gap-2"><BookOpenCheck className="w-5 h-5 text-teal-600" /> Independence evidence</h2>
+          <div className="grid grid-cols-2 gap-3">
+            <Evidence label="Final Accuracy" value={analytics?.total_attempts ? `${ind.final_accuracy ?? 0}%` : '—'} />
+            <Evidence label="Average Retry" value={analytics?.total_attempts ? String(ind.avg_retry ?? 0) : '—'} />
+            <Evidence label="First Attempt" value={analytics?.total_attempts ? `${ind.first_attempt_accuracy ?? 0}%` : '—'} />
+            <Evidence label="No Hint" value={analytics?.total_attempts ? `${ind.no_hint_accuracy ?? 0}%` : '—'} />
+          </div>
+          <div className="p-4 rounded-2xl bg-teal-50 border border-teal-200 text-xs text-teal-950">
+            <b>Nguyên tắc diễn giải:</b> Hint giảm chỉ có ý nghĩa tích cực khi First Attempt/No-hint Accuracy được duy trì hoặc tăng. Không dùng “ít bấm hint” như bằng chứng độc lập duy nhất.
           </div>
         </div>
+      </div>
+
+      <div className="bg-slate-950 text-slate-100 rounded-3xl p-6 flex gap-3">
+        <ShieldCheck className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+        <div className="text-xs leading-relaxed"><b>Research safeguard:</b> màn hình này không dùng MEI/XP/streak làm outcome nghiên cứu chính và không tự động gắn nhãn “học sinh yếu”. Các chỉ báo phải được đối chiếu với Pre/Post và Teacher Intervention.</div>
       </div>
     </div>
   );
 };
+
+const Metric = ({ label, value, note }: { label: string; value: string; note: string }) => (
+  <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs"><p className="text-[10px] font-black uppercase text-slate-400">{label}</p><p className="text-2xl font-black text-slate-900 mt-1">{value}</p><p className="text-xs text-slate-500 mt-1">{note}</p></div>
+);
+const Evidence = ({ label, value }: { label: string; value: string }) => (
+  <div className="p-4 rounded-2xl bg-slate-50 border"><p className="text-[10px] uppercase font-black text-slate-400">{label}</p><p className="text-xl font-black text-slate-900 mt-1">{value}</p></div>
+);

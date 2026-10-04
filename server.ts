@@ -631,6 +631,9 @@ const getInitialSeedData = () => ({
   practice_attempts: [],
   test_attempts: [],
   hint_logs: [],
+  teacher_interventions: [],
+  question_versions: [],
+  research_mode: { enabled: false, locked_at: null, protocol_version: 'AMB-RP-1.0', note: '' },
   mei_scores: [
     {
       id: 'mei-1',
@@ -727,6 +730,12 @@ const syncCanonicalCurriculum = (db: any) => {
     (q: any) => !canonicalIds.has(q.id) && !isLegacyExtremaFallbackQuestion(q)
   ).map((q: any) => migrateQuestionToCurrentCurriculum(q)).filter((q: any) => !q.type_id || ALL_CURRENT_TYPE_IDS.has(q.type_id));
   db.questions = [...canonicalQuestions, ...customQuestions];
+  db.practice_attempts = db.practice_attempts || [];
+  db.test_attempts = db.test_attempts || [];
+  db.hint_logs = db.hint_logs || [];
+  db.teacher_interventions = db.teacher_interventions || [];
+  db.question_versions = db.question_versions || [];
+  db.research_mode = db.research_mode || { enabled: false, locked_at: null, protocol_version: 'AMB-RP-1.0', note: '' };
   return db;
 };
 
@@ -915,13 +924,19 @@ app.post('/api/questions/replace-types', (req, res) => {
   const incoming = Array.isArray(req.body?.questions) ? req.body.questions : [];
 
   const canonicalIds = new Set(FULL_QUESTION_BANK.map((q: any) => q.id));
+  const replaced = (db.questions || []).filter((q: any) => !canonicalIds.has(q.id) && q.type_id && typeIds.has(q.type_id));
+  if (db.research_mode?.enabled && replaced.length) {
+    db.question_versions.push(...replaced.map((q: any) => ({ ...q, archived_at: new Date().toISOString(), archived_reason: 'Research Mode bulk replace' })));
+  }
   db.questions = (db.questions || []).filter(
     (q: any) => canonicalIds.has(q.id) || !q.type_id || !typeIds.has(q.type_id)
   );
+  const previousVersions = new Map(replaced.map((q: any) => [q.id, Number(q.question_version || 1)]));
   const now = new Date().toISOString();
   const saved = incoming.map((q: any, idx: number) => ({
     ...q,
     id: q.id || `q-ai-${Date.now()}-${idx}-${Math.random().toString(36).slice(2, 7)}`,
+    question_version: previousVersions.has(q.id) ? Number(previousVersions.get(q.id)) + 1 : Number(q.question_version || 1),
     created_at: q.created_at || now,
     updated_at: now,
   }));
@@ -952,9 +967,18 @@ app.post('/api/questions', (req, res) => {
   const db = getDb();
   const requestedId = req.body?.id as string | undefined;
   const existingIndex = requestedId ? db.questions.findIndex((q: any) => q.id === requestedId) : -1;
+  const previous = existingIndex >= 0 ? db.questions[existingIndex] : null;
+  if (previous && db.research_mode?.enabled) {
+    db.question_versions.push({
+      ...previous,
+      archived_at: new Date().toISOString(),
+      archived_reason: 'Research Mode edit',
+    });
+  }
   const question = {
     ...req.body,
     id: requestedId || `q-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    question_version: previous ? Number(previous.question_version || 1) + 1 : Number(req.body?.question_version || 1),
     created_at: req.body?.created_at || new Date().toISOString(),
     updated_at: new Date().toISOString(),
   };
@@ -966,7 +990,7 @@ app.post('/api/questions', (req, res) => {
 
 // Practice submit with diagnostic error classification
 app.post('/api/practice/submit', (req, res) => {
-  const { student_id, question_id, student_answer, response_time, language_mode, hint_count, vocabulary_check } = req.body;
+  const { student_id, question_id, student_answer, response_time, language_mode, hint_count, vocabulary_check, barrier_type, hint_level, independent_mode, support_requested_by_student, support_triggered_by_system, class_id, group } = req.body;
   const db = getDb();
   const question = db.questions.find((q: any) => q.id === question_id);
 
@@ -987,15 +1011,35 @@ app.post('/api/practice/submit', (req, res) => {
     }
   }
 
+  const resolvedStudentId = student_id || 'usr-student-1';
+  const priorForQuestion = db.practice_attempts.filter((pa: any) => pa.student_id === resolvedStudentId && pa.question_id === question_id);
+  const attemptNumber = priorForQuestion.length + 1;
+  const firstAttemptCorrect = priorForQuestion.length > 0
+    ? Boolean(priorForQuestion[0].first_attempt_correct ?? priorForQuestion[0].is_correct)
+    : is_correct;
+  const profile = db.profiles.find((p: any) => p.id === resolvedStudentId);
+  const matchedClass = db.classes.find((c: any) => c.class_code === profile?.class_code);
   const attempt = {
     id: `pa-${Date.now()}`,
-    student_id: student_id || 'usr-student-1',
+    student_id: resolvedStudentId,
+    class_id: class_id || matchedClass?.id || undefined,
+    group: group || undefined,
     question_id,
+    question_version: Number(question.question_version || 1),
     student_answer,
     is_correct,
+    first_attempt_correct: firstAttemptCorrect,
+    final_correct: is_correct,
+    attempt_number: attemptNumber,
+    retry_count: Math.max(0, attemptNumber - 1),
     response_time: response_time || 12,
     language_mode: language_mode || 'BILINGUAL',
     hint_count: hint_count || 0,
+    barrier_type: barrier_type || undefined,
+    hint_level: hint_level ? Number(hint_level) : undefined,
+    independent_mode: Boolean(independent_mode),
+    support_requested_by_student: Boolean(support_requested_by_student),
+    support_triggered_by_system: Boolean(support_triggered_by_system),
     error_type,
     created_at: new Date().toISOString(),
   };
@@ -1018,9 +1062,13 @@ app.post('/api/practice/submit', (req, res) => {
 // Hint logs
 app.post('/api/hint-log', (req, res) => {
   const db = getDb();
+  const question = db.questions.find((q: any) => q.id === req.body?.question_id);
   const log = {
     id: `hl-${Date.now()}`,
     ...req.body,
+    question_version: Number(req.body?.question_version || question?.question_version || 1),
+    hint_level: req.body?.hint_level ? Number(req.body.hint_level) : undefined,
+    requested_by: req.body?.requested_by || 'STUDENT',
     created_at: new Date().toISOString(),
   };
   db.hint_logs.push(log);
@@ -1192,6 +1240,155 @@ app.get('/api/teacher/analytics', (req, res) => {
       { name: 'Nguyễn Văn An', level: 2, recommended: 3, mei: 63.8 },
       { name: 'Phạm Thu Trang', level: 3, recommended: 4, mei: 76.2 },
     ],
+  });
+});
+
+// Research Mode, Barrier Analysis & Teacher Intervention
+app.post('/api/teacher/research-mode', (req, res) => {
+  const db = getDb();
+  const enabled = Boolean(req.body?.enabled);
+  db.research_mode = {
+    ...(db.research_mode || {}),
+    ...req.body,
+    enabled,
+    locked_at: enabled ? new Date().toISOString() : null,
+  };
+  saveDb(db);
+  res.json({ success: true, research_mode: db.research_mode });
+});
+
+app.get('/api/teacher/interventions', (req, res) => {
+  const db = getDb();
+  const classId = req.query.class_id as string;
+  let list = db.teacher_interventions || [];
+  if (classId) list = list.filter((x: any) => x.class_id === classId);
+  res.json(list);
+});
+
+app.post('/api/teacher/interventions', (req, res) => {
+  const db = getDb();
+  const item = {
+    id: `ti-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+    teacher_id: req.body?.teacher_id || 'usr-teacher-1',
+    class_id: req.body?.class_id,
+    barrier_type: req.body?.barrier_type,
+    intervention_type: req.body?.intervention_type,
+    target_type: req.body?.target_type || 'CLASS',
+    target_id: req.body?.target_id || req.body?.class_id,
+    note: req.body?.note || '',
+    created_at: new Date().toISOString(),
+  };
+  db.teacher_interventions.push(item);
+  saveDb(db);
+  res.json({ success: true, intervention: item });
+});
+
+function buildResearchSnapshot(db: any, classId?: string) {
+  const attempts = (db.practice_attempts || []).filter((x: any) => !classId || !x.class_id || x.class_id === classId);
+  const hints = (db.hint_logs || []).filter((x: any) => !classId || !x.class_id || x.class_id === classId);
+  const counts: Record<string, number> = { L: 0, C: 0, M: 0 };
+  [...attempts, ...hints].forEach((x: any) => {
+    if (x.barrier_type && counts[x.barrier_type] !== undefined) counts[x.barrier_type] += 1;
+  });
+  const totalBarrier = counts.L + counts.C + counts.M;
+  const firstAttempts = attempts.filter((x: any) => Number(x.attempt_number || 1) === 1);
+  const level3 = hints.filter((x: any) => Number(x.hint_level || 0) === 3).length;
+  const noHint = attempts.filter((x: any) => Boolean(x.independent_mode) || Number(x.hint_count || 0) === 0);
+  const pct = (a: number, b: number) => b > 0 ? Math.round((a / b) * 1000) / 10 : 0;
+  const avgRetry = attempts.length
+    ? Math.round((attempts.reduce((sum: number, x: any) => sum + Number(x.retry_count || Math.max(0, Number(x.attempt_number || 1) - 1)), 0) / attempts.length) * 10) / 10
+    : 0;
+  return {
+    research_mode: db.research_mode,
+    classes: db.classes || [],
+    barrier_summary: {
+      language: counts.L,
+      comprehension: counts.C,
+      math_reasoning: counts.M,
+      total_hint_events: hints.length,
+      high_support_rate: pct(level3, hints.length),
+    },
+    independence: {
+      first_attempt_accuracy: pct(firstAttempts.filter((x: any) => Boolean(x.is_correct || x.first_attempt_correct)).length, firstAttempts.length),
+      final_accuracy: pct(attempts.filter((x: any) => Boolean(x.final_correct ?? x.is_correct)).length, attempts.length),
+      avg_retry: avgRetry,
+      no_hint_accuracy: pct(noHint.filter((x: any) => Boolean(x.is_correct)).length, noHint.length),
+    },
+    common_barriers: (['L', 'C', 'M'] as const).map((code) => ({
+      code,
+      label: code,
+      count: counts[code],
+      percent: pct(counts[code], totalBarrier),
+    })),
+    recent_interventions: (db.teacher_interventions || [])
+      .filter((x: any) => !classId || x.class_id === classId)
+      .slice(-20)
+      .reverse(),
+    question_version_count: (db.question_versions || []).length,
+    total_attempts: attempts.length,
+  };
+}
+
+app.get('/api/teacher/research-snapshot', (req, res) => {
+  const db = getDb();
+  res.json(buildResearchSnapshot(db, req.query.class_id as string));
+});
+
+function csvEscape(value: any) {
+  const s = value === null || value === undefined ? '' : String(value);
+  return `"${s.replace(/"/g, '""')}"`;
+}
+
+app.get('/api/teacher/research-export.csv', (req, res) => {
+  const db = getDb();
+  const classId = req.query.class_id as string;
+  const attempts = (db.practice_attempts || []).filter((x: any) => !classId || !x.class_id || x.class_id === classId);
+  const headers = [
+    'student_id','class_id','group','question_id','question_version','attempt_number','first_attempt_correct',
+    'final_correct','barrier_type','hint_level','hint_count','retry_count','response_time','independent_mode',
+    'support_requested_by_student','support_triggered_by_system','created_at'
+  ];
+  const rows = attempts.map((x: any) => headers.map((h) => csvEscape(x[h])).join(','));
+  const csv = '\uFEFF' + [headers.join(','), ...rows].join('\n');
+  res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+  res.setHeader('Content-Disposition', `attachment; filename="AI_Math_Bridge_${classId || 'all'}_research.csv"`);
+  res.send(csv);
+});
+
+app.get('/api/teacher/research-export.json', (req, res) => {
+  const db = getDb();
+  const classId = req.query.class_id as string;
+  const payload = {
+    exported_at: new Date().toISOString(),
+    protocol: db.research_mode,
+    snapshot: buildResearchSnapshot(db, classId),
+    practice_attempts: (db.practice_attempts || []).filter((x: any) => !classId || !x.class_id || x.class_id === classId),
+    hint_logs: (db.hint_logs || []).filter((x: any) => !classId || !x.class_id || x.class_id === classId),
+    teacher_interventions: (db.teacher_interventions || []).filter((x: any) => !classId || x.class_id === classId),
+    question_versions: db.question_versions || [],
+  };
+  res.setHeader('Content-Type', 'application/json; charset=utf-8');
+  res.setHeader('Content-Disposition', `attachment; filename="AI_Math_Bridge_${classId || 'all'}_research.json"`);
+  res.json(payload);
+});
+
+// Compatibility endpoint used by the existing TeacherAnalytics screen.
+app.get('/api/teacher/classes/:id/analytics', (req, res) => {
+  const db = getDb();
+  const snapshot = buildResearchSnapshot(db, req.params.id);
+  res.json({
+    ...snapshot,
+    diagnostic_errors: {
+      language_errors: snapshot.barrier_summary.language,
+      comprehension_errors: snapshot.barrier_summary.comprehension,
+      math_errors: snapshot.barrier_summary.math_reasoning,
+      math_and_language_errors: 0,
+    },
+    hint_usage: {
+      vocabulary: (db.hint_logs || []).filter((x: any) => x.hint_type === 'vocabulary' || x.barrier_type === 'L').length,
+      comprehension: (db.hint_logs || []).filter((x: any) => x.barrier_type === 'C').length,
+      math_reasoning: (db.hint_logs || []).filter((x: any) => x.barrier_type === 'M').length,
+    },
   });
 });
 

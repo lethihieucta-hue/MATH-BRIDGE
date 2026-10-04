@@ -17,7 +17,9 @@ export type ContentStatus = 'DRAFT' | 'PUBLISHED' | 'ARCHIVED';
 
 export type TestStatus = 'DRAFT' | 'SCHEDULED' | 'ACTIVE' | 'CLOSED' | 'ARCHIVED';
 
-export type HintType = 'vocabulary' | 'translation' | 'formula' | 'example';
+export type HintType = 'vocabulary' | 'translation' | 'formula' | 'example' | 'language' | 'comprehension' | 'math_reasoning';
+export type BarrierType = 'L' | 'C' | 'M';
+export type HintLevel = 1 | 2 | 3;
 
 export type ErrorClassification = 'MATH_ERROR' | 'LANGUAGE_ERROR' | 'MATH_AND_LANGUAGE_ERROR' | 'CORRECT';
 
@@ -234,6 +236,8 @@ export interface Question {
   status: ContentStatus;
   created_by: string;
   created_at?: string;
+  /** Version used by Research Mode; increments when a stored question is edited. */
+  question_version?: number;
   /** Distinct exercise pattern label used to prevent number-only clones. */
   variant_tag?: string;
   /** True only when the answer key is reliable enough for automatic online grading. */
@@ -269,12 +273,24 @@ export interface WorksheetExportConfig {
 export interface PracticeAttempt {
   id: string;
   student_id: string;
+  class_id?: string;
+  group?: 'EXPERIMENT' | 'CONTROL';
   question_id: string;
+  question_version?: number;
   student_answer: string;
   is_correct: boolean;
+  first_attempt_correct?: boolean;
+  final_correct?: boolean;
+  attempt_number?: number;
+  retry_count?: number;
   response_time: number;
   language_mode: LanguageMode;
   hint_count: number;
+  barrier_type?: BarrierType;
+  hint_level?: HintLevel;
+  independent_mode?: boolean;
+  support_requested_by_student?: boolean;
+  support_triggered_by_system?: boolean;
   error_type?: ErrorClassification;
   created_at: string;
 }
@@ -323,9 +339,26 @@ export interface TestAttempt {
 export interface HintLog {
   id: string;
   student_id: string;
+  class_id?: string;
   question_id: string;
+  question_version?: number;
   attempt_id?: string;
   hint_type: HintType;
+  barrier_type?: BarrierType;
+  hint_level?: HintLevel;
+  requested_by?: 'STUDENT' | 'SYSTEM';
+  created_at: string;
+}
+
+export interface TeacherIntervention {
+  id: string;
+  teacher_id: string;
+  class_id: string;
+  barrier_type: BarrierType;
+  intervention_type: string;
+  target_type: 'STUDENT' | 'GROUP' | 'CLASS';
+  target_id: string;
+  note: string;
   created_at: string;
 }
 
