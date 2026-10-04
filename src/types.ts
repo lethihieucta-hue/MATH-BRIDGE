@@ -1,418 +1,392 @@
-export type LearningStage = 1 | 2 | 3 | 4 | 5 | 6;
-export type HighSchoolGrade = 10 | 11 | 12;
-export type AppCoreLevel = 1 | 2 | 3; // 1: Vocab & Minigame, 2: Reading Comprehension, 3: English Math Essay
+/**
+ * MATH-BRIDGE Types & Interfaces
+ * Comprehensive Bilingual Mathematics for Vietnamese High Schools (GDPT 2018)
+ */
 
-export interface StageDefinition {
-  stage: LearningStage;
-  name: string;
-  vietnameseName: string;
-  tagline: string;
-  description: string;
-  englishRatio: number; // e.g., 20% to 100%
-  keyPedagogy: string;
-  tools: string[];
-  targetAudience: string;
-  samplePhrase: string;
-}
+export type UserRole = 'student' | 'teacher' | 'admin';
 
-export interface MathTerm {
+export type MathEnglishLevel = 1 | 2 | 3 | 4 | 5;
+
+export type LanguageMode = 'VIETNAMESE' | 'BILINGUAL' | 'ENGLISH';
+
+export type QuestionType = 'MCQ' | 'TRUE_FALSE' | 'SHORT' | 'NUMERIC' | 'ESSAY';
+
+export type QuestionDifficulty = 'EASY' | 'MEDIUM' | 'HARD';
+
+export type ContentStatus = 'DRAFT' | 'PUBLISHED' | 'ARCHIVED';
+
+export type TestStatus = 'DRAFT' | 'SCHEDULED' | 'ACTIVE' | 'CLOSED' | 'ARCHIVED';
+
+export type HintType = 'vocabulary' | 'translation' | 'formula' | 'example' | 'language' | 'comprehension' | 'math_reasoning';
+export type BarrierType = 'L' | 'C' | 'M';
+export type HintLevel = 1 | 2 | 3;
+
+export type ErrorClassification = 'MATH_ERROR' | 'LANGUAGE_ERROR' | 'MATH_AND_LANGUAGE_ERROR' | 'CORRECT';
+
+export interface UserProfile {
   id: string;
-  term: string;
-  phonetic?: string;
-  phoneticIpa?: string;
-  vietnamese: string;
-  vietnameseMeaning?: string;
-  category: "algebra" | "calculus" | "geometry" | "stats" | "instructional" | "word_problems" | "trig" | "vectors" | "sequences" | "probability" | string;
-  gradeLevel: HighSchoolGrade; // Lớp 10, 11, hoặc 12
-  chapterId?: string; // e.g. "g10_c1", "g10_c2", "g11_c1", "g12_c1"
-  topicVi?: string; // ví dụ: "Hàm số bậc 2 & Đỉnh", "Đạo hàm & Tiếp tuyến", "Véctơ không gian"
-  definitionEn: string;
-  definitionVi: string;
-  mathSymbol?: string;
-  formulaLatex?: string;
-  exampleSentence?: string;
-  exampleSentenceEn: string;
-  exampleSentenceVi: string;
-  falseFriendPitfall?: string;
-  stageLevel: LearningStage;
-}
-
-export interface ProblemOption {
-  label: string;
-  text: string;
-  isCorrect: boolean;
-}
-
-export interface PracticeProblem {
-  id: string;
-  title: string;
-  topic: string;
-  gradeLevel: HighSchoolGrade; // Lớp 10, 11, 12
-  chapterId?: string; // ID chương SGK Kết nối tri thức
-  level: AppCoreLevel; // Level 2 (Đọc hiểu) or Level 3 (Tự luận tiếng Anh)
-  exam: "SAT" | "AP Calculus" | "AP Stats" | "A-Level" | "High School Algebra" | "Geometry" | "THPT Quốc gia Song ngữ" | "SGK Kết nối tri thức";
-  stage: LearningStage;
-  difficulty: "Easy" | "Medium" | "Hard";
-  questionEnglish: string;
-  questionVietnamese?: string;
-  givenParameters?: Array<{ label: string; value: string; meaningVi: string }>;
-  toFind?: { requirementEn: string; requirementVi: string };
-  options?: ProblemOption[];
-  correctAnswer?: string;
-  acceptedAnswerFormats?: string[]; // for direct input checking e.g., ["80", "80m", "80 meters"]
-  solutionSteps?: string[];
-  keyVocabulary: {
-    word: string;
-    phonetic?: string;
-    meaning: string;
-    mathContext: string;
-  }[];
-  socraticSteps: string[];
-  commonPitfall: string;
-  visualType?: "coordinate" | "geometry" | "fraction" | "chart" | "derivative" | "vector" | "function";
-  exemplaryEssay?: string; // For level 3
-}
-
-export type ExamLanguageRatio = "bilingual" | "20%" | "40%" | "60%" | "80%" | "100%";
-
-export interface ExamQuestion {
-  id: string;
-  questionNumber: number;
-  chapterId: string;
-  chapterTitleVi: string;
-  prompt: string; // The formatted prompt according to the selected language ratio
-  promptEnglish?: string;
-  promptVietnamese?: string;
-  options: ProblemOption[];
-  correctAnswer: string;
-  detailedExplanationVi: string;
-  detailedExplanationEn?: string;
-  keyTerms: Array<{
-    term: string;
-    phonetic?: string;
-    vietnamese: string;
-    note?: string;
-  }>;
-  difficulty: "Easy" | "Medium" | "Hard";
-}
-
-export interface AIExamData {
-  id: string;
-  title: string;
-  gradeLevel: HighSchoolGrade;
-  chapterId: string;
-  chapterTitleVi: string;
-  languageRatio: ExamLanguageRatio;
-  durationMinutes: number;
-  totalQuestions: number;
-  questions: ExamQuestion[];
-  createdAt: string;
-}
-
-export interface ExamSubmissionReport {
-  examId: string;
-  totalQuestions: number;
-  correctCount: number;
-  scoreOutOfTen: number;
-  percentage: number;
-  timeSpentSeconds: number;
-  mathMasteryScore: number;
-  englishComprehensionScore: number;
-  feedbackSummary: string;
-  strengths: string[];
-  recommendations: string[];
-  questionResults: Array<{
-    questionId: string;
-    questionNumber: number;
-    userAnswer: string;
-    correctAnswer: string;
-    isCorrect: boolean;
-    explanation: string;
-    terms: Array<{ term: string; vietnamese: string }>;
-  }>;
-}
-
-export interface MatchingCard {
-  id: string;
-  pairId: string;
-  type: "english" | "vietnamese";
-  text: string;
-  symbol?: string;
-  phonetic?: string;
-  isMatched: boolean;
-  isSelected: boolean;
-  isWrong?: boolean;
-}
-
-export interface RubricCriteria {
-  criteria: string;
-  score: number;
-  maxScore: number;
-  feedback: string;
-}
-
-export interface LineCorrection {
-  originalSnippet: string;
-  improvedSnippet: string;
-  explanation: string;
-}
-
-export interface EssayGradingResult {
-  totalScore: number;
-  mathScore: number;
-  englishScore: number;
-  structureScore: number;
-  grammarScore: number;
-  percentage: number;
-  letterGrade: string;
-  summaryFeedback: string;
-  rubricDetails: RubricCriteria[];
-  lineCorrections: LineCorrection[];
-  exemplarySolution: string;
-}
-
-
-export type TutorIntent = "SOCRATIC" | "LANGUAGE" | "CONCEPT" | "STRATEGY" | "FIRST_STEP" | "CHECK_STEP";
-export type TutorMode = "SOCRATIC" | "LANGUAGE" | "CONCEPT" | "STRATEGY" | "FIRST_STEP" | "CHECK_STEP" | "ENCOURAGEMENT";
-export type TutorStepAssessment = "CORRECT" | "PARTIAL" | "INCORRECT" | "NOT_APPLICABLE";
-
-export type SpeakingPracticeMode = "REPEAT" | "READ_MATH" | "EXPLAIN";
-
-export interface SpeakingAIResponse {
-  overallScore: number;
-  mathContentScore: number;
-  mathEnglishScore: number;
-  clarityScore: number;
-  keyVocabularyScore: number;
-  feedbackVi: string;
-  correctedEnglish: string;
-  nextPrompt: string;
-  strengths: string[];
-  improvements: string[];
-}
-
-export interface TutorKeyTerm {
-  term: string;
-  meaningVi: string;
-}
-
-export interface TutorAIResponse {
-  tutorReply: string;
-  mode: TutorMode;
-  nextQuestion: string;
-  mathEnglishFocus: string;
-  keyTerms: TutorKeyTerm[];
-  stepAssessment: TutorStepAssessment;
-  hintStage: number;
-  shouldRevealSolution: boolean;
-}
-
-export interface TutorConversationTurn {
-  role: "user" | "assistant";
-  content: string;
-}
-
-export interface StructuredAIResponse {
-  diagnostic: {
-    status: string;
-    issue: string;
-    issueCategory?: "Language Barrier" | "Math Gap" | "Mixed Error" | "Calculation Slip" | "Correct Reasoning";
-  };
-  bridge: {
-    hint: string;
-    dualCoding?: Array<{ term: string; vietnamese: string; note: string }>;
-  };
-  guidedSolution: string[];
-  gamification: {
-    xpGain: number;
-    skillUpdate: string;
-    dailyChallenge?: string;
-  };
-  voiceFeedback?: {
-    terminologyReview: string;
-    logicScore?: number;
-  };
-  rawMarkdown?: string;
-}
-
-export interface ChatMessage {
-  id: string;
-  role: "user" | "assistant";
-  content: string;
-  structuredData?: StructuredAIResponse;
-  timestamp: string;
-  stage: LearningStage;
-  isVoiceInput?: boolean;
-  problemContext?: string;
-}
-
-export interface DiagnosticResult {
-  errorCategory: "Language Barrier" | "Math Gap" | "Mixed Error" | "Calculation Slip" | "Correct Reasoning";
-  languageGapScore: number;
-  mathGapScore: number;
-  analysis: string;
-  misunderstoodTerms: Array<{
-    term: string;
-    intendedMeaning: string;
-    studentConfusion: string;
-  }>;
-  scaffoldingHint: string;
-  remedialExercise?: {
-    question: string;
-    vietnameseHint: string;
-  };
-}
-
-export type ErrorDiagnosisResult = DiagnosticResult;
-
-
-export interface StudentProfile {
-  studentId: string;
-  fullName: string;
-  className: string;
-  grade: HighSchoolGrade;
-  createdAt: string;
-  lastLoginAt: string;
-  accountVersion?: number;
-  email?: string;
-}
-
-
-export type ResearchBarrierType = "L" | "C" | "M" | "NONE";
-
-export interface ResearchAttemptRecord {
-  id: string;
-  studentId?: string;
-  classId?: string;
-  group?: "EXPERIMENT" | "CONTROL" | "UNASSIGNED";
-  grade: HighSchoolGrade;
-  chapterId?: string;
-  lessonId: string;
-  questionId: string;
-  questionVersion: number;
-  activityType: "level2" | "level3" | "tutor" | "independent";
-  attemptNumber: number;
-  firstAttemptCorrect: boolean;
-  finalCorrect: boolean;
-  barrierType: ResearchBarrierType;
-  hintLevel: 0 | 1 | 2 | 3;
-  hintCount: number;
-  retryCount: number;
-  responseTimeSeconds?: number;
-  independentMode: boolean;
-  supportRequestedByStudent: boolean;
-  supportTriggeredBySystem: boolean;
-  translationUsed: boolean;
-  selfDiagnosis?: "LANGUAGE" | "UNDERSTAND_QUESTION" | "REPRESENTATION" | "METHOD" | "CALCULATION" | "NO_DIFFICULTY";
-  createdAt: string;
-}
-
-export interface LearningActivityRecord {
-  id: string;
-  type: "vocabulary" | "level2" | "level3" | "tutor" | "speaking" | "mission" | "boss";
-  title: string;
-  timestamp: string;
+  full_name: string;
+  email: string;
+  role: UserRole;
+  school_id?: string;
+  school_name?: string;
+  grade_id?: number; // 10, 11, 12
+  avatar_url?: string;
+  created_at: string;
+  current_level?: MathEnglishLevel;
+  class_code?: string;
   xp?: number;
-  correct?: boolean;
-  mathScore?: number;
-  englishScore?: number;
-  grade?: HighSchoolGrade;
-  lessonId?: string;
-  hintsUsed?: number;
-  translationUsed?: boolean;
-  difficulty?: "Easy" | "Medium" | "Hard";
+  streak_days?: number;
 }
 
-export interface DailyMissionSnapshot {
-  date: string;
-  startTermsMastered: number;
-  startLevel2Solved: number;
-  startLevel3Graded: number;
-  startXp: number;
-  claimedTaskIds: string[];
+export interface School {
+  id: string;
+  name: string;
+  province: string;
 }
 
-export interface BossProgress {
-  attempts: number;
-  wins: number;
-  bestScore: number;
-  lastScore: number;
-  lastPlayedAt?: string;
+export interface ClassGroup {
+  id: string;
+  name: string;
+  school_id: string;
+  teacher_id: string;
+  grade_id: number;
+  school_year: string;
+  class_code: string;
+  created_at: string;
+  student_count?: number;
 }
 
-export interface LessonSkillStats {
-  lessonId: string;
-  grade: HighSchoolGrade;
-  attempts: number;
-  correct: number;
-  level2Attempts: number;
-  level3Attempts: number;
-  mathScore: number;
-  mathEnglishScore: number;
-  mathEvidence: number;
-  englishEvidence: number;
-  hintsUsed: number;
-  translationUses: number;
-  lastPracticedAt: string;
+export interface Grade {
+  id: number; // 10, 11, 12
+  name: string;
+  order_index: number;
 }
 
-export type AdaptiveSupportMode = "foundation" | "language-bridge" | "math-rebuild" | "balanced" | "english-first" | "immersion";
-
-export interface AdaptiveSnapshot {
-  generatedAt: string;
-  assessmentCount: number;
-  mathConfidence: number;
-  mathEnglishConfidence: number;
-  recommendedLevel: AppCoreLevel;
-  recommendedEnglishRatio: number;
-  preferredDifficulty: "EASY" | "MEDIUM" | "HARD";
-  supportMode: AdaptiveSupportMode;
-  focus: "collect-data" | "math-english" | "math" | "balanced" | "advanced";
-  focusLessonId?: string;
-  reason: string;
-  nextGoal: string;
+export interface Chapter {
+  id: string;
+  grade_id: number;
+  name_vi: string;
+  name_en: string;
+  description: string;
+  order_index: number;
 }
 
-export interface UserProgress {
-  xp: number;
-  streakDays: number;
-  currentStage: LearningStage;
-  selectedGrade: HighSchoolGrade;
-  currentLevel: AppCoreLevel;
-  mathIQ: number; // Legacy display field; adaptive scoring uses Math Score instead.
-  englishFluency: "A1" | "A2" | "B1" | "B2" | "C1" | "C2";
-  solvedCount: number;
-  level1MasteredCount: number;
-  level2SolvedCount: number;
-  level3GradedCount: number;
-  tutorSessions: number;
-  tutorTurns: number;
-  tutorHintCount: number;
-  speakingSessions: number;
-  speakingTurns: number;
-  speakingPracticeCount: number;
-  speakingBestScore: number;
-  termsMastered: string[];
-  recentErrors: Array<{
-    problemTitle: string;
-    errorType: string;
-    date: string;
-  }>;
-  mathScore: number;
-  mathEnglishScore: number;
-  mathAssessmentCount: number;
-  mathEnglishAssessmentCount: number;
-  attemptedAnswers: number;
-  correctAnswers: number;
-  hintUsageCount: number;
-  translationUsageCount: number;
-  lastActiveDate: string;
-  lastLessonId?: string;
-  activityHistory: LearningActivityRecord[];
-  lessonSkillStats: Record<string, LessonSkillStats>;
-  adaptive: AdaptiveSnapshot;
-  dailyMission: DailyMissionSnapshot;
-  bossProgress: BossProgress;
-  researchAttempts: ResearchAttemptRecord[];
-  researchProtocolVersion?: string;
+export interface Topic {
+  id: string;
+  chapter_id: string;
+  name_vi: string;
+  name_en: string;
+  description: string;
+  order_index: number;
+}
+
+export interface MathType {
+  id: string;
+  lesson_id: string;
+  code: string; // "Dạng 1", "Dạng 2"...
+  title_vi: string;
+  title_en: string;
+  description_vi?: string;
+  description_en?: string;
+  order_index: number;
+  sample_count_tn?: number;
+  sample_count_ds?: number;
+  sample_count_tln?: number;
+  sample_count_tl?: number;
+}
+
+export interface VocabularyItem {
+  id: string;
+  topic_id: string;
+  word: string;
+  ipa: string;
+  meaning_vi: string;
+  definition_en: string;
+  example_en: string;
+  example_vi: string;
+  formula?: string;
+  audio_url?: string;
+  difficulty: QuestionDifficulty;
+  language_level: MathEnglishLevel;
+  created_at?: string;
+  is_favorite?: boolean;
+  is_learned?: boolean;
+}
+
+export interface SentencePattern {
+  id: string;
+  topic_id: string;
+  pattern_en: string;
+  pattern_vi: string;
+  example_en: string;
+  example_vi: string;
+  level: MathEnglishLevel;
+  usage_note?: string;
+}
+
+export interface SolutionStep {
+  step_number: number;
+  title_vi: string;
+  title_en: string;
+  content_vi: string;
+  content_en: string;
+  formula?: string;
+}
+
+export interface WorkedExample {
+  id?: string;
+  type_id?: string;
+  type_code?: string; // "Dạng 1", "Dạng 2"...
+  title_vi: string;
+  title_en: string;
+  problem_vi: string;
+  problem_en: string;
+  solution_vi?: string;
+  solution_en?: string;
+  solution_steps?: SolutionStep[];
+  conclusion_vi?: string;
+  conclusion_en?: string;
+  key_steps?: string[];
+}
+
+export interface Lesson {
+  id: string;
+  chapter_id?: string;
+  topic_id: string;
+  title_vi: string;
+  title_en: string;
+  order_index?: number;
+  learning_objectives: string[];
+  vocabulary_list: string[];
+  key_concepts_vi: string;
+  key_concepts_en: string;
+  formulas: string[];
+  types?: MathType[];
+  worked_examples: WorkedExample[];
+  quick_quiz_questions?: string[];
+  status: ContentStatus;
+  language_level: MathEnglishLevel;
+  created_by: string;
+  created_at: string;
+}
+
+
+export type QuestionDiagramKind =
+  | 'triangle'
+  | 'line-2d'
+  | 'circle'
+  | 'conic'
+  | 'trig-graph'
+  | 'vector-3d'
+  | 'plane-3d'
+  | 'sphere-3d'
+  | 'solid-3d'
+  | 'area-graph';
+
+export interface QuestionDiagramAsset {
+  kind: 'diagram';
+  diagram: QuestionDiagramKind;
+  title_vi?: string;
+  title_en?: string;
+}
+
+/** Original source image/table/graph extracted from the teacher document. */
+export interface QuestionImageAsset {
+  kind: 'image';
+  src: string;
+  alt_vi?: string;
+  alt_en?: string;
+  title_vi?: string;
+  title_en?: string;
+  source_name?: string;
+  source_sha256?: string;
+}
+
+export type QuestionAsset = QuestionDiagramAsset | QuestionImageAsset;
+
+export interface QuestionOption {
+  option_key: string; // 'A', 'B', 'C', 'D'
+  content_vi: string;
+  content_en: string;
+  is_correct: boolean;
+}
+
+export interface Question {
+  id: string;
+  topic_id: string;
+  type_id?: string;
+  question_type: QuestionType;
+  format_type?: 'TN' | 'DS' | 'TLN' | 'TL';
+  difficulty: QuestionDifficulty;
+  language_level: MathEnglishLevel;
+  question_vi: string;
+  question_en: string;
+  question_bilingual?: string;
+  options?: QuestionOption[];
+  solution_vi: string;
+  solution_en: string;
+  correct_answer: string;
+  vocabulary_support?: { word: string; meaning: string }[];
+  formula_support?: string[];
+  /** Optional concept diagram attached to a question. */
+  assets?: QuestionAsset[];
+  math_skill: string;
+  english_skill: string;
+  status: ContentStatus;
+  created_by: string;
+  created_at?: string;
+  /** Version used by Research Mode; increments when a stored question is edited. */
+  question_version?: number;
+  /** Distinct exercise pattern label used to prevent number-only clones. */
+  variant_tag?: string;
+  /** True only when the answer key is reliable enough for automatic online grading. */
+  grading_safe?: boolean;
+  /** Human-readable source label for imported question banks. */
+  source_name?: string;
+  // Math Reading fields
+  given_info?: string;
+  required_info?: string;
+}
+
+export interface SelectedTypeCountConfig {
+  type_id: string;
+  type_code: string;
+  title_vi: string;
+  title_en: string;
+  tn_count: number;
+  ds_count: number;
+  tln_count: number;
+  tl_count: number;
+}
+
+export interface WorksheetExportConfig {
+  exportPreset: 'EXERCISE' | 'THEMATIC' | 'WORKSHEET' | 'OUTLINE';
+  documentTitle: string;
+  includeTheorySummary: boolean;
+  includeWorkedExamples: boolean;
+  includeAnswerKeyTable: boolean;
+  includeDetailedSolutions: boolean;
+  bilingualMode: boolean;
+}
+
+export interface PracticeAttempt {
+  id: string;
+  student_id: string;
+  class_id?: string;
+  group?: 'EXPERIMENT' | 'CONTROL';
+  question_id: string;
+  question_version?: number;
+  student_answer: string;
+  is_correct: boolean;
+  first_attempt_correct?: boolean;
+  final_correct?: boolean;
+  attempt_number?: number;
+  retry_count?: number;
+  response_time: number;
+  language_mode: LanguageMode;
+  hint_count: number;
+  barrier_type?: BarrierType;
+  hint_level?: HintLevel;
+  independent_mode?: boolean;
+  support_requested_by_student?: boolean;
+  support_triggered_by_system?: boolean;
+  error_type?: ErrorClassification;
+  created_at: string;
+}
+
+export interface Test {
+  id: string;
+  title: string;
+  description: string;
+  teacher_id: string;
+  teacher_name?: string;
+  duration_minutes: number;
+  english_ratio: number;
+  start_at?: string;
+  end_at?: string;
+  max_attempts: number;
+  shuffle_questions: boolean;
+  shuffle_options: boolean;
+  show_result: boolean;
+  show_solution: boolean;
+  status: TestStatus;
+  question_ids: string[];
+  class_id?: string;
+  created_at: string;
+}
+
+export interface TestAttempt {
+  id: string;
+  test_id: string;
+  student_id: string;
+  started_at: string;
+  submitted_at?: string;
+  score?: number;
+  math_score?: number;
+  english_math_score?: number;
+  status: 'IN_PROGRESS' | 'COMPLETED';
+  answers: {
+    question_id: string;
+    student_answer: string;
+    is_correct: boolean;
+    points: number;
+    error_type?: ErrorClassification;
+    hint_count: number;
+  }[];
+}
+
+export interface HintLog {
+  id: string;
+  student_id: string;
+  class_id?: string;
+  question_id: string;
+  question_version?: number;
+  attempt_id?: string;
+  hint_type: HintType;
+  barrier_type?: BarrierType;
+  hint_level?: HintLevel;
+  requested_by?: 'STUDENT' | 'SYSTEM';
+  created_at: string;
+}
+
+export interface TeacherIntervention {
+  id: string;
+  teacher_id: string;
+  class_id: string;
+  barrier_type: BarrierType;
+  intervention_type: string;
+  target_type: 'STUDENT' | 'GROUP' | 'CLASS';
+  target_id: string;
+  note: string;
+  created_at: string;
+}
+
+export interface StudentLevel {
+  id: string;
+  student_id: string;
+  current_level: MathEnglishLevel;
+  previous_level: MathEnglishLevel;
+  recommended_level: MathEnglishLevel;
+  teacher_approved: boolean;
+  changed_at: string;
+}
+
+export interface MEIScore {
+  id: string;
+  student_id: string;
+  vocabulary_score: number;
+  reading_score: number;
+  problem_solving_score: number;
+  expression_score: number;
+  mei_score: number;
+  calculated_at: string;
+}
+
+export interface Badge {
+  id: string;
+  title: string;
+  description: string;
+  icon: string;
+  earned_at?: string;
 }

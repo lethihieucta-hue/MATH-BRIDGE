@@ -1,646 +1,1431 @@
-import express, { Request, Response } from "express";
-import path from "path";
-import dotenv from "dotenv";
-import { GoogleGenAI } from "@google/genai";
+import express from 'express';
+import path from 'path';
+import fs from 'fs';
+import { createServer as createViteServer } from 'vite';
+import dotenv from 'dotenv';
+import { FULL_CHAPTERS, FULL_LESSONS, ALL_CURRENT_TYPE_IDS, LEGACY_TYPE_MIGRATION, migrateQuestionToCurrentCurriculum } from './src/lib/curriculumData';
+import { FULL_QUESTION_BANK, DEFAULT_WORKED_EXAMPLES } from './src/lib/questionBankData';
 
 dotenv.config();
 
 const app = express();
-const router = express.Router();
-const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
+const PORT = 3000;
 
-app.use(express.json({ limit: "10mb" }));
+app.use(express.json());
 
-// Enable CORS for all incoming requests
-app.use((_req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With");
-  if (_req.method === "OPTIONS") {
-    res.sendStatus(204);
-    return;
-  }
-  next();
-});
+// File path for JSON persistent database
+const DB_FILE = path.join(process.cwd(), 'data', 'math_bridge_db.json');
 
-// Initialize Google GenAI client
-const apiKey = process.env.GEMINI_API_KEY;
-let aiClient: GoogleGenAI | null = null;
-
-function getAI(): GoogleGenAI {
-  if (!aiClient) {
-    aiClient = new GoogleGenAI({
-      apiKey: apiKey || "",
-      httpOptions: {
-        headers: {
-          "User-Agent": "aistudio-build",
-        },
-      },
-    });
-  }
-  return aiClient;
+// Helper to ensure data folder exists
+if (!fs.existsSync(path.dirname(DB_FILE))) {
+  fs.mkdirSync(path.dirname(DB_FILE), { recursive: true });
 }
 
-const SYSTEM_INSTRUCTION_BASE = `
-You are the **Math Bridge AI Student Specialized Tutor** – Kiến trúc sư học tập và Trợ giảng ảo cao cấp trong hệ sinh thái tự học thông minh.
-Bạn là sự giao thoa giữa một chuyên gia Toán học quốc tế (SAT/AP/A-Level) và một chuyên gia ngôn ngữ (NLP/ESL).
-Nhiệm vụ của bạn không chỉ là giải toán hay dịch thuật, mà là xây dựng "cây cầu" tư duy, giúp học sinh vượt qua rào cản ngôn ngữ để làm chủ kiến thức Toán học thông qua lộ trình Adaptive Learning 6 giai đoạn:
-1. Giai đoạn 1 (General Foundation): Visual-Linguistic Mapping, ngôn ngữ đơn giản, sơ đồ, khái niệm số lượng/so sánh.
-2. Giai đoạn 2 (Basic Academic English): Động từ chỉ lệnh (solve, evaluate, simplify, factor, express), Contextual Hints.
-3. Giai đoạn 3 (Mathematical Terminology): Thuật ngữ chuyên ngành kèm định nghĩa đa phương tiện, Spaced Repetition gợi nhớ.
-4. Giai đoạn 4 (Bilingual Mathematics): Mã hóa kép (Dual-Coding), đề bài song ngữ, Smart Hover từ vựng khó, ví dụ toán học trực quan.
-5. Giai đoạn 5 (Scaffolded English): Tăng tỷ lệ tiếng Anh, chỉ dùng tiếng Việt làm giàn giáo động khi học sinh dừng lại/vướng mắc.
-6. Giai đoạn 6 (English Immersion): 100% tiếng Anh chuẩn SAT/AP/A-Level, phân tích logic thuyết trình (Voice-to-Text).
-
-Quy tắc xử lý lỗi:
-- Lỗi do Ngôn ngữ: gợi ý từ vựng, cấu trúc câu hoặc ngữ cảnh toán học.
-- Lỗi do Toán: gợi ý bước tư duy logic, công thức hoặc tính chất.
-- Lỗi Hỗn hợp: ưu tiên xử lý rào cản ngôn ngữ trước, sau đó dẫn dắt tư duy toán.
-- Triết lý: AI là Cầu nối, không giải hộ. Dùng Socratic Method (câu hỏi gợi mở).
-
-Định dạng phản hồi (BẮT BUỘC theo cấu trúc markdown rõ ràng hoặc JSON có cấu trúc nếu được yêu cầu):
-### 1. Diagnostic (Chẩn đoán)
-- **Status:** [Giai đoạn hiện tại của học sinh e.g., Stage X]
-- **Issue:** [Math Gap | Language Barrier | Mixed Error | Calculation Slip] - [Phân tích ngắn gọn nguyên nhân]
-
-### 2. Instructional Bridge (Cầu nối kiến thức)
-- **Hint/Scaffolding:** [Gợi ý theo kỹ thuật tương ứng với giai đoạn]
-- **Dual-Coding:** [Bảng đối chiếu thuật ngữ Anh - Việt hoặc minh họa khái niệm]
-
-### 3. Guided Solution (Hướng dẫn giải quyết)
-- [Các bước gợi mở Socratic để học sinh tự thực hiện tiếp, không đưa ra đáp số cuối cùng ngay]
-
-### 4. Gamification & Progress (Tăng trưởng)
-- **Skill Tree Update:** [+XP, Streak, kỹ năng toán/từ vựng được củng cố]
-- **Daily Challenge:** [Một câu đố/câu hỏi nhỏ liên quan để củng cố]
-
-### 5. Voice/Feedback (Dành cho Giai đoạn 6 hoặc khi có bản ghi giọng nói/giải trình)
-- **Logic & Terminology Review:** [Nhận xét tính chính xác của thuật ngữ và ngữ pháp toán học]
-`;
-
-// Health check route
-router.get("/health", (_req: Request, res: Response) => {
-  res.json({ status: "ok", timestamp: new Date().toISOString() });
-});
-
-// Chat with Tutor
-router.post("/tutor/chat", async (req: Request, res: Response) => {
-  try {
-    const {
-      message,
-      stage = 3,
-      problemContext,
-      studentWorking,
-      voiceTranscript,
-      chatHistory = [],
-      targetExam = "SAT",
-    } = req.body;
-
-    const ai = getAI();
-
-    const stagePrompt = `
-Học sinh đang ở **Stage ${stage}** trong lộ trình 6 giai đoạn. Mục tiêu kỳ thi: ${targetExam}.
-Ngữ cảnh bài toán (nếu có): ${problemContext || "Không có"}
-Bài làm / suy luận của học sinh: ${studentWorking || "Chưa có"}
-Bản ghi giải trình giọng nói (nếu có): ${voiceTranscript || "Không có"}
-Tin nhắn của học sinh: "${message}"
-
-Hãy đưa ra phản hồi chuẩn theo 5 phần của System Instruction:
-1. Diagnostic (Chẩn đoán)
-2. Instructional Bridge (Cầu nối kiến thức)
-3. Guided Solution (Hướng dẫn gợi mở Socratic)
-4. Gamification & Progress (+XP và Daily Challenge)
-5. Voice/Feedback (nếu học sinh có voiceTranscript hoặc ở Stage 6)
-`;
-
-    const contents: any[] = [];
-
-    // Add previous history if any
-    if (Array.isArray(chatHistory) && chatHistory.length > 0) {
-      chatHistory.slice(-6).forEach((h: { role: string; content: string }) => {
-        contents.push({
-          role: h.role === "assistant" ? "model" : "user",
-          parts: [{ text: h.content }],
-        });
-      });
-    }
-
-    contents.push({
-      role: "user",
-      parts: [{ text: stagePrompt }],
-    });
-
-    const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: contents,
-      config: {
-        systemInstruction: SYSTEM_INSTRUCTION_BASE,
-        temperature: 0.7,
-      },
-    });
-
-    const reply = response.text || "Xin lỗi, đã có gián đoạn kết nối. Hãy thử gửi lại nhé!";
-
-    res.json({
-      success: true,
-      reply,
-      stage,
-    });
-  } catch (error: any) {
-    console.error("Tutor chat error:", error);
-    res.status(500).json({
-      success: false,
-      error: error.message || "Internal server error",
-      fallbackReply: `### 1. Diagnostic (Chẩn đoán)
-- **Status:** Stage 4 (Bilingual Mathematics)
-- **Issue:** [Language & Math Review] Hãy phân tích kỹ các từ khóa trong đề bài.
-
-### 2. Instructional Bridge (Cầu nối kiến thức)
-- **Hint/Scaffolding:** Chú ý các từ chỉ quan hệ như *"at least"* ($\ge$), *"ratio of A to B"* ($A/B$).
-- **Dual-Coding:**
-  - *Slope / Rate of change* = Hệ số góc / Tốc độ thay đổi
-  - *Intercept* = Giao điểm với trục tọa độ
-
-### 3. Guided Solution
-- **Bước 1:** Xác định đại lượng đã biết và ẩn số cần tìm.
-- **Bước 2:** Lập phương trình biểu diễn mối quan hệ.
-- **Bước 3:** Em hãy thử giải phương trình vừa lập và cho thầy/cô biết kết quả nhé!
-
-### 4. Gamification & Progress
-- **Skill Tree Update:** +15 XP (Math Vocabulary Mastery)
-- **Daily Challenge:** "If $3x - 5 = 16$, what is the value of $x$?"`,
-    });
-  }
-});
-
-// Diagnostic Deep-dive
-router.post("/tutor/diagnose", async (req: Request, res: Response) => {
-  try {
-    const { problemText, studentAnswer, studentExplanation, stage = 3 } = req.body;
-    const ai = getAI();
-
-    const prompt = `
-Phân tích lỗi sai của học sinh dựa trên lý thuyết NLP & Sư phạm Toán học:
-- Đề bài: "${problemText}"
-- Đáp án / Lựa chọn của học sinh: "${studentAnswer}"
-- Lời giải trình của học sinh: "${studentExplanation || "Không có"}"
-- Stage hiện tại: Stage ${stage}
-
-Hãy trả về JSON có cấu trúc sau:
-{
-  "errorCategory": "Language Barrier" | "Math Gap" | "Mixed Error" | "Calculation Slip" | "Correct Reasoning",
-  "languageGapScore": number (0 to 100),
-  "mathGapScore": number (0 to 100),
-  "analysis": "Phân tích chi tiết tại sao học sinh mắc lỗi này (do từ vựng, do ngữ pháp tiếng Anh toán học, hay do bản chất toán)",
-  "misunderstoodTerms": [{"term": "từ tiếng Anh", "intendedMeaning": "nghĩa toán học đúng", "studentConfusion": "học sinh hiểu nhầm là gì"}],
-  "scaffoldingHint": "Gợi ý giàn giáo từng bước để học sinh tự sửa lỗi",
-  "remedialExercise": {
-    "question": "Bài tập bổ trợ tương tự",
-    "vietnameseHint": "Gợi ý tiếng Việt"
-  }
-}
-`;
-
-    const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: prompt,
-      config: {
-        systemInstruction: "You are an expert NLP & Math Education diagnostician. Return valid JSON only.",
-        responseMimeType: "application/json",
-      },
-    });
-
-    const jsonStr = response.text || "{}";
-    const data = JSON.parse(jsonStr);
-
-    res.json({ success: true, data });
-  } catch (error: any) {
-    console.error("Diagnosis error:", error);
-    // Return structured fallback
-    res.json({
-      success: true,
-      data: {
-        errorCategory: "Language Barrier",
-        languageGapScore: 65,
-        mathGapScore: 35,
-        analysis: "Học sinh có thể đã nhầm lẫn giữa cụm từ 'decreased by' (trừ đi) và 'decreased to' (giảm xuống còn), dẫn đến việc thiết lập phương trình sai lệch.",
-        misunderstoodTerms: [
-          {
-            term: "decreased by",
-            intendedMeaning: "Giảm đi một lượng $x$ (Phép trừ: $A - x$)",
-            studentConfusion: "Nhầm lẫn với giá trị còn lại sau khi giảm",
-          },
-        ],
-        scaffoldingHint: "Hãy gạch chân động từ hành động và cụm giới từ đi kèm để xác định phép tính chính xác.",
-        remedialExercise: {
-          question: "A quantity Q is decreased by 20%. Express the new quantity in terms of Q.",
-          vietnameseHint: "Giảm đi 20% tức là lấy 100% - 20% = 80% của Q.",
-        },
-      },
-    });
-  }
-});
-
-// Generate Custom Practice Problem for Level 2 & Level 3
-router.post("/tutor/generate-problem", async (req: Request, res: Response) => {
-  try {
-    const {
-      gradeLevel = 10,
-      chapterId = "g10_c1",
-      chapterTitleVi = "Mệnh đề và tập hợp",
-      topic = "Mệnh đề và tập hợp",
-      keyTopics = [],
-      level = 2,
-      stage = level === 2 ? 3 : 5,
-      exam = "SGK Kết nối tri thức với cuộc sống",
-      difficulty = level === 2 ? "Medium" : "Hard",
-    } = req.body;
-
-    const activeTitle = chapterTitleVi || topic;
-    const topicsList = Array.isArray(keyTopics) && keyTopics.length > 0 ? keyTopics.join(", ") : activeTitle;
-
-    const ai = getAI();
-
-    const levelPrompt =
-      level === 2
-        ? `
-Yêu cầu bài toán Level 2 (Đọc hiểu đề & Bóc tách tham số & Trắc nghiệm 4 lựa chọn):
-- Đề bài song ngữ chất lượng cao (Tiếng Anh chuẩn quốc tế và bản dịch Tiếng Việt chuẩn SGK).
-- Có mảng "givenParameters": [{ "label": "tên đại lượng", "value": "giá trị toán học/công thức", "meaningVi": "ý nghĩa tiếng Việt" }].
-- Có "toFind": { "requirementEn": "yêu cầu cần tìm bằng tiếng Anh", "requirementVi": "yêu cầu cần tìm bằng tiếng Việt" }.
-- Có 4 "options" A, B, C, D rõ ràng (chỉ 1 đáp án đúng).
-- Có "correctAnswer" là "A", "B", "C" hoặc "D".
-- Có "solutionSteps": các bước giải toán cụ thể có công thức LaTeX.
-`
-        : `
-Yêu cầu bài toán Level 3 (Tự luận Toán tiếng Anh chuyên sâu & Barem chấm điểm):
-- Đề bài tự luận yêu cầu chứng minh hoặc mô hình hóa toán học thực tế bằng tiếng Anh học thuật.
-- Có "exemplaryEssay": Bài luận toán giải mẫu hoàn chỉnh bằng Tiếng Anh học thuật cao cấp (kèm công thức KaTeX/LaTeX, có các bước Step 1, Step 2, Conclusion rõ ràng).
-`;
-
-    const prompt = `
-Bạn là Chuyên gia Biên soạn Đề thi và Học liệu Toán học THPT theo chương trình Sách Giáo Khoa "Kết nối tri thức với cuộc sống" kết hợp chuẩn quốc tế SAT / AP / Cambridge A-Level.
-Hãy tạo 1 bài toán chuẩn xác 100% thuộc chương trình Lớp ${gradeLevel}:
-- Khối lớp: Lớp ${gradeLevel}
-- Chương học: ${activeTitle} (Mã chương: ${chapterId})
-- Các chủ đề cốt lõi trong chương: ${topicsList}
-- Cấp độ bài tập: Level ${level} (${level === 2 ? "Đọc hiểu đề & Trắc nghiệm" : "Tự luận toán Tiếng Anh"})
-- Độ khó: ${difficulty} (Stage ${stage}/6)
-
-${levelPrompt}
-
-Yêu cầu chung:
-1. Nội dung bài toán PHẢI CHÍNH XÁC 100% thuộc kiến thức Toán Lớp ${gradeLevel} - Chương "${activeTitle}".
-2. "keyVocabulary": 2-3 từ vựng toán học then chốt, là TỪ ĐƠN LẺ / CỤM TỪ NGUYÊN TỬ (không ghép nhiều khái niệm).
-3. "socraticSteps": 3-4 câu hỏi gợi ý mở giàn giáo từng bước giúp học sinh tư duy.
-4. "commonPitfall": 1 bẫy ngôn ngữ hoặc bẫy logic toán điển hình.
-
-Hãy trả về JSON DUY NHẤT theo schema:
-{
-  "id": "gen_${Date.now()}",
-  "title": "Tiêu đề ngắn gọn bằng tiếng Anh",
-  "topic": "${activeTitle}",
-  "chapterId": "${chapterId}",
-  "gradeLevel": ${gradeLevel},
-  "level": ${level},
-  "exam": "${exam}",
-  "stage": ${stage},
-  "difficulty": "${difficulty}",
-  "questionEnglish": "Nội dung câu hỏi bài toán bằng tiếng Anh",
-  "questionVietnamese": "Bản dịch tiếng Việt chính xác",
-  "givenParameters": [
-    {"label": "Tên tham số", "value": "Giá trị", "meaningVi": "Giải nghĩa"}
+// Initial DB seed structure
+const getInitialSeedData = () => ({
+  schools: [
+    { id: 'sch-1', name: 'THPT Ngô Quyền', province: 'Hưng Yên' },
+    { id: 'sch-2', name: 'THPT Triệu Sơn', province: 'Thanh Hóa' },
+    { id: 'sch-3', name: 'THPT Hải Hậu', province: 'Nam Định' },
   ],
-  "toFind": {
-    "requirementEn": "Yêu cầu tiếng Anh",
-    "requirementVi": "Yêu cầu tiếng Việt"
-  },
-  "options": [
-    {"label": "A", "text": "Phương án A", "isCorrect": false},
-    {"label": "B", "text": "Phương án B", "isCorrect": true},
-    {"label": "C", "text": "Phương án C", "isCorrect": false},
-    {"label": "D", "text": "Phương án D", "isCorrect": false}
-  ],
-  "correctAnswer": "B",
-  "acceptedAnswerFormats": ["B"],
-  "solutionSteps": [
-    "Bước 1: ...",
-    "Bước 2: ..."
-  ],
-  "keyVocabulary": [
+  classes: [
     {
-      "word": "từ đơn lẻ",
-      "phonetic": "/phiên âm/",
-      "meaning": "nghĩa tiếng Việt",
-      "mathContext": "ngữ cảnh toán"
-    }
-  ],
-  "socraticSteps": [
-    "Gợi ý 1",
-    "Gợi ý 2"
-  ],
-  "commonPitfall": "Bẫy toán hoặc ngôn ngữ",
-  "exemplaryEssay": "Bài giải mẫu tiếng Anh đầy đủ (cho Level 3)"
-}
-`;
-
-    const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: prompt,
-      config: {
-        systemInstruction: "You are a specialized test-prep math author for Vietnamese Curriculum and International SAT/AP Math. Return valid JSON only.",
-        responseMimeType: "application/json",
-      },
-    });
-
-    const jsonStr = response.text || "{}";
-    const data = JSON.parse(jsonStr);
-    res.json({ success: true, data });
-  } catch (error: any) {
-    console.error("Generate problem error:", error);
-    res.status(500).json({ success: false, error: error.message });
-  }
-});
-
-// Grade Level 3 Math Essay in English
-router.post("/tutor/grade-essay", async (req: Request, res: Response) => {
-  try {
-    const { gradeLevel = 10, problemTitle, problemEnglish, studentEssay, expectedAnswer } = req.body;
-    const ai = getAI();
-
-    const prompt = `
-Bạn là Giám khảo Quốc tế chấm bài tự luận Toán học bằng tiếng Anh (SAT / AP / Cambridge A-Level / Kỳ thi Học sinh Giỏi Toán Song ngữ).
-Hãy chấm bài giải tự luận của học sinh Lớp ${gradeLevel}:
-
-Đề bài:
-"${problemEnglish || problemTitle}"
-
-Lời giải tự luận bằng tiếng Anh của học sinh:
-"${studentEssay}"
-
-Đáp án / Định hướng (nếu có):
-"${expectedAnswer || "Chuẩn toán học THPT"}"
-
-Hãy đánh giá theo Barem 4 Tiêu chí Chuẩn Quốc tế (mỗi tiêu chí 10 điểm, tổng 40 điểm):
-1. mathScore (0-10): Tính chính xác toán học, công thức, tính toán, tính logic chặt chẽ của các bước.
-2. englishScore (0-10): Độ chuẩn xác của thuật ngữ toán học tiếng Anh (Mathematical Terminology).
-3. structureScore (0-10): Bố cục bài giải (Đặt ẩn, thiết lập phương trình, biến đổi, kết luận).
-4. grammarScore (0-10): Ngữ pháp tiếng Anh, từ nối câu học thuật (Therefore, Hence, Since, Let x be...).
-
-Hãy trả về định dạng JSON DUY NHẤT:
-{
-  "totalScore": number (0-40),
-  "mathScore": number (0-10),
-  "englishScore": number (0-10),
-  "structureScore": number (0-10),
-  "grammarScore": number (0-10),
-  "percentage": number (0-100),
-  "letterGrade": "A+" | "A" | "B+" | "B" | "C" | "D",
-  "summaryFeedback": "Nhận xét tổng quan song ngữ (ngắn gọn, truyền cảm hứng, chỉ rõ điểm mạnh và điểm cần cải thiện)",
-  "rubricDetails": [
-    {
-      "criteria": "Math Accuracy & Logical Steps",
-      "score": number,
-      "maxScore": 10,
-      "feedback": "Nhận xét chi tiết về phần toán"
+      id: 'class-10a1',
+      name: 'Lớp 10A1 (Chuyên Toán-Anh)',
+      school_id: 'sch-1',
+      teacher_id: 'usr-teacher-1',
+      grade_id: 10,
+      school_year: '2025-2026',
+      class_code: 'MB10A1',
+      created_at: new Date().toISOString(),
+      student_count: 32,
     },
     {
-      "criteria": "Mathematical English & Terminology",
-      "score": number,
-      "maxScore": 10,
-      "feedback": "Nhận xét về việc sử dụng thuật ngữ tiếng Anh"
+      id: 'class-11a2',
+      name: 'Lớp 11A2',
+      school_id: 'sch-1',
+      teacher_id: 'usr-teacher-1',
+      grade_id: 11,
+      school_year: '2025-2026',
+      class_code: 'MB11A2',
+      created_at: new Date().toISOString(),
+      student_count: 28,
+    },
+  ],
+  profiles: [
+    {
+      id: 'usr-student-1',
+      full_name: 'Nguyễn Văn An',
+      email: 'student@mathbridge.edu.vn',
+      role: 'student',
+      school_id: 'sch-1',
+      school_name: 'THPT Ngô Quyền',
+      grade_id: 10,
+      avatar_url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
+      current_level: 2,
+      class_code: 'MB10A1',
+      xp: 450,
+      streak_days: 5,
+      created_at: new Date().toISOString(),
     },
     {
-      "criteria": "Proof Structure & Cohesion",
-      "score": number,
-      "maxScore": 10,
-      "feedback": "Nhận xét về bố cục và tính liền mạch"
+      id: 'usr-teacher-1',
+      full_name: 'Cô Lê Thị Mai',
+      email: 'teacher@mathbridge.edu.vn',
+      role: 'teacher',
+      school_id: 'sch-1',
+      school_name: 'THPT Ngô Quyền',
+      avatar_url: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150',
+      created_at: new Date().toISOString(),
     },
     {
-      "criteria": "Grammar & Academic Transitions",
-      "score": number,
-      "maxScore": 10,
-      "feedback": "Nhận xét về ngữ pháp và từ nối"
-    }
+      id: 'usr-admin-1',
+      full_name: 'Quản Trị Viên Hệ Thống',
+      email: 'admin@mathbridge.edu.vn',
+      role: 'admin',
+      avatar_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150',
+      created_at: new Date().toISOString(),
+    },
   ],
-  "lineCorrections": [
-    {
-      "originalSnippet": "câu hoặc đoạn học sinh viết chưa chuẩn",
-      "improvedSnippet": "câu viết lại chuẩn tiếng Anh học thuật",
-      "explanation": "giải thích vì sao nên sửa như vậy"
-    }
+  grades: [
+    { id: 10, name: 'Toán 10', order_index: 1 },
+    { id: 11, name: 'Toán 11', order_index: 2 },
+    { id: 12, name: 'Toán 12', order_index: 3 },
   ],
-  "exemplarySolution": "Bài giải mẫu hoàn chỉnh bằng tiếng Anh học thuật cao cấp có kèm công thức LaTeX và các bước rõ ràng"
-}
-`;
-
-    const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: prompt,
-      config: {
-        systemInstruction: "You are an expert Math Essay Grader and International Math Curriculum Evaluator. Return valid JSON only.",
-        responseMimeType: "application/json",
-      },
-    });
-
-    const jsonStr = response.text || "{}";
-    const data = JSON.parse(jsonStr);
-    res.json({ success: true, data });
-  } catch (error: any) {
-    console.error("Grade essay error:", error);
-    res.status(500).json({
-      success: false,
-      error: error?.message || "AI grading backend is not configured.",
-    });
-  }
-});
-
-// Generate AI Exam with customizable English immersion ratio and KNTT topics
-router.post("/tutor/generate-exam", async (req: Request, res: Response) => {
-  try {
-    const {
-      gradeLevel = 10,
-      chapterId = "g10_c2",
-      chapterTitle = "Bất phương trình và hệ bất phương trình bậc nhất hai ẩn",
-      languageRatio = "50/50 (Song ngữ)",
-      questionCount = 5,
-      difficulty = "Medium",
-    } = req.body;
-
-    const ai = getAI();
-
-    let languageRulePrompt = "";
-    if (languageRatio === "bilingual") {
-      languageRulePrompt = "Chế độ SONG NGỮ (50% Anh - 50% Việt): Mỗi câu hỏi hiển thị song song Đề bài tiếng Anh và Đề bài dịch tiếng Việt chuẩn xác bên dưới.";
-    } else if (languageRatio === "20%") {
-      languageRulePrompt = "Chế độ 20% TIẾNG ANH: Đề bài 80% tiếng Việt, chèn 20% các thuật ngữ toán cốt lõi, danh từ chuyên ngành hoặc câu hỏi then chốt bằng tiếng Anh (ví dụ: 'Find the vertex of the parabola $y = ax^2+bx+c$', 'Biết rằng hàm số có local maximum tại...').";
-    } else if (languageRatio === "40%") {
-      languageRulePrompt = "Chế độ 40% TIẾNG ANH: Đề bài kết hợp 60% tiếng Việt dẫn giải và 40% tiếng Anh cho mệnh đề toán học chính, câu hỏi và định dạng tham số.";
-    } else if (languageRatio === "60%") {
-      languageRulePrompt = "Chế độ 60% TIẾNG ANH: Đề bài 60% tiếng Anh, có phần chú giải tóm tắt 40% tiếng Việt bên cạnh hoặc trong ngoặc đơn.";
-    } else if (languageRatio === "80%") {
-      languageRulePrompt = "Chế độ 80% TIẾNG ANH: Đề bài hoàn toàn bằng tiếng Anh chuẩn học thuật (80%), chỉ có 20% chú thích gợi ý từ vựng nâng cao bằng tiếng Việt ở phần ghi chú.";
-    } else {
-      languageRulePrompt = "Chế độ 100% TIẾNG ANH (Full Immersion): 100% Đề bài, câu hỏi và các lựa chọn đáp án hoàn toàn bằng Tiếng Anh chuẩn SAT / AP / Cambridge A-Level.";
-    }
-
-    const prompt = `
-Bạn là Chuyên gia Khảo thí và Biên soạn Đề thi Toán học theo Sách giáo khoa "Kết nối tri thức với cuộc sống" (Bộ GD&ĐT) kết hợp Khung chuẩn hóa Quốc tế (SAT/AP/A-Level).
-Hãy soạn 1 bài kiểm tra (Exam) gồm ${questionCount} câu trắc nghiệm 4 lựa chọn (A, B, C, D) cho học sinh:
-- Khối lớp: Lớp ${gradeLevel} (Chương trình Toán THPT Kết nối tri thức)
-- Chủ đề: ${chapterTitle} (Mã chương: ${chapterId})
-- Độ khó: ${difficulty}
-- Tỉ lệ ngôn ngữ: ${languageRatio}
-${languageRulePrompt}
-
-Yêu cầu nội dung:
-1. Các câu hỏi phải bám sát chương trình SGK Kết nối tri thức Lớp ${gradeLevel} cho chủ đề "${chapterTitle}".
-2. Mỗi câu hỏi phải có 4 đáp án A, B, C, D rõ ràng, trong đó duy nhất 1 đáp án đúng (ghi rõ correctAnswer là 'A', 'B', 'C' hoặc 'D').
-3. Kèm theo lời giải chi tiết (detailedExplanationVi) giải thích từng bước rõ ràng, kèm công thức LaTeX.
-4. Kèm theo danh sách 2-3 từ vựng toán học then chốt (keyTerms) có trong câu để học sinh học từ vựng.
-
-Hãy trả về JSON DUY NHẤT theo schema sau:
-{
-  "id": "exam_${Date.now()}",
-  "title": "Bài kiểm tra Toán ${gradeLevel} - ${chapterTitle}",
-  "gradeLevel": ${gradeLevel},
-  "chapterId": "${chapterId}",
-  "chapterTitleVi": "${chapterTitle}",
-  "languageRatio": "${languageRatio}",
-  "durationMinutes": ${Math.max(10, questionCount * 3)},
-  "totalQuestions": ${questionCount},
-  "questions": [
+  chapters: [
     {
-      "id": "q1",
-      "questionNumber": 1,
-      "chapterId": "${chapterId}",
-      "chapterTitleVi": "${chapterTitle}",
-      "prompt": "Nội dung câu hỏi theo đúng tỉ lệ tiếng Anh đã chỉ định",
-      "promptEnglish": "Bản tiếng Anh đầy đủ (nếu có)",
-      "promptVietnamese": "Bản tiếng Việt đầy đủ (nếu có)",
-      "options": [
-        {"label": "A", "text": "Nội dung đáp án A", "isCorrect": false},
-        {"label": "B", "text": "Nội dung đáp án B", "isCorrect": true},
-        {"label": "C", "text": "Nội dung đáp án C", "isCorrect": false},
-        {"label": "D", "text": "Nội dung đáp án D", "isCorrect": false}
+      id: 'chap-10-1',
+      grade_id: 10,
+      name_vi: 'Chương 1: Mệnh đề & Tập hợp',
+      name_en: 'Chapter 1: Propositions & Sets',
+      description: 'Cơ sở logic toán học và các phép toán tập hợp bằng tiếng Anh',
+      order_index: 1,
+    },
+    {
+      id: 'chap-10-2',
+      grade_id: 10,
+      name_vi: 'Chương 2: Hàm số & Hàm số bậc hai',
+      name_en: 'Chapter 2: Functions & Quadratic Functions',
+      description: 'Định nghĩa hàm số, tập xác định, hàm số bậc hai và parabol',
+      order_index: 2,
+    },
+    {
+      id: 'chap-10-3',
+      grade_id: 10,
+      name_vi: 'Chương 3: Véctơ & Hệ thức lượng trong tam giác',
+      name_en: 'Chapter 3: Vectors & Trigonometry in Triangles',
+      description: 'Các phép toán véctơ và định lý cosin, sin trong tam giác',
+      order_index: 3,
+    },
+    {
+      id: 'chap-11-1',
+      grade_id: 11,
+      name_vi: 'Chương 1: Đạo hàm & Tiếp tuyến',
+      name_en: 'Chapter 1: Derivatives & Tangent Lines',
+      description: 'Quy tắc tính đạo hàm và ý nghĩa hình học',
+      order_index: 1,
+    },
+    {
+      id: 'chap-12-1',
+      grade_id: 12,
+      name_vi: 'Chương 1: Ứng dụng đạo hàm khảo sát hàm số',
+      name_en: 'Chapter 1: Applications of Derivatives in Function Analysis',
+      description: 'Tính đơn điệu, cực trị, giá trị lớn nhất, nhỏ nhất, tiệm cận',
+      order_index: 1,
+    },
+  ],
+  topics: [
+    {
+      id: 'top-10-2-1',
+      chapter_id: 'chap-10-2',
+      name_vi: 'Chủ đề 1: Hàm số & Tập xác định',
+      name_en: 'Topic 1: Functions, Domain & Range',
+      description: 'Khái niệm hàm số, tập xác định (Domain) và tập giá trị (Range)',
+      order_index: 1,
+    },
+    {
+      id: 'top-10-2-2',
+      chapter_id: 'chap-10-2',
+      name_vi: 'Chủ đề 2: Hàm số bậc hai & Đỉnh Parabol',
+      name_en: 'Topic 2: Quadratic Functions & Parabola Vertex',
+      description: 'Hàm số $y = ax^2 + bx + c$, đỉnh parabol $I(-b/2a, -\\Delta/4a)$',
+      order_index: 2,
+    },
+    {
+      id: 'top-10-3-1',
+      chapter_id: 'chap-10-3',
+      name_vi: 'Chủ đề 1: Khái niệm véctơ & Phép cộng véctơ',
+      name_en: 'Topic 1: Vector Concepts & Vector Addition',
+      description: 'Độ dài véctơ, véctơ cùng phương, quy tắc ba điểm',
+      order_index: 1,
+    },
+    {
+      id: 'top-11-1-1',
+      chapter_id: 'chap-11-1',
+      name_vi: 'Chủ đề 1: Định nghĩa & Quy tắc tính đạo hàm',
+      name_en: 'Topic 1: Definition & Differentiation Rules',
+      description: 'Đạo hàm của các hàm số cơ bản, tổng, tích, thương',
+      order_index: 1,
+    },
+    {
+      id: 'top-12-1-1',
+      chapter_id: 'chap-12-1',
+      name_vi: 'Chủ đề 1: Tính đơn điệu & Giá trị lớn nhất / nhỏ nhất',
+      name_en: 'Topic 1: Monotonicity & Extreme Values',
+      description: 'Đồng biến, nghịch biến, Max & Min của hàm số',
+      order_index: 1,
+    },
+  ],
+  vocabulary: [
+    {
+      id: 'voc-1',
+      topic_id: 'top-10-2-1',
+      word: 'function',
+      ipa: '/ˈfʌŋk.ʃən/',
+      meaning_vi: 'hàm số',
+      definition_en: 'A relation that maps each input element to exactly one output element.',
+      example_en: 'The equation f(x) = 2x + 3 is a linear function.',
+      example_vi: 'Phương trình f(x) = 2x + 3 là một hàm số bậc nhất.',
+      formula: 'f: X \\to Y',
+      difficulty: 'EASY',
+      language_level: 1,
+      is_favorite: true,
+      is_learned: true,
+    },
+    {
+      id: 'voc-2',
+      topic_id: 'top-10-2-1',
+      word: 'domain',
+      ipa: '/dəʊˈmeɪn/',
+      meaning_vi: 'tập xác định',
+      definition_en: 'The set of all possible input values (x) for which a function is defined.',
+      example_en: 'Find the domain of the function f(x) = \\sqrt{x - 2}.',
+      example_vi: 'Tìm tập xác định của hàm số f(x) = \\sqrt{x - 2}.',
+      formula: 'D = \\{x \\in \\mathbb{R} \\mid x \\ge 2\\}',
+      difficulty: 'EASY',
+      language_level: 1,
+      is_favorite: false,
+      is_learned: true,
+    },
+    {
+      id: 'voc-3',
+      topic_id: 'top-10-2-1',
+      word: 'range',
+      ipa: '/reɪndʒ/',
+      meaning_vi: 'tập giá trị',
+      definition_en: 'The set of all possible output values (y) produced by a function.',
+      example_en: 'The range of f(x) = x^2 is all non-negative real numbers.',
+      example_vi: 'Tập giá trị của f(x) = x^2 là tất cả các số thực không âm.',
+      formula: 'y \\in [0, +\\infty)',
+      difficulty: 'EASY',
+      language_level: 1,
+      is_favorite: false,
+      is_learned: true,
+    },
+    {
+      id: 'voc-4',
+      topic_id: 'top-10-2-2',
+      word: 'quadratic function',
+      ipa: '/kwɒdˈræt.ɪk ˈfʌŋk.ʃən/',
+      meaning_vi: 'hàm số bậc hai',
+      definition_en: 'A polynomial function of degree 2.',
+      example_en: 'A quadratic function can be expressed in standard form f(x) = ax^2 + bx + c.',
+      example_vi: 'Hàm số bậc hai có thể biểu diễn dưới dạng chuẩn f(x) = ax^2 + bx + c.',
+      formula: 'y = ax^2 + bx + c \\quad (a \\neq 0)',
+      difficulty: 'EASY',
+      language_level: 1,
+      is_favorite: true,
+      is_learned: true,
+    },
+    {
+      id: 'voc-5',
+      topic_id: 'top-10-2-2',
+      word: 'parabola',
+      ipa: '/pəˈræb.əl.ə/',
+      meaning_vi: 'đồ thị parabol',
+      definition_en: 'The U-shaped curve that represents a quadratic function.',
+      example_en: 'The parabola opens upwards when a > 0.',
+      example_vi: 'Đồ thị parabol bề lõm quay lên trên khi a > 0.',
+      formula: 'a > 0 \\implies \\cup',
+      difficulty: 'MEDIUM',
+      language_level: 2,
+      is_favorite: false,
+      is_learned: false,
+    },
+    {
+      id: 'voc-6',
+      topic_id: 'top-10-2-2',
+      word: 'vertex',
+      ipa: '/ˈvɜː.teks/',
+      meaning_vi: 'đỉnh của parabol',
+      definition_en: 'The maximum or minimum turning point of a parabola.',
+      example_en: 'The coordinates of the vertex are (-b/2a, -\\Delta/4a).',
+      example_vi: 'Tọa độ đỉnh có dạng (-b/2a, -\\Delta/4a).',
+      formula: 'I\\left(-\\frac{b}{2a}, -\\frac{\\Delta}{4a}\\right)',
+      difficulty: 'MEDIUM',
+      language_level: 2,
+      is_favorite: true,
+      is_learned: true,
+    },
+    {
+      id: 'voc-7',
+      topic_id: 'top-10-2-2',
+      word: 'axis of symmetry',
+      ipa: '/ˈæk.sɪs əv ˈsɪm.ə.tri/',
+      meaning_vi: 'trục đối xứng',
+      definition_en: 'The vertical line passing through the vertex that divides the parabola into two symmetric halves.',
+      example_en: 'The axis of symmetry has equation x = -b / (2a).',
+      example_vi: 'Trục đối xứng có phương trình x = -b / (2a).',
+      formula: 'x = -\\frac{b}{2a}',
+      difficulty: 'MEDIUM',
+      language_level: 2,
+      is_favorite: false,
+      is_learned: false,
+    },
+    {
+      id: 'voc-8',
+      topic_id: 'top-10-2-2',
+      word: 'maximum value',
+      ipa: '/ˈmæk.sɪ.məm ˈvæl.juː/',
+      meaning_vi: 'giá trị lớn nhất (GTLN)',
+      definition_en: 'The highest y-value attainable by a function on an interval.',
+      example_en: 'If a < 0, the function attains its maximum value at the vertex.',
+      example_vi: 'Nếu a < 0, hàm số đạt giá trị lớn nhất tại đỉnh.',
+      formula: '\\max_{x \\in D} f(x) = f(x_0)',
+      difficulty: 'EASY',
+      language_level: 1,
+      is_favorite: false,
+      is_learned: true,
+    },
+    {
+      id: 'voc-9',
+      topic_id: 'top-10-2-2',
+      word: 'minimum value',
+      ipa: '/ˈmɪn.ɪ.məm ˈvæl.juː/',
+      meaning_vi: 'giá trị nhỏ nhất (GTNN)',
+      definition_en: 'The lowest y-value attainable by a function on an interval.',
+      example_en: 'Determine the minimum value of f(x) = x^2 - 4x + 3.',
+      example_vi: 'Xác định giá trị nhỏ nhất của f(x) = x^2 - 4x + 3.',
+      formula: '\\min_{x \\in D} f(x) = f(x_0)',
+      difficulty: 'EASY',
+      language_level: 1,
+      is_favorite: false,
+      is_learned: true,
+    },
+    {
+      id: 'voc-10',
+      topic_id: 'top-10-2-1',
+      word: 'increasing function',
+      ipa: '/ɪnˈkriː.sɪŋ ˈfʌŋk.ʃən/',
+      meaning_vi: 'hàm số đồng biến',
+      definition_en: 'A function where output y increases as input x increases.',
+      example_en: 'The function f(x) = 2x + 1 is strictly increasing on R.',
+      example_vi: 'Hàm số f(x) = 2x + 1 đồng biến trên R.',
+      formula: 'x_1 < x_2 \\implies f(x_1) < f(x_2)',
+      difficulty: 'MEDIUM',
+      language_level: 2,
+      is_favorite: false,
+      is_learned: false,
+    },
+    {
+      id: 'voc-11',
+      topic_id: 'top-11-1-1',
+      word: 'derivative',
+      ipa: '/dɪˈrɪv.ə.tɪv/',
+      meaning_vi: 'đạo hàm',
+      definition_en: 'The instantaneous rate of change of a function with respect to a variable.',
+      example_en: 'Find the derivative of f(x) = x^3 - 3x.',
+      example_vi: 'Tính đạo hàm của hàm số f(x) = x^3 - 3x.',
+      formula: "f'(x) = \\lim_{\\Delta x \\to 0} \\frac{\\Delta y}{\\Delta x}",
+      difficulty: 'MEDIUM',
+      language_level: 3,
+      is_favorite: true,
+      is_learned: false,
+    },
+    {
+      id: 'voc-12',
+      topic_id: 'top-12-1-1',
+      word: 'monotonicity',
+      ipa: '/ˌmɒn.ə.təˈnɪs.ə.ti/',
+      meaning_vi: 'tính đơn điệu (đồng biến/nghịch biến)',
+      definition_en: 'The behavior of a function being entirely non-increasing or non-decreasing.',
+      example_en: 'Analyze the monotonicity of the function on the interval (0, +infinity).',
+      example_vi: 'Xét tính đơn điệu của hàm số trên khoảng (0, +vô cực).',
+      formula: "f'(x) > 0 \\implies \\text{Increasing}",
+      difficulty: 'HARD',
+      language_level: 3,
+      is_favorite: false,
+      is_learned: false,
+    },
+  ],
+  sentence_patterns: [
+    {
+      id: 'sp-1',
+      topic_id: 'top-10-2-1',
+      pattern_en: 'Given the function f(x) = ...',
+      pattern_vi: 'Cho hàm số f(x) = ...',
+      example_en: 'Given the function f(x) = x^2 - 4x + 3, find its domain.',
+      example_vi: 'Cho hàm số f(x) = x^2 - 4x + 3, hãy tìm tập xác định của nó.',
+      level: 2,
+      usage_note: 'Dùng để mở đầu bài toán giới thiệu hàm số.',
+    },
+    {
+      id: 'sp-2',
+      topic_id: 'top-10-2-1',
+      pattern_en: 'Find the domain / range of ...',
+      pattern_vi: 'Tìm tập xác định / tập giá trị của ...',
+      example_en: 'Find the domain of the function f(x) = \\sqrt{3 - x}.',
+      example_vi: 'Tìm tập xác định của hàm số f(x) = \\sqrt{3 - x}.',
+      level: 2,
+      usage_note: 'Câu lệnh yêu cầu tìm miền giá trị hoặc tập xác định.',
+    },
+    {
+      id: 'sp-3',
+      topic_id: 'top-10-2-2',
+      pattern_en: 'Determine the coordinates of the vertex of the parabola.',
+      pattern_vi: 'Xác định tọa độ đỉnh của đồ thị parabol.',
+      example_en: 'Determine the coordinates of the vertex of y = 2x^2 - 8x + 5.',
+      example_vi: 'Xác định tọa độ đỉnh của parabol y = 2x^2 - 8x + 5.',
+      level: 2,
+      usage_note: 'Dùng cho bài toán tìm tọa độ đỉnh I.',
+    },
+    {
+      id: 'sp-4',
+      topic_id: 'top-10-2-2',
+      pattern_en: 'Calculate the minimum / maximum value of ...',
+      pattern_vi: 'Tính giá trị nhỏ nhất / lớn nhất của ...',
+      example_en: 'Calculate the minimum value of f(x) on the interval [0, 5].',
+      example_vi: 'Tính giá trị nhỏ nhất của f(x) trên đoạn [0, 5].',
+      level: 2,
+      usage_note: 'Dùng cho bài toán tìm cực trị Min / Max.',
+    },
+    {
+      id: 'sp-5',
+      topic_id: 'top-11-1-1',
+      pattern_en: 'Calculate the derivative of f(x) with respect to x.',
+      pattern_vi: 'Tính đạo hàm của f(x) theo biến x.',
+      example_en: 'Calculate the derivative of f(x) = x^4 - 2x^2 + 1.',
+      example_vi: 'Tính đạo hàm của f(x) = x^4 - 2x^2 + 1.',
+      level: 3,
+      usage_note: 'Câu lệnh quen thuộc trong chương Đạo hàm.',
+    },
+    {
+      id: 'sp-6',
+      topic_id: 'top-12-1-1',
+      pattern_en: 'Prove that f(x) is strictly increasing on ...',
+      pattern_vi: 'Chứng minh rằng f(x) đồng biến trên ...',
+      example_en: 'Prove that f(x) = x^3 + x is strictly increasing on R.',
+      example_vi: 'Chứng minh rằng f(x) = x^3 + x đồng biến trên R.',
+      level: 3,
+      usage_note: 'Câu hỏi chứng minh tính đơn điệu.',
+    },
+  ],
+  lessons: [
+    {
+      id: 'les-10-2-2',
+      topic_id: 'top-10-2-2',
+      title_vi: 'Bài 1: Hàm số bậc hai & Đỉnh của Parabol',
+      title_en: 'Lesson 1: Quadratic Functions & Parabola Vertex',
+      learning_objectives: [
+        'Hiểu và phát biểu được khái niệm Quadratic Function bằng tiếng Anh',
+        'Xác định tọa độ đỉnh (Vertex) và Trục đối xứng (Axis of symmetry)',
+        'Đọc và giải bài toán tìm Min/Max của hàm số bậc hai',
       ],
-      "correctAnswer": "B",
-      "detailedExplanationVi": "Giải thích chi tiết các bước giải toán bằng tiếng Việt",
-      "detailedExplanationEn": "Brief solution step in English",
-      "keyTerms": [
+      vocabulary_list: ['voc-4', 'voc-5', 'voc-6', 'voc-7', 'voc-8', 'voc-9'],
+      key_concepts_vi: 'Hàm số bậc hai có dạng y = ax^2 + bx + c (a khác 0). Đồ thị là một Parabol có đỉnh I(-b/2a; -Delta/4a). Nếu a > 0, bề lõm quay lên trên, hàm số đạt GTNN tại đỉnh. Nếu a < 0, bề lõm quay xuống dưới, hàm số đạt GTLN tại đỉnh.',
+      key_concepts_en: 'A quadratic function has standard form y = ax^2 + bx + c (a != 0). Its graph is a Parabola with vertex I(-b/2a, -Delta/4a). If a > 0, the parabola opens upwards and attains a minimum value at the vertex. If a < 0, it opens downwards and attains a maximum value.',
+      formulas: [
+        'y = ax^2 + bx + c \\quad (a \\neq 0)',
+        'x_I = -\\frac{b}{2a}, \\quad y_I = -\\frac{\\Delta}{4a}',
+        '\\Delta = b^2 - 4ac',
+      ],
+      worked_examples: [
         {
-          "term": "từ tiếng Anh",
-          "phonetic": "/phiên âm/",
-          "vietnamese": "nghĩa tiếng Việt",
-          "note": "ngữ cảnh toán"
-        }
+          problem_en: 'Given the quadratic function f(x) = x^2 - 4x + 3. Determine the coordinates of its vertex and calculate its minimum value.',
+          problem_vi: 'Cho hàm số bậc hai f(x) = x^2 - 4x + 3. Xác định tọa độ đỉnh và tính giá trị nhỏ nhất của hàm số.',
+          solution_en: 'Identify coefficients: a = 1, b = -4, c = 3. Compute x-coordinate of vertex: x_I = -b/(2a) = -(-4)/(2*1) = 2. Substitute x = 2 into f(x): f(2) = 2^2 - 4(2) + 3 = -1. Thus, the vertex is I(2, -1). Since a = 1 > 0, the parabola opens upwards, so the minimum value is -1 at x = 2.',
+          solution_vi: 'Xác định hệ số: a = 1, b = -4, c = 3. Tính hoành độ đỉnh: x_I = -b/(2a) = 2. Thay x = 2 vào f(x): f(2) = -1. Do đó đỉnh I(2, -1). Vì a = 1 > 0 nên parabol quay bề lõm lên trên, GTNN là -1 tại x = 2.',
+          key_steps: [
+            'Identify coefficients a, b, c',
+            'Use formula x_I = -b / (2a)',
+            'Calculate y_I = f(x_I)',
+            'State the vertex coordinates and Min/Max conclusion',
+          ],
+        },
       ],
-      "difficulty": "${difficulty}"
-    }
-  ]
-}
-`;
-
-    const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: prompt,
-      config: {
-        systemInstruction: "You are a professional Math Exam Author for Vietnamese High School Curriculum & International SAT/AP Math. Return valid JSON only.",
-        responseMimeType: "application/json",
-      },
-    });
-
-    const jsonStr = response.text || "{}";
-    const data = JSON.parse(jsonStr);
-    res.json({ success: true, data });
-  } catch (error: any) {
-    console.error("Generate exam error:", error);
-    // Robust fallback exam
-    const count = typeof req.body?.questionCount === "number" ? req.body.questionCount : 5;
-    const gLevel = req.body?.gradeLevel || 10;
-    const cTitle = req.body?.chapterTitle || "Bất phương trình và hệ bất phương trình bậc nhất hai ẩn";
-    const cId = req.body?.chapterId || "g10_c2";
-    const ratio = req.body?.languageRatio || "bilingual";
-
-    res.json({
-      success: true,
-      data: {
-        id: `exam_fallback_${Date.now()}`,
-        title: `Bài kiểm tra Toán ${gLevel} - ${cTitle}`,
-        gradeLevel: gLevel,
-        chapterId: cId,
-        chapterTitleVi: cTitle,
-        languageRatio: ratio,
-        durationMinutes: count * 3,
-        totalQuestions: count,
-        questions: Array.from({ length: count }).map((_, idx) => ({
-          id: `q_${idx + 1}`,
-          questionNumber: idx + 1,
-          chapterId: cId,
-          chapterTitleVi: cTitle,
-          prompt: `Câu ${idx + 1}: Cho hàm số và điều kiện thực tế thuộc chủ đề "${cTitle}". Determine the correct mathematical relationship for this problem statement.`,
-          promptEnglish: `Question ${idx + 1}: Given a problem in ${cTitle}, identify the valid mathematical inequality/solution.`,
-          promptVietnamese: `Câu ${idx + 1}: Trong chủ đề ${cTitle}, hãy xác định khẳng định toán học chính xác.`,
-          options: [
-            { label: "A", text: `Phương án A: Giá trị đại lượng thỏa mãn điều kiện $x \\ge 10$`, isCorrect: false },
-            { label: "B", text: `Phương án B: Miền nghiệm chính xác thỏa mãn hệ điều kiện đã cho`, isCorrect: true },
-            { label: "C", text: `Phương án C: Biểu thức nhận giá trị cực tiểu tại $x = 0$`, isCorrect: false },
-            { label: "D", text: `Phương án D: Không có giá trị nào thỏa mãn`, isCorrect: false },
-          ],
-          correctAnswer: "B",
-          detailedExplanationVi: `Áp dụng định nghĩa và các định lí trọng tâm trong SGK Kết nối tri thức về "${cTitle}". Biến đổi từng bước và đối chiếu điều kiện để suy ra phương án B là chính xác.`,
-          detailedExplanationEn: `Apply the core theorems from the curriculum. Evaluate the given conditions to deduce that option B is correct.`,
-          keyTerms: [
-            { term: "feasible region", phonetic: "/ˈfiː.zə.bəl ˈriː.dʒən/", vietnamese: "miền nghiệm / miền khả thi", note: "Tập hợp các điểm thỏa mãn hệ" },
-            { term: "objective function", phonetic: "/əbˈdʒek.tɪv/", vietnamese: "hàm mục tiêu", note: "Hàm cần tối ưu hóa max/min" }
-          ],
-          difficulty: req.body?.difficulty || "Medium"
-        }))
-      }
-    });
-  }
+      status: 'PUBLISHED',
+      language_level: 2,
+      created_by: 'usr-teacher-1',
+      created_at: new Date().toISOString(),
+    },
+  ],
+  questions: [
+    {
+      id: 'q-101',
+      topic_id: 'top-10-2-2',
+      question_type: 'MCQ',
+      difficulty: 'EASY',
+      language_level: 1,
+      question_vi: 'Tọa độ đỉnh I của đồ thị hàm số y = x² - 4x + 3 là gì?',
+      question_en: 'What are the coordinates of the vertex I of the parabola y = x² - 4x + 3?',
+      question_bilingual: 'Cho hàm số y = x² - 4x + 3. Hãy tìm tọa độ đỉnh (vertex) I của đồ thị?',
+      options: [
+        { option_key: 'A', content_vi: 'I(2; -1)', content_en: 'I(2, -1)', is_correct: true },
+        { option_key: 'B', content_vi: 'I(-2; 15)', content_en: 'I(-2, 15)', is_correct: false },
+        { option_key: 'C', content_vi: 'I(4; 3)', content_en: 'I(4, 3)', is_correct: false },
+        { option_key: 'D', content_vi: 'I(1; 0)', content_en: 'I(1, 0)', is_correct: false },
+      ],
+      solution_vi: 'Hoành độ x_I = -b/(2a) = -(-4)/(2*1) = 2. Tung độ y_I = 2² - 4(2) + 3 = -1. Tọa độ đỉnh I(2, -1).',
+      solution_en: 'The x-coordinate is x_I = -b/(2a) = 2. The y-coordinate is y_I = 2² - 4(2) + 3 = -1. Hence, the vertex is I(2, -1).',
+      correct_answer: 'A',
+      vocabulary_support: [
+        { word: 'vertex', meaning: 'đỉnh của parabol' },
+        { word: 'coordinates', meaning: 'tọa độ (x, y)' },
+      ],
+      formula_support: ['x_I = -\\frac{b}{2a}'],
+      math_skill: 'Quadratic function analysis',
+      english_skill: 'Identifying math key terms in questions',
+      given_info: 'Parabola function y = x² - 4x + 3',
+      required_info: 'Coordinates of vertex I(x, y)',
+      status: 'PUBLISHED',
+      created_by: 'usr-teacher-1',
+      created_at: new Date().toISOString(),
+    },
+    {
+      id: 'q-102',
+      topic_id: 'top-10-2-2',
+      question_type: 'MCQ',
+      difficulty: 'MEDIUM',
+      language_level: 2,
+      question_vi: 'Giá trị nhỏ nhất (Minimum value) của hàm số f(x) = 2x² - 8x + 5 là bao nhiêu?',
+      question_en: 'Determine the minimum value of the quadratic function f(x) = 2x² - 8x + 5.',
+      options: [
+        { option_key: 'A', content_vi: 'Min = -3', content_en: 'Min = -3', is_correct: true },
+        { option_key: 'B', content_vi: 'Min = 2', content_en: 'Min = 2', is_correct: false },
+        { option_key: 'C', content_vi: 'Min = -8', content_en: 'Min = -8', is_correct: false },
+        { option_key: 'D', content_vi: 'Min = 5', content_en: 'Min = 5', is_correct: false },
+      ],
+      solution_vi: 'Hệ số a = 2 > 0 nên hàm số đạt GTNN tại đỉnh x = -b/(2a) = 8 / 4 = 2. f(2) = 2(4) - 8(2) + 5 = 8 - 16 + 5 = -3.',
+      solution_en: 'Coeff a = 2 > 0 implies minimum at vertex x = 2. f(2) = 8 - 16 + 5 = -3.',
+      correct_answer: 'A',
+      vocabulary_support: [
+        { word: 'minimum value', meaning: 'giá trị nhỏ nhất' },
+        { word: 'determine', meaning: 'xác định / tìm' },
+      ],
+      formula_support: ['f(x) = ax^2 + bx + c', 'x = -\\frac{b}{2a}'],
+      math_skill: 'Extreme value of quadratic polynomial',
+      english_skill: 'Reading sentence commands in English',
+      given_info: 'f(x) = 2x² - 8x + 5',
+      required_info: 'Minimum value of f(x)',
+      status: 'PUBLISHED',
+      created_by: 'usr-teacher-1',
+      created_at: new Date().toISOString(),
+    },
+    {
+      id: 'q-103',
+      topic_id: 'top-10-2-1',
+      question_type: 'MCQ',
+      difficulty: 'EASY',
+      language_level: 1,
+      question_vi: 'Tập xác định D (Domain) của hàm số f(x) = \\sqrt{x - 3} là gì?',
+      question_en: 'Find the domain of the function f(x) = \\sqrt{x - 3}.',
+      options: [
+        { option_key: 'A', content_vi: 'D = [3, +\\infty)', content_en: 'D = [3, +infinity)', is_correct: true },
+        { option_key: 'B', content_vi: 'D = (3, +\\infty)', content_en: 'D = (3, +infinity)', is_correct: false },
+        { option_key: 'C', content_vi: 'D = (-\\infty, 3]', content_en: 'D = (-infinity, 3]', is_correct: false },
+        { option_key: 'D', content_vi: 'D = \\mathbb{R} \\setminus \\{3\\}', content_en: 'D = R \\ {3}', is_correct: false },
+      ],
+      solution_vi: 'Hàm số xác định khi x - 3 >= 0 <=> x >= 3. Vậy D = [3, +vô cực).',
+      solution_en: 'Defined when x - 3 >= 0 => x >= 3. Domain is [3, +infinity).',
+      correct_answer: 'A',
+      vocabulary_support: [
+        { word: 'domain', meaning: 'tập xác định' },
+      ],
+      formula_support: ['\\sqrt{A} \\text{ is defined when } A \\ge 0'],
+      math_skill: 'Domain of square root function',
+      english_skill: 'Basic math terminology',
+      given_info: 'Function f(x) = \\sqrt{x - 3}',
+      required_info: 'Domain of f(x)',
+      status: 'PUBLISHED',
+      created_by: 'usr-teacher-1',
+      created_at: new Date().toISOString(),
+    },
+    {
+      id: 'q-104',
+      topic_id: 'top-10-2-2',
+      question_type: 'TRUE_FALSE',
+      difficulty: 'EASY',
+      language_level: 2,
+      question_vi: 'Trục đối xứng (Axis of symmetry) của parabol y = x² - 6x + 5 là đường thẳng x = 3. Đúng hay Sai?',
+      question_en: 'True or False: The axis of symmetry of y = x² - 6x + 5 is x = 3.',
+      options: [
+        { option_key: 'A', content_vi: 'Đúng (True)', content_en: 'True', is_correct: true },
+        { option_key: 'B', content_vi: 'Sai (False)', content_en: 'False', is_correct: false },
+      ],
+      solution_vi: 'Phương trình trục đối xứng x = -b/(2a) = -(-6)/(2*1) = 3. Do đó khẳng định trên ĐÚNG.',
+      solution_en: 'Axis of symmetry x = -b/(2a) = 3. Hence, the statement is TRUE.',
+      correct_answer: 'A',
+      vocabulary_support: [
+        { word: 'axis of symmetry', meaning: 'trục đối xứng' },
+      ],
+      formula_support: ['x = -\\frac{b}{2a}'],
+      math_skill: 'Axis of symmetry computation',
+      english_skill: 'Evaluating mathematical statements',
+      given_info: 'y = x² - 6x + 5',
+      required_info: 'Check if axis of symmetry is x = 3',
+      status: 'PUBLISHED',
+      created_by: 'usr-teacher-1',
+      created_at: new Date().toISOString(),
+    },
+    {
+      id: 'q-105',
+      topic_id: 'top-11-1-1',
+      question_type: 'MCQ',
+      difficulty: 'MEDIUM',
+      language_level: 3,
+      question_vi: 'Tính đạo hàm (derivative) của hàm số f(x) = x³ - 3x + 2.',
+      question_en: 'Calculate the derivative of the polynomial function f(x) = x³ - 3x + 2.',
+      options: [
+        { option_key: 'A', content_vi: "f'(x) = 3x² - 3", content_en: "f'(x) = 3x² - 3", is_correct: true },
+        { option_key: 'B', content_vi: "f'(x) = 3x²", content_en: "f'(x) = 3x²", is_correct: false },
+        { option_key: 'C', content_vi: "f'(x) = 3x - 3", content_en: "f'(x) = 3x - 3", is_correct: false },
+        { option_key: 'D', content_vi: "f'(x) = x² - 3", content_en: "f'(x) = x² - 3", is_correct: false },
+      ],
+      solution_vi: "Áp dụng quy tắc tính đạo hàm: (x^n)' = n*x^(n-1). Ta có f'(x) = 3x² - 3.",
+      solution_en: "Applying power rule: (x^n)' = n*x^(n-1). We obtain f'(x) = 3x² - 3.",
+      correct_answer: 'A',
+      vocabulary_support: [
+        { word: 'derivative', meaning: 'đạo hàm' },
+        { word: 'polynomial', meaning: 'đa thức' },
+      ],
+      formula_support: ["(x^n)' = n x^{n-1}"],
+      math_skill: 'Differentiation rules',
+      english_skill: 'Understanding derivative problem prompts',
+      given_info: 'f(x) = x³ - 3x + 2',
+      required_info: "Derivative f'(x)",
+      status: 'PUBLISHED',
+      created_by: 'usr-teacher-1',
+      created_at: new Date().toISOString(),
+    },
+  ],
+  tests: [
+    {
+      id: 'tst-101',
+      title: 'Bài Kiểm Tra Hàm Số Bậc Hai (Quadratic Functions Test)',
+      description: 'Bài kiểm tra 15 phút với tỷ lệ tiếng Anh 40%. Đánh giá khả năng đọc đề và tìm đỉnh Parabol.',
+      teacher_id: 'usr-teacher-1',
+      teacher_name: 'Cô Lê Thị Mai',
+      duration_minutes: 15,
+      english_ratio: 40,
+      max_attempts: 3,
+      shuffle_questions: true,
+      shuffle_options: true,
+      show_result: true,
+      show_solution: true,
+      status: 'ACTIVE',
+      question_ids: ['q-101', 'q-102', 'q-103', 'q-104', 'q-105'],
+      class_id: 'class-10a1',
+      created_at: new Date().toISOString(),
+    },
+  ],
+  practice_attempts: [],
+  test_attempts: [],
+  hint_logs: [],
+  teacher_interventions: [],
+  question_versions: [],
+  research_mode: { enabled: false, locked_at: null, protocol_version: 'AMB-RP-1.0', note: '' },
+  mei_scores: [
+    {
+      id: 'mei-1',
+      student_id: 'usr-student-1',
+      vocabulary_score: 75,
+      reading_score: 65,
+      problem_solving_score: 60,
+      expression_score: 50,
+      mei_score: 63.8, // 0.25*75 + 0.25*65 + 0.30*60 + 0.20*50 = 18.75 + 16.25 + 18 + 10 = 63.0
+      calculated_at: new Date().toISOString(),
+    },
+  ],
+  student_levels: [
+    {
+      id: 'lvl-1',
+      student_id: 'usr-student-1',
+      current_level: 2,
+      previous_level: 1,
+      recommended_level: 3,
+      teacher_approved: true,
+      changed_at: new Date().toISOString(),
+    },
+  ],
 });
 
-// Mount router on both /api prefix and root for universal compatibility
-app.use("/api", router);
-app.use("/", router);
+// Keep the server database aligned with the canonical GDPT 2018 curriculum used by the client.
+// Previously the Express seed contained only a tiny legacy curriculum, so a running server could
+// silently override the complete Grade 10-12 data from src/lib/dataService.ts.
+const isLegacyExtremaFallbackQuestion = (q: any) => {
+  const text = `${q?.question_vi || ''} ${q?.solution_vi || ''}`.toLowerCase();
+  return (
+    (/\[trắc nghiệm\s*\d+\]/i.test(text) && text.includes('x^3') && text.includes('điểm cực đại')) ||
+    (/\[đúng\/sai\s*\d+\]/i.test(text) && text.includes('-x^3 + 3x + 1')) ||
+    (/\[tln\s*\d+\]/i.test(text) && text.includes('tung độ điểm cực đại'))
+  );
+};
 
-// Vite & Static middleware
-async function startServer() {
-  const isProduction = process.env.NODE_ENV === "production" || !!process.env.VERCEL;
-  const distPath = path.join(process.cwd(), "dist");
+const normalizeLessonIdentity = (title?: string): string => (title || '')
+  .toLowerCase()
+  .normalize('NFD')
+  .replace(/[\u0300-\u036f]/g, '')
+  .replace(/đ/g, 'd')
+  .replace(/^bai\s+\d+\.\s*/i, '')
+  .replace(/\s+/g, ' ')
+  .trim();
 
-  if (!isProduction) {
-    try {
-      const { createServer: createViteServer } = await import("vite");
-      const vite = await createViteServer({
-        server: { middlewareMode: true },
-        appType: "spa",
-      });
-      app.use(vite.middlewares);
-    } catch (err) {
-      console.warn("Vite dev server not loaded, falling back to static dist directory:", err);
-      app.use(express.static(distPath));
-      app.get("*", (_req, res) => {
-        res.sendFile(path.join(distPath, "index.html"));
-      });
+const canReuseStoredLessonContent = (stored: any, canonical: any): boolean => {
+  if (!stored?.updated_at) return false;
+  return normalizeLessonIdentity(stored.title_vi) === normalizeLessonIdentity(canonical.title_vi);
+};
+
+const migrateStoredWorkedExamples = (examples: any[], canonical: any): any[] => {
+  const allowedTypeIds = new Set((canonical.types || []).map((type: any) => type.id));
+  return (examples || []).map((example: any) => {
+    const oldTypeId = example?.type_id as string | undefined;
+    const mappedTypeId = oldTypeId ? (LEGACY_TYPE_MIGRATION[oldTypeId] || oldTypeId) : undefined;
+    return { ...example, type_id: mappedTypeId };
+  }).filter((example: any) => !example.type_id || allowedTypeIds.has(example.type_id));
+};
+
+const syncCanonicalCurriculum = (db: any) => {
+  const storedLessons = new Map((db.lessons || []).map((l: any) => [l.id, l]));
+
+  db.chapters = FULL_CHAPTERS;
+  db.lessons = FULL_LESSONS.map((canonical: any) => {
+    const stored: any = storedLessons.get(canonical.id);
+    const canonicalWorked = DEFAULT_WORKED_EXAMPLES[canonical.id] || canonical.worked_examples || [];
+    const reuseStored = canReuseStoredLessonContent(stored, canonical);
+
+    // Only preserve lesson content that was explicitly updated through the app. Curriculum identity
+    // (chapter/topic/title/type IDs) always comes from the canonical source so routing cannot drift.
+    const merged = reuseStored ? { ...canonical, ...stored } : { ...canonical };
+    return {
+      ...merged,
+      id: canonical.id,
+      chapter_id: canonical.chapter_id,
+      topic_id: canonical.topic_id,
+      title_vi: canonical.title_vi,
+      title_en: canonical.title_en,
+      key_concepts_vi: canonical.key_concepts_vi,
+      key_concepts_en: canonical.key_concepts_en,
+      formulas: canonical.formulas,
+      vocabulary_list: canonical.vocabulary_list,
+      types: canonical.types,
+      worked_examples: (reuseStored && stored?.worked_examples?.length)
+        ? migrateStoredWorkedExamples(stored.worked_examples, canonical)
+        : canonicalWorked,
+    };
+  });
+
+  const canonicalQuestions = FULL_QUESTION_BANK;
+  const canonicalIds = new Set(canonicalQuestions.map((q: any) => q.id));
+  const customQuestions = (db.questions || []).filter(
+    (q: any) => !canonicalIds.has(q.id) && !isLegacyExtremaFallbackQuestion(q)
+  ).map((q: any) => migrateQuestionToCurrentCurriculum(q)).filter((q: any) => !q.type_id || ALL_CURRENT_TYPE_IDS.has(q.type_id));
+  db.questions = [...canonicalQuestions, ...customQuestions];
+  db.practice_attempts = db.practice_attempts || [];
+  db.test_attempts = db.test_attempts || [];
+  db.hint_logs = db.hint_logs || [];
+  db.teacher_interventions = db.teacher_interventions || [];
+  db.question_versions = db.question_versions || [];
+  db.research_mode = db.research_mode || { enabled: false, locked_at: null, protocol_version: 'AMB-RP-1.0', note: '' };
+  return db;
+};
+
+// Helper to get db or create initial
+const getDb = () => {
+  if (!fs.existsSync(DB_FILE)) {
+    const seed = syncCanonicalCurriculum(getInitialSeedData());
+    fs.writeFileSync(DB_FILE, JSON.stringify(seed, null, 2), 'utf-8');
+    return seed;
+  }
+  try {
+    const content = fs.readFileSync(DB_FILE, 'utf-8');
+    const parsed = JSON.parse(content);
+    const synced = syncCanonicalCurriculum(parsed);
+    // Persist migrations so legacy chapter/question data cannot reappear on the next request.
+    fs.writeFileSync(DB_FILE, JSON.stringify(synced, null, 2), 'utf-8');
+    return synced;
+  } catch (err) {
+    const seed = syncCanonicalCurriculum(getInitialSeedData());
+    fs.writeFileSync(DB_FILE, JSON.stringify(seed, null, 2), 'utf-8');
+    return seed;
+  }
+};
+
+// Helper to save db
+const saveDb = (data: any) => {
+  fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2), 'utf-8');
+};
+
+// REST API ROUTES
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok', app: 'MATH-BRIDGE', version: '1.0.0' });
+});
+
+// Auth endpoints
+app.post('/api/auth/login', (req, res) => {
+  const { email, password } = req.body;
+  const db = getDb();
+  const user = db.profiles.find((p: any) => p.email.toLowerCase() === (email || '').toLowerCase());
+
+  if (user) {
+    return res.json({ success: true, user, token: `token-${user.id}` });
+  }
+
+  // Fallback demo user creator if not found
+  const newUser = {
+    id: `usr-${Date.now()}`,
+    full_name: email.split('@')[0],
+    email: email,
+    role: email.includes('teacher') ? 'teacher' : email.includes('admin') ? 'admin' : 'student',
+    grade_id: 10,
+    current_level: 2,
+    created_at: new Date().toISOString(),
+  };
+  db.profiles.push(newUser);
+  saveDb(db);
+  res.json({ success: true, user: newUser, token: `token-${newUser.id}` });
+});
+
+app.get('/api/auth/me', (req, res) => {
+  const userId = req.headers['x-user-id'] as string;
+  const db = getDb();
+  const user = db.profiles.find((p: any) => p.id === userId) || db.profiles[0];
+  res.json({ user });
+});
+
+// Curriculum endpoints
+app.get('/api/grades', (req, res) => {
+  const db = getDb();
+  res.json(db.grades);
+});
+
+app.get('/api/chapters', (req, res) => {
+  const gradeId = parseInt(req.query.grade_id as string, 10);
+  const db = getDb();
+  let chapters = db.chapters;
+  if (gradeId) {
+    chapters = chapters.filter((c: any) => c.grade_id === gradeId);
+  }
+  res.json(chapters);
+});
+
+app.get('/api/topics', (req, res) => {
+  const chapterId = req.query.chapter_id as string;
+  const db = getDb();
+  let topics = db.topics;
+  if (chapterId) {
+    topics = topics.filter((t: any) => t.chapter_id === chapterId);
+  }
+  res.json(topics);
+});
+
+// Vocabulary endpoints
+app.get('/api/vocabulary', (req, res) => {
+  const topicId = req.query.topic_id as string;
+  const level = req.query.level ? parseInt(req.query.level as string, 10) : null;
+  const db = getDb();
+  let list = db.vocabulary;
+  if (topicId) {
+    list = list.filter((v: any) => v.topic_id === topicId);
+  }
+  if (level) {
+    list = list.filter((v: any) => v.language_level === level);
+  }
+  res.json(list);
+});
+
+app.post('/api/vocabulary', (req, res) => {
+  const db = getDb();
+  const newItem = {
+    id: `voc-${Date.now()}`,
+    ...req.body,
+    created_at: new Date().toISOString(),
+  };
+  db.vocabulary.push(newItem);
+  saveDb(db);
+  res.json({ success: true, vocabulary: newItem });
+});
+
+app.post('/api/vocabulary/:id/toggle-favorite', (req, res) => {
+  const { id } = req.params;
+  const db = getDb();
+  const item = db.vocabulary.find((v: any) => v.id === id);
+  if (item) {
+    item.is_favorite = !item.is_favorite;
+    saveDb(db);
+    return res.json({ success: true, is_favorite: item.is_favorite });
+  }
+  res.status(404).json({ error: 'Vocabulary not found' });
+});
+
+app.post('/api/vocabulary/:id/toggle-learned', (req, res) => {
+  const { id } = req.params;
+  const db = getDb();
+  const item = db.vocabulary.find((v: any) => v.id === id);
+  if (item) {
+    item.is_learned = !item.is_learned;
+    saveDb(db);
+    return res.json({ success: true, is_learned: item.is_learned });
+  }
+  res.status(404).json({ error: 'Vocabulary not found' });
+});
+
+// Sentence patterns
+app.get('/api/sentence-patterns', (req, res) => {
+  const topicId = req.query.topic_id as string;
+  const db = getDb();
+  let list = db.sentence_patterns;
+  if (topicId) {
+    list = list.filter((sp: any) => sp.topic_id === topicId);
+  }
+  res.json(list);
+});
+
+// Lessons
+app.get('/api/lessons', (req, res) => {
+  const topicId = req.query.topic_id as string;
+  const db = getDb();
+  let list = db.lessons;
+  if (topicId) {
+    list = list.filter((l: any) => l.topic_id === topicId);
+  }
+  res.json(list);
+});
+
+app.post('/api/lessons', (req, res) => {
+  const db = getDb();
+  const requestedId = req.body?.id as string | undefined;
+  const existingIndex = requestedId ? db.lessons.findIndex((l: any) => l.id === requestedId) : -1;
+  const lesson = {
+    ...req.body,
+    id: requestedId || `les-${Date.now()}`,
+    created_at: req.body?.created_at || new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  };
+  if (existingIndex >= 0) db.lessons[existingIndex] = { ...db.lessons[existingIndex], ...lesson };
+  else db.lessons.push(lesson);
+  saveDb(db);
+  res.json({ success: true, lesson });
+});
+
+// Questions Bank
+app.post('/api/questions/replace-types', (req, res) => {
+  const db = getDb();
+  const typeIds = new Set<string>((req.body?.type_ids || []).filter(Boolean));
+  const incoming = Array.isArray(req.body?.questions) ? req.body.questions : [];
+
+  const canonicalIds = new Set(FULL_QUESTION_BANK.map((q: any) => q.id));
+  const replaced = (db.questions || []).filter((q: any) => !canonicalIds.has(q.id) && q.type_id && typeIds.has(q.type_id));
+  if (db.research_mode?.enabled && replaced.length) {
+    db.question_versions.push(...replaced.map((q: any) => ({ ...q, archived_at: new Date().toISOString(), archived_reason: 'Research Mode bulk replace' })));
+  }
+  db.questions = (db.questions || []).filter(
+    (q: any) => canonicalIds.has(q.id) || !q.type_id || !typeIds.has(q.type_id)
+  );
+  const previousVersions = new Map(replaced.map((q: any) => [q.id, Number(q.question_version || 1)]));
+  const now = new Date().toISOString();
+  const saved = incoming.map((q: any, idx: number) => ({
+    ...q,
+    id: q.id || `q-ai-${Date.now()}-${idx}-${Math.random().toString(36).slice(2, 7)}`,
+    question_version: previousVersions.has(q.id) ? Number(previousVersions.get(q.id)) + 1 : Number(q.question_version || 1),
+    created_at: q.created_at || now,
+    updated_at: now,
+  }));
+  db.questions.push(...saved);
+  saveDb(db);
+  res.json({ success: true, count: saved.length, questions: saved });
+});
+
+app.get('/api/questions', (req, res) => {
+  const topicId = req.query.topic_id as string;
+  const difficulty = req.query.difficulty as string;
+  const level = req.query.level ? parseInt(req.query.level as string, 10) : null;
+  const db = getDb();
+  let list = db.questions;
+  if (topicId) {
+    list = list.filter((q: any) => q.topic_id === topicId);
+  }
+  if (difficulty) {
+    list = list.filter((q: any) => q.difficulty === difficulty);
+  }
+  if (level) {
+    list = list.filter((q: any) => q.language_level === level);
+  }
+  res.json(list);
+});
+
+app.post('/api/questions', (req, res) => {
+  const db = getDb();
+  const requestedId = req.body?.id as string | undefined;
+  const existingIndex = requestedId ? db.questions.findIndex((q: any) => q.id === requestedId) : -1;
+  const previous = existingIndex >= 0 ? db.questions[existingIndex] : null;
+  if (previous && db.research_mode?.enabled) {
+    db.question_versions.push({
+      ...previous,
+      archived_at: new Date().toISOString(),
+      archived_reason: 'Research Mode edit',
+    });
+  }
+  const question = {
+    ...req.body,
+    id: requestedId || `q-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    question_version: previous ? Number(previous.question_version || 1) + 1 : Number(req.body?.question_version || 1),
+    created_at: req.body?.created_at || new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  };
+  if (existingIndex >= 0) db.questions[existingIndex] = { ...db.questions[existingIndex], ...question };
+  else db.questions.push(question);
+  saveDb(db);
+  res.json({ success: true, question });
+});
+
+// Practice submit with diagnostic error classification
+app.post('/api/practice/submit', (req, res) => {
+  const { student_id, question_id, student_answer, response_time, language_mode, hint_count, vocabulary_check, barrier_type, hint_level, independent_mode, support_requested_by_student, support_triggered_by_system, class_id, group } = req.body;
+  const db = getDb();
+  const question = db.questions.find((q: any) => q.id === question_id);
+
+  if (!question) {
+    return res.status(404).json({ error: 'Question not found' });
+  }
+
+  const is_correct = (student_answer || '').trim().toUpperCase() === (question.correct_answer || '').trim().toUpperCase();
+
+  let error_type = 'CORRECT';
+  if (!is_correct) {
+    if (vocabulary_check === false) {
+      error_type = 'LANGUAGE_ERROR';
+    } else if (vocabulary_check === true) {
+      error_type = 'MATH_ERROR';
+    } else {
+      error_type = hint_count > 1 ? 'MATH_AND_LANGUAGE_ERROR' : 'MATH_ERROR';
     }
+  }
+
+  const resolvedStudentId = student_id || 'usr-student-1';
+  const priorForQuestion = db.practice_attempts.filter((pa: any) => pa.student_id === resolvedStudentId && pa.question_id === question_id);
+  const attemptNumber = priorForQuestion.length + 1;
+  const firstAttemptCorrect = priorForQuestion.length > 0
+    ? Boolean(priorForQuestion[0].first_attempt_correct ?? priorForQuestion[0].is_correct)
+    : is_correct;
+  const profile = db.profiles.find((p: any) => p.id === resolvedStudentId);
+  const matchedClass = db.classes.find((c: any) => c.class_code === profile?.class_code);
+  const attempt = {
+    id: `pa-${Date.now()}`,
+    student_id: resolvedStudentId,
+    class_id: class_id || matchedClass?.id || undefined,
+    group: group || undefined,
+    question_id,
+    question_version: Number(question.question_version || 1),
+    student_answer,
+    is_correct,
+    first_attempt_correct: firstAttemptCorrect,
+    final_correct: is_correct,
+    attempt_number: attemptNumber,
+    retry_count: Math.max(0, attemptNumber - 1),
+    response_time: response_time || 12,
+    language_mode: language_mode || 'BILINGUAL',
+    hint_count: hint_count || 0,
+    barrier_type: barrier_type || undefined,
+    hint_level: hint_level ? Number(hint_level) : undefined,
+    independent_mode: Boolean(independent_mode),
+    support_requested_by_student: Boolean(support_requested_by_student),
+    support_triggered_by_system: Boolean(support_triggered_by_system),
+    error_type,
+    created_at: new Date().toISOString(),
+  };
+
+  db.practice_attempts.push(attempt);
+
+  // Update MEI score if needed
+  const meiEntry = db.mei_scores.find((m: any) => m.student_id === attempt.student_id);
+  if (meiEntry) {
+    if (is_correct) {
+      meiEntry.problem_solving_score = Math.min(100, meiEntry.problem_solving_score + 1.5);
+    }
+    meiEntry.mei_score = Math.round((0.25 * meiEntry.vocabulary_score + 0.25 * meiEntry.reading_score + 0.30 * meiEntry.problem_solving_score + 0.20 * meiEntry.expression_score) * 10) / 10;
+  }
+
+  saveDb(db);
+  res.json({ success: true, attempt, is_correct, question_solution: question.solution_vi, error_type });
+});
+
+// Hint logs
+app.post('/api/hint-log', (req, res) => {
+  const db = getDb();
+  const question = db.questions.find((q: any) => q.id === req.body?.question_id);
+  const log = {
+    id: `hl-${Date.now()}`,
+    ...req.body,
+    question_version: Number(req.body?.question_version || question?.question_version || 1),
+    hint_level: req.body?.hint_level ? Number(req.body.hint_level) : undefined,
+    requested_by: req.body?.requested_by || 'STUDENT',
+    created_at: new Date().toISOString(),
+  };
+  db.hint_logs.push(log);
+  saveDb(db);
+  res.json({ success: true, log });
+});
+
+// Online exams: persist the full bank-backed payload so shared links work across devices.
+app.get('/api/online-exams', (req, res) => {
+  const db = getDb() as any;
+  db.online_exams = db.online_exams || [];
+  res.json(db.online_exams);
+});
+
+app.post('/api/online-exams', (req, res) => {
+  const db = getDb() as any;
+  db.online_exams = db.online_exams || [];
+  const incoming = req.body || {};
+  const id = incoming.id || `exam-${Date.now()}`;
+  const exam = { ...incoming, id, created_at: incoming.created_at || new Date().toISOString() };
+  const idx = db.online_exams.findIndex((item: any) => item.id === id);
+  if (idx >= 0) db.online_exams[idx] = exam;
+  else db.online_exams.push(exam);
+  saveDb(db);
+  res.json({ success: true, exam });
+});
+
+// Tests
+app.get('/api/tests', (req, res) => {
+  const db = getDb();
+  res.json(db.tests);
+});
+
+app.post('/api/tests', (req, res) => {
+  const db = getDb();
+  const newTest = {
+    id: `tst-${Date.now()}`,
+    ...req.body,
+    created_at: new Date().toISOString(),
+  };
+  db.tests.push(newTest);
+  saveDb(db);
+  res.json({ success: true, test: newTest });
+});
+
+// Start & submit test attempts
+app.get('/api/tests/:id/take', (req, res) => {
+  const { id } = req.params;
+  const db = getDb();
+  const test = db.tests.find((t: any) => t.id === id);
+  if (!test) return res.status(404).json({ error: 'Test not found' });
+
+  // Get question items
+  const questions = db.questions.filter((q: any) => test.question_ids.includes(q.id));
+  
+  res.json({ test, questions });
+});
+
+app.post('/api/tests/:id/submit', (req, res) => {
+  const { id } = req.params;
+  const { student_id, answers } = req.body; // answers: { question_id, student_answer, hint_count }[]
+  const db = getDb();
+  const test = db.tests.find((t: any) => t.id === id);
+
+  if (!test) return res.status(404).json({ error: 'Test not found' });
+
+  let correctCount = 0;
+  const totalQuestions = answers.length || 1;
+  const processedAnswers = answers.map((ans: any) => {
+    const q = db.questions.find((item: any) => item.id === ans.question_id);
+    const isCorrect = q && (q.correct_answer || '').toUpperCase() === (ans.student_answer || '').toUpperCase();
+    if (isCorrect) correctCount++;
+    return {
+      question_id: ans.question_id,
+      student_answer: ans.student_answer,
+      is_correct: isCorrect,
+      points: isCorrect ? 10 : 0,
+      error_type: isCorrect ? 'CORRECT' : 'MATH_ERROR',
+      hint_count: ans.hint_count || 0,
+    };
+  });
+
+  const finalScore = Math.round((correctCount / totalQuestions) * 100);
+
+  const attempt = {
+    id: `ta-${Date.now()}`,
+    test_id: id,
+    student_id: student_id || 'usr-student-1',
+    started_at: new Date(Date.now() - 10 * 60 * 1000).toISOString(),
+    submitted_at: new Date().toISOString(),
+    score: finalScore,
+    math_score: finalScore,
+    english_math_score: Math.round(finalScore * (test.english_ratio / 100)),
+    status: 'COMPLETED',
+    answers: processedAnswers,
+  };
+
+  db.test_attempts.push(attempt);
+  saveDb(db);
+
+  res.json({ success: true, attempt });
+});
+
+// Student Dashboard Summary
+app.get('/api/student/dashboard-summary', (req, res) => {
+  const studentId = (req.headers['x-user-id'] as string) || 'usr-student-1';
+  const db = getDb();
+  const student = db.profiles.find((p: any) => p.id === studentId) || db.profiles[0];
+  const mei = db.mei_scores.find((m: any) => m.student_id === studentId) || db.mei_scores[0];
+  const learnedVocab = db.vocabulary.filter((v: any) => v.is_learned).length;
+  const totalVocab = db.vocabulary.length;
+  const practiceAttempts = db.practice_attempts.filter((pa: any) => pa.student_id === studentId);
+  const correctPractice = practiceAttempts.filter((pa: any) => pa.is_correct).length;
+  const practiceAccuracy = practiceAttempts.length > 0 ? Math.round((correctPractice / practiceAttempts.length) * 100) : 85;
+
+  res.json({
+    student,
+    mei,
+    vocabulary: { learned: learnedVocab, total: totalVocab },
+    lessons_completed: 4,
+    practice_accuracy: practiceAccuracy,
+    tests_completed: db.test_attempts.length,
+    streak_days: student.streak_days || 5,
+    recent_lesson: db.lessons[0],
+    recommended_activities: [
+      { id: 'act-1', type: 'VOCABULARY', title: 'Luyện 10 từ vựng Hàm số bậc hai', topic_id: 'top-10-2-2', level: 2 },
+      { id: 'act-2', type: 'READING', title: 'Đọc & phân tích bài toán Parabol', topic_id: 'top-10-2-2', level: 2 },
+      { id: 'act-3', type: 'MINI_TEST', title: 'Mini Test 15 phút - Tỷ lệ 40% Anh', test_id: 'tst-101', level: 2 },
+    ],
+  });
+});
+
+// Teacher Classes & Analytics
+app.get('/api/teacher/classes', (req, res) => {
+  const db = getDb();
+  res.json(db.classes);
+});
+
+app.post('/api/teacher/classes', (req, res) => {
+  const db = getDb();
+  const newClass = {
+    id: `class-${Date.now()}`,
+    class_code: `MB${Math.floor(1000 + Math.random() * 9000)}`,
+    student_count: 0,
+    created_at: new Date().toISOString(),
+    ...req.body,
+  };
+  db.classes.push(newClass);
+  saveDb(db);
+  res.json({ success: true, class: newClass });
+});
+
+app.get('/api/teacher/analytics', (req, res) => {
+  const db = getDb();
+  res.json({
+    class_average_mei: 64.5,
+    math_accuracy_avg: 78.2,
+    english_math_accuracy_avg: 62.1,
+    vocabulary_mastery_pct: 71.0,
+    reading_comprehension_pct: 66.5,
+    problem_solving_pct: 59.8,
+    most_difficult_vocabulary: ['monotonicity', 'axis of symmetry', 'vertex', 'range'],
+    most_difficult_questions: ['q-102', 'q-105'],
+    students_needing_support: [
+      { name: 'Trần Văn Bình', level: 1, mei: 38, issue: 'Cần hỗ trợ từ vựng Toán tiếng Anh' },
+      { name: 'Lê Hoàng Nam', level: 2, mei: 45, issue: 'Gặp khó khăn khi đọc câu lệnh đố bằng tiếng Anh' },
+    ],
+    students_ready_next_level: [
+      { name: 'Nguyễn Văn An', level: 2, recommended: 3, mei: 63.8 },
+      { name: 'Phạm Thu Trang', level: 3, recommended: 4, mei: 76.2 },
+    ],
+  });
+});
+
+// Research Mode, Barrier Analysis & Teacher Intervention
+app.post('/api/teacher/research-mode', (req, res) => {
+  const db = getDb();
+  const enabled = Boolean(req.body?.enabled);
+  db.research_mode = {
+    ...(db.research_mode || {}),
+    ...req.body,
+    enabled,
+    locked_at: enabled ? new Date().toISOString() : null,
+  };
+  saveDb(db);
+  res.json({ success: true, research_mode: db.research_mode });
+});
+
+app.get('/api/teacher/interventions', (req, res) => {
+  const db = getDb();
+  const classId = req.query.class_id as string;
+  let list = db.teacher_interventions || [];
+  if (classId) list = list.filter((x: any) => x.class_id === classId);
+  res.json(list);
+});
+
+app.post('/api/teacher/interventions', (req, res) => {
+  const db = getDb();
+  const item = {
+    id: `ti-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+    teacher_id: req.body?.teacher_id || 'usr-teacher-1',
+    class_id: req.body?.class_id,
+    barrier_type: req.body?.barrier_type,
+    intervention_type: req.body?.intervention_type,
+    target_type: req.body?.target_type || 'CLASS',
+    target_id: req.body?.target_id || req.body?.class_id,
+    note: req.body?.note || '',
+    created_at: new Date().toISOString(),
+  };
+  db.teacher_interventions.push(item);
+  saveDb(db);
+  res.json({ success: true, intervention: item });
+});
+
+function buildResearchSnapshot(db: any, classId?: string) {
+  const attempts = (db.practice_attempts || []).filter((x: any) => !classId || !x.class_id || x.class_id === classId);
+  const hints = (db.hint_logs || []).filter((x: any) => !classId || !x.class_id || x.class_id === classId);
+  const counts: Record<string, number> = { L: 0, C: 0, M: 0 };
+  [...attempts, ...hints].forEach((x: any) => {
+    if (x.barrier_type && counts[x.barrier_type] !== undefined) counts[x.barrier_type] += 1;
+  });
+  const totalBarrier = counts.L + counts.C + counts.M;
+  const firstAttempts = attempts.filter((x: any) => Number(x.attempt_number || 1) === 1);
+  const level3 = hints.filter((x: any) => Number(x.hint_level || 0) === 3).length;
+  const noHint = attempts.filter((x: any) => Boolean(x.independent_mode) || Number(x.hint_count || 0) === 0);
+  const pct = (a: number, b: number) => b > 0 ? Math.round((a / b) * 1000) / 10 : 0;
+  const avgRetry = attempts.length
+    ? Math.round((attempts.reduce((sum: number, x: any) => sum + Number(x.retry_count || Math.max(0, Number(x.attempt_number || 1) - 1)), 0) / attempts.length) * 10) / 10
+    : 0;
+  return {
+    research_mode: db.research_mode,
+    classes: db.classes || [],
+    barrier_summary: {
+      language: counts.L,
+      comprehension: counts.C,
+      math_reasoning: counts.M,
+      total_hint_events: hints.length,
+      high_support_rate: pct(level3, hints.length),
+    },
+    independence: {
+      first_attempt_accuracy: pct(firstAttempts.filter((x: any) => Boolean(x.is_correct || x.first_attempt_correct)).length, firstAttempts.length),
+      final_accuracy: pct(attempts.filter((x: any) => Boolean(x.final_correct ?? x.is_correct)).length, attempts.length),
+      avg_retry: avgRetry,
+      no_hint_accuracy: pct(noHint.filter((x: any) => Boolean(x.is_correct)).length, noHint.length),
+    },
+    common_barriers: (['L', 'C', 'M'] as const).map((code) => ({
+      code,
+      label: code,
+      count: counts[code],
+      percent: pct(counts[code], totalBarrier),
+    })),
+    recent_interventions: (db.teacher_interventions || [])
+      .filter((x: any) => !classId || x.class_id === classId)
+      .slice(-20)
+      .reverse(),
+    question_version_count: (db.question_versions || []).length,
+    total_attempts: attempts.length,
+  };
+}
+
+app.get('/api/teacher/research-snapshot', (req, res) => {
+  const db = getDb();
+  res.json(buildResearchSnapshot(db, req.query.class_id as string));
+});
+
+function csvEscape(value: any) {
+  const s = value === null || value === undefined ? '' : String(value);
+  return `"${s.replace(/"/g, '""')}"`;
+}
+
+app.get('/api/teacher/research-export.csv', (req, res) => {
+  const db = getDb();
+  const classId = req.query.class_id as string;
+  const attempts = (db.practice_attempts || []).filter((x: any) => !classId || !x.class_id || x.class_id === classId);
+  const headers = [
+    'student_id','class_id','group','question_id','question_version','attempt_number','first_attempt_correct',
+    'final_correct','barrier_type','hint_level','hint_count','retry_count','response_time','independent_mode',
+    'support_requested_by_student','support_triggered_by_system','created_at'
+  ];
+  const rows = attempts.map((x: any) => headers.map((h) => csvEscape(x[h])).join(','));
+  const csv = '\uFEFF' + [headers.join(','), ...rows].join('\n');
+  res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+  res.setHeader('Content-Disposition', `attachment; filename="AI_Math_Bridge_${classId || 'all'}_research.csv"`);
+  res.send(csv);
+});
+
+app.get('/api/teacher/research-export.json', (req, res) => {
+  const db = getDb();
+  const classId = req.query.class_id as string;
+  const payload = {
+    exported_at: new Date().toISOString(),
+    protocol: db.research_mode,
+    snapshot: buildResearchSnapshot(db, classId),
+    practice_attempts: (db.practice_attempts || []).filter((x: any) => !classId || !x.class_id || x.class_id === classId),
+    hint_logs: (db.hint_logs || []).filter((x: any) => !classId || !x.class_id || x.class_id === classId),
+    teacher_interventions: (db.teacher_interventions || []).filter((x: any) => !classId || x.class_id === classId),
+    question_versions: db.question_versions || [],
+  };
+  res.setHeader('Content-Type', 'application/json; charset=utf-8');
+  res.setHeader('Content-Disposition', `attachment; filename="AI_Math_Bridge_${classId || 'all'}_research.json"`);
+  res.json(payload);
+});
+
+// Compatibility endpoint used by the existing TeacherAnalytics screen.
+app.get('/api/teacher/classes/:id/analytics', (req, res) => {
+  const db = getDb();
+  const snapshot = buildResearchSnapshot(db, req.params.id);
+  res.json({
+    ...snapshot,
+    diagnostic_errors: {
+      language_errors: snapshot.barrier_summary.language,
+      comprehension_errors: snapshot.barrier_summary.comprehension,
+      math_errors: snapshot.barrier_summary.math_reasoning,
+      math_and_language_errors: 0,
+    },
+    hint_usage: {
+      vocabulary: (db.hint_logs || []).filter((x: any) => x.hint_type === 'vocabulary' || x.barrier_type === 'L').length,
+      comprehension: (db.hint_logs || []).filter((x: any) => x.barrier_type === 'C').length,
+      math_reasoning: (db.hint_logs || []).filter((x: any) => x.barrier_type === 'M').length,
+    },
+  });
+});
+
+// Admin stats
+app.get('/api/admin/stats', (req, res) => {
+  const db = getDb();
+  res.json({
+    total_users: db.profiles.length + 120,
+    total_students: 110,
+    total_teachers: 12,
+    total_schools: db.schools.length,
+    total_questions: db.questions.length + 45,
+    total_tests: db.tests.length + 15,
+    total_lessons: db.lessons.length + 20,
+    active_classes: db.classes.length,
+  });
+});
+
+// Vite & Static file serving setup
+async function startServer() {
+  if (process.env.NODE_ENV !== 'production') {
+    const vite = await createViteServer({
+      server: { middlewareMode: true },
+      appType: 'spa',
+    });
+    app.use(vite.middlewares);
   } else {
+    const distPath = path.join(process.cwd(), 'dist');
     app.use(express.static(distPath));
-    app.get("*", (_req, res) => {
-      res.sendFile(path.join(distPath, "index.html"));
+    app.get('*', (req, res) => {
+      res.sendFile(path.join(distPath, 'index.html'));
     });
   }
 
-  app.listen(PORT, "0.0.0.0", () => {
-    console.log(`Math Bridge AI Student Server running on http://0.0.0.0:${PORT}`);
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(`MATH-BRIDGE Server running on http://0.0.0.0:${PORT}`);
   });
 }
 
-export { app };
-export default app;
-
-// Only start standalone server if not running as serverless function and not testing
-if (!process.env.VERCEL && !process.env.AWS_LAMBDA_FUNCTION_NAME && process.env.NODE_ENV !== "test") {
-  startServer();
-}
+startServer();
