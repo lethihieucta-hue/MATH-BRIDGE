@@ -112,12 +112,7 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab }) => {
 
             {/* Right Controls */}
             <div className="flex items-center gap-2.5">
-              <div className="hidden lg:block text-right pr-2 text-xs">
-                <span className="text-slate-400">Tác giả: </span>
-                <span className="text-violet-300 font-bold">Lê Thị Hiếu (0939069119)</span>
-              </div>
-
-              <button
+<button
                 onClick={() => setIsSettingsOpen(true)}
                 className="p-2 rounded-xl bg-slate-900 border border-slate-700 text-teal-400 hover:bg-slate-800"
               >

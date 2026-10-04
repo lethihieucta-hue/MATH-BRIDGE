@@ -18,6 +18,7 @@ import { getAllowedVariantTags } from '../../lib/questionBlueprintData';
 import { printElementAsA4 } from '../../lib/officeExport';
 import { isCleanEnglishText, isQuestionEnglishReady } from '../../lib/englishQuality';
 import { normalizeLatexFractions, normalizeMathFractionsInText } from '../../lib/mathFormatting';
+import { barrierFocusInstruction, barrierFocusLabel, getBarrierFocus, getRecommendedBarrier, getResearchClass, setBarrierFocus, type TeacherBarrierFocus } from '../../lib/teacherResearchPreferences';
 import {
   BookOpen,
   Search,
@@ -300,6 +301,9 @@ export const BilingualLessonModule: React.FC = () => {
   const [allQuestions, setAllQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(true);
   const [isAiGeneratingWorksheet, setIsAiGeneratingWorksheet] = useState(false);
+  const [barrierFocus, setBarrierFocusState] = useState<TeacherBarrierFocus>(() => getBarrierFocus());
+  const recommendedBarrier = getRecommendedBarrier();
+  const researchClassName = getResearchClass();
 
   // Active Selection States
   const [activeChapterId, setActiveChapterId] = useState<string | null>(null);
@@ -422,6 +426,7 @@ export const BilingualLessonModule: React.FC = () => {
             {
               key_concepts_vi: activeLesson.key_concepts_vi,
               formulas: activeLesson.formulas || [],
+              researchFocus: barrierFocusInstruction(barrierFocus),
             }
           ),
           45000,
@@ -1069,7 +1074,7 @@ export const BilingualLessonModule: React.FC = () => {
                   title_en: shortage.mathType.title_en,
                   ...requestNow,
                 }],
-                { key_concepts_vi: activeLesson.key_concepts_vi, formulas: activeLesson.formulas || [] }
+                { key_concepts_vi: activeLesson.key_concepts_vi, formulas: activeLesson.formulas || [], researchFocus: barrierFocusInstruction(barrierFocus) }
               ),
               12000,
               'Gemini'
@@ -1630,6 +1635,23 @@ export const BilingualLessonModule: React.FC = () => {
                   Vừa khung
                 </button>
               </div>
+            </div>
+
+            <div className="bg-white rounded-2xl border border-teal-200 p-3 shadow-2xs">
+              <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-2">
+                <div>
+                  <div className="text-xs font-black text-slate-900">Ưu tiên soạn theo rào cản học sinh</div>
+                  <div className="text-[10px] text-slate-500 mt-0.5">{researchClassName ? `Lớp đang theo dõi: ${researchClassName}` : 'Chưa chọn lớp nghiên cứu'}{recommendedBarrier !== 'NONE' ? ` • Dữ liệu gợi ý: ${barrierFocusLabel[recommendedBarrier]}` : ''}</div>
+                </div>
+                <div className="flex flex-wrap gap-1.5">
+                  {(['NONE','L','C','M'] as TeacherBarrierFocus[]).map((code) => (
+                    <button key={code} type="button" onClick={() => { setBarrierFocusState(code); setBarrierFocus(code); }} className={`px-2.5 py-1.5 rounded-lg text-[10px] font-black border ${barrierFocus === code ? 'bg-teal-600 text-white border-teal-600' : 'bg-white text-slate-700 border-slate-200 hover:border-teal-300'}`}>
+                      {barrierFocusLabel[code]}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              {barrierFocus !== 'NONE' && <div className="mt-2 text-[10px] leading-4 text-teal-900 bg-teal-50 border border-teal-100 rounded-xl px-3 py-2">AI và phần câu hỏi bổ sung sẽ ưu tiên <b>{barrierFocusLabel[barrierFocus]}</b>. Đây là ưu tiên can thiệp, không phải nhãn cố định của học sinh.</div>}
             </div>
 
             {/* A4 DOCUMENT PREVIEW CONTAINER */}

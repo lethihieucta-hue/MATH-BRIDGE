@@ -488,7 +488,7 @@ export async function generateWorksheetQuestionsByPlanAi(
   chapterName: string,
   grade: number,
   plans: WorksheetTypeQuestionPlan[],
-  lessonContext?: { key_concepts_vi?: string; formulas?: string[] }
+  lessonContext?: { key_concepts_vi?: string; formulas?: string[]; researchFocus?: string }
 ): Promise<StepExecutionResult> {
   const cleanPlans = plans
     .map((p) => ({
@@ -535,6 +535,7 @@ BLUEPRINT RIÊNG THEO TYPE_ID:
 ${blueprintContext}
 
 ${curriculumContext ? `LÝ THUYẾT/CÔNG THỨC CHUẨN CỦA BÀI:\n${curriculumContext}\n` : ''}
+${lessonContext?.researchFocus ? `ƯU TIÊN CAN THIỆP THEO DỮ LIỆU RÀO CẢN:\n${lessonContext.researchFocus}\n` : ''}
 RÀNG BUỘC BẮT BUỘC:
 1. Mỗi câu phải có type_id đúng y hệt một ID cho phép và nội dung phải đúng chính xác tên dạng đó. Không được mượn bài từ type_id khác, kể cả cùng bài/chương.
 2. format_type chỉ nhận TN, DS, TLN, TL và số câu của TỪNG format trong TỪNG type_id phải đúng bảng số lượng ở trên.
@@ -584,7 +585,7 @@ export async function generateCompleteLessonWorksheetAi(
   chapterName: string,
   grade: number,
   mathTypes: Array<{ id: string; code: string; title_vi: string; title_en: string }> = [],
-  lessonContext?: { key_concepts_vi?: string; formulas?: string[] }
+  lessonContext?: { key_concepts_vi?: string; formulas?: string[]; researchFocus?: string }
 ): Promise<StepExecutionResult> {
   const allowedTypes = mathTypes.length > 0
     ? mathTypes.map((t) => `- ${t.id} | ${t.code} | ${t.title_vi} | ${t.title_en}`).join('\n')
@@ -608,6 +609,7 @@ NGÂN HÀNG CẤU TRÚC BÀI TẬP RIÊNG CHO TỪNG type_id (variant_tag PHẢI
 ${blueprintContext}
 
 ${curriculumContext ? `NGỮ CẢNH CHƯƠNG TRÌNH CHUẨN (BÁM SÁT, KHÔNG MỞ RỘNG SANG BÀI KHÁC):\n${curriculumContext}\n` : ''}
+${lessonContext?.researchFocus ? `ƯU TIÊN CAN THIỆP THEO DỮ LIỆU RÀO CẢN:\n${lessonContext.researchFocus}\n` : ''}
 RÀNG BUỘC SƯ PHẠM BẮT BUỘC:
 1. TUYỆT ĐỐI không sinh kiến thức thuộc bài/chương khác. Ví dụ: bài Nguyên hàm không được xuất hiện câu cực trị, đồng biến/nghịch biến; bài số liệu ghép nhóm không được xuất hiện đạo hàm/khảo sát hàm số; bài hình học không được chèn xác suất hay thống kê.
 2. Mỗi câu hỏi và mỗi ví dụ phải có trường type_id; type_id CHỈ được lấy từ danh sách dạng toán ở trên và nội dung câu phải đúng chính xác mô tả của type_id đó.

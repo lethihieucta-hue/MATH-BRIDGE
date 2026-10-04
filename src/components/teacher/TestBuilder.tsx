@@ -6,6 +6,7 @@ import { ONLINE_SAFE_QUESTION_BANK } from '../../lib/questionBankData';
 import { apiFetch } from '../../lib/dataService';
 import { FULL_LESSONS } from '../../lib/curriculumData';
 import { isQuestionEnglishReady } from '../../lib/englishQuality';
+import { barrierFocusLabel, getBarrierFocus, getRecommendedBarrier, getResearchClass, setBarrierFocus, type TeacherBarrierFocus } from '../../lib/teacherResearchPreferences';
 import { OnlineExamRoom, OnlineExamData } from '../online_exam/OnlineExamRoom';
 import {
   createDocxBlob,
@@ -53,6 +54,9 @@ export const TestBuilder: React.FC = () => {
     `Tạo đề kiểm tra 15 phút về Giá trị lớn nhất, giá trị nhỏ nhất của hàm số và bài toán tối ưu hoá thực tế lớp 12, gồm 10 câu, tỷ lệ tiếng Anh 50%.`
   );
   const [isGenerating, setIsGenerating] = useState(false);
+  const [barrierFocus, setBarrierFocusState] = useState<TeacherBarrierFocus>(() => getBarrierFocus());
+  const recommendedBarrier = getRecommendedBarrier();
+  const researchClassName = getResearchClass();
   const [includeAnswerKey, setIncludeAnswerKey] = useState(true);
   const [includeCandidateBox, setIncludeCandidateBox] = useState(true);
 
@@ -252,6 +256,32 @@ export const TestBuilder: React.FC = () => {
     };
   });
 
+  const prioritizeQuestionsForBarrier = (questions: Question[], focus: TeacherBarrierFocus): Question[] => {
+    if (focus === 'NONE') return questions;
+    const score = (q: Question) => {
+      const enWords = String(q.question_en || '').trim().split(/\s+/).filter(Boolean).length;
+      let value = 0;
+      if (focus === 'L') {
+        value += (q.vocabulary_support?.length || 0) * 3;
+        value += q.english_skill ? 3 : 0;
+        value += enWords >= 8 ? 2 : 0;
+        value += Number(q.language_level || 0);
+      } else if (focus === 'C') {
+        value += q.given_info ? 4 : 0;
+        value += q.required_info ? 4 : 0;
+        value += enWords >= 18 ? 4 : enWords >= 10 ? 2 : 0;
+        value += q.format_type === 'DS' || q.format_type === 'TLN' ? 2 : 0;
+        value += (q.assets?.length || 0) > 0 ? 1 : 0;
+      } else if (focus === 'M') {
+        value += q.difficulty === 'HARD' ? 6 : q.difficulty === 'MEDIUM' ? 3 : 0;
+        value += (q.formula_support?.length || 0) > 0 ? 2 : 0;
+        value += q.format_type === 'TLN' ? 2 : 0;
+      }
+      return value;
+    };
+    return [...questions].sort((a, b) => score(b) - score(a));
+  };
+
   // Generate Test directly from the verified question bank (no Gemini by default)
   const handleGenerateTest = async () => {
     if (!promptDescription.trim()) {
@@ -301,10 +331,11 @@ export const TestBuilder: React.FC = () => {
       : rawCandidateQuestions;
     const formatCounts = parseFormatCounts(promptDescription, targetCount);
     targetCount = formatCounts.total;
+    const prioritizedCandidates = prioritizeQuestionsForBarrier(candidateQuestions, barrierFocus);
     const selected: Question[] = [
-      ...pickDiverse(candidateQuestions, 'TN', formatCounts.tn),
-      ...pickDiverse(candidateQuestions, 'DS', formatCounts.ds),
-      ...pickDiverse(candidateQuestions, 'TLN', formatCounts.tln),
+      ...pickDiverse(prioritizedCandidates, 'TN', formatCounts.tn),
+      ...pickDiverse(prioritizedCandidates, 'DS', formatCounts.ds),
+      ...pickDiverse(prioritizedCandidates, 'TLN', formatCounts.tln),
     ];
 
     // Extract title from prompt
@@ -634,6 +665,16 @@ export const TestBuilder: React.FC = () => {
               placeholder="Ví dụ: Tạo đề kiểm tra 15 phút về Giá trị lớn nhất, giá trị nhỏ nhất của hàm số và bài toán tối ưu hoá thực tế lớp 12, gồm 10 câu, tỷ lệ tiếng Anh 50%."
               className="w-full p-4 bg-slate-50 border border-slate-300 rounded-2xl text-sm font-medium text-slate-900 focus:bg-white focus:border-violet-600 focus:ring-2 focus:ring-violet-200 outline-none transition resize-y shadow-inner"
             />
+          </div>
+
+          <div className="rounded-2xl border border-teal-200 bg-teal-50/60 p-3 space-y-2">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-2">
+              <div><div className="text-xs font-black text-slate-900">Ưu tiên đề theo rào cản cần bổ sung</div><div className="text-[10px] text-slate-500">{researchClassName ? `Lớp: ${researchClassName}` : 'Chưa chọn lớp nghiên cứu'}{recommendedBarrier !== 'NONE' ? ` • Dữ liệu gợi ý: ${barrierFocusLabel[recommendedBarrier]}` : ''}</div></div>
+              <div className="flex flex-wrap gap-1.5">
+                {(['NONE','L','C','M'] as TeacherBarrierFocus[]).map((code) => <button key={code} type="button" onClick={() => { setBarrierFocusState(code); setBarrierFocus(code); }} className={`px-2.5 py-1.5 rounded-lg text-[10px] font-black border ${barrierFocus === code ? 'bg-teal-600 text-white border-teal-600' : 'bg-white text-slate-700 border-slate-200'}`}>{barrierFocusLabel[code]}</button>)}
+              </div>
+            </div>
+            {barrierFocus !== 'NONE' && <p className="text-[10px] text-teal-900">Hệ thống ưu tiên chọn câu trong ngân hàng phù hợp với <b>{barrierFocusLabel[barrierFocus]}</b>; vẫn giữ nguyên phạm vi kiến thức và cấu trúc đề.</p>}
           </div>
 
           {/* Action Button */}

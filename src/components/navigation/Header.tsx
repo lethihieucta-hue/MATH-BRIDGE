@@ -5,7 +5,6 @@ import { ApiKeySettingsModal } from './ApiKeySettingsModal';
 import {
   Key,
   Sparkles,
-  Phone,
   Layers,
   GraduationCap,
   Activity,
@@ -144,18 +143,6 @@ export const Header: React.FC = () => {
 
             {/* Right: Author Info & Gemini Controls */}
             <div className="flex items-center gap-2.5">
-              {/* Author & Contact Info */}
-              <div className="hidden xl:flex flex-col items-end text-right pr-2 border-r border-slate-800">
-                <div className="text-xs font-bold text-slate-200 flex items-center gap-1.5">
-                  <span className="text-slate-400">Tác giả:</span>
-                  <span className="text-violet-300 font-extrabold">Lê Thị Hiếu</span>
-                </div>
-                <div className="text-[11px] text-teal-400 font-mono font-bold flex items-center gap-1">
-                  <Phone className="w-3 h-3 text-teal-400" />
-                  <span>ĐT / Zalo: 0939069119</span>
-                </div>
-              </div>
-
               {/* Gemini AI Settings Button */}
               <button
                 onClick={() => setIsSettingsOpen(true)}
