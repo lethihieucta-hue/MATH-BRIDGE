@@ -1,0 +1,49 @@
+{
+  "version": "3.1.0",
+  "combined_scope": [
+    "V3.0 Adaptive AI",
+    "V3.1 Account test + local teacher dashboard"
+  ],
+  "question_bank": {
+    "total": 2251,
+    "formats": {
+      "TN": 1322,
+      "TLN": 638,
+      "TL": 291
+    },
+    "duplicate_ids": 0
+  },
+  "relative_imports": {
+    "count": 106,
+    "missing": []
+  },
+  "preservation": [
+    {
+      "file": "src/components/MathRenderer.tsx",
+      "same_as_v2_5": true,
+      "sha256": "05268583d64d3b4a29ccf5cb25f274e3be7575a2dbda1f39ef775a4218096029"
+    },
+    {
+      "file": "src/data/standardBank/questionsG10.json",
+      "same_as_v2_5": true,
+      "sha256": "1780b6d065e888ce15c39895c28180b394dd2845f1ee6372b5010dca64c34da4"
+    },
+    {
+      "file": "src/data/standardBank/questionsG11.json",
+      "same_as_v2_5": true,
+      "sha256": "05f087eec262d6055dc9af4cc02c75a8f06bf2f887068730c7105b39a7fe287c"
+    },
+    {
+      "file": "src/data/standardBank/questionsG12.json",
+      "same_as_v2_5": true,
+      "sha256": "68ab1415220d1052302baec1a3628dd3d8d7d665bc748a60c67edfb8d3a0a919"
+    }
+  ],
+  "account_runtime_test": {
+    "wrong_password_rejected": true,
+    "two_accounts_separate": true,
+    "relogin_preserves_progress": true,
+    "adaptive_language_bridge_case": true
+  },
+  "known_deployment_mode": "local browser account test; cloud multi-device backend not configured"
+}

@@ -1,0 +1,69 @@
+{
+  "artifact": "AI Math Bridge Student Math Speaking",
+  "internalBuild": "3.5B / backend 3.5.3",
+  "userFacingVersionLabelAudit": {
+    "visibleHits": [],
+    "commentOnlyHits": [
+      {
+        "file": "src/components/MathRenderer.tsx",
+        "line": 19,
+        "text": "* IMPORTANT V2.2.3:"
+      }
+    ]
+  },
+  "typescriptTranspile": {
+    "files": 39,
+    "syntaxErrors": 0
+  },
+  "relativeImports": {
+    "total": 118,
+    "missing": 0
+  },
+  "fullTsc": {
+    "dependencyResolutionErrors": 81,
+    "nonDependencyInternalErrors": 0,
+    "internalErrorLines": [],
+    "note": "node_modules are not included in source ZIP; full tsc cannot resolve React/Vite/Node packages in this environment."
+  },
+  "appsScriptSyntax": "PASS",
+  "questionBank": {
+    "total": 2251,
+    "formats": {
+      "TN": 1322,
+      "TLN": 638,
+      "TL": 291
+    },
+    "duplicateIds": 0
+  },
+  "roster": {
+    "total": 768,
+    "duplicateStudentIds": 0,
+    "grade11": 346,
+    "grade12": 422
+  },
+  "preservationVsFullMathKeyboardBase": {
+    "src/components/MathRenderer.tsx": true,
+    "src/components/Level2ReadingStudio.tsx": true,
+    "src/components/Level3EssayStudio.tsx": true,
+    "src/components/MathInputToolbar.tsx": true,
+    "src/data/standardBank/questionsG10.json": true,
+    "src/data/standardBank/questionsG11.json": true,
+    "src/data/standardBank/questionsG12.json": true,
+    "src/data/builtInRoster.ts": true
+  },
+  "speakingFeatures": {
+    "navLabelMathSpeaking": true,
+    "repeatMode": true,
+    "readMathMode": true,
+    "explainMode": true,
+    "browserSpeechRecognition": true,
+    "speechSynthesis": true,
+    "typedTranscriptFallback": true,
+    "audioNotStoredNotice": true,
+    "geminiSpeakingAction": true,
+    "geminiSpeakingTest": true,
+    "teacherProgressSpeakingColumns": true,
+    "microphoneMetadata": true
+  },
+  "appsScriptRootCopyMatches": true
+}

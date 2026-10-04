@@ -1,0 +1,76 @@
+{
+  "version": "3.1.4",
+  "title": "Roster Cleanup + Legacy UI Removal",
+  "ui_cleanup": {
+    "ai_socratic_tutor_nav_removed": true,
+    "nlp_diagnostic_nav_removed": true,
+    "TutorRoom_component_removed": true,
+    "ErrorDiagnosticStudio_component_removed": true
+  },
+  "local_roster_cleanup": {
+    "auto_cleanup_on_app_start": true,
+    "cleanup_function_present": true,
+    "login_rejects_outside_roster": true,
+    "analytics_filters_roster": true
+  },
+  "google_sheet_cleanup": {
+    "menu_present": true,
+    "archive_sheet_present": true,
+    "cleanup_archives_before_delete": true,
+    "protected_research_sheets": [
+      "PRE_POST_EXPERIMENT",
+      "TEACHER_INTERVENTION"
+    ]
+  },
+  "roster": {
+    "total": 768,
+    "grade_counts": {
+      "11": 346,
+      "12": 422
+    },
+    "unique_student_ids": 768
+  },
+  "standard_bank": {
+    "total": 2251,
+    "by_grade": {
+      "10": {
+        "total": 707,
+        "formats": {
+          "TN": 409,
+          "TLN": 199,
+          "TL": 99
+        }
+      },
+      "11": {
+        "total": 884,
+        "formats": {
+          "TN": 525,
+          "TLN": 245,
+          "TL": 114
+        }
+      },
+      "12": {
+        "total": 660,
+        "formats": {
+          "TN": 388,
+          "TLN": 194,
+          "TL": 78
+        }
+      }
+    },
+    "duplicate_ids": 0
+  },
+  "preservation_sha256": {
+    "src/components/MathRenderer.tsx": "05268583d64d3b4a29ccf5cb25f274e3be7575a2dbda1f39ef775a4218096029",
+    "src/data/standardBank/questionsG10.json": "1780b6d065e888ce15c39895c28180b394dd2845f1ee6372b5010dca64c34da4",
+    "src/data/standardBank/questionsG11.json": "05f087eec262d6055dc9af4cc02c75a8f06bf2f887068730c7105b39a7fe287c",
+    "src/data/standardBank/questionsG12.json": "68ab1415220d1052302baec1a3628dd3d8d7d665bc748a60c67edfb8d3a0a919"
+  },
+  "source_checks": {
+    "tsx_ts_syntax_errors": 0,
+    "relative_imports": 109,
+    "missing_relative_imports": 0,
+    "apps_script_syntax": "PASS",
+    "full_tsc_note": "Full tsc cannot resolve external npm packages because node_modules is not bundled; transpile syntax and internal relative-import audit passed."
+  }
+}

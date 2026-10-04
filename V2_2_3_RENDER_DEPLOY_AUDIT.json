@@ -1,0 +1,64 @@
+{
+  "version": "2.2.3",
+  "question_count": 2251,
+  "math_tokens_scanned": 8534,
+  "array_occurrences": 164,
+  "malformed_arrays": 0,
+  "bare_latex_commands_outside_explicit_math": 0,
+  "vietnamese_diacritics_in_english_question_solution_options": 0,
+  "tsx_syntax_errors": 0,
+  "non_dependency_tsc_errors": 0,
+  "regression_fixtures": {
+    "parallelepiped": {
+      "id": "q-static-type-kntt-12-06-02-tn-1",
+      "questionEn": "In parallelepiped $ABCD.A^\\prime B^\\prime C^\\prime D^\\prime$, the correct identity is",
+      "optionsEn": [
+        "$\\overrightarrow{AC^\\prime}=\\overrightarrow{AB}+\\overrightarrow{AD}+\\overrightarrow{AA^\\prime}$",
+        "$\\overrightarrow{AC^\\prime}=\\overrightarrow{AB}+\\overrightarrow{AD}$",
+        "$\\overrightarrow{AC^\\prime}=\\overrightarrow{AA^\\prime}$",
+        "$\\overrightarrow{AC^\\prime}=\\vec0$"
+      ]
+    },
+    "grouped_samples": {
+      "id": "q-static-type-kntt-12-09-03-tn-1",
+      "questionEn": "Given two grouped samples $$\\begin{array}{c|ccc}\\text{Sample A}&[0;10)&[10;20)&[20;30)\\\\\\hline\\text{Frequency}&2&4&2\\end{array}$$ $$\\begin{array}{c|ccc}\\text{Sample B}&[0;20)&[20;40)&[40;60)\\\\\\hline\\text{Frequency}&2&4&2\\end{array}$$ Which sample is more dispersed by range?",
+      "optionsEn": [
+        "Sample B",
+        "Sample A",
+        "The two samples are equally dispersed",
+        "Insufficient information"
+      ]
+    },
+    "integral": {
+      "id": "q-static-type-kntt-12-12-01-tn-2",
+      "questionEn": "Using the data in the following problem, choose the correct result: Evaluate $\\int_0^2 3\\,dx$.",
+      "optionsEn": [
+        "6",
+        "3",
+        "5",
+        "9"
+      ]
+    },
+    "channel": {
+      "id": "q-static-type-kntt-12-13-04-tn-2",
+      "questionEn": "Using the data in the following problem, choose the correct result: A channel cross-section has height $y=2x-x^2$ for $0\\le x\\le2$ m. Find its cross-sectional area.",
+      "optionsEn": [
+        "$\\dfrac43$",
+        "2",
+        "$\\dfrac23$",
+        "$\\dfrac83$"
+      ]
+    },
+    "planes": {
+      "id": "q-static-type-kntt-12-14-03-tn-2",
+      "questionEn": "Using the data in the following problem, choose the correct result: In $Oxyz$, for $(P):x+y+z=0$ and $(Q):2x+2y+2z-3=0$, the correct conclusion is",
+      "optionsEn": [
+        "Two parallel planes",
+        "Two intersecting planes",
+        "Two coincident planes",
+        "Two perpendicular planes"
+      ]
+    }
+  },
+  "deployment_note": "ZIP is flat/root-ready. After extraction, package.json, src, public, netlify.toml are directly in the extracted folder. Copy these items to the GitHub repository root; do not create a nested ai-math-bridge-student folder."
+}

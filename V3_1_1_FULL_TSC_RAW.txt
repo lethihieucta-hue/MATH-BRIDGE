@@ -1,0 +1,82 @@
+server.ts(1,44): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+server.ts(2,18): error TS2307: Cannot find module 'path' or its corresponding type declarations.
+server.ts(3,20): error TS2307: Cannot find module 'dotenv' or its corresponding type declarations.
+server.ts(4,29): error TS2307: Cannot find module '@google/genai' or its corresponding type declarations.
+server.ts(10,14): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+server.ts(10,42): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+server.ts(27,16): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+server.ts(654,24): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+server.ts(654,67): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+server.ts(655,30): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+server.ts(659,63): error TS2307: Cannot find module 'vite' or its corresponding type declarations.
+server.ts(688,6): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+server.ts(688,29): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+server.ts(688,69): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+src/App.tsx(1,44): error TS2307: Cannot find module 'react' or its corresponding type declarations.
+src/App.tsx(23,8): error TS2307: Cannot find module 'lucide-react' or its corresponding type declarations.
+src/App.tsx(24,22): error TS2307: Cannot find module 'canvas-confetti' or its corresponding type declarations.
+src/App.tsx(386,12): error TS2875: This JSX tag requires the module path 'react/jsx-runtime' to exist, but none could be found. Make sure you have types for the appropriate package installed.
+src/components/ApiKeyModal.tsx(1,44): error TS2307: Cannot find module 'react' or its corresponding type declarations.
+src/components/ApiKeyModal.tsx(15,8): error TS2307: Cannot find module 'lucide-react' or its corresponding type declarations.
+src/components/ApiKeyModal.tsx(115,5): error TS2875: This JSX tag requires the module path 'react/jsx-runtime' to exist, but none could be found. Make sure you have types for the appropriate package installed.
+src/components/ChallengeHub.tsx(1,42): error TS2307: Cannot find module 'react' or its corresponding type declarations.
+src/components/ChallengeHub.tsx(2,123): error TS2307: Cannot find module 'lucide-react' or its corresponding type declarations.
+src/components/ChallengeHub.tsx(236,5): error TS2875: This JSX tag requires the module path 'react/jsx-runtime' to exist, but none could be found. Make sure you have types for the appropriate package installed.
+src/components/ErrorDiagnosticStudio.tsx(1,33): error TS2307: Cannot find module 'react' or its corresponding type declarations.
+src/components/ErrorDiagnosticStudio.tsx(2,115): error TS2307: Cannot find module 'lucide-react' or its corresponding type declarations.
+src/components/ErrorDiagnosticStudio.tsx(100,5): error TS2875: This JSX tag requires the module path 'react/jsx-runtime' to exist, but none could be found. Make sure you have types for the appropriate package installed.
+src/components/KnowledgeGraphView.tsx(1,33): error TS2307: Cannot find module 'react' or its corresponding type declarations.
+src/components/KnowledgeGraphView.tsx(13,8): error TS2307: Cannot find module 'lucide-react' or its corresponding type declarations.
+src/components/KnowledgeGraphView.tsx(247,5): error TS2875: This JSX tag requires the module path 'react/jsx-runtime' to exist, but none could be found. Make sure you have types for the appropriate package installed.
+src/components/LessonTreeSelector.tsx(1,53): error TS2307: Cannot find module 'react' or its corresponding type declarations.
+src/components/LessonTreeSelector.tsx(2,77): error TS2307: Cannot find module 'lucide-react' or its corresponding type declarations.
+src/components/LessonTreeSelector.tsx(70,5): error TS2875: This JSX tag requires the module path 'react/jsx-runtime' to exist, but none could be found. Make sure you have types for the appropriate package installed.
+src/components/Level1VocabularyStudio.tsx(1,53): error TS2307: Cannot find module 'react' or its corresponding type declarations.
+src/components/Level1VocabularyStudio.tsx(21,8): error TS2307: Cannot find module 'lucide-react' or its corresponding type declarations.
+src/components/Level1VocabularyStudio.tsx(313,5): error TS2875: This JSX tag requires the module path 'react/jsx-runtime' to exist, but none could be found. Make sure you have types for the appropriate package installed.
+src/components/Level2ReadingStudio.tsx(1,53): error TS2307: Cannot find module 'react' or its corresponding type declarations.
+src/components/Level2ReadingStudio.tsx(15,8): error TS2307: Cannot find module 'lucide-react' or its corresponding type declarations.
+src/components/Level2ReadingStudio.tsx(170,5): error TS2875: This JSX tag requires the module path 'react/jsx-runtime' to exist, but none could be found. Make sure you have types for the appropriate package installed.
+src/components/Level3EssayStudio.tsx(1,53): error TS2307: Cannot find module 'react' or its corresponding type declarations.
+src/components/Level3EssayStudio.tsx(16,8): error TS2307: Cannot find module 'lucide-react' or its corresponding type declarations.
+src/components/Level3EssayStudio.tsx(280,5): error TS2875: This JSX tag requires the module path 'react/jsx-runtime' to exist, but none could be found. Make sure you have types for the appropriate package installed.
+src/components/MathRenderer.tsx(1,19): error TS2307: Cannot find module 'react' or its corresponding type declarations.
+src/components/MathRenderer.tsx(2,19): error TS2307: Cannot find module 'katex' or its corresponding type declarations.
+src/components/MathRenderer.tsx(174,5): error TS2875: This JSX tag requires the module path 'react/jsx-runtime' to exist, but none could be found. Make sure you have types for the appropriate package installed.
+src/components/SmartHoverText.tsx(1,33): error TS2307: Cannot find module 'react' or its corresponding type declarations.
+src/components/SmartHoverText.tsx(2,61): error TS2307: Cannot find module 'lucide-react' or its corresponding type declarations.
+src/components/SmartHoverText.tsx(102,5): error TS2875: This JSX tag requires the module path 'react/jsx-runtime' to exist, but none could be found. Make sure you have types for the appropriate package installed.
+src/components/SpeedMathTermGame.tsx(1,53): error TS2307: Cannot find module 'react' or its corresponding type declarations.
+src/components/SpeedMathTermGame.tsx(15,8): error TS2307: Cannot find module 'lucide-react' or its corresponding type declarations.
+src/components/SpeedMathTermGame.tsx(16,22): error TS2307: Cannot find module 'canvas-confetti' or its corresponding type declarations.
+src/components/SpeedMathTermGame.tsx(250,5): error TS2875: This JSX tag requires the module path 'react/jsx-runtime' to exist, but none could be found. Make sure you have types for the appropriate package installed.
+src/components/StageRoadmap.tsx(1,33): error TS2307: Cannot find module 'react' or its corresponding type declarations.
+src/components/StageRoadmap.tsx(2,91): error TS2307: Cannot find module 'lucide-react' or its corresponding type declarations.
+src/components/StageRoadmap.tsx(70,5): error TS2875: This JSX tag requires the module path 'react/jsx-runtime' to exist, but none could be found. Make sure you have types for the appropriate package installed.
+src/components/StandardQuestionMedia.tsx(1,19): error TS2307: Cannot find module 'react' or its corresponding type declarations.
+src/components/StandardQuestionMedia.tsx(12,5): error TS2875: This JSX tag requires the module path 'react/jsx-runtime' to exist, but none could be found. Make sure you have types for the appropriate package installed.
+src/components/StudentLogin.tsx(1,50): error TS2307: Cannot find module 'react' or its corresponding type declarations.
+src/components/StudentLogin.tsx(18,8): error TS2307: Cannot find module 'lucide-react' or its corresponding type declarations.
+src/components/StudentLogin.tsx(123,5): error TS2875: This JSX tag requires the module path 'react/jsx-runtime' to exist, but none could be found. Make sure you have types for the appropriate package installed.
+src/components/StudentProgressDashboard.tsx(1,19): error TS2307: Cannot find module 'react' or its corresponding type declarations.
+src/components/StudentProgressDashboard.tsx(15,8): error TS2307: Cannot find module 'lucide-react' or its corresponding type declarations.
+src/components/StudentProgressDashboard.tsx(31,3): error TS2875: This JSX tag requires the module path 'react/jsx-runtime' to exist, but none could be found. Make sure you have types for the appropriate package installed.
+src/components/TeacherAnalytics.tsx(1,42): error TS2307: Cannot find module 'react' or its corresponding type declarations.
+src/components/TeacherAnalytics.tsx(2,68): error TS2307: Cannot find module 'lucide-react' or its corresponding type declarations.
+src/components/TeacherAnalytics.tsx(64,5): error TS2875: This JSX tag requires the module path 'react/jsx-runtime' to exist, but none could be found. Make sure you have types for the appropriate package installed.
+src/components/TutorRoom.tsx(1,52): error TS2307: Cannot find module 'react' or its corresponding type declarations.
+src/components/TutorRoom.tsx(20,8): error TS2307: Cannot find module 'lucide-react' or its corresponding type declarations.
+src/components/TutorRoom.tsx(21,22): error TS2307: Cannot find module 'canvas-confetti' or its corresponding type declarations.
+src/components/TutorRoom.tsx(295,5): error TS2875: This JSX tag requires the module path 'react/jsx-runtime' to exist, but none could be found. Make sure you have types for the appropriate package installed.
+src/components/VocabularyLessonTreeSelector.tsx(1,53): error TS2307: Cannot find module 'react' or its corresponding type declarations.
+src/components/VocabularyLessonTreeSelector.tsx(2,79): error TS2307: Cannot find module 'lucide-react' or its corresponding type declarations.
+src/components/VocabularyLessonTreeSelector.tsx(49,5): error TS2875: This JSX tag requires the module path 'react/jsx-runtime' to exist, but none could be found. Make sure you have types for the appropriate package installed.
+src/components/VocabularyLexicon.tsx(1,33): error TS2307: Cannot find module 'react' or its corresponding type declarations.
+src/components/VocabularyLexicon.tsx(2,88): error TS2307: Cannot find module 'lucide-react' or its corresponding type declarations.
+src/components/VocabularyLexicon.tsx(58,5): error TS2875: This JSX tag requires the module path 'react/jsx-runtime' to exist, but none could be found. Make sure you have types for the appropriate package installed.
+src/main.tsx(1,26): error TS2307: Cannot find module 'react' or its corresponding type declarations.
+src/main.tsx(2,26): error TS2307: Cannot find module 'react-dom/client' or its corresponding type declarations.
+src/main.tsx(7,3): error TS2875: This JSX tag requires the module path 'react/jsx-runtime' to exist, but none could be found. Make sure you have types for the appropriate package installed.
+src/services/geminiService.ts(1,29): error TS2307: Cannot find module '@google/genai' or its corresponding type declarations.
+src/services/geminiService.ts(66,23): error TS2339: Property 'env' does not exist on type 'ImportMeta'.
+src/services/geminiService.ts(66,62): error TS2339: Property 'env' does not exist on type 'ImportMeta'.

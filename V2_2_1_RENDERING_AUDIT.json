@@ -1,0 +1,38 @@
+{
+  "questions": 2251,
+  "formats": {
+    "TN": 1322,
+    "TLN": 638,
+    "TL": 291
+  },
+  "grades": {
+    "10": 707,
+    "11": 884,
+    "12": 660
+  },
+  "chapters": 24,
+  "lessons": 79,
+  "duplicate_ids": 0,
+  "structure_errors": 0,
+  "missing_assets": 0,
+  "lessons_without_questions": 0,
+  "mixed_vietnamese_questionEn": 0,
+  "mixed_vietnamese_optionEn": 0,
+  "mixed_vietnamese_solutionEn_nonempty": 0,
+  "solutionEn_empty_fallback_to_verified_Vi": 1531,
+  "unbalanced_dollar_strings": 0,
+  "bare_array_strings_pre_renderer_normalization": 0,
+  "formula_spans": 19932,
+  "unique_formulas": 3615,
+  "xelatex_exit_code": 0,
+  "xelatex_unique_formulas_pass": 3615,
+  "renderer_has_explicit_math_tokenizer": true,
+  "renderer_autowraps_bare_arrays": true,
+  "smart_hover_uses_same_tokenizer": true,
+  "structure_examples": [],
+  "missing_asset_examples": [],
+  "mixed_question_examples": [],
+  "mixed_option_examples": [],
+  "odd_dollar_examples": [],
+  "bare_array_examples": []
+}

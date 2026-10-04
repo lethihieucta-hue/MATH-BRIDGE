@@ -1,0 +1,22 @@
+{
+  "PASS": true,
+  "stats": {
+    "total": 2,
+    "grade10": 0,
+    "grade11": 1,
+    "grade12": 1,
+    "withBirthDate": 2
+  },
+  "profile": {
+    "studentId": "12A1-001",
+    "fullName": "Pham Quynh Anh",
+    "className": "12A1",
+    "grade": 12,
+    "email": "qa@test.com",
+    "createdAt": "2026-08-30T05:26:37.005Z",
+    "lastLoginAt": "2026-08-30T05:26:37.005Z",
+    "accountVersion": 311
+  },
+  "emailLogin": "12A1-001",
+  "idLogin": "12A1-001"
+}

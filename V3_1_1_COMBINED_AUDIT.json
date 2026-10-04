@@ -1,0 +1,34 @@
+{
+  "version": "3.1.1",
+  "rosterAccountTestPass": true,
+  "rosterRules": [
+    "unknown student ID blocked",
+    "wrong DOB blocked when DOB exists",
+    "name/class/grade authoritative from roster",
+    "duplicate email blocked",
+    "login by email PASS",
+    "login by student ID PASS",
+    "wrong password blocked"
+  ],
+  "sourceSyntax": {
+    "files": 36,
+    "syntaxErrors": 0,
+    "errors": []
+  },
+  "questionBank": {
+    "total": 2251,
+    "formats": {
+      "TN": 1322,
+      "TLN": 638,
+      "TL": 291
+    },
+    "duplicateIds": 0
+  },
+  "preservedFromV31": {
+    "src/components/MathRenderer.tsx": true,
+    "src/data/standardBank/questionsG10.json": true,
+    "src/data/standardBank/questionsG11.json": true,
+    "src/data/standardBank/questionsG12.json": true
+  },
+  "cloudStatus": "local test only; email is not externally verified; Firebase/Supabase required for cross-device auth and Google Sign-In"
+}

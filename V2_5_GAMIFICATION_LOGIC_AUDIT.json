@@ -1,0 +1,18 @@
+{
+  "version": "2.5.0",
+  "dailyMissionDateCreated": true,
+  "missionProgress": {
+    "vocab": 3,
+    "level2": 3,
+    "level3": 1,
+    "xp": 80
+  },
+  "playerLevelAt510Xp": {
+    "level": 3,
+    "title": "Bridge Builder",
+    "currentXp": 10,
+    "neededXp": 250,
+    "percent": 4
+  },
+  "badgeDefinitions": 8
+}

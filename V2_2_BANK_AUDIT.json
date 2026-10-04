@@ -1,0 +1,17 @@
+{
+  "version": "2.2.0",
+  "curriculum": {
+    "chapters": 24,
+    "lessons": 79
+  },
+  "questionBank": {
+    "total": 2251,
+    "TN": 1322,
+    "TLN": 638,
+    "TL": 291,
+    "duplicateIds": 0
+  },
+  "assets": {
+    "missingReferencedImages": 0
+  }
+}

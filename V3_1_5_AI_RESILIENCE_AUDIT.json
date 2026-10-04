@@ -1,0 +1,85 @@
+{
+  "version": "3.1.5",
+  "name": "AI Resilience + Server-side Gemini only",
+  "source": {
+    "ts_tsx_files": 35,
+    "syntax_errors": 0,
+    "relative_imports": 104,
+    "missing_relative_imports": [],
+    "full_vite_build": "not_run: npm install timed out in tool environment"
+  },
+  "roster": {
+    "total": 768,
+    "unique": 768,
+    "grade11": 346,
+    "grade12": 422,
+    "grade10": 0
+  },
+  "standard_bank": {
+    "total": 2251,
+    "formats_by_grade": {
+      "10": {
+        "total": 707,
+        "TN": 409,
+        "TLN": 199,
+        "TL": 99
+      },
+      "11": {
+        "total": 884,
+        "TN": 525,
+        "TLN": 245,
+        "TL": 114
+      },
+      "12": {
+        "total": 660,
+        "TN": 388,
+        "TLN": 194,
+        "TL": 78
+      }
+    },
+    "duplicate_ids": 0
+  },
+  "preservation_vs_v3_1_4": {
+    "src/components/MathRenderer.tsx": {
+      "preserved": true,
+      "sha256": "05268583d64d3b4a29ccf5cb25f274e3be7575a2dbda1f39ef775a4218096029"
+    },
+    "src/components/Level2ReadingStudio.tsx": {
+      "preserved": true,
+      "sha256": "4956963ebed102d7e5ae4322a315cf9a475651f7d51af6e2e38803b3d8a715c1"
+    },
+    "src/data/standardBank/questionsG10.json": {
+      "preserved": true,
+      "sha256": "1780b6d065e888ce15c39895c28180b394dd2845f1ee6372b5010dca64c34da4"
+    },
+    "src/data/standardBank/questionsG11.json": {
+      "preserved": true,
+      "sha256": "05f087eec262d6055dc9af4cc02c75a8f06bf2f887068730c7105b39a7fe287c"
+    },
+    "src/data/standardBank/questionsG12.json": {
+      "preserved": true,
+      "sha256": "68ab1415220d1052302baec1a3628dd3d8d7d665bc748a60c67edfb8d3a0a919"
+    }
+  },
+  "ai_cleanup": {
+    "api_key_modal_removed": true,
+    "client_gemini_service_removed": true,
+    "level3_direct_browser_gemini_removed": true,
+    "level3_legacy_node_fallback_removed": true,
+    "header_client_api_key_button_removed": true
+  },
+  "apps_script": {
+    "version_marker": true,
+    "models": [
+      "gemini-3.7-flash",
+      "gemini-3.6-flash",
+      "gemini-3.1-flash-lite"
+    ],
+    "retries_per_model": 2,
+    "exponential_backoff_jitter": true,
+    "dynamic_model_discovery": true,
+    "temporary_busy_status": true,
+    "deprecated_1_5_2_0_absent": true,
+    "node_syntax_check": "PASS"
+  }
+}

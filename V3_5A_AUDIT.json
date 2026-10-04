@@ -1,0 +1,104 @@
+{
+  "version": "3.5A",
+  "base": "V3.1.5 AI Resilience",
+  "tsTsx": {
+    "files": 36,
+    "syntaxErrors": 0,
+    "errors": []
+  },
+  "relativeImports": {
+    "count": 111,
+    "missing": []
+  },
+  "typescriptFullCheck": {
+    "rawErrors": 75,
+    "nonDependencyInternalErrors": 0,
+    "note": "node_modules not bundled; full production dependency install timed out, so raw tsc only reports missing external packages / JSX runtime."
+  },
+  "appsScript": {
+    "syntaxPass": true,
+    "versionMarker": true,
+    "tutorAction": true,
+    "testTutorAction": true,
+    "teacherBankHiddenReferenceRule": true,
+    "noFullSolutionRule": true,
+    "forceShouldRevealFalse": true,
+    "semanticHintStageCap": true
+  },
+  "tutorUi": {
+    "componentExists": true,
+    "fourScaffoldStages": true,
+    "checkStep": true,
+    "officialSolutionIsUserControlled": true,
+    "usesGoogleSheetsBackend": true
+  },
+  "progressTracking": {
+    "typeFields": true,
+    "defaults": true,
+    "googleSheetColumns": true
+  },
+  "standardBank": {
+    "total": 2251,
+    "byGrade": {
+      "10": 707,
+      "11": 884,
+      "12": 660
+    },
+    "formats": {
+      "TN": 1322,
+      "TLN": 638,
+      "TL": 291
+    },
+    "duplicateIds": 0
+  },
+  "roster": {
+    "total": 768,
+    "grades": {
+      "11": 346,
+      "12": 422
+    },
+    "duplicateIds": 0
+  },
+  "preservation": {
+    "src/components/MathRenderer.tsx": {
+      "baseline": "05268583d64d3b4a29ccf5cb25f274e3be7575a2dbda1f39ef775a4218096029",
+      "current": "05268583d64d3b4a29ccf5cb25f274e3be7575a2dbda1f39ef775a4218096029",
+      "preserved": true
+    },
+    "src/components/Level2ReadingStudio.tsx": {
+      "baseline": "4956963ebed102d7e5ae4322a315cf9a475651f7d51af6e2e38803b3d8a715c1",
+      "current": "4956963ebed102d7e5ae4322a315cf9a475651f7d51af6e2e38803b3d8a715c1",
+      "preserved": true
+    },
+    "src/components/Level3EssayStudio.tsx": {
+      "baseline": "596f696369a0ff8aefe7ce83f72852a3ecbf76402711b7b33cb0c7b0ed933692",
+      "current": "596f696369a0ff8aefe7ce83f72852a3ecbf76402711b7b33cb0c7b0ed933692",
+      "preserved": true
+    },
+    "src/data/standardBank/questionsG10.json": {
+      "baseline": "1780b6d065e888ce15c39895c28180b394dd2845f1ee6372b5010dca64c34da4",
+      "current": "1780b6d065e888ce15c39895c28180b394dd2845f1ee6372b5010dca64c34da4",
+      "preserved": true
+    },
+    "src/data/standardBank/questionsG11.json": {
+      "baseline": "05f087eec262d6055dc9af4cc02c75a8f06bf2f887068730c7105b39a7fe287c",
+      "current": "05f087eec262d6055dc9af4cc02c75a8f06bf2f887068730c7105b39a7fe287c",
+      "preserved": true
+    },
+    "src/data/standardBank/questionsG12.json": {
+      "baseline": "68ab1415220d1052302baec1a3628dd3d8d7d665bc748a60c67edfb8d3a0a919",
+      "current": "68ab1415220d1052302baec1a3628dd3d8d7d665bc748a60c67edfb8d3a0a919",
+      "preserved": true
+    }
+  },
+  "productionBuild": {
+    "status": "not_run",
+    "reason": "npm install timed out in sandbox; source syntax/import/internal-error audits passed."
+  },
+  "finalZip": {
+    "path": "AI_Math_Bridge_Student_V3.5A_AI_Tutor_DEPLOY_ROOT.zip",
+    "unzipTest": "PASS",
+    "deployRoot": true,
+    "note": "Archive integrity re-tested after embedding this audit."
+  }
+}

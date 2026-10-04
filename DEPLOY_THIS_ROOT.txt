@@ -1,0 +1,14 @@
+AI Math Bridge Student — DEPLOY ROOT
+
+Copy the CONTENTS of this folder directly into the existing GitHub repository root.
+Do not create an extra nested folder.
+
+Learner-facing UI intentionally does not display build/version numbers.
+Current major feature set: AI Tutor + Full Math Keyboard + Math Speaking + Student Cloud Account.
+
+IMPORTANT FOR CROSS-DEVICE LOGIN:
+1) Update Google Apps Script with google-apps-script/Code.gs and deploy Web App /exec.
+2) The current /exec URL is already embedded in index.html. Vercel Environment Variable is optional and only needed if the Apps Script URL changes later.
+3) Redeploy once. Students do not paste the URL on their devices.
+
+See STUDENT_CLOUD_ACCOUNT_SETUP_VI.md.

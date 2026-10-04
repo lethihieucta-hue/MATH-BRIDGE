@@ -1,0 +1,26 @@
+{
+  "version": "2.2.2",
+  "questions_total": 2251,
+  "formats": {
+    "TN": 1322,
+    "TLN": 638,
+    "TL": 291
+  },
+  "math_tokens_recognized": 14166,
+  "array_occurrences": 164,
+  "array_structure_issues": 0,
+  "odd_dollar_fields": 0,
+  "latex_commands_outside_math_tokens": 0,
+  "english_options_with_vietnamese_chars": 0,
+  "english_options_empty": 0,
+  "suspicious_jammed_english_words_28plus_chars": 0,
+  "level2_level3_question_body_renderer": "RichMathText only (SmartHover removed)",
+  "array_renderer": "HTML table parser",
+  "details": {
+    "array_bad": [],
+    "odd": [],
+    "outside": [],
+    "option_vi": [],
+    "jam": []
+  }
+}

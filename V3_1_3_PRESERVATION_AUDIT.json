@@ -1,0 +1,27 @@
+{
+  "src/components/MathRenderer.tsx": {
+    "v312": "05268583d64d3b4a29ccf5cb25f274e3be7575a2dbda1f39ef775a4218096029",
+    "v313": "05268583d64d3b4a29ccf5cb25f274e3be7575a2dbda1f39ef775a4218096029",
+    "preserved": true
+  },
+  "src/data/standardBank/questionsG10.json": {
+    "v312": "1780b6d065e888ce15c39895c28180b394dd2845f1ee6372b5010dca64c34da4",
+    "v313": "1780b6d065e888ce15c39895c28180b394dd2845f1ee6372b5010dca64c34da4",
+    "preserved": true
+  },
+  "src/data/standardBank/questionsG11.json": {
+    "v312": "05f087eec262d6055dc9af4cc02c75a8f06bf2f887068730c7105b39a7fe287c",
+    "v313": "05f087eec262d6055dc9af4cc02c75a8f06bf2f887068730c7105b39a7fe287c",
+    "preserved": true
+  },
+  "src/data/standardBank/questionsG12.json": {
+    "v312": "68ab1415220d1052302baec1a3628dd3d8d7d665bc748a60c67edfb8d3a0a919",
+    "v313": "68ab1415220d1052302baec1a3628dd3d8d7d665bc748a60c67edfb8d3a0a919",
+    "preserved": true
+  },
+  "src/data/builtInRoster.ts": {
+    "v312": "76147b13322d49b30c1a2664271b4bd95a5b3e544e8e65a1eaf5a34765a55a07",
+    "v313": "76147b13322d49b30c1a2664271b4bd95a5b3e544e8e65a1eaf5a34765a55a07",
+    "preserved": true
+  }
+}

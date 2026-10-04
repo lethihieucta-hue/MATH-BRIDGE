@@ -1,0 +1,5 @@
+AI Math Bridge Student — current Google Apps Script endpoint
+
+https://script.google.com/macros/s/AKfycbzHbdvBeFKrOci2Ap1Wa9nevpQb6W0HtSg6HvdNLbbGAL697vEhXa2JggJXfZS4qmWy7A/exec
+
+This URL is already embedded in index.html in this package.

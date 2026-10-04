@@ -1,0 +1,47 @@
+{
+  "version": "3.1.2",
+  "builtInRoster": {
+    "total": 768,
+    "grade11": 346,
+    "grade12": 422,
+    "grade10": 0
+  },
+  "questionBank": {
+    "total": 2251,
+    "TN": 1322,
+    "TLN": 638,
+    "TL": 291,
+    "duplicateIds": 0
+  },
+  "preserved": {
+    "MathRenderer": true,
+    "questionsG10": true,
+    "questionsG11": true,
+    "questionsG12": true
+  },
+  "googleSheets": {
+    "syncService": "src/services/googleSheetsSyncService.ts",
+    "appsScript": "google-apps-script/Code.gs",
+    "template": "google-sheet-template/AI_MATH_BRIDGE_GOOGLE_SHEET_DB_K11_K12_V3.1.2.xlsx",
+    "sheets": [
+      "ROSTER",
+      "ACCOUNTS",
+      "STUDENT_PROGRESS",
+      "LESSON_PROGRESS",
+      "ACTIVITY_LOG",
+      "DAILY_MISSIONS",
+      "ALERTS",
+      "CLASS_SUMMARY",
+      "DASHBOARD",
+      "CONFIG"
+    ],
+    "passwordUploaded": false,
+    "authMode": "local email/password; Google Sheets analytics sync"
+  },
+  "validation": {
+    "appsScriptSyntax": "PASS",
+    "relativeImportsMissing": 0,
+    "typescriptNonDependencyErrors": 0,
+    "xlsxFormulaErrors": 0
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "base": "V2.2.3",
+  "version": "V2.5.0",
+  "all_preserved": true,
+  "files": [
+    {
+      "file": "src/components/MathRenderer.tsx",
+      "preserved": true,
+      "sha256": "05268583d64d3b4a29ccf5cb25f274e3be7575a2dbda1f39ef775a4218096029"
+    },
+    {
+      "file": "src/components/Level2ReadingStudio.tsx",
+      "preserved": true,
+      "sha256": "10cf53877346627b0eea897577bf0c56accdf608406adabace4e7e5203f8d551"
+    },
+    {
+      "file": "src/components/Level3EssayStudio.tsx",
+      "preserved": true,
+      "sha256": "c16926e54ae88aaa20310191701803d4b01caf56a54b34f87abd489b65ac41cf"
+    },
+    {
+      "file": "src/data/standardBank/questionsG10.json",
+      "preserved": true,
+      "sha256": "1780b6d065e888ce15c39895c28180b394dd2845f1ee6372b5010dca64c34da4"
+    },
+    {
+      "file": "src/data/standardBank/questionsG11.json",
+      "preserved": true,
+      "sha256": "05f087eec262d6055dc9af4cc02c75a8f06bf2f887068730c7105b39a7fe287c"
+    },
+    {
+      "file": "src/data/standardBank/questionsG12.json",
+      "preserved": true,
+      "sha256": "68ab1415220d1052302baec1a3628dd3d8d7d665bc748a60c67edfb8d3a0a919"
+    }
+  ]
+}

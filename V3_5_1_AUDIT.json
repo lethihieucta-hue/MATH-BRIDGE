@@ -1,0 +1,91 @@
+{
+  "version": "3.5.1",
+  "features": {
+    "tutorBackendVersion": "3.5.1",
+    "tutorActionSupported": true,
+    "testTutorActionSupported": true,
+    "backendCapabilityPublished": true,
+    "frontendFriendlyOldBackendError": true,
+    "mathKeyboardComponent": true,
+    "mathKeyboardInTutor": true,
+    "mathKeyboardInLevel3": true,
+    "englishTemplates": true,
+    "mathGroups": [
+      "Cơ bản",
+      "Đại số",
+      "Giải tích",
+      "Tập hợp & Hình học",
+      "Lượng giác & Hy Lạp"
+    ]
+  },
+  "source": {
+    "tsTsxFiles": 37,
+    "transpileSyntaxErrors": 0,
+    "relativeImports": 114,
+    "missingRelativeImports": 0,
+    "missingImports": [],
+    "appsScriptNodeSyntax": "PASS"
+  },
+  "bank": {
+    "total": 2251,
+    "byGrade": {
+      "10": 707,
+      "11": 884,
+      "12": 660
+    },
+    "byFormat": {
+      "TN": 1322,
+      "TLN": 638,
+      "TL": 291
+    },
+    "duplicateIds": 0
+  },
+  "roster": {
+    "total": 768,
+    "grade11": 346,
+    "grade12": 422,
+    "duplicateStudentIds": 0
+  },
+  "preservation": [
+    {
+      "file": "src/components/MathRenderer.tsx",
+      "preserved": true,
+      "sha256": "05268583d64d3b4a29ccf5cb25f274e3be7575a2dbda1f39ef775a4218096029"
+    },
+    {
+      "file": "src/components/Level2ReadingStudio.tsx",
+      "preserved": true,
+      "sha256": "4956963ebed102d7e5ae4322a315cf9a475651f7d51af6e2e38803b3d8a715c1"
+    },
+    {
+      "file": "src/data/standardBank/questionsG10.json",
+      "preserved": true,
+      "sha256": "1780b6d065e888ce15c39895c28180b394dd2845f1ee6372b5010dca64c34da4"
+    },
+    {
+      "file": "src/data/standardBank/questionsG11.json",
+      "preserved": true,
+      "sha256": "05f087eec262d6055dc9af4cc02c75a8f06bf2f887068730c7105b39a7fe287c"
+    },
+    {
+      "file": "src/data/standardBank/questionsG12.json",
+      "preserved": true,
+      "sha256": "68ab1415220d1052302baec1a3628dd3d8d7d665bc748a60c67edfb8d3a0a919"
+    },
+    {
+      "file": "src/data/builtInRoster.ts",
+      "preserved": true,
+      "sha256": "76147b13322d49b30c1a2664271b4bd95a5b3e544e8e65a1eaf5a34765a55a07"
+    }
+  ],
+  "intentionallyChanged": [
+    "src/components/AITutorStudio.tsx",
+    "src/components/Level3EssayStudio.tsx",
+    "src/components/MathInputToolbar.tsx (new)",
+    "src/services/googleSheetsSyncService.ts",
+    "src/components/GoogleSheetsSyncPanel.tsx",
+    "google-apps-script/Code.gs",
+    "src/appVersion.ts"
+  ],
+  "fullTscNote": "Full tsc cannot resolve package dependencies because node_modules is not bundled in the source archive. TypeScript transpileModule found 0 syntax errors; tsc output contained only missing external module/type errors in this environment."
+}

@@ -1,0 +1,71 @@
+{
+  "version": "2.5.0",
+  "base": "2.2.3",
+  "standard_bank_total": 2251,
+  "renderer_files_preserved": true,
+  "vocabulary_coverage": {
+    "lessons": 79,
+    "emptyLessons": 0,
+    "totalLessonTermAssignments": 630,
+    "minTermsPerLesson": 5,
+    "maxTermsPerLesson": 12,
+    "averageTermsPerLesson": 7.97,
+    "directTeacherBankLinks": 134,
+    "duplicateConceptsWithinLesson": 0,
+    "wrongGrade": 0,
+    "wrongSourceLesson": 0
+  },
+  "by_grade": {
+    "10": {
+      "total": 707,
+      "TN": 409,
+      "TLN": 199,
+      "TL": 99,
+      "hard_tn": 0
+    },
+    "11": {
+      "total": 884,
+      "TN": 525,
+      "TLN": 245,
+      "TL": 114,
+      "hard_tn": 0
+    },
+    "12": {
+      "total": 660,
+      "TN": 388,
+      "TLN": 194,
+      "TL": 78,
+      "hard_tn": 8
+    }
+  },
+  "boss_readiness": {
+    "10": {
+      "gate1_vocabulary": true,
+      "gate2_decode": true,
+      "gate3_tn": true,
+      "gate4_tln": true,
+      "gate5_final_tn": true,
+      "hard_tn_preferred_when_available": false
+    },
+    "11": {
+      "gate1_vocabulary": true,
+      "gate2_decode": true,
+      "gate3_tn": true,
+      "gate4_tln": true,
+      "gate5_final_tn": true,
+      "hard_tn_preferred_when_available": false
+    },
+    "12": {
+      "gate1_vocabulary": true,
+      "gate2_decode": true,
+      "gate3_tn": true,
+      "gate4_tln": true,
+      "gate5_final_tn": true,
+      "hard_tn_preferred_when_available": true
+    }
+  },
+  "duplicate_ids": 0,
+  "empty_question_en": 0,
+  "tn_invalid_options": 0,
+  "tln_missing_answer": 0
+}
