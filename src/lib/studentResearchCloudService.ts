@@ -61,6 +61,8 @@ export interface StudentResearchClassSummary {
   student_count: number;
   active_student_count: number;
   research_attempt_count: number;
+  native_research_attempt_count?: number;
+  historical_attempt_count?: number;
 }
 
 export interface StudentResearchSnapshot {
@@ -90,6 +92,17 @@ export interface StudentResearchSnapshot {
   recommended_barrier?: ResearchBarrierCode;
   recent_interventions?: any[];
   total_attempts?: number;
+  native_research_attempts?: number;
+  historical_inferred_attempts?: number;
+  coverage?: {
+    total_analyzable_attempts: number;
+    native_research_attempts: number;
+    historical_inferred_attempts: number;
+    historical_barrier_confidence?: { HIGH?: number; MEDIUM?: number; LOW?: number };
+    first_attempt_metric_basis?: string;
+    high_support_metric_basis?: string;
+    independent_metric_basis?: string;
+  };
   teacher?: string;
   version?: string;
 }
