@@ -104,7 +104,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-amb-paper text-slate-900 font-sans selection:bg-teal-500 selection:text-white pb-16 md:pb-0">
+    <div className="min-h-screen amb-app-bg text-slate-900 font-sans selection:bg-teal-500 selection:text-white pb-16 md:pb-0">
       {/* Top Header */}
       <Header />
 

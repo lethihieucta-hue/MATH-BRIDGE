@@ -36,9 +36,41 @@
   --color-amb-M: #7950f2;
 }
 
+/* ===== Nền & khung nổi bật (ui-theme-2026, bản 2) ===== */
+/* Nền giấy xám–tím–xanh, mảng màu mềm như minh họa trường học */
+.amb-app-bg {
+  background-color: #e6e8f3;
+  background-image:
+    radial-gradient(circle at 1px 1px, rgba(59, 91, 219, 0.10) 1px, transparent 0),
+    radial-gradient(55% 45% at 100% 0%, rgba(92, 124, 250, 0.30), transparent 70%),
+    radial-gradient(45% 40% at 0% 100%, rgba(151, 117, 250, 0.22), transparent 70%),
+    linear-gradient(180deg, #eceef7 0%, #e2e1f3 100%);
+  background-size: 22px 22px, 100% 100%, 100% 100%, 100% 100%;
+  background-attachment: fixed;
+}
+/* Khung xanh có viền nét đứt trắng (phong cách hoạt hình) */
+.amb-hero-blue {
+  position: relative;
+  background: linear-gradient(135deg, #2f4ac0 0%, #3b5bdb 45%, #5c7cfa 100%);
+}
+.amb-hero-blue::after {
+  content: "";
+  position: absolute;
+  inset: 8px;
+  border: 3px dashed rgba(255, 255, 255, 0.55);
+  border-radius: inherit;
+  pointer-events: none;
+}
+/* Khung navy–xanh cho trang giáo viên (chững chạc) */
+.amb-hero-navy {
+  background:
+    radial-gradient(40% 80% at 100% 50%, rgba(252, 196, 25, 0.12), transparent 70%),
+    linear-gradient(120deg, #1e2a4a 0%, #24357a 55%, #2f4ac0 100%);
+}
+
 @layer base {
   body {
-    @apply bg-amb-paper text-slate-900 antialiased selection:bg-teal-500/25 selection:text-teal-950;
+    @apply bg-[#e6e8f3] text-slate-900 antialiased selection:bg-teal-500/25 selection:text-teal-950;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11", "ss01";
   }
 }

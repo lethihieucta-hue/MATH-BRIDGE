@@ -606,7 +606,7 @@ export const TestBuilder: React.FC = () => {
   const isPureEnglish = currentTest.englishRatio >= 80;
 
   return (
-    <div className="w-full bg-[#F3F4F8] min-h-screen text-slate-900 font-sans pb-24">
+    <div className="w-full bg-transparent min-h-screen text-slate-900 font-sans pb-24">
       {/* Container */}
       <div className="max-w-[1600px] mx-auto px-3 sm:px-6 py-6 space-y-6">
         

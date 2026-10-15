@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { AmbArt } from '../brand/AmbArt';
 import { apiFetch } from '../../lib/dataService';
 import { useAppStore } from '../../lib/store';
 import {
@@ -204,13 +205,14 @@ export const TeacherResearchHub: React.FC = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6 pb-24 md:pb-12">
-      <div className="bg-gradient-to-r from-slate-950 via-indigo-950 to-teal-950 text-white rounded-3xl p-6 sm:p-8 shadow-xl">
+      <div className="amb-hero-navy text-white rounded-3xl p-6 sm:p-8 shadow-xl">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5">
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/15 text-[11px] font-black uppercase tracking-wide"><Beaker className="w-3.5 h-3.5" /> Research Mode & Barrier Analysis</div>
             <h1 className="text-2xl sm:text-3xl font-black mt-3">Trung tâm dữ liệu nghiên cứu AI Math Bridge</h1>
             <p className="text-sm text-slate-200 mt-2 max-w-3xl leading-relaxed">Teacher dùng dữ liệu research-native và tái dựng dữ liệu lịch sử từ Student Learning Database. L/C/M lịch sử luôn được gắn nguồn và mức tin cậy; các trường không có bằng chứng không được bịa.</p>
           </div>
+          <AmbArt name="network" className="hidden xl:block w-[220px] shrink-0 -my-2" />
           <div className="flex flex-wrap gap-2">
             <button onClick={() => load(classId)} className="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-black inline-flex items-center gap-2"><RefreshCw className="w-4 h-4" /> Làm mới</button>
             <button disabled={saving} onClick={toggleResearchMode} className={`px-4 py-2.5 rounded-xl text-xs font-black inline-flex items-center gap-2 ${data?.research_mode?.enabled ? 'bg-emerald-500 text-white' : 'bg-amber-400 text-slate-950'}`}><FileLock2 className="w-4 h-4" /> {data?.research_mode?.enabled ? 'Research Mode: ON' : 'Bật Research Mode'}</button>

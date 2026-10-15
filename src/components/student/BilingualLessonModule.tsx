@@ -1369,7 +1369,7 @@ export const BilingualLessonModule: React.FC = () => {
   const selectedTypesList = (activeLesson?.types || []).filter((t) => selectedTypeIds.includes(t.id));
 
   return (
-    <div className="w-full bg-[#F3F4F8] min-h-screen text-slate-900 font-sans pb-20">
+    <div className="w-full bg-transparent min-h-screen text-slate-900 font-sans pb-20">
       {/* 3-COLUMN MAIN WORKSPACE */}
       <div className="max-w-[1850px] mx-auto px-2 sm:px-4 py-4">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">

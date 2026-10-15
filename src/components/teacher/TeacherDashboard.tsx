@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { AmbArt } from '../brand/AmbArt';
 import { fetchStudentResearchSnapshot, getTeacherCloudToken } from '../../lib/studentResearchCloudService';
 import { setResearchClass } from '../../lib/teacherResearchPreferences';
 import { BarChart3, Database, GraduationCap, Microscope, Users } from 'lucide-react';
@@ -31,10 +32,10 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ setActiveTab
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8 pb-24 md:pb-12">
-      <div className="bg-gradient-to-r from-teal-900 via-slate-900 to-indigo-900 text-white rounded-3xl p-6 sm:p-8 shadow-xl">
+      <div className="amb-hero-navy text-white rounded-3xl p-6 sm:p-8 shadow-xl">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="space-y-2"><span className="bg-teal-500/20 text-teal-200 text-xs px-3 py-1 rounded-full font-bold border border-teal-400/30">Teacher Control Studio</span><h1 className="text-2xl sm:text-3xl font-black">Lớp học từ AI Math Bridge Student</h1><p className="text-xs sm:text-sm text-teal-100/90 max-w-xl leading-relaxed">Danh sách lớp được lấy trực tiếp từ những học sinh đã có hoạt động trong Student Google Sheets; không tạo lớp thủ công riêng ở Teacher.</p></div>
-          <div className="flex flex-wrap gap-2"><button onClick={() => setActiveTab('test-builder')} className="inline-flex items-center gap-2 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold text-xs rounded-xl"><GraduationCap className="w-4 h-4" /> Tạo bài Test</button><button onClick={() => setActiveTab('teacher-research')} className="inline-flex items-center gap-2 px-4 py-2.5 bg-teal-500 hover:bg-teal-600 text-white font-extrabold text-xs rounded-xl"><Microscope className="w-4 h-4" /> Phân tích rào cản</button></div>
+          <div className="space-y-2"><span className="bg-amb-yellow-400 text-amb-ink text-xs px-3 py-1 rounded-full font-bold">Teacher Control Studio</span><h1 className="text-2xl sm:text-3xl font-black">Lớp học từ AI Math Bridge Student</h1><p className="text-xs sm:text-sm text-teal-100/90 max-w-xl leading-relaxed">Danh sách lớp được lấy trực tiếp từ những học sinh đã có hoạt động trong Student Google Sheets; không tạo lớp thủ công riêng ở Teacher.</p></div>
+          <AmbArt name="teacherDesk" className="hidden xl:block w-[300px] shrink-0 -my-2" /><div className="flex flex-wrap gap-2"><button onClick={() => setActiveTab('test-builder')} className="inline-flex items-center gap-2 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold text-xs rounded-xl"><GraduationCap className="w-4 h-4" /> Tạo bài Test</button><button onClick={() => setActiveTab('teacher-research')} className="inline-flex items-center gap-2 px-4 py-2.5 bg-teal-500 hover:bg-teal-600 text-white font-extrabold text-xs rounded-xl"><Microscope className="w-4 h-4" /> Phân tích rào cản</button></div>
         </div>
       </div>
 
