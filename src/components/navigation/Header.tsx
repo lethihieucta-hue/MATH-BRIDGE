@@ -37,7 +37,7 @@ export const Header: React.FC = () => {
 
   return (
     <>
-      <header className="bg-[#111322] text-white sticky top-0 z-40 border-b border-slate-800 shadow-[0_4px_25px_rgba(0,0,0,0.4)]">
+      <header className="bg-amb-navy-800 text-white sticky top-0 z-40 border-b border-amb-navy-700 shadow-[0_4px_20px_rgba(30,42,74,0.25)]">
         <div className="max-w-[1700px] mx-auto px-3 sm:px-5 lg:px-6">
           <div className="flex items-center justify-between h-16 gap-2 sm:gap-4">
             {/* Left: Scientific Branding Title */}
@@ -45,28 +45,35 @@ export const Header: React.FC = () => {
               onClick={() => setActiveTab('learn')}
               className="flex items-center gap-3 cursor-pointer group shrink-0"
             >
-              <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-violet-600 via-indigo-500 to-teal-400 p-0.5 shadow-md shadow-violet-500/20 group-hover:scale-105 transition-transform flex items-center justify-center">
-                <div className="w-full h-full bg-[#111322] rounded-[14px] flex items-center justify-center font-mono font-black text-teal-300 text-lg">
-                  ∫x
-                </div>
-              </div>
+              <svg
+                width="40"
+                height="40"
+                viewBox="0 0 64 64"
+                aria-hidden="true"
+                className="shrink-0 group-hover:scale-105 transition-transform"
+              >
+                <rect width="64" height="64" rx="16" fill="#3b5bdb" />
+                <path d="M10 44 Q32 14 54 44" fill="none" stroke="#fcc419" strokeWidth="6" strokeLinecap="round" />
+                <path d="M8 44h48" stroke="#fff" strokeWidth="5" strokeLinecap="round" />
+                <path d="M21 44v-9M32 44v-14M43 44v-9" stroke="#fff" strokeWidth="4" strokeLinecap="round" />
+              </svg>
               <div className="hidden sm:block">
                 <div className="flex items-center gap-2">
-                  <span className="font-black text-base lg:text-lg tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-teal-300 via-indigo-200 to-violet-300 group-hover:text-teal-300 transition-colors">
-                    AI MATH BRIDGE TEACHER
+                  <span className="font-display font-extrabold text-lg lg:text-xl leading-none text-white">
+                    AI Math Bridge
                   </span>
-                  <span className="text-[10px] font-mono font-bold bg-violet-950/80 text-violet-300 border border-violet-700/60 px-2 py-0.5 rounded-full shadow-2xs">
-                    KẾT NỐI TRI THỨC · GDPT 2018
+                  <span className="text-[10px] font-bold uppercase tracking-wide bg-white text-amb-navy-800 px-2 py-0.5 rounded-md">
+                    Giáo viên
                   </span>
                 </div>
-                <p className="text-[11px] text-slate-400 font-medium">
-                  Scientific Bilingual Mathematics Hub
+                <p className="text-[11px] text-slate-300 font-medium">
+                  Kết nối tri thức · GDPT 2018
                 </p>
               </div>
             </div>
 
             {/* Center: Prominent Grade Pills [ Lớp 10 ] [ Lớp 11 ] [ Lớp 12 ] */}
-            <div className="flex items-center bg-[#1E2238] p-1 rounded-2xl border border-slate-700/60 shadow-inner">
+            <div className="flex items-center bg-amb-navy-700 p-1 rounded-xl border border-white/10">
               {[10, 11, 12].map((grade) => {
                 const isSelected = selectedGrade === grade;
                 return (
@@ -80,8 +87,8 @@ export const Header: React.FC = () => {
                     }}
                     className={`px-3.5 sm:px-5 py-1.5 rounded-xl font-black text-xs sm:text-sm transition-all duration-200 cursor-pointer ${
                       isSelected
-                        ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-md shadow-violet-500/30 scale-102 ring-1 ring-violet-400/40'
-                        : 'text-slate-300 hover:text-white hover:bg-slate-700/40'
+                        ? 'bg-amb-blue-600 text-white shadow-sm'
+                        : 'text-slate-300 hover:text-white hover:bg-white/10'
                     }`}
                   >
                     Lớp {grade}
@@ -91,16 +98,16 @@ export const Header: React.FC = () => {
             </div>
 
             {/* Center-Right: Navigation Tabs specifically for Teachers (Soạn Phiếu & Tạo Bài Test) */}
-            <nav className="hidden lg:flex items-center space-x-1 bg-[#1E2238]/90 p-1 rounded-2xl border border-slate-700/60 text-xs font-bold shadow-inner">
+            <nav className="hidden lg:flex items-center space-x-1 bg-amb-navy-700 p-1 rounded-xl border border-white/10 text-xs font-bold">
               <button
                 onClick={() => {
                   setSelectedLessonSubTab('theory');
                   setActiveTab('learn');
                 }}
-                className={`px-4 py-1.5 rounded-xl transition cursor-pointer flex items-center gap-1.5 ${
+                className={`px-4 py-1.5 rounded-lg transition cursor-pointer flex items-center gap-1.5 ${
                   activeTab === 'learn'
-                    ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-extrabold shadow-xs'
-                    : 'text-slate-300 hover:text-white hover:bg-slate-800/60'
+                    ? 'bg-amb-blue-600 text-white font-extrabold shadow-xs'
+                    : 'text-slate-300 hover:text-white hover:bg-white/10'
                 }`}
               >
                 <BookOpen className="w-4 h-4" />
@@ -108,10 +115,10 @@ export const Header: React.FC = () => {
               </button>
               <button
                 onClick={() => setActiveTab('test-builder')}
-                className={`px-4 py-1.5 rounded-xl transition cursor-pointer flex items-center gap-1.5 ${
+                className={`px-4 py-1.5 rounded-lg transition cursor-pointer flex items-center gap-1.5 ${
                   activeTab === 'test-builder'
-                    ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-extrabold shadow-xs'
-                    : 'text-slate-300 hover:text-white hover:bg-slate-800/60'
+                    ? 'bg-amb-blue-600 text-white font-extrabold shadow-xs'
+                    : 'text-slate-300 hover:text-white hover:bg-white/10'
                 }`}
               >
                 <GraduationCap className="w-4 h-4" />
@@ -119,10 +126,10 @@ export const Header: React.FC = () => {
               </button>
               <button
                 onClick={() => setActiveTab('teacher-dashboard')}
-                className={`px-4 py-1.5 rounded-xl transition cursor-pointer flex items-center gap-1.5 ${
+                className={`px-4 py-1.5 rounded-lg transition cursor-pointer flex items-center gap-1.5 ${
                   activeTab === 'teacher-dashboard' || activeTab === 'teacher-analytics'
-                    ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-extrabold shadow-xs'
-                    : 'text-slate-300 hover:text-white hover:bg-slate-800/60'
+                    ? 'bg-amb-blue-600 text-white font-extrabold shadow-xs'
+                    : 'text-slate-300 hover:text-white hover:bg-white/10'
                 }`}
               >
                 <UsersRound className="w-4 h-4" />
@@ -130,10 +137,10 @@ export const Header: React.FC = () => {
               </button>
               <button
                 onClick={() => setActiveTab('teacher-research')}
-                className={`px-4 py-1.5 rounded-xl transition cursor-pointer flex items-center gap-1.5 ${
+                className={`px-4 py-1.5 rounded-lg transition cursor-pointer flex items-center gap-1.5 ${
                   activeTab === 'teacher-research'
-                    ? 'bg-gradient-to-r from-teal-600 to-emerald-600 text-white font-extrabold shadow-xs'
-                    : 'text-slate-300 hover:text-white hover:bg-slate-800/60'
+                    ? 'bg-amb-yellow-400 text-amb-ink font-extrabold shadow-xs'
+                    : 'text-slate-300 hover:text-white hover:bg-white/10'
                 }`}
               >
                 <Microscope className="w-4 h-4" />
@@ -149,7 +156,7 @@ export const Header: React.FC = () => {
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition shadow-xs cursor-pointer ${
                   !apiKeyConfigured
                     ? 'bg-amber-500/20 border border-amber-400 text-amber-300 hover:bg-amber-500/30'
-                    : 'bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700/80'
+                    : 'bg-amb-navy-700 hover:bg-white/10 text-slate-200 border border-white/10'
                 }`}
                 title="Cài đặt Google Gemini AI & Quản lý API Key"
               >

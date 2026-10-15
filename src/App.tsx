@@ -104,13 +104,13 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-teal-500 selection:text-white pb-16 md:pb-0">
+    <div className="min-h-screen bg-amb-paper text-slate-900 font-sans selection:bg-teal-500 selection:text-white pb-16 md:pb-0">
       {/* Top Header */}
       <Header />
 
       {/* Toast Notification */}
       {notification && (
-        <div className="fixed top-20 right-4 z-50 bg-slate-900 text-white text-xs font-bold px-4 py-3 rounded-2xl shadow-xl border border-slate-700 flex items-center justify-between gap-4 animate-bounce">
+        <div className="fixed top-20 right-4 z-50 bg-amb-navy-800 text-white text-xs font-bold px-4 py-3 rounded-2xl shadow-xl border border-amb-navy-700 flex items-center justify-between gap-4 animate-bounce">
           <span>{notification}</span>
           <button
             onClick={clearNotification}
