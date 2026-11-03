@@ -15,6 +15,7 @@ import {
   type StudentResearchSnapshot,
 } from '../../lib/studentResearchCloudService';
 import { setRecommendedBarrier, setResearchClass } from '../../lib/teacherResearchPreferences';
+import { pullAndMergeBank } from '../../lib/teacherBankSync';
 import {
   AlertTriangle,
   BarChart3,
@@ -125,6 +126,7 @@ export const TeacherResearchHub: React.FC = () => {
       setPassword('');
       setConnected(true);
       showNotification('Đã kết nối dữ liệu Student Google Sheets.');
+      void pullAndMergeBank();
       await load('');
     } catch (e: any) {
       setCloudError(e?.message || 'Không kết nối được Student Google Sheets.');

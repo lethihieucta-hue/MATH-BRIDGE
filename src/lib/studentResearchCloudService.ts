@@ -23,9 +23,9 @@ export function clearTeacherCloudSession() {
   safeStorage()?.removeItem(TOKEN_KEY); safeStorage()?.removeItem(USERNAME_KEY);
 }
 
-async function post(action: string, payload: Record<string, unknown> = {}, requireAuth = true) {
+async function post(action: string, payload: Record<string, unknown> = {}, requireAuth = true, apiUrl = '') {
   const teacherToken = requireAuth ? getTeacherCloudToken() : '';
-  const response = await fetch(getStudentResearchApiUrl(), {
+  const response = await fetch(apiUrl || getStudentResearchApiUrl(), {
     method: 'POST',
     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
     body: JSON.stringify({ action, ...payload, ...(teacherToken ? { teacherToken } : {}) }),
@@ -35,7 +35,10 @@ async function post(action: string, payload: Record<string, unknown> = {}, requi
   if (!json?.ok) {
     const code = String(json?.code || '');
     if (code.startsWith('TEACHER_AUTH')) clearTeacherCloudSession();
-    const err = new Error(String(json?.error || 'Không đọc được dữ liệu Student Google Sheets.')) as Error & { code?: string };
+    const msg = code === 'UNSUPPORTED_ACTION'
+      ? 'Google Sheet chưa cài mã TeacherCloud (tệp TeacherCloud.gs). Cần dán mã mới vào Apps Script rồi Deploy phiên bản mới.'
+      : String(json?.error || 'Không đọc được dữ liệu Student Google Sheets.');
+    const err = new Error(msg) as Error & { code?: string };
     err.code = code;
     throw err;
   }
@@ -117,4 +120,48 @@ export async function fetchStudentTeacherAnalytics() {
 
 export async function saveStudentTeacherIntervention(intervention: Record<string, unknown>) {
   return post('saveTeacherIntervention', { intervention }, true);
+}
+
+// ---------------------------------------------------------------------------
+// TeacherCloud (Apps Script teacher-cloud-1.0): điểm thi online + kho dữ liệu riêng của giáo viên
+// ---------------------------------------------------------------------------
+export interface OnlineExamScoreRecord {
+  submissionId: string;
+  examId: string;
+  examTitle: string;
+  studentName: string;
+  studentClass: string;
+  studentSbd: string;
+  score10: number;
+  correctCount: number;
+  totalGradable: number;
+  timeSpent?: string;
+  timeSpentFormatted?: string;
+  submittedAt: string;
+  receivedAt?: string;
+  details: { id: string; ok: number; a?: string }[];
+  clientVersion?: string;
+}
+
+/** Học sinh gửi điểm (không cần đăng nhập). apiUrl lấy từ link phòng thi giáo viên tạo. */
+export async function submitOnlineExamScoreToCloud(score: OnlineExamScoreRecord, apiUrl = '') {
+  return post('submitOnlineExamScore', { score }, false, apiUrl);
+}
+
+export async function fetchOnlineExamScores(examId = ''): Promise<OnlineExamScoreRecord[]> {
+  const res = await post('getOnlineExamScores', { examId }, true);
+  return (res?.scores || []) as OnlineExamScoreRecord[];
+}
+
+export type TeacherBankStoreKey = 'barrierTags' | 'customQuestions';
+export async function saveTeacherBankStore(key: TeacherBankStoreKey, data: string) {
+  return post('saveTeacherBankStore', { key, data }, true);
+}
+export async function fetchTeacherBankStore(): Promise<Record<TeacherBankStoreKey, { data: string; updatedAt: string }>> {
+  const res = await post('getTeacherBankStore', {}, true);
+  return res?.store || {};
+}
+export async function fetchSharedExamQuestions(ids: string[], apiUrl = ''): Promise<any[]> {
+  const res = await post('getSharedExamQuestions', { ids }, false, apiUrl);
+  return res?.questions || [];
 }

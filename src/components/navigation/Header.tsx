@@ -136,6 +136,17 @@ export const Header: React.FC = () => {
                 <span>Ngân hàng câu hỏi</span>
               </button>
               <button
+                onClick={() => setActiveTab('online-results')}
+                className={`px-4 py-1.5 rounded-lg transition cursor-pointer flex items-center gap-1.5 ${
+                  activeTab === 'online-results'
+                    ? 'bg-amb-blue-600 text-white font-extrabold shadow-xs'
+                    : 'text-slate-300 hover:text-white hover:bg-white/10'
+                }`}
+              >
+                <Activity className="w-4 h-4" />
+                <span>Điểm thi online</span>
+              </button>
+              <button
                 onClick={() => setActiveTab('teacher-dashboard')}
                 className={`px-4 py-1.5 rounded-lg transition cursor-pointer flex items-center gap-1.5 ${
                   activeTab === 'teacher-dashboard' || activeTab === 'teacher-analytics'

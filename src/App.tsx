@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAppStore } from './lib/store';
 import { Header } from './components/navigation/Header';
 import { MobileNav } from './components/navigation/MobileNav';
@@ -21,6 +21,8 @@ import { TeacherDashboard } from './components/teacher/TeacherDashboard';
 import { QuestionBank } from './components/teacher/QuestionBank';
 import { ContentStudio } from './components/teacher/ContentStudio';
 import { TestBuilder } from './components/teacher/TestBuilder';
+import { OnlineExamResults } from './components/teacher/OnlineExamResults';
+import { initTeacherBankSync } from './lib/teacherBankSync';
 import { TeacherAnalytics } from './components/teacher/TeacherAnalytics';
 import { TeacherResearchHub } from './components/teacher/TeacherResearchHub';
 
@@ -38,6 +40,8 @@ export default function App() {
     }
     return false;
   });
+
+  useEffect(() => { if (currentRole === 'TEACHER' && !hasOnlineExamParam) initTeacherBankSync(); }, [currentRole, hasOnlineExamParam]);
 
   if (hasOnlineExamParam || activeTab === 'online-exam') {
     return (
@@ -69,6 +73,8 @@ export default function App() {
           return <QuestionBank />;
         case 'test-builder':
           return <TestBuilder />;
+        case 'online-results':
+          return <OnlineExamResults />;
         case 'learn':
         default:
           return <BilingualLessonModule />;

@@ -3,7 +3,8 @@ import { Question } from '../../types';
 import { MathRenderer } from '../math/MathRenderer';
 import { QuestionAssetRenderer } from '../math/QuestionAssetRenderer';
 import { apiFetch } from '../../lib/dataService';
-import { decodeExamFromLink } from '../../lib/onlineExamLink';
+import { loadExamFromLink } from '../../lib/onlineExamLink';
+import { submitOnlineExamScoreToCloud, type OnlineExamScoreRecord } from '../../lib/studentResearchCloudService';
 import { checkShortAnswer } from '../../utils/answerCheck';
 import {
   Clock,
@@ -33,6 +34,8 @@ export interface OnlineExamData {
   created_at?: string;
   googleSheetUrl?: string;
   googleSheetWebhook?: string;
+  /** Apps Script của giáo viên nhận điểm (teacher-cloud-1.0). */
+  cloudApiUrl?: string;
 }
 
 interface OnlineExamRoomProps {
@@ -43,6 +46,21 @@ interface OnlineExamRoomProps {
 export const OnlineExamRoom: React.FC<OnlineExamRoomProps> = ({ examData: propExamData, onExit }) => {
   const [exam, setExam] = useState<OnlineExamData | null>(null);
   const [loadError, setLoadError] = useState('');
+  const [cloudState, setCloudState] = useState<'none' | 'sending' | 'sent' | 'failed'>('none');
+  const pendingScoreRef = useRef<OnlineExamScoreRecord | null>(null);
+
+  const sendScoreToTeacher = async () => {
+    const rec = pendingScoreRef.current;
+    if (!rec || !exam?.cloudApiUrl) return;
+    setCloudState('sending');
+    try {
+      await submitOnlineExamScoreToCloud(rec, exam.cloudApiUrl);
+      setCloudState('sent');
+    } catch (e) {
+      console.warn('Send score to teacher failed:', e);
+      setCloudState('failed');
+    }
+  };
   const [phase, setPhase] = useState<'LOBBY' | 'IN_PROGRESS' | 'COMPLETED'>('LOBBY');
 
   // Student info state
@@ -93,18 +111,17 @@ export const OnlineExamRoom: React.FC<OnlineExamRoomProps> = ({ examData: propEx
       // Link dùng chung: đề được mã hóa ngay trong link (tham số x) nên mở được trên máy học sinh.
       const code = urlParams.get('x');
       if (code) {
-        try {
-          const { exam: shared, missing } = decodeExamFromLink(code);
-          if (missing.length || !shared.questions.length) {
-            setLoadError(`Đề có ${missing.length} câu không còn trong ngân hàng câu hỏi của app. Học sinh báo giáo viên tạo lại link.`);
-            return;
-          }
-          setExam(shared as OnlineExamData);
-          setTimeLeft((shared.duration || 15) * 60);
-          return;
-        } catch (e) {
-          console.error('Invalid shared exam code:', e);
-        }
+        loadExamFromLink(code)
+          .then(({ exam: shared, missing }) => {
+            if (missing.length || !shared.questions.length) {
+              setLoadError(`Đề có ${missing.length} câu không tải được (câu giáo viên tự tạo chưa lưu lên Google Sheet). Học sinh báo giáo viên tạo lại link.`);
+              return;
+            }
+            setExam(shared as OnlineExamData);
+            setTimeLeft((shared.duration || 15) * 60);
+          })
+          .catch((e) => { console.error('Invalid shared exam code:', e); setLoadError('Link phòng thi bị lỗi hoặc không đầy đủ. Hãy mở lại đúng link giáo viên gửi.'); });
+        return;
       }
 
       // Link cũ (không có mã đề): thử tải từ máy chủ. Không bao giờ thay bằng đề mẫu.
@@ -282,6 +299,19 @@ export const OnlineExamRoom: React.FC<OnlineExamRoomProps> = ({ examData: propEx
       localStorage.setItem('mb_google_sheet_scores_v1', JSON.stringify(storedScores));
     } catch (e) {
       console.warn('Local Google Sheet score ledger save error:', e);
+    }
+
+    // Gửi điểm về Google Sheet của giáo viên (Apps Script teacher-cloud-1.0) kèm kết quả từng câu.
+    if (exam.cloudApiUrl) {
+      pendingScoreRef.current = {
+        ...scorePayload,
+        submissionId: `SUB-${exam.id}-${Date.now()}-${Math.floor(Math.random() * 100000)}`,
+        examId: exam.id,
+        examTitle: exam.title,
+        details: exam.questions.map((q) => ({ id: q.id, ok: details[q.id]?.isCorrect ? 1 : 0, a: String(details[q.id]?.studentAns || '').slice(0, 40) })),
+        clientVersion: 'teacher-exam-1.1',
+      };
+      void sendScoreToTeacher();
     }
 
     // Post data to Google Apps Script Webhook if configured
@@ -713,6 +743,17 @@ export const OnlineExamRoom: React.FC<OnlineExamRoomProps> = ({ examData: propEx
               </div>
             </div>
           </div>
+          {exam.cloudApiUrl && (
+            <div className={`mx-auto max-w-md rounded-2xl px-4 py-3 text-sm font-bold ${cloudState === 'sent' ? 'bg-emerald-500/20 text-emerald-200' : cloudState === 'failed' ? 'bg-rose-500/20 text-rose-200' : 'bg-white/10 text-slate-200'}`}>
+              {cloudState === 'sending' && 'Đang gửi điểm cho giáo viên…'}
+              {cloudState === 'sent' && '✅ Đã gửi điểm cho giáo viên.'}
+              {cloudState === 'failed' && (
+                <span>⚠️ Chưa gửi được điểm (mạng yếu).{' '}
+                  <button type="button" onClick={() => void sendScoreToTeacher()} className="underline text-white">Gửi lại</button>
+                  {' '}– không đóng trang này trước khi gửi xong.</span>
+              )}
+            </div>
+          )}
 
           {/* Google Sheets Score Recorded Notification Banner */}
           <div className="bg-emerald-500/20 border border-emerald-400/40 rounded-2xl p-4 my-6 text-emerald-100 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs sm:text-sm">

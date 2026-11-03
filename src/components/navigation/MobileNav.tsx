@@ -19,6 +19,7 @@ export const MobileNav: React.FC = () => {
       { id: 'learn', label: 'Học liệu', icon: BookOpen },
       { id: 'test-builder', label: 'Tạo Test', icon: GraduationCap },
       { id: 'question-bank', label: 'Ngân hàng', icon: FileQuestion },
+      { id: 'online-results', label: 'Điểm thi', icon: Activity },
       { id: 'teacher-dashboard', label: 'Lớp', icon: UsersRound },
       { id: 'teacher-research', label: 'Nghiên cứu', icon: Microscope },
     ];

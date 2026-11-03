@@ -5,6 +5,7 @@
  */
 import type { Question } from '../types';
 import { FULL_QUESTION_BANK } from './questionBankData';
+import { fetchSharedExamQuestions, getStudentResearchApiUrl } from './studentResearchCloudService';
 
 export interface SharedExamMeta {
   v: 1;
@@ -17,6 +18,8 @@ export interface SharedExamMeta {
   ie: string;
   q: string[];
   w?: string;
+  /** Địa chỉ Apps Script nhận điểm và cấp câu hỏi tự tạo. */
+  a?: string;
 }
 
 const toBase64Url = (text: string) => {
@@ -47,6 +50,7 @@ export function encodeExamForLink(exam: {
     v: 1, id: exam.id, t: exam.title, te: exam.title_en, d: exam.duration, r: exam.englishRatio,
     iv: exam.instructions_vi, ie: exam.instructions_en, q: exam.questions.map((q) => q.id),
     ...(exam.googleSheetWebhook ? { w: exam.googleSheetWebhook } : {}),
+    a: getStudentResearchApiUrl(),
   };
   return toBase64Url(JSON.stringify(meta));
 }
@@ -61,7 +65,22 @@ export function decodeExamFromLink(code: string) {
     exam: {
       id: meta.id, title: meta.t, title_en: meta.te, duration: meta.d, englishRatio: meta.r,
       instructions_vi: meta.iv, instructions_en: meta.ie, questions, googleSheetWebhook: meta.w || '',
+      cloudApiUrl: meta.a || '',
     },
+    order: meta.q,
     missing,
   };
+}
+
+/**
+ * Dựng đề từ link; câu giáo viên tự tạo (không có trong ngân hàng chung) được tải từ Google Sheet của giáo viên.
+ * Trả về danh sách mã câu vẫn không tìm được.
+ */
+export async function loadExamFromLink(code: string) {
+  const decoded = decodeExamFromLink(code);
+  if (!decoded.missing.length) return decoded;
+  const extra = decoded.exam.cloudApiUrl ? await fetchSharedExamQuestions(decoded.missing, decoded.exam.cloudApiUrl).catch(() => []) : [];
+  const byId = new Map<string, Question>([...decoded.exam.questions, ...extra].map((q: Question) => [q.id, q]));
+  const questions = decoded.order.map((id) => byId.get(id)).filter(Boolean) as Question[];
+  return { ...decoded, exam: { ...decoded.exam, questions }, missing: decoded.order.filter((id) => !byId.has(id)) };
 }

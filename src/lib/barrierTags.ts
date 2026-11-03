@@ -27,6 +27,11 @@ const normalize = (value: unknown): BarrierType[] => {
 };
 
 let overrideCache: Record<string, string> | null = null;
+type Listener = () => void;
+const listeners = new Set<Listener>();
+/** Đăng ký nhận báo khi giáo viên sửa nhãn (dùng để đồng bộ lên Google Sheet). */
+export function onBarrierTagsChange(fn: Listener) { listeners.add(fn); return () => listeners.delete(fn); }
+const emit = () => listeners.forEach((fn) => { try { fn(); } catch { /* ignore */ } });
 const readOverrides = (): Record<string, string> => {
   if (overrideCache) return overrideCache;
   try { overrideCache = JSON.parse(storage()?.getItem(OVERRIDE_KEY) || '{}') || {}; } catch { overrideCache = {}; }
@@ -58,6 +63,7 @@ export function setQuestionBarrierTags(questionId: string, tags: BarrierType[]):
   else all[questionId] = clean.join('');
   overrideCache = all;
   try { storage()?.setItem(OVERRIDE_KEY, JSON.stringify(all)); } catch { return false; }
+  emit();
   return true;
 }
 
@@ -66,6 +72,15 @@ export function resetQuestionBarrierTags(questionId: string) {
   delete all[questionId];
   overrideCache = all;
   try { storage()?.setItem(OVERRIDE_KEY, JSON.stringify(all)); } catch { /* ignore */ }
+  emit();
+}
+
+/** Thay toàn bộ nhãn đã sửa bằng bản lấy từ Google Sheet (không báo đồng bộ ngược). */
+export function replaceBarrierTagOverrides(map: Record<string, string>) {
+  const clean: Record<string, string> = {};
+  Object.entries(map || {}).forEach(([id, v]) => { const t = normalize(v).join(''); if (t) clean[id] = t; });
+  overrideCache = clean;
+  try { storage()?.setItem(OVERRIDE_KEY, JSON.stringify(clean)); } catch { /* ignore */ }
 }
 
 export function exportBarrierTagOverrides(): Record<string, string> {

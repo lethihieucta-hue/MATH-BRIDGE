@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useAppStore } from '../../lib/store';
 import { BarrierType, Question } from '../../types';
+import { getSyncStatus, onSyncStatus, pullAndMergeBank, scheduleBankPush, type SyncStatus } from '../../lib/teacherBankSync';
+import { TeacherCloudLogin } from './OnlineExamResults';
 import { BARRIER_ORDER, BARRIER_TAG_LABEL, BARRIER_TAG_SHORT, getQuestionBarrierTags, isBarrierTagEdited, resetQuestionBarrierTags, setQuestionBarrierTags } from '../../lib/barrierTags';
 import { MathRenderer } from '../math/MathRenderer';
 import { apiFetch } from '../../lib/dataService';
@@ -33,6 +35,12 @@ export const QuestionBank: React.FC = () => {
   const [tagVersion, setTagVersion] = useState(0);
   const [newTags, setNewTags] = useState<BarrierType[]>(['L']);
   const PAGE_SIZE = 30;
+  const [sync, setSync] = useState<SyncStatus>(() => getSyncStatus());
+  const [showLogin, setShowLogin] = useState(false);
+  useEffect(() => onSyncStatus((st) => {
+    setSync(st);
+    if (st.state === 'ok') { setTagVersion((v) => v + 1); void fetchQuestions(); }
+  }), []);
 
   // New question form modal
   const [isNewQModalOpen, setIsNewQModalOpen] = useState(false);
@@ -101,6 +109,7 @@ export const QuestionBank: React.FC = () => {
         body: JSON.stringify(payload),
       });
       if (data.question) {
+        scheduleBankPush('customQuestions');
         showNotification('Đã tạo câu hỏi mới vào Ngân Hàng Đề!');
         setIsNewQModalOpen(false);
         setQVi('');
@@ -248,6 +257,20 @@ export const QuestionBank: React.FC = () => {
           </button>
         </div>
       </div>
+
+      {/* Trạng thái lưu nhãn và câu tự tạo lên Google Sheet */}
+      <div className={`flex flex-wrap items-center justify-between gap-2 px-4 py-3 rounded-2xl border text-xs ${sync.state === 'error' ? 'bg-rose-50 border-rose-200 text-rose-800' : sync.state === 'offline' ? 'bg-amber-50 border-amber-200 text-amber-900' : 'bg-emerald-50 border-emerald-200 text-emerald-900'}`}>
+        <span>
+          {sync.state === 'syncing' ? '⏳ ' : sync.state === 'ok' ? '☁️ ' : sync.state === 'error' ? '⚠️ ' : '💾 '}
+          {sync.message || 'Nhãn L/C/M đã sửa và câu tự tạo được lưu lên Google Sheet khi đăng nhập tài khoản giáo viên.'}
+          {sync.lastSyncAt && sync.state !== 'offline' ? ` (lần cuối ${new Date(sync.lastSyncAt).toLocaleString('vi-VN')})` : ''}
+          {sync.dirty.length > 0 && sync.state !== 'syncing' ? ' · Còn thay đổi chưa lưu lên Sheet.' : ''}
+        </span>
+        {sync.state === 'offline'
+          ? <button type="button" onClick={() => setShowLogin((v) => !v)} className="px-3 py-1.5 rounded-xl bg-slate-900 text-white font-black">Đăng nhập để đồng bộ</button>
+          : <button type="button" onClick={() => void pullAndMergeBank()} disabled={sync.state === 'syncing'} className="px-3 py-1.5 rounded-xl bg-white border border-slate-300 font-black disabled:opacity-50">Đồng bộ ngay</button>}
+      </div>
+      {showLogin && <TeacherCloudLogin onDone={() => setShowLogin(false)} />}
 
       {/* Bộ lọc khối lớp + nhãn rào cản L/C/M */}
       <div className="bg-white p-4 rounded-3xl border border-slate-200/80 shadow-2xs space-y-3">

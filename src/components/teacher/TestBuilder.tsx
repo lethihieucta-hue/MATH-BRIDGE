@@ -8,6 +8,8 @@ import { FULL_LESSONS } from '../../lib/curriculumData';
 import { isQuestionEnglishReady } from '../../lib/englishQuality';
 import { questionHasBarrier } from '../../lib/barrierTags';
 import { encodeExamForLink, questionsNotShareable } from '../../lib/onlineExamLink';
+import { pushBank } from '../../lib/teacherBankSync';
+import { getTeacherCloudToken } from '../../lib/studentResearchCloudService';
 import { barrierFocusLabel, getBarrierFocus, getRecommendedBarrier, getResearchClass, setBarrierFocus, type TeacherBarrierFocus } from '../../lib/teacherResearchPreferences';
 import { OnlineExamRoom, OnlineExamData } from '../online_exam/OnlineExamRoom';
 import {
@@ -420,8 +422,12 @@ export const TestBuilder: React.FC = () => {
     // Đề được mã hóa trong link (tham số x) để học sinh mở trên máy khác vẫn đúng đề.
     const notShareable = questionsNotShareable(currentTest.questions);
     if (notShareable.length) {
-      showNotification(`⚠️ Có ${notShareable.length} câu tự tạo chưa có trong ngân hàng chung nên học sinh ở máy khác không mở được. Hãy thay bằng câu trong ngân hàng.`);
-      return;
+      // Câu tự tạo: lưu lên Google Sheet để máy học sinh tải được qua link.
+      const pushed = getTeacherCloudToken() ? await pushBank(['customQuestions']) : false;
+      if (!pushed) {
+        showNotification(`⚠️ Đề có ${notShareable.length} câu tự tạo. Hãy đăng nhập tài khoản giáo viên (mục Nghiên cứu) để lưu câu lên Google Sheet, hoặc thay bằng câu trong ngân hàng.`);
+        return;
+      }
     }
     const fullUrl = `${window.location.origin}${window.location.pathname}?onlineExamId=${examId}&x=${encodeExamForLink(examPayload)}`;
     setOnlineExamLink(fullUrl);

@@ -553,3 +553,31 @@ export async function apiFetch<T = any>(endpoint: string, options?: RequestInit)
 
   return {} as any;
 }
+
+/** Câu hỏi riêng của giáo viên: câu tự tạo + câu chuẩn đã sửa (dùng để đồng bộ Google Sheet). */
+export function getTeacherOwnedQuestions(): any[] {
+  const db = getLocalDb();
+  return (db.questions || []).filter((q: any) => !CANONICAL_QUESTION_IDS.has(q.id) || q.updated_at);
+}
+
+/** Nhận câu hỏi riêng từ Google Sheet: thêm câu mới, câu đã có thì giữ bản có updated_at mới hơn. */
+export function mergeTeacherOwnedQuestions(list: any[]): number {
+  if (!Array.isArray(list) || !list.length) return 0;
+  const db = getLocalDb();
+  const index = new Map<string, number>((db.questions || []).map((q: any, i: number) => [q.id, i]));
+  let changed = 0;
+  list.forEach((q: any) => {
+    if (!q || typeof q.id !== 'string') return;
+    const i = index.get(q.id);
+    if (i === undefined) { db.questions.push(q); index.set(q.id, db.questions.length - 1); changed++; return; }
+    const cur = db.questions[i];
+    if (String(q.updated_at || '') > String(cur.updated_at || '')) { db.questions[i] = q; changed++; }
+  });
+  if (changed) saveLocalDb(db);
+  return changed;
+}
+
+/** Tra câu hỏi theo mã: ngân hàng chuẩn + câu riêng của giáo viên trên máy này. */
+export function findQuestionById(id: string): any | undefined {
+  return (getLocalDb().questions || []).find((q: any) => q.id === id);
+}
