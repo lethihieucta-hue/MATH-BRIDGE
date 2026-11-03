@@ -247,6 +247,8 @@ export interface Question {
   // Math Reading fields
   given_info?: string;
   required_info?: string;
+  /** Nhãn rào cản L/C/M (1–3 nhãn) giáo viên gắn khi tạo câu; câu trong ngân hàng dùng src/data/barrierTags.json. */
+  barrier_tags?: BarrierType[];
 }
 
 export interface SelectedTypeCountConfig {

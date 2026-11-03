@@ -81,7 +81,7 @@ export const Header: React.FC = () => {
                     key={grade}
                     onClick={() => {
                       setSelectedGrade(grade);
-                      if (['learn', 'content-studio', 'question-bank'].includes(activeTab)) {
+                      if (['learn', 'content-studio'].includes(activeTab)) {
                         setActiveTab('learn');
                       }
                     }}
@@ -123,6 +123,17 @@ export const Header: React.FC = () => {
               >
                 <GraduationCap className="w-4 h-4" />
                 <span>Tạo Bài Test</span>
+              </button>
+              <button
+                onClick={() => setActiveTab('question-bank')}
+                className={`px-4 py-1.5 rounded-lg transition cursor-pointer flex items-center gap-1.5 ${
+                  activeTab === 'question-bank'
+                    ? 'bg-amb-blue-600 text-white font-extrabold shadow-xs'
+                    : 'text-slate-300 hover:text-white hover:bg-white/10'
+                }`}
+              >
+                <FileQuestion className="w-4 h-4" />
+                <span>Ngân hàng câu hỏi</span>
               </button>
               <button
                 onClick={() => setActiveTab('teacher-dashboard')}

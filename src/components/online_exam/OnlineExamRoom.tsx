@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Question } from '../../types';
 import { MathRenderer } from '../math/MathRenderer';
 import { QuestionAssetRenderer } from '../math/QuestionAssetRenderer';
 import { apiFetch } from '../../lib/dataService';
+import { decodeExamFromLink } from '../../lib/onlineExamLink';
+import { checkShortAnswer } from '../../utils/answerCheck';
 import {
   Clock,
   CheckCircle2,
@@ -40,6 +42,7 @@ interface OnlineExamRoomProps {
 
 export const OnlineExamRoom: React.FC<OnlineExamRoomProps> = ({ examData: propExamData, onExit }) => {
   const [exam, setExam] = useState<OnlineExamData | null>(null);
+  const [loadError, setLoadError] = useState('');
   const [phase, setPhase] = useState<'LOBBY' | 'IN_PROGRESS' | 'COMPLETED'>('LOBBY');
 
   // Student info state
@@ -87,16 +90,36 @@ export const OnlineExamRoom: React.FC<OnlineExamRoomProps> = ({ examData: propEx
         console.error('Failed to load online exam from localStorage:', e);
       }
 
-      // Shared links must also work on a different device. Load the persisted full exam payload.
+      // Link dùng chung: đề được mã hóa ngay trong link (tham số x) nên mở được trên máy học sinh.
+      const code = urlParams.get('x');
+      if (code) {
+        try {
+          const { exam: shared, missing } = decodeExamFromLink(code);
+          if (missing.length || !shared.questions.length) {
+            setLoadError(`Đề có ${missing.length} câu không còn trong ngân hàng câu hỏi của app. Học sinh báo giáo viên tạo lại link.`);
+            return;
+          }
+          setExam(shared as OnlineExamData);
+          setTimeLeft((shared.duration || 15) * 60);
+          return;
+        } catch (e) {
+          console.error('Invalid shared exam code:', e);
+        }
+      }
+
+      // Link cũ (không có mã đề): thử tải từ máy chủ. Không bao giờ thay bằng đề mẫu.
       apiFetch<any[]>('/api/online-exams')
         .then((tests) => {
           const remote = (tests || []).find((item: any) => item.id === examId);
           if (remote?.questions?.length) {
             setExam(remote as OnlineExamData);
             setTimeLeft((remote.duration || 15) * 60);
+          } else {
+            setLoadError('Không tìm thấy đề trên máy này. Link được tạo trước bản cập nhật chỉ mở được trên máy của giáo viên; giáo viên cần tạo lại link phòng thi.');
           }
         })
-        .catch((e) => console.error('Failed to load shared online exam from server:', e));
+        .catch(() => setLoadError('Không tải được đề. Hãy kiểm tra mạng hoặc báo giáo viên tạo lại link.'));
+      return;
     }
 
     // Fallback default demo test if none found
@@ -138,21 +161,19 @@ export const OnlineExamRoom: React.FC<OnlineExamRoomProps> = ({ examData: propEx
     setTimeLeft(demoExam.duration * 60);
   }, [propExamData]);
 
-  // Countdown timer
+  // Countdown timer. Hết giờ thì nộp bằng hàm mới nhất (có đủ câu trả lời học sinh đã chọn);
+  // trước đây bộ đếm giữ bản cũ của hàm nộp bài nên tự nộp bài trống khi hết giờ.
+  const submitRef = useRef<() => void>(() => {});
   useEffect(() => {
     if (phase !== 'IN_PROGRESS') return;
     const timer = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 1) {
-          clearInterval(timer);
-          handleSubmitExam();
-          return 0;
-        }
-        return prev - 1;
-      });
+      setTimeLeft((prev) => Math.max(0, prev - 1));
     }, 1000);
     return () => clearInterval(timer);
   }, [phase]);
+  useEffect(() => {
+    if (phase === 'IN_PROGRESS' && timeLeft <= 0) submitRef.current();
+  }, [phase, timeLeft]);
 
   // Handle start test
   const handleStartExam = (e: React.FormEvent) => {
@@ -176,7 +197,8 @@ export const OnlineExamRoom: React.FC<OnlineExamRoomProps> = ({ examData: propEx
     const details: Record<string, { isCorrect: boolean; studentAns: string; correctAns: string }> = {};
 
     exam.questions.forEach((q) => {
-      totalGradable++;
+      const isEssay = q.format_type === 'TL' || q.question_type === 'ESSAY';
+      if (!isEssay) totalGradable++;
       if (q.format_type === 'TN' || q.question_type === 'MCQ') {
         const studentAns = (answers[q.id] || '').trim().toUpperCase();
         const correctAns = (q.correct_answer || '').trim().toUpperCase();
@@ -198,8 +220,9 @@ export const OnlineExamRoom: React.FC<OnlineExamRoomProps> = ({ examData: propEx
         });
 
         const isFullyCorrect = matchedSub === totalSub;
-        if (isFullyCorrect) correctCount++;
-        else if (matchedSub >= totalSub - 1) correctCount += 0.5; // partial credit
+        // Thang điểm câu Đúng/Sai theo cấu trúc đề của Bộ GD&ĐT: đúng 1/2/3/4 ý được 0,1/0,25/0,5/1 điểm câu.
+        const dsScale: Record<number, number> = { 0: 0, 1: 0.1, 2: 0.25, 3: 0.5, 4: 1 };
+        correctCount += totalSub === 4 ? dsScale[matchedSub] : matchedSub / Math.max(1, totalSub);
 
         const studentAnsStr = parts
           .filter((k) => tfMap[k])
@@ -214,9 +237,10 @@ export const OnlineExamRoom: React.FC<OnlineExamRoomProps> = ({ examData: propEx
           correctAns: correctAnsStr,
         };
       } else if (q.format_type === 'TLN' || q.question_type === 'SHORT') {
-        const studentAns = (answers[q.id] || '').trim().replace(/\s+/g, '').replace(/,/g, '.');
-        const correctAns = (q.correct_answer || '').trim().replace(/\s+/g, '').replace(/,/g, '.');
-        const isCorrect = studentAns.toLowerCase() === correctAns.toLowerCase();
+        // Chấm theo giá trị (bộ chấm tln-check của app Student): "4/3" = "\\dfrac43", "{1;2}" = "{1,2}", "0,5" = "0.5".
+        const studentAns = (answers[q.id] || '').trim();
+        const correctAns = (q.correct_answer || '').trim();
+        const isCorrect = !!studentAns && checkShortAnswer(studentAns, correctAns).correct;
         if (isCorrect) correctCount++;
         details[q.id] = { isCorrect, studentAns: studentAns || '(Chưa điền)', correctAns };
       } else {
@@ -233,7 +257,7 @@ export const OnlineExamRoom: React.FC<OnlineExamRoomProps> = ({ examData: propEx
     const finalScore10 = Math.round(((correctCount / (totalGradable || 1)) * 10) * 10) / 10;
     setScoreResult({
       score10: finalScore10,
-      correctCount: Math.round(correctCount),
+      correctCount: Math.round(correctCount * 100) / 100,
       totalGradable,
       details,
     });
@@ -245,7 +269,7 @@ export const OnlineExamRoom: React.FC<OnlineExamRoomProps> = ({ examData: propEx
       studentSbd: studentSbd || 'KDB',
       testTitle: exam.title,
       score10: finalScore10,
-      correctCount: Math.round(correctCount),
+      correctCount: Math.round(correctCount * 100) / 100,
       totalGradable,
       timeSpentFormatted: formatTimer(spent),
       submittedAt: new Date().toLocaleString('vi-VN'),
@@ -278,6 +302,8 @@ export const OnlineExamRoom: React.FC<OnlineExamRoomProps> = ({ examData: propEx
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  submitRef.current = handleSubmitExam;
+
   const formatTimer = (seconds: number) => {
     const m = Math.floor(seconds / 60);
     const s = seconds % 60;
@@ -290,7 +316,7 @@ export const OnlineExamRoom: React.FC<OnlineExamRoomProps> = ({ examData: propEx
         <div className="bg-white p-8 rounded-3xl shadow-xl text-center max-w-md">
           <AlertCircle className="w-12 h-12 text-amber-500 mx-auto mb-4" />
           <h2 className="text-xl font-bold text-slate-800 mb-2">Không tìm thấy bài thi</h2>
-          <p className="text-sm text-slate-600 mb-6">Liên kết phòng thi có thể đã hết hạn hoặc không tồn tại.</p>
+          <p className="text-sm text-slate-600 mb-6">{loadError || 'Đang tải đề… Nếu chờ lâu, liên kết phòng thi có thể đã hết hạn hoặc không tồn tại.'}</p>
           {onExit && (
             <button onClick={onExit} className="px-6 py-3 bg-teal-600 text-white font-bold rounded-xl shadow-md">
               Quay về trang chủ

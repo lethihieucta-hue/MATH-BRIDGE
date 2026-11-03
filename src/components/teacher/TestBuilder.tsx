@@ -6,6 +6,8 @@ import { ONLINE_SAFE_QUESTION_BANK } from '../../lib/questionBankData';
 import { apiFetch } from '../../lib/dataService';
 import { FULL_LESSONS } from '../../lib/curriculumData';
 import { isQuestionEnglishReady } from '../../lib/englishQuality';
+import { questionHasBarrier } from '../../lib/barrierTags';
+import { encodeExamForLink, questionsNotShareable } from '../../lib/onlineExamLink';
 import { barrierFocusLabel, getBarrierFocus, getRecommendedBarrier, getResearchClass, setBarrierFocus, type TeacherBarrierFocus } from '../../lib/teacherResearchPreferences';
 import { OnlineExamRoom, OnlineExamData } from '../online_exam/OnlineExamRoom';
 import {
@@ -256,30 +258,16 @@ export const TestBuilder: React.FC = () => {
     };
   });
 
-  const prioritizeQuestionsForBarrier = (questions: Question[], focus: TeacherBarrierFocus): Question[] => {
-    if (focus === 'NONE') return questions;
-    const score = (q: Question) => {
-      const enWords = String(q.question_en || '').trim().split(/\s+/).filter(Boolean).length;
-      let value = 0;
-      if (focus === 'L') {
-        value += (q.vocabulary_support?.length || 0) * 3;
-        value += q.english_skill ? 3 : 0;
-        value += enWords >= 8 ? 2 : 0;
-        value += Number(q.language_level || 0);
-      } else if (focus === 'C') {
-        value += q.given_info ? 4 : 0;
-        value += q.required_info ? 4 : 0;
-        value += enWords >= 18 ? 4 : enWords >= 10 ? 2 : 0;
-        value += q.format_type === 'DS' || q.format_type === 'TLN' ? 2 : 0;
-        value += (q.assets?.length || 0) > 0 ? 1 : 0;
-      } else if (focus === 'M') {
-        value += q.difficulty === 'HARD' ? 6 : q.difficulty === 'MEDIUM' ? 3 : 0;
-        value += (q.formula_support?.length || 0) > 0 ? 2 : 0;
-        value += q.format_type === 'TLN' ? 2 : 0;
-      }
-      return value;
-    };
-    return [...questions].sort((a, b) => score(b) - score(a));
+  /**
+   * Chọn câu theo nhãn rào cản L/C/M (barrier-tags): lấy trước các câu CÓ nhãn được chọn trong đúng
+   * phạm vi kiến thức; chỉ khi thiếu mới bổ sung câu khác cùng chuyên đề và báo rõ số câu bổ sung.
+   */
+  const splitByBarrier = (questions: Question[], focus: TeacherBarrierFocus) => {
+    if (focus === 'NONE') return { tagged: questions, others: [] as Question[] };
+    const tagged: Question[] = [];
+    const others: Question[] = [];
+    questions.forEach((q) => (questionHasBarrier(q, focus) ? tagged : others).push(q));
+    return { tagged, others };
   };
 
   // Generate Test directly from the verified question bank (no Gemini by default)
@@ -331,11 +319,19 @@ export const TestBuilder: React.FC = () => {
       : rawCandidateQuestions;
     const formatCounts = parseFormatCounts(promptDescription, targetCount);
     targetCount = formatCounts.total;
-    const prioritizedCandidates = prioritizeQuestionsForBarrier(candidateQuestions, barrierFocus);
+    const { tagged: barrierTagged, others: barrierOthers } = splitByBarrier(candidateQuestions, barrierFocus);
+    let barrierFilled = 0;
+    const pickWithBarrier = (format: 'TN' | 'DS' | 'TLN', count: number): Question[] => {
+      const first = pickDiverse(barrierTagged, format, count);
+      if (first.length >= count || barrierFocus === 'NONE') return first;
+      const extra = pickDiverse(barrierOthers, format, count - first.length);
+      barrierFilled += extra.length;
+      return [...first, ...extra];
+    };
     const selected: Question[] = [
-      ...pickDiverse(prioritizedCandidates, 'TN', formatCounts.tn),
-      ...pickDiverse(prioritizedCandidates, 'DS', formatCounts.ds),
-      ...pickDiverse(prioritizedCandidates, 'TLN', formatCounts.tln),
+      ...pickWithBarrier('TN', formatCounts.tn),
+      ...pickWithBarrier('DS', formatCounts.ds),
+      ...pickWithBarrier('TLN', formatCounts.tln),
     ];
 
     // Extract title from prompt
@@ -371,9 +367,12 @@ export const TestBuilder: React.FC = () => {
       questions: selected,
     });
 
+    const barrierNote = barrierFocus === 'NONE' ? '' : barrierFilled > 0
+      ? ` Rào cản ${barrierFocus}: ${selected.length - barrierFilled} câu có nhãn ${barrierFocus}, bổ sung ${barrierFilled} câu cùng chuyên đề vì ngân hàng chưa đủ.`
+      : ` Tất cả ${selected.length} câu đều có nhãn ${barrierFocus}.`;
     showNotification(selected.length < targetCount
-      ? `⚠️ Ngân hàng đề hiện có ${selected.length}/${targetCount} câu đúng chuyên đề. Hệ thống không chèn câu sai bài để bù số lượng.`
-      : `✅ Đã tạo đề từ ngân hàng đúng chuyên đề (${selected.length} câu, ${detectedRatio}% Tiếng Anh)!`);
+      ? `⚠️ Ngân hàng đề hiện có ${selected.length}/${targetCount} câu đúng chuyên đề. Hệ thống không chèn câu sai bài để bù số lượng.${barrierNote}`
+      : `✅ Đã tạo đề từ ngân hàng đúng chuyên đề (${selected.length} câu, ${detectedRatio}% Tiếng Anh)!${barrierNote}`);
     setIsGenerating(false);
   };
 
@@ -418,7 +417,13 @@ export const TestBuilder: React.FC = () => {
       console.warn('Failed to persist online exam to server; local copy is still available:', e);
     }
 
-    const fullUrl = `${window.location.origin}${window.location.pathname}?onlineExamId=${examId}`;
+    // Đề được mã hóa trong link (tham số x) để học sinh mở trên máy khác vẫn đúng đề.
+    const notShareable = questionsNotShareable(currentTest.questions);
+    if (notShareable.length) {
+      showNotification(`⚠️ Có ${notShareable.length} câu tự tạo chưa có trong ngân hàng chung nên học sinh ở máy khác không mở được. Hãy thay bằng câu trong ngân hàng.`);
+      return;
+    }
+    const fullUrl = `${window.location.origin}${window.location.pathname}?onlineExamId=${examId}&x=${encodeExamForLink(examPayload)}`;
     setOnlineExamLink(fullUrl);
     setOnlineExamCode(examCode);
     setShowOnlineExamModal(true);
@@ -669,12 +674,12 @@ export const TestBuilder: React.FC = () => {
 
           <div className="rounded-2xl border border-teal-200 bg-teal-50/60 p-3 space-y-2">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-2">
-              <div><div className="text-xs font-black text-slate-900">Ưu tiên đề theo rào cản cần bổ sung</div><div className="text-[10px] text-slate-500">{researchClassName ? `Lớp: ${researchClassName}` : 'Chưa chọn lớp nghiên cứu'}{recommendedBarrier !== 'NONE' ? ` • Dữ liệu gợi ý: ${barrierFocusLabel[recommendedBarrier]}` : ''}</div></div>
+              <div><div className="text-xs font-black text-slate-900">Chọn câu theo rào cản học sinh còn yếu (nhãn L/C/M)</div><div className="text-[10px] text-slate-500">{researchClassName ? `Lớp: ${researchClassName}` : 'Chưa chọn lớp nghiên cứu'}{recommendedBarrier !== 'NONE' ? ` • Dữ liệu gợi ý: ${barrierFocusLabel[recommendedBarrier]}` : ''}</div></div>
               <div className="flex flex-wrap gap-1.5">
                 {(['NONE','L','C','M'] as TeacherBarrierFocus[]).map((code) => <button key={code} type="button" onClick={() => { setBarrierFocusState(code); setBarrierFocus(code); }} className={`px-2.5 py-1.5 rounded-lg text-[10px] font-black border ${barrierFocus === code ? 'bg-teal-600 text-white border-teal-600' : 'bg-white text-slate-700 border-slate-200'}`}>{barrierFocusLabel[code]}</button>)}
               </div>
             </div>
-            {barrierFocus !== 'NONE' && <p className="text-[10px] text-teal-900">Hệ thống ưu tiên chọn câu trong ngân hàng phù hợp với <b>{barrierFocusLabel[barrierFocus]}</b>; vẫn giữ nguyên phạm vi kiến thức và cấu trúc đề.</p>}
+            {barrierFocus !== 'NONE' && <p className="text-[10px] text-teal-900">Hệ thống chỉ lấy các câu có nhãn <b>{barrierFocusLabel[barrierFocus]}</b> trong đúng phạm vi kiến thức và cấu trúc đề; nếu ngân hàng thiếu sẽ bổ sung câu cùng chuyên đề và báo số câu bổ sung. Nhãn từng câu xem và sửa ở mục Ngân hàng câu hỏi.</p>}
           </div>
 
           {/* Action Button */}

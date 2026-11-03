@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useAppStore } from '../../lib/store';
-import { Question } from '../../types';
+import { BarrierType, Question } from '../../types';
+import { BARRIER_ORDER, BARRIER_TAG_LABEL, BARRIER_TAG_SHORT, getQuestionBarrierTags, isBarrierTagEdited, resetQuestionBarrierTags, setQuestionBarrierTags } from '../../lib/barrierTags';
 import { MathRenderer } from '../math/MathRenderer';
 import { apiFetch } from '../../lib/dataService';
 import { generateBilingualQuestionAi, hasApiKey } from '../../lib/geminiService';
@@ -26,6 +27,12 @@ export const QuestionBank: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [previewQuestion, setPreviewQuestion] = useState<Question | null>(null);
+  const [gradeFilter, setGradeFilter] = useState<number | 'ALL'>(selectedGrade || 'ALL');
+  const [barrierFilter, setBarrierFilter] = useState<BarrierType | 'ALL'>('ALL');
+  const [page, setPage] = useState(0);
+  const [tagVersion, setTagVersion] = useState(0);
+  const [newTags, setNewTags] = useState<BarrierType[]>(['L']);
+  const PAGE_SIZE = 30;
 
   // New question form modal
   const [isNewQModalOpen, setIsNewQModalOpen] = useState(false);
@@ -78,10 +85,11 @@ export const QuestionBank: React.FC = () => {
       options: [
         { option_key: 'A', content_vi: optA, content_en: optA, is_correct: correctKey === 'A' },
         { option_key: 'B', content_vi: optB, content_en: optB, is_correct: correctKey === 'B' },
-        { option_key: 'C', content_vi: optC || 'None', content_en: optC || 'None', is_correct: correctKey === 'C' },
-        { option_key: 'D', content_vi: optD || 'None', content_en: optD || 'None', is_correct: correctKey === 'D' },
+        ...(optC.trim() ? [{ option_key: 'C', content_vi: optC, content_en: optC, is_correct: correctKey === 'C' }] : []),
+        ...(optD.trim() ? [{ option_key: 'D', content_vi: optD, content_en: optD, is_correct: correctKey === 'D' }] : []),
       ],
-      vocabulary_support: [{ word: 'function', meaning: 'hàm số' }],
+      vocabulary_support: [],
+      barrier_tags: newTags.length ? newTags : ['L'],
       status: 'PUBLISHED',
       created_by: 'usr-teacher-1',
     };
@@ -157,10 +165,55 @@ export const QuestionBank: React.FC = () => {
     }
   };
 
-  const filtered = questions.filter((q) =>
-    (q.question_en || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (q.question_vi || '').toLowerCase().includes(searchTerm.toLowerCase())
+  const gradeOf = (q: Question) => Number(String(q.topic_id || '').split('-')[1]) || 0;
+  const scoped = useMemo(() => {
+    const term = searchTerm.trim().toLowerCase();
+    return questions.filter((q) =>
+      (gradeFilter === 'ALL' || gradeOf(q) === gradeFilter) &&
+      (!term || (q.question_en || '').toLowerCase().includes(term) || (q.question_vi || '').toLowerCase().includes(term))
+    );
+  }, [questions, gradeFilter, searchTerm]);
+  const barrierCounts = useMemo(() => {
+    const c: Record<BarrierType, number> = { L: 0, C: 0, M: 0 };
+    scoped.forEach((q) => getQuestionBarrierTags(q).forEach((t) => { c[t] += 1; }));
+    return c;
+  }, [scoped, tagVersion]);
+  const filtered = useMemo(
+    () => (barrierFilter === 'ALL' ? scoped : scoped.filter((q) => getQuestionBarrierTags(q).includes(barrierFilter))),
+    [scoped, barrierFilter, tagVersion]
   );
+  useEffect(() => { setPage(0); }, [gradeFilter, barrierFilter, searchTerm]);
+  useEffect(() => { if (selectedGrade) setGradeFilter(selectedGrade); }, [selectedGrade]);
+  const pageCount = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const pageItems = filtered.slice(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE);
+
+  const toggleTag = (q: Question, tag: BarrierType) => {
+    const current = getQuestionBarrierTags(q);
+    const next = current.includes(tag) ? current.filter((t) => t !== tag) : [...current, tag];
+    if (!next.length) { showNotification('⚠️ Mỗi câu cần ít nhất 1 nhãn L, C hoặc M.'); return; }
+    if (setQuestionBarrierTags(q.id, next)) setTagVersion((v) => v + 1);
+  };
+  const tagStyle: Record<BarrierType, string> = {
+    L: 'bg-sky-100 text-sky-800 border-sky-300',
+    C: 'bg-amber-100 text-amber-800 border-amber-300',
+    M: 'bg-rose-100 text-rose-800 border-rose-300',
+  };
+  const TagEditor: React.FC<{ q: Question }> = ({ q }) => {
+    const tags = getQuestionBarrierTags(q);
+    return (
+      <div className="flex items-center gap-1" title="Bấm để bật/tắt nhãn rào cản (1–3 nhãn)">
+        {BARRIER_ORDER.map((t) => (
+          <button key={t} type="button" onClick={() => toggleTag(q, t)} title={BARRIER_TAG_LABEL[t]}
+            className={`text-[10px] font-black px-2 py-0.5 rounded-full border transition ${tags.includes(t) ? tagStyle[t] : 'bg-white text-slate-300 border-slate-200 hover:text-slate-500'}`}>
+            {t}
+          </button>
+        ))}
+        {isBarrierTagEdited(q.id) && (
+          <button type="button" onClick={() => { resetQuestionBarrierTags(q.id); setTagVersion((v) => v + 1); }} className="text-[9px] font-bold text-slate-400 hover:text-slate-700 underline" title="Trả về nhãn tự động">đã sửa · hoàn tác</button>
+        )}
+      </div>
+    );
+  };
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6 pb-24 md:pb-12">
@@ -196,6 +249,33 @@ export const QuestionBank: React.FC = () => {
         </div>
       </div>
 
+      {/* Bộ lọc khối lớp + nhãn rào cản L/C/M */}
+      <div className="bg-white p-4 rounded-3xl border border-slate-200/80 shadow-2xs space-y-3">
+        <div className="flex flex-wrap items-center gap-2 text-xs">
+          <span className="font-black text-slate-700">Khối:</span>
+          {(['ALL', 10, 11, 12] as const).map((g) => (
+            <button key={String(g)} type="button" onClick={() => setGradeFilter(g)}
+              className={`px-3 py-1.5 rounded-xl font-bold border ${gradeFilter === g ? 'bg-slate-900 text-white border-slate-900' : 'bg-white text-slate-700 border-slate-200'}`}>
+              {g === 'ALL' ? 'Tất cả' : `Lớp ${g}`}
+            </button>
+          ))}
+        </div>
+        <div className="flex flex-wrap items-center gap-2 text-xs">
+          <span className="font-black text-slate-700">Rào cản học sinh còn yếu:</span>
+          <button type="button" onClick={() => setBarrierFilter('ALL')}
+            className={`px-3 py-1.5 rounded-xl font-bold border ${barrierFilter === 'ALL' ? 'bg-slate-900 text-white border-slate-900' : 'bg-white text-slate-700 border-slate-200'}`}>
+            Tất cả ({scoped.length})
+          </button>
+          {BARRIER_ORDER.map((t) => (
+            <button key={t} type="button" onClick={() => setBarrierFilter(t)} title={BARRIER_TAG_LABEL[t]}
+              className={`px-3 py-1.5 rounded-xl font-bold border ${barrierFilter === t ? tagStyle[t] + ' ring-2 ring-offset-1 ring-slate-300' : 'bg-white text-slate-700 border-slate-200'}`}>
+              {t} – {BARRIER_TAG_SHORT[t]} ({barrierCounts[t]})
+            </button>
+          ))}
+        </div>
+        <p className="text-[10px] text-slate-500">Mỗi câu có 1–3 nhãn: <b>L</b> ngôn ngữ (thuật ngữ, câu lệnh), <b>C</b> đọc hiểu đề (dữ kiện, bối cảnh, hình/bảng), <b>M</b> suy luận Toán (chiến lược, nhiều bước). Nhãn tự động được gắn theo quy tắc; bấm vào chữ L/C/M trên từng câu để sửa.</p>
+      </div>
+
       {/* Search */}
       <div className="relative">
         <Search className="w-4 h-4 text-slate-400 absolute left-4 top-3.5" />
@@ -210,7 +290,7 @@ export const QuestionBank: React.FC = () => {
 
       {/* Question Cards List */}
       <div className="space-y-4">
-        {filtered.map((q, idx) => (
+        {pageItems.map((q, idx) => (
           <div
             key={q.id}
             className="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-2xs space-y-4 hover:border-teal-300 transition"
@@ -224,9 +304,11 @@ export const QuestionBank: React.FC = () => {
                   {q.difficulty}
                 </span>
                 <span className="text-[10px] font-bold text-purple-700 bg-purple-50 px-2.5 py-0.5 rounded-full">
-                  {q.question_type}
+                  {q.format_type || q.question_type}
                 </span>
+                <span className="text-[10px] text-slate-400 hidden sm:inline">Lớp {gradeOf(q) || '?'}</span>
               </div>
+              <TagEditor q={q} />
 
               <div className="flex items-center gap-1">
                 <button
@@ -267,6 +349,62 @@ export const QuestionBank: React.FC = () => {
           </div>
         ))}
       </div>
+
+      {filtered.length === 0 && !loading && (
+        <div className="text-center text-xs text-slate-500 bg-white rounded-3xl border border-dashed border-slate-300 p-8">Không có câu hỏi phù hợp bộ lọc.</div>
+      )}
+      {pageCount > 1 && (
+        <div className="flex items-center justify-center gap-3 text-xs font-bold">
+          <button type="button" disabled={page === 0} onClick={() => { setPage((p) => Math.max(0, p - 1)); window.scrollTo({ top: 0 }); }} className="px-3 py-2 rounded-xl border border-slate-200 bg-white disabled:opacity-40">‹ Trước</button>
+          <span className="text-slate-600">Trang {page + 1}/{pageCount} · {filtered.length} câu</span>
+          <button type="button" disabled={page >= pageCount - 1} onClick={() => { setPage((p) => Math.min(pageCount - 1, p + 1)); window.scrollTo({ top: 0 }); }} className="px-3 py-2 rounded-xl border border-slate-200 bg-white disabled:opacity-40">Sau ›</button>
+        </div>
+      )}
+
+      {/* Xem chi tiết câu hỏi */}
+      {previewQuestion && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-xs" onClick={() => setPreviewQuestion(null)}>
+          <div className="bg-white w-full max-w-2xl rounded-3xl p-6 shadow-2xl border border-slate-200 space-y-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between border-b pb-3">
+              <div>
+                <h3 className="font-extrabold text-slate-900 text-sm">Chi tiết câu hỏi</h3>
+                <p className="text-[10px] text-slate-400 font-mono">{previewQuestion.id}</p>
+              </div>
+              <button onClick={() => setPreviewQuestion(null)} className="text-slate-400 hover:text-slate-700"><X className="w-5 h-5" /></button>
+            </div>
+            <div className="flex flex-wrap items-center gap-2 text-[10px]">
+              <span className="font-black text-slate-700">Nhãn rào cản:</span>
+              <TagEditor q={previewQuestion} />
+            </div>
+            <div className="space-y-1">
+              <div className="text-[10px] font-black text-slate-500 uppercase">English</div>
+              <div className="text-sm font-bold text-slate-900"><MathRenderer content={previewQuestion.question_en} /></div>
+            </div>
+            {previewQuestion.question_vi && (
+              <div className="space-y-1">
+                <div className="text-[10px] font-black text-slate-500 uppercase">Tiếng Việt</div>
+                <div className="text-sm text-slate-700"><MathRenderer content={previewQuestion.question_vi} /></div>
+              </div>
+            )}
+            {previewQuestion.options && previewQuestion.options.length > 0 && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                {previewQuestion.options.map((opt) => (
+                  <div key={opt.option_key} className={`p-2.5 rounded-xl border ${opt.is_correct ? 'bg-emerald-50 border-emerald-300 font-bold' : 'bg-slate-50 border-slate-200'}`}>
+                    <b>{opt.option_key}.</b> <MathRenderer content={opt.content_en || opt.content_vi} inline />
+                  </div>
+                ))}
+              </div>
+            )}
+            <div className="text-xs"><b>Đáp án:</b> <MathRenderer content={previewQuestion.correct_answer} inline /></div>
+            {(previewQuestion.solution_vi || previewQuestion.solution_en) && (
+              <div className="space-y-1 bg-slate-50 rounded-2xl p-3">
+                <div className="text-[10px] font-black text-slate-500 uppercase">Lời giải</div>
+                <div className="text-xs text-slate-800"><MathRenderer content={previewQuestion.solution_vi || previewQuestion.solution_en} /></div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* AI Generate Question Modal */}
       {isAiGenModalOpen && (
@@ -429,6 +567,19 @@ export const QuestionBank: React.FC = () => {
                     onChange={(e) => setOptD(e.target.value)}
                     className="w-full mt-1 p-2.5 rounded-xl border border-slate-300 bg-white font-mono"
                   />
+                </div>
+              </div>
+
+              <div>
+                <label className="font-bold text-slate-700">Nhãn rào cản (chọn 1–3): *</label>
+                <div className="flex flex-wrap gap-2 mt-1">
+                  {BARRIER_ORDER.map((t) => (
+                    <label key={t} className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border cursor-pointer ${newTags.includes(t) ? tagStyle[t] : 'bg-white border-slate-200 text-slate-500'}`}>
+                      <input type="checkbox" className="accent-teal-600" checked={newTags.includes(t)}
+                        onChange={() => setNewTags((prev) => (prev.includes(t) ? (prev.length > 1 ? prev.filter((x) => x !== t) : prev) : BARRIER_ORDER.filter((x) => x === t || prev.includes(x))))} />
+                      <span className="font-bold">{BARRIER_TAG_LABEL[t]}</span>
+                    </label>
+                  ))}
                 </div>
               </div>
 

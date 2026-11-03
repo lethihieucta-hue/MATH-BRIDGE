@@ -233,15 +233,35 @@ function migrateStoredWorkedExamples(examples: any[], canonical: any): any[] {
   }).filter((example: any) => !example.type_id || allowedTypeIds.has(example.type_id));
 }
 
+// Ngân hàng câu hỏi chuẩn (~3.000 câu, ~4,3 triệu ký tự) luôn có sẵn trong mã nguồn nên KHÔNG lưu lại vào
+// localStorage. Trước đây mỗi lần gọi dữ liệu, app đọc – ghi lại toàn bộ khoảng 4,3 triệu ký tự (sát giới hạn
+// ~5 MB của trình duyệt): chậm, và khi đầy bộ nhớ thì việc lưu đề/câu hỏi mới bị bỏ qua mà không báo.
+// Nay chỉ lưu phần riêng của giáo viên (câu tự tạo, câu đã sửa, đề, lớp, dữ liệu nghiên cứu…).
+let localDbCache: any = null;
+const CANONICAL_QUESTION_IDS = new Set(FULL_QUESTION_BANK.map((q: any) => q.id));
+
+function compactForStorage(db: any) {
+  return {
+    ...db,
+    chapters: undefined,
+    // Câu chuẩn chưa sửa thì bỏ; câu tự tạo hoặc câu chuẩn đã sửa (có updated_at) thì giữ.
+    questions: (db.questions || []).filter((q: any) => !CANONICAL_QUESTION_IDS.has(q.id) || q.updated_at),
+    __compact: 1,
+  };
+}
+
 function getLocalDb() {
   if (typeof window === 'undefined') return INITIAL_DATA;
+  if (localDbCache) return localDbCache;
   try {
     const raw = localStorage.getItem(DB_KEY);
     if (!raw) {
-      localStorage.setItem(DB_KEY, JSON.stringify(INITIAL_DATA));
-      return INITIAL_DATA;
+      localDbCache = INITIAL_DATA;
+      saveLocalDb(INITIAL_DATA);
+      return localDbCache;
     }
     const parsed = JSON.parse(raw);
+    const wasCompact = Boolean(parsed.__compact);
     let changed = false;
 
     // Curriculum identity is canonical: chapter, lesson, topic and math-type IDs must not drift.
@@ -277,7 +297,9 @@ function getLocalDb() {
     const cleanedStoredQuestions = (parsed.questions || []).filter((q: any) => !isLegacyExtremaFallbackQuestion(q));
     const canonicalQuestionIds = new Set(INITIAL_DATA.questions.map((q: any) => q.id));
     const customQuestions = cleanedStoredQuestions.filter((q: any) => !canonicalQuestionIds.has(q.id)).map((q: any) => migrateQuestionToCurrentCurriculum(q)).filter((q: any) => !q.type_id || ALL_CURRENT_TYPE_IDS.has(q.type_id));
-    parsed.questions = [...INITIAL_DATA.questions, ...customQuestions];
+    // Câu chuẩn giáo viên đã sửa (có updated_at) được giữ bản sửa thay vì bị ghi đè bằng bản gốc.
+    const editedCanonical = new Map(cleanedStoredQuestions.filter((q: any) => canonicalQuestionIds.has(q.id) && q.updated_at).map((q: any) => [q.id, q]));
+    parsed.questions = [...INITIAL_DATA.questions.map((q: any) => editedCanonical.get(q.id) || q), ...customQuestions];
     changed = true;
 
     // Update school name in profiles
@@ -297,21 +319,24 @@ function getLocalDb() {
     parsed.question_versions = parsed.question_versions || [];
     parsed.research_mode = parsed.research_mode || { enabled: false, locked_at: null, protocol_version: 'AMB-RP-1.0', note: '' };
 
-    if (changed) {
-      localStorage.setItem(DB_KEY, JSON.stringify(parsed));
-    }
+    localDbCache = parsed;
+    // Thu gọn bản lưu cũ (đầy đủ ~4,3 triệu ký tự) về bản chỉ chứa dữ liệu riêng – làm một lần.
+    if (changed && !wasCompact) saveLocalDb(parsed);
     return parsed;
   } catch {
+    localDbCache = INITIAL_DATA;
     return INITIAL_DATA;
   }
 }
 
 export function saveLocalDb(db: any) {
   if (typeof window === 'undefined') return;
+  localDbCache = db;
   try {
-    localStorage.setItem(DB_KEY, JSON.stringify(db));
+    localStorage.setItem(DB_KEY, JSON.stringify(compactForStorage(db)));
   } catch (e) {
     console.error('Save local DB error:', e);
+    try { window.dispatchEvent(new CustomEvent('amb-storage-full')); } catch { /* ignore */ }
   }
 }
 
