@@ -20,6 +20,7 @@ import {
 
 import { FULL_CHAPTERS, FULL_LESSONS, ALL_CURRENT_TYPE_IDS, LEGACY_TYPE_MIGRATION, migrateQuestionToCurrentCurriculum } from './curriculumData';
 import { FULL_QUESTION_BANK, DEFAULT_WORKED_EXAMPLES } from './questionBankData';
+import { SCHOOL_NAME, TEACHER_NAME, TEACHER_EMAIL } from './schoolBrand';
 
 const DB_KEY = 'math_bridge_client_db_v13';
 
@@ -31,7 +32,7 @@ export const INITIAL_DATA = {
       email: 'student@mathbridge.edu.vn',
       role: 'student',
       school_id: 'sch-1',
-      school_name: 'THPT Châu Thành A',
+      school_name: SCHOOL_NAME,
       grade_id: 12,
       avatar_url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
       current_level: 2,
@@ -43,11 +44,11 @@ export const INITIAL_DATA = {
     },
     {
       id: 'usr-teacher-1',
-      full_name: 'Lê Thị Hiếu',
-      email: 'hieu.le@thptchauthanha.edu.vn',
+      full_name: TEACHER_NAME,
+      email: TEACHER_EMAIL,
       role: 'teacher',
       school_id: 'sch-1',
-      school_name: 'THPT Châu Thành A',
+      school_name: SCHOOL_NAME,
       grade_id: 12,
       avatar_url: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150',
       current_level: 3,
@@ -159,7 +160,7 @@ export const INITIAL_DATA = {
       title: 'Đề kiểm tra 15 phút: Tính đơn điệu & Cực trị (Song ngữ)',
       description: 'Đề kiểm tra đánh giá định kỳ chuẩn GDPT 2018 kết hợp tiếng Anh',
       teacher_id: 'usr-teacher-1',
-      teacher_name: 'Cô Lê Thị Hiếu',
+      teacher_name: `Cô ${TEACHER_NAME}`,
       duration_minutes: 15,
       english_ratio: 50,
       max_attempts: 3,
@@ -305,8 +306,8 @@ function getLocalDb() {
     // Update school name in profiles
     if (parsed.profiles) {
       parsed.profiles.forEach((p: any) => {
-        if (p.school_name !== 'THPT Châu Thành A') {
-          p.school_name = 'THPT Châu Thành A';
+        if (p.school_name !== SCHOOL_NAME) {
+          p.school_name = SCHOOL_NAME;
           changed = true;
         }
       });

@@ -1,5 +1,6 @@
 import type { HighSchoolGrade } from "../types";
 import { BUILT_IN_ROSTER_K10_K11_K12 } from "../data/builtInRoster";
+import { IS_DEMO_MODE, maskStudentName } from "../lib/schoolBrand";
 const normalizeStudentId = (value: string) => value.trim().toUpperCase().replace(/\s+/g, "-");
 
 const ROSTER_KEY = "ai_math_bridge_v360_student_roster_k10_k11_k12_1210";
@@ -127,6 +128,11 @@ export function saveRoster(entries: StudentRosterEntry[]): void {
 }
 
 export function loadRoster(): StudentRosterEntry[] {
+  const rows = loadRosterRaw();
+  return IS_DEMO_MODE ? rows.map(maskStudentName) : rows;
+}
+
+function loadRosterRaw(): StudentRosterEntry[] {
   const storage = safeStorage();
   // Roster built-in vẫn phải hoạt động khi trình duyệt chặn localStorage.
   if (!storage) return BUILT_IN_ROSTER_K10_K11_K12;

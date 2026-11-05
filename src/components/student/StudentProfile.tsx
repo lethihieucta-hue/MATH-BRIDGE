@@ -2,6 +2,7 @@ import React from 'react';
 import { useAppStore } from '../../lib/store';
 import { LevelBadge } from './LevelBadge';
 import { User, School, GraduationCap, Download, Flame, Shield, Award } from 'lucide-react';
+import { IS_DEMO_MODE, SCHOOL_NAME } from '../../lib/schoolBrand';
 
 export const StudentProfile: React.FC = () => {
   const { user, selectedGrade, currentLevel, showNotification } = useAppStore();
@@ -54,7 +55,7 @@ export const StudentProfile: React.FC = () => {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 text-center">
             <p className="text-[10px] uppercase font-bold text-slate-400">Trường Học</p>
-            <p className="text-sm font-extrabold text-slate-800 mt-1">{user?.school_name || 'THPT Châu Thành A'}</p>
+            <p className="text-sm font-extrabold text-slate-800 mt-1">{IS_DEMO_MODE ? SCHOOL_NAME : (user?.school_name || SCHOOL_NAME)}</p>
           </div>
           <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 text-center">
             <p className="text-[10px] uppercase font-bold text-slate-400">Khối Lớp</p>

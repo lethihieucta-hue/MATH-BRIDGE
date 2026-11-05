@@ -21,6 +21,7 @@ import {
   School,
   Sparkles,
 } from 'lucide-react';
+import { SCHOOL_SHORT_UPPER } from '../../lib/schoolBrand';
 
 export interface OnlineExamData {
   id: string;
@@ -367,7 +368,7 @@ export const OnlineExamRoom: React.FC<OnlineExamRoomProps> = ({ examData: propEx
           {/* Header Banner */}
           <div className="bg-gradient-to-r from-teal-600 via-teal-700 to-indigo-800 text-white p-6 sm:p-8 text-center relative">
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/15 rounded-full text-xs font-bold uppercase tracking-wider mb-3">
-              <School className="w-4 h-4" /> THPT CHÂU THÀNH A • TỔ TOÁN
+              <School className="w-4 h-4" /> {SCHOOL_SHORT_UPPER} • TỔ TOÁN
             </div>
             <h1 className="text-2xl sm:text-3xl font-black tracking-tight leading-snug">{exam.title}</h1>
             {exam.title_en && (

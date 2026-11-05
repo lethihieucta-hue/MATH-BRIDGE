@@ -49,6 +49,7 @@ import {
   Bot,
   Wand2,
 } from 'lucide-react';
+import { SCHOOL_HEADER, SCHOOL_SHORT_UPPER } from '../../lib/schoolBrand';
 
 type QuestionCounts = { tn: number; ds: number; tln: number; tl: number };
 const DEFAULT_COUNTS: QuestionCounts = { tn: 4, ds: 2, tln: 2, tl: 1 };
@@ -1187,7 +1188,7 @@ export const BilingualLessonModule: React.FC = () => {
   // Export Action: Copy Word Text
   const handleCopyWord = () => {
     let content = `=========================================================\n`;
-    content += `TRƯỜNG THPT CHÂU THÀNH A\n`;
+    content += `${SCHOOL_HEADER}\n`;
     content += `${isEnglishExport ? 'MATHEMATICS DEPARTMENT' : 'TỔ TOÁN'}\n`;
     content += `${localizedDocumentTitle.toUpperCase()}\n`;
     if (activeLesson) {
@@ -1264,7 +1265,7 @@ export const BilingualLessonModule: React.FC = () => {
       }
     };
 
-    paragraphs.push(paragraph(docxTextRun('TRƯỜNG THPT CHÂU THÀNH A', { bold: true }), { align: 'center', keepNext: true }));
+    paragraphs.push(paragraph(docxTextRun(SCHOOL_HEADER, { bold: true }), { align: 'center', keepNext: true }));
     paragraphs.push(paragraph(docxTextRun(isEnglishExport ? 'MATHEMATICS DEPARTMENT' : 'TỔ TOÁN', { bold: true }), { align: 'center', keepNext: true }));
     paragraphs.push(paragraph(docxTextRun(localizedDocumentTitle, { bold: true }), { style: 'Title', align: 'center', keepNext: true }));
     if (activeLesson) addLocalized(activeLesson.title_vi, activeLesson.title_en, '', '', { keepLines: true });
@@ -1666,7 +1667,7 @@ export const BilingualLessonModule: React.FC = () => {
                 <div className="border-b-2 border-slate-900 pb-3 mb-6 font-sans">
                   <div className="flex justify-between items-start text-xs">
                     <div>
-                      <p className="font-extrabold uppercase text-slate-800 tracking-wide text-xs">THPT CHÂU THÀNH A</p>
+                      <p className="font-extrabold uppercase text-slate-800 tracking-wide text-xs">{SCHOOL_SHORT_UPPER}</p>
                       <p className="font-black text-violet-900 uppercase text-xs mt-0.5">
                         {isEnglishExport ? 'MATHEMATICS DEPARTMENT' : 'TỔ TOÁN'}
                       </p>

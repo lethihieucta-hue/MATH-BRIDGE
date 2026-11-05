@@ -15,6 +15,7 @@ import {
   UsersRound,
   Microscope,
 } from 'lucide-react';
+import { IS_DEMO_MODE } from '../../lib/schoolBrand';
 
 export const Header: React.FC = () => {
   const {
@@ -65,6 +66,11 @@ export const Header: React.FC = () => {
                   <span className="text-[10px] font-bold uppercase tracking-wide bg-white text-amb-navy-800 px-2 py-0.5 rounded-md">
                     Giáo viên
                   </span>
+                  {IS_DEMO_MODE && (
+                    <span className="text-[10px] font-bold uppercase tracking-wide bg-amb-yellow-400 text-amb-navy-800 px-2 py-0.5 rounded-md" title="Chế độ demo: tên trường, giáo viên, học sinh được ẩn danh">
+                      Demo
+                    </span>
+                  )}
                 </div>
                 <p className="text-[11px] text-slate-300 font-medium">
                   Kết nối tri thức · GDPT 2018

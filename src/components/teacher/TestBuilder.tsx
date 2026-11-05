@@ -38,6 +38,7 @@ import {
   Send,
   Eye,
 } from 'lucide-react';
+import { SCHOOL_HEADER } from '../../lib/schoolBrand';
 
 interface GeneratedTestState {
   title: string;
@@ -450,7 +451,7 @@ export const TestBuilder: React.FC = () => {
     }
     const isPureEnglish = currentTest.englishRatio >= 80;
     let content = `=========================================================\n`;
-    content += `TRƯỜNG THPT CHÂU THÀNH A\n`;
+    content += `${SCHOOL_HEADER}\n`;
     content += `TỔ TOÁN\n`;
     content += `${isPureEnglish ? currentTest.title_en.toUpperCase() : currentTest.title.toUpperCase()}\n`;
     content += `Thời gian / Time: ${currentTest.duration} phút | Tỷ lệ tiếng Anh: ${currentTest.englishRatio}%\n`;
@@ -514,7 +515,7 @@ export const TestBuilder: React.FC = () => {
     const title = isPureEnglish ? currentTest.title_en : currentTest.title;
     const safeName = title.replace(/[\\/:*?"<>|]/g, '').replace(/\s+/g, '_');
 
-    paragraphs.push(wordParagraph(wordTextRun('TRƯỜNG THPT CHÂU THÀNH A', { bold: true }), { align: 'center', keepNext: true }));
+    paragraphs.push(wordParagraph(wordTextRun(SCHOOL_HEADER, { bold: true }), { align: 'center', keepNext: true }));
     paragraphs.push(wordParagraph(wordTextRun(isPureEnglish ? 'MATHEMATICS DEPARTMENT' : 'TỔ TOÁN', { bold: true }), { align: 'center', keepNext: true }));
     paragraphs.push(wordParagraph(wordTextRun(title.toUpperCase(), { bold: true }), { style: 'Title', align: 'center', keepNext: true }));
     if (isBilingual && currentTest.title_en) {
@@ -770,7 +771,7 @@ export const TestBuilder: React.FC = () => {
               <div className="border-b-2 border-slate-900 pb-4 mb-6">
                 <div className="flex justify-between items-start text-xs font-sans font-bold uppercase tracking-wider">
                   <div>
-                    <div>TRƯỜNG THPT CHÂU THÀNH A</div>
+                    <div>{SCHOOL_HEADER}</div>
                     <div className="text-violet-700">TỔ TOÁN</div>
                   </div>
                   <div className="text-right">

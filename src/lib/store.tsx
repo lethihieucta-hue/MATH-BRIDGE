@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { UserProfile, MathEnglishLevel, LanguageMode } from '../types';
+import { SCHOOL_NAME, TEACHER_NAME, TEACHER_EMAIL } from './schoolBrand';
 
 export type Role = 'STUDENT' | 'TEACHER';
 
@@ -33,10 +34,10 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<UserProfile | null>({
     id: 'usr-teacher-1',
-    full_name: 'Lê Thị Hiếu',
-    email: 'lehieu@thptchauthanha.edu.vn',
+    full_name: TEACHER_NAME,
+    email: TEACHER_EMAIL,
     role: 'teacher',
-    school_name: 'THPT Châu Thành A',
+    school_name: SCHOOL_NAME,
     grade_id: 12,
     current_level: 3,
     xp: 2500,
